@@ -27,9 +27,9 @@
 ## 2.3 User Roles
 
 | Role | Description |
-|------|------------|
-|      |            |
-|      |            |
+|-----|------------|
+|     |            |
+|     |            |
 
 ## 2.4 Assumptions & Constraints
 
@@ -56,15 +56,17 @@ FR-05:
 # 4. External Interface Requirements
 
 ## 4.1 User Interface
-- 
-- 
-- 
-
+- Tất cả người dùng: Trang chủ
+- Học viên: Đăng ký; Đăng nhập; Đăng ký khóa học, thanh toán; Xem lịch học, phòng học, profile; Xem điểm, kết quả học tập.
+- Giáo viên: Quản lý lớp học, lịch giảng dạy; Điểm danh; Nhập điểm, nhận xét học viên, Đăng nhập quản trị.
+- Admin: Đăng nhập quản trị; Quản lý khóa học (học phí, chính sách, số lượng sinh viên, khóa học, điểm); Quản lý giáo viên, học viên; Báo cáo, thống kê.
 ## 4.2 Hardware Interface
-
+- Máy tính 
+- Máy in
 ## 4.3 Software Interface
-- 
-- 
+- Hệ điều hành
+- Trình duyệt web
+- Cơ sở dữ liệu
 
 ---
 
