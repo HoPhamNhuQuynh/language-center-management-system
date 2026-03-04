@@ -75,17 +75,18 @@ NFR-01: Yêu cầu giao diện
 - Các thành phần giao diện (menu, nút chức năng, biểu mẫu nhập liệu) phải được thiết kế nhất quán giữa các chức năng.
 - Hệ thống phải hiển thị thông báo lỗi rõ ràng và dễ hiểu khi nhập sai dữ liệu.
 
-NFR-02: Yêu cầu bảo mật
+NFR-02: Bảo mật
 - Hệ thống phải yêu cầu xác thực người dùng trước khi truy cập các chức năng quản lý (admin, giáo viên).
-- Mật khẩu người dùng phải có ít nhất 6 kí tự.
+- Mật khẩu người dùng phải có ít nhất 6 kí tự. Mật khẩu phải được băm trước khi lưu trữ trong cơ sở dữ liệu
 
-NFR-03: Yêu cầu hiệu năng
-- Hệ thống có thể cung cấp với số lượng người dùng đủ lớn (tối thiếu 200 người), không bị quá tải.
-- Tốc độ xử lý và khả năng phản hồi nhanh
+NFR-03: Hiệu năng
+- Hệ thống phải hỗ trợ tối thiếu 200 người dùng truy cập đồng thời trong môi trường kiểm thử mà không xảy ra lỗi nghiêm trọng (server crash hoặc HTTP 500)
+- Thời gian phản hồi trung bình cho mỗi yêu cầu không vượt quá 3 giây trong điều kiện tải bình thường. 
 
-NFR-04: Yêu cầu về độ tin cậy và khả năng bảo trì
+NFR-04: Độ tin cậy & khả năng bảo trì
 - Hệ thống phải đảm bảo không mất dữ liệu khi xảy ra sự cố đột ngột.
-- Việc cập nhật hệ thống không được làm ảnh hưởng đến các chức năng cốt lõi. 
+- Hệ thống phải có cơ chế sao lưu cơ sở dữ liệu định kỳ (tối thiểu 1 lần/ngày).
+- Việc cập nhật hệ thống không được làm ảnh hưởng đến các chức năng đã triển khai trước đó
 
 ---
 
