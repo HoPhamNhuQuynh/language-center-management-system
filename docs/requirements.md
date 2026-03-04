@@ -56,17 +56,24 @@ FR-05:
 # 4. External Interface Requirements
 
 ## 4.1 User Interface
-- Tất cả người dùng: Trang chủ
-- Học viên: Đăng ký; Đăng nhập; Đăng ký khóa học, thanh toán; Xem lịch học, phòng học, profile; Xem điểm, kết quả học tập.
-- Giáo viên: Quản lý lớp học, lịch giảng dạy; Điểm danh; Nhập điểm, nhận xét học viên, Đăng nhập quản trị.
-- Admin: Đăng nhập quản trị; Quản lý khóa học (học phí, chính sách, số lượng sinh viên, khóa học, điểm); Quản lý giáo viên, học viên; Báo cáo, thống kê.
+- Phương thúc tương tác: người dùng thao tác bằng chuột, bàn phím khi sử dụng trên máy tính, laptop; thao tác bằng cảm ứng khi sử dụng trên thiết bị di động. Sử dụng menu, nút bấm, biểu mẫu để tương tác với hệ thống.
+- Loại giao diện: Giao diện Web
+- Giao diện:
+  + Quản trị: 
+    + Admin: Đăng nhập quản trị; Quản lý khóa học (học phí, chính sách, số lượng sinh viên, khóa học, điểm); Quản lý giáo viên, học viên; Báo cáo, thống kê.
+    + Giáo viên: Đăng nhập quản trị; Quản lý lớp học, lịch giảng dạy; Điểm danh; Nhập điểm, nhận xét học viên.
+  + Người dùng:
+    + Học viên: Trang chủ; Đăng ký; Đăng nhập; Đăng ký khóa học, thanh toán; Xem lịch học, phòng học, profile; Xem điểm, kết quả học tập.
 ## 4.2 Hardware Interface
-- Máy tính 
-- Máy in
+- Yêu cầu: thiết bị có khả năng kết nối Internet
+- Thiết bị: Máy tính, Laptop, Điện thoại thông minh 
 ## 4.3 Software Interface
-- Hệ điều hành
-- Trình duyệt web
-- Cơ sở dữ liệu
+- Môi trường server: có cài đặt Python và Django
+- Hệ quản trị cơ sở dữ liệu: MySQL
+- Trình duyệt hỗ trợ: Google Chrome, Microsoft Edge,...
+- Dịch vụ tích hợp: 
+  + Dịch vụ xác thực đăng nhập (Google OAuth 2.0)
+  + Dịch vụ xử lý thanh toán trực tuyến (Stripe API)
 
 ---
 
