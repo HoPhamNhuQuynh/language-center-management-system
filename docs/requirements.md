@@ -149,14 +149,282 @@ BR-03:
 # 7. Data Requirements
 
 ## 7.1 Data Entities
-- 
-- 
+
+
+### 👤 Quản lý người dùng và phân quyền (User & Access Management) 
+| Entity Name | Description |
+|---|---|
+| `User` | Đại diện cho người dùng sử dụng hệ thống. |
+| `Profile` | Đại diện cho thông tin người sử dụng hệ thống. |
+| `Role` | Đại diện cho vai trò người dùng trong hệ thống. |
+
+### 📚 Quản lý khóa học (Course Management)
+| Entity Name | Description |
+|---|---|
+| `Course` | Đại diện cho khóa học. |
+| `Tag` | Đại diện cho các thẻ của khóa học. |
+| `CourseTag` | Đại diện mối quan hệ giữa các thẻ và các khóa học. |
+| `Level` | Đại diện cho mức độ của khóa học. |
+
+
+### 🏫 Quản lý lớp học và lịch học (Class & Scheduling Management)
+| Entity Name | Description |
+|---|---|
+| `Class` | Đại diện cho lớp học cụ thể của khóa học. |
+| `Room` | Đại diện cho phòng học. |
+| `Schedule` | Đại diện lịch học của lớp. |
+| `Session` | Đại diện buổi học cụ thể của lớp. |
+| `TeachingAssignment` | Thể hiện thông tin phân công giảng dạy cho giáo viên. |
+
+### 💳 Đăng ký và thanh toán (Enrollment & Payment Management)
+| Entity Name | Description |
+|---|---|
+| `Enrollment` | Thể hiện cho đăng ký khóa học. |
+| `Payment` | Đại diện cho giao dịch thanh toán khóa học. |
+
+### 🎓 Quản lý kết quả học tập (Academic Result Management)
+| Entity Name | Description |
+|---|---|
+| `Attendance` | Đại diện cho sự điểm danh của học viên trong các buổi học. |
+| `AcademicResult` | Đại diện kết quả học tập toàn khóa học của học viên. |
+| `Score` | Đại diện thông tin điểm chi tiết. |
+| `ScoreType` | Đại diện cho cột điểm số. |
+
+---
 
 ## 7.2 Entity Attributes
 
-### Entity Name
-- 
-- 
+### 7.2.1. User
+
+| Attribute | Data Type | Description |
+|---|---|---|
+| id | int | Định danh duy nhất của thực thể |
+| email | string | Địa chỉ email của người dùng |
+| username | string | Tên đăng nhập của người dùng |
+| password | string | Mật khẩu xác thực của người dùng |
+| auth_provider | enum | Kiểu login của tài khoản |
+| provider_id | string | Định danh xác thực từ Google |
+| role_id | int | Vai trò người dùng |
+| active | boolean | Trạng thái hoạt động của người dùng |
+| created_at | datetime | Thời gian tạo tài khoản người dùng |
+| updated_at | datetime | Thời gian cập nhật tài khoản người dùng gần nhất |
+
+
+### 7.2.2. Profile
+
+| Attribute | Data Type | Description |
+|---|---|---|
+| user_id | int | Định danh người dùng, đồng thời là khóa chính của hồ sơ |
+| first_name | string | Tên người dùng |
+| last_name | string | Họ người dùng |
+| avatar | string | Ảnh đại diện của người dùng |
+| phone_num | string | Số điện thoại người dùng |
+
+
+### 7.2.3. Role
+
+| Attribute | Data Type | Description |
+|---|---|---|
+| id | int | Định danh duy nhất của thực thể |
+| name | string | Vai trò của người dùng |
+| active | boolean | Trạng thái hoạt động của thực thể |
+| created_at | datetime | Ngày tạo của thực thể |
+| updated_at | datetime | Ngày cập nhật thông tin thực thể |
+
+
+### 7.2.4. Course
+
+| Attribute | Data Type | Description |
+|---|---|---|
+| id | int | Định danh duy nhất của khóa học |
+| name | string | Tên khóa học |
+| price | float | Giá của khóa học |
+| description | string | Mô tả về khóa học |
+| image | string | Hình ảnh khóa học |
+| total_sessions | int | Tổng số buổi học |
+| level_id | int | Trình độ của khóa học |
+| active | boolean | Trạng thái hoạt động của thực thể |
+| created_at | datetime | Ngày tạo của thực thể |
+| updated_at | datetime | Ngày cập nhật thông tin thực thể |
+
+
+### 7.2.5. Tag
+
+| Attribute | Data Type | Description |
+|---|---|---|
+| id | int | Định danh duy nhất của thực thể |
+| name | string | Tên thẻ |
+| active | boolean | Trạng thái hoạt động của thực thể |
+| created_at | datetime | Ngày tạo của thực thể |
+| updated_at | datetime | Ngày cập nhật thông tin thực thể |
+
+
+### 7.2.6. CourseTag
+
+| Attribute | Data Type | Description |
+|---|---|---|
+| course_id | int | Xác định khóa học cụ thể. |
+| tag_id | int | Xác định thẻ cụ thể. |
+
+
+### 7.2.7. Level
+
+| Attribute | Data Type | Description |
+|---|---|---|
+| id | int | Định danh duy nhất của thực thể |
+| name | string | Mức độ |
+| description | string | Mô tả về mức độ |
+| active | boolean | Trạng thái hoạt động của thực thể |
+| created_at | datetime | Ngày tạo của thực thể |
+| updated_at | datetime | Ngày cập nhật thông tin thực thể |
+
+
+### 7.2.8. Class
+
+| Attribute | Data Type | Description |
+|---|---|---|
+| id | int | Định danh duy nhất của lớp học |
+| name | string | Tên lớp học |
+| start_date | date | Ngày bắt đầu của lớp học |
+| end_date | date | Ngày kết thúc của lớp học |
+| capacity | int | Số lượng học viên tối đa của lớp học |
+| course_id | int | Khóa học mà lớp học thuộc về |
+| active | boolean | Trạng thái hoạt động của thực thể |
+| created_at | datetime | Ngày tạo của thực thể |
+| updated_at | datetime | Ngày cập nhật thông tin thực thể |
+
+
+### 7.2.9. Room
+
+| Attribute | Data Type | Description |
+|---|---|---|
+| id | int | Định danh duy nhất của thực thể |
+| name | string | Tên phòng học |
+| capacity | int | Sức chứa của phòng |
+| active | boolean | Trạng thái hoạt động của thực thể |
+| created_at | datetime | Ngày tạo của thực thể |
+| updated_at | datetime | Ngày cập nhật thông tin thực thể |
+
+
+### 7.2.10. Schedule
+
+| Attribute | Data Type | Description |
+|---|---|---|
+| id | int | Định danh duy nhất của thực thể |
+| class_id | int | Xác định lịch học này của lớp học nào |
+| start_time | datetime | Thời gian dự kiến bắt đầu của lịch học |
+| end_time | datetime | Thời gian dự kiến kết thúc lịch học |
+| room_id | int | Xác định phòng học cho lịch học |
+| day_of_weeks | int | Xác định lớp học diễn ra vào thứ mấy |
+| active | boolean | Trạng thái hoạt động của thực thể |
+| created_at | datetime | Ngày tạo của thực thể |
+| updated_at | datetime | Ngày cập nhật thông tin thực thể |
+
+
+### 7.2.11. Session
+
+| Attribute | Data Type | Description |
+|---|---|---|
+| id | int | Định danh duy nhất của thực thể |
+| schedule_id | int | Xác định buổi học này được sắp xếp theo lịch học nào. |
+| user_id | int | Xác định giáo viên dạy buổi học. |
+| start_time | datetime | Thời gian bắt đầu thực tế của buổi học |
+| end_time | datetime | Thời gian kết thúc thực tế buổi học |
+| room_id | int | Xác định phòng học thực tế cho buổi học |
+| date | date | Xác định buổi học này diễn ra vào ngày nào |
+| active | boolean | Trạng thái hoạt động của thực thể |
+| created_at | datetime | Ngày tạo của thực thể |
+| updated_at | datetime | Ngày cập nhật thông tin thực thể |
+
+
+### 7.2.12. TeachingAssignment
+
+| Attribute | Data Type | Description |
+|---|---|---|
+| user_id | int | Định danh giảng viên được phân công. |
+| class_id | int | Xác định lớp được phân công. |
+| is_main | boolean | Xác định giáo viên chính của lớp. |
+
+
+### 7.2.13. Enrollment
+
+| Attribute | Data Type | Description |
+|---|---|---|
+| id | int | Định danh duy nhất của thực thể |
+| user_id | int | Định danh của học viên đăng ký khóa học |
+| class_id | int | Định danh của lớp học được đăng ký |
+| enrollment_status | enum | Trạng thái đăng ký |
+| active | boolean | Trạng thái hoạt động của thực thể |
+| created_at | datetime | Ngày tạo của thực thể |
+| updated_at | datetime | Ngày cập nhật thông tin thực thể |
+
+
+### 7.2.14. Payment
+
+| Attribute | Data Type | Description |
+|---|---|---|
+| id | int | Định danh duy nhất của thực thể |
+| enrollment_id | int | Xác định thanh toán cho đăng ký nào |
+| amount | float | Số tiền thanh toán |
+| payment_method | enum | Phương thức thanh toán |
+| payment_status | enum | Trạng thái thanh toán |
+| transaction_id | string | Định danh từ cổng thanh toán |
+| paid_at | datetime | Thời điểm thanh toán thành công |
+| created_at | datetime | Ngày tạo của thực thể |
+| updated_at | datetime | Ngày cập nhật thông tin thực thể |
+
+
+### 7.2.15. Attendance
+
+| Attribute | Data Type | Description |
+|---|---|---|
+| enrollment_id | int | Xác định học viên đã đăng ký lớp học của buổi học này |
+| session_id | int | Xác định buổi học cụ thể của lớp học |
+| attendance_status | enum | Trạng thái điểm danh |
+| note | string | Ghi chú đối với các trường hợp cần chú thích thêm |
+| created_at | datetime | Ngày tạo của thực thể |
+
+
+### 7.2.16. AcademicResult
+
+| Attribute | Data Type | Description |
+|---|---|---|
+| id | int | Định danh duy nhất của thực thể |
+| enrollment_id | int | Xác định điểm thuộc về ai và lớp học nào |
+| average_score | float | Điểm trung bình toàn khóa học |
+| comment | string | Nhận xét của giáo viên |
+| active | boolean | Trạng thái hoạt động của thực thể |
+| created_at | datetime | Ngày tạo của thực thể |
+| updated_at | datetime | Ngày cập nhật thông tin thực thể |
+
+
+### 7.2.17. Score
+
+| Attribute | Data Type | Description |
+|---|---|---|
+| id | int | Định danh duy nhất của thực thể |
+| enrollment_id | int | Xác định điểm thuộc về ai và lớp học nào |
+| score_value | float | Số điểm |
+| score_type_id | int | Xác định cột điểm |
+| active | boolean | Trạng thái hoạt động của thực thể |
+| created_at | datetime | Ngày tạo của thực thể |
+| updated_at | datetime | Ngày cập nhật thông tin thực thể |
+
+
+### 7.2.18. ScoreType
+
+| Attribute | Data Type | Description |
+|---|---|---|
+| id | int | Định danh duy nhất của thực thể |
+| name | string | Tên cột điểm |
+| weight | float | Hệ số của cột điểm |
+| course_id | int | Thuộc khóa học nào |
+| active | boolean | Trạng thái hoạt động của thực thể |
+| created_at | datetime | Ngày tạo của thực thể |
+| updated_at | datetime | Ngày cập nhật thông tin thực thể |
+
+---
+
 
 ## 7.3 Relationships
 - 
