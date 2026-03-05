@@ -159,15 +159,56 @@ BR-03:
 - 
 
 ## 7.3 Relationships
-- 
-- 
+| A              | B               | Relationship | Description                                                                                      |
+|----------------|-----------------|--------------|--------------------------------------------------------------------------------------------------|
+| User           | Profile         | 1:1          | Mỗi một người dùng có một hồ sơ thông tin riêng biệt                                             |
+| Role           | User            | 1:N          | Mỗi vai trò được gắn cho nhiều người dùng                                                        |
+| Level          | Course          | N:N          | Một mức độ có nhiều khóa học và một khóa học cũng có nhiều mức độ                                |
+| Course         | Tag             | N:N          | Một khóa học có nhiều thẻ và một thẻ được gắn cho nhiều khóa học                                 |
+| Course         | Class           | 1:N          | Một khóa học có nhiều lớp học                                                                    |
+| Room           | Class           | 1:N          | Một phòng học được sử dụng bởi nhiều lớp học (ở các thời điểm khác nhau)                         |
+| User           | ClassInstructor | 1:N          | Mỗi một người dùng (giáo viên) có thể được phân công dạy nhiều lớp                               |
+| Class          | ClassInstructor | 1:N          | Một lớp học thì được phân cho nhiều giáo viên dạy                                                |
+| Class          | Schedule        | 1:N          | Một lớp học có nhiều buổi học                                                                    |
+| User           | Enrollment      | 1:N          | Một người dùng (học viên) có thể thực hiện nhiều lượt đăng ký                                    |
+| Class          | Enrollment      | 1:0..30      | Một lớp học nhận được tối đa 30 lượt đăng ký                                                     |
+| Enrollment     | Payment         | 1:1..2       | Một lượt đăng ký được thanh toán 1 lần khi thanh toán 100% hoặc 2 lần khi thanh toán 50% mỗi lần |
+| Schedule       | Attendance      | 1:N          | Một buổi học có nhiều bảng điểm danh                                                             |
+| Enrollment     | Attendance      | 1:N          | Một lượt đăng ký có nhiều bảng điểm danh                                                         |
+| Enrollment     | AcademicResult  | 1:1          | Một lượt đăng ký chỉ có một bảng kết quả học tập                                                 |
+| AcademicResult | ScoreType       | 1:N          | Một bảng kết quả học tập có nhiều loại điểm                                                      |
 
 ## 7.4 Data Constraints
-- 
-- 
+- Ràng buộc Primary Key:
+  + Tất cả các bảng đều phải có một ID duy nhất làm khóa chính
+  + Bảng Profile: Sử dụng id của bảng User làm khóa chính
+  + Bảng Attendance: Sử dụng id của bảng Enrollment và bảng Schedule làm khóa chính
+  + Bảng ClassInstructor: Sử dụng id của bảng User và bảng Schedule làm khóa chính
+- Ràng buộc Foreign Key:
+  + Không thể tạo ra dữ liệu con khi dữ liệu cha chưa tồn tại
+  + Không được phép xóa một dữ liệu khi dữ liệu con của nó đang hoạt động
+- Ràng buộc Unique:
+  + Bảng User: username và email là duy nhất
+  + Bảng Profile: số điện thoại là duy nhất
+  + Bảng Payment: transaction_id là duy nhất (mã giao dịch)
+  + Enrollment: cặp u_id và class_id phải là duy nhất
+- Ràng buộc Not null và Default:
+  + Tất cả các trường name, username, email, password đều không được trống
+  + Tất cả các trường active mặc định là True hoặc là 1
+  + Tất cả các trường created_at tự động được hệ thống gán thời gian 
+- Ràng buộc miền giá trị:
+  + Thời gian:
+    + Bảng Class: end_date phải lớn hơn hoặc bằng start_date
+    + Bảng Schedule: end_time phải lớn hơn start_time
+  + Giá trị:
+    + Bảng Course: price phải lớn hơn hoặc bằng 0 và total_sessions cũng phải lớn hơn 0
+    + Bảng Class: capacity phải lớn hơn 0 và nhỏ hơn hoặc bằng 30
+    + Bảng Room: capacity phải lớn hơn 0 và nhỏ hơn hoặc bằng 30
+    + Bảng Payment: amount phải lớn hơn hoặc bằng 0
+    + Bảng AcademicResult: score_value và average_score phải lớn hơn hoặc bằng 0 và phải nhỏ hơn hoặc bằng 10
+    + Bảng ScoreType: weight phải lớn hơn 0 và nhỏ hơn hoặc bằng 3
 
 ---
-
 # 8. System Models
 
 ## 8.1 Use Case Diagram
