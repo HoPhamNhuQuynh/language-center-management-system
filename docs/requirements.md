@@ -6,40 +6,79 @@
 # 1. Introduction
 
 ## 1.1 Purpose
+Việc xây dựng hệ thống được triển khai nhằm hướng đến các mục tiêu trọng tâm trong công tác quản lý và vận hành trung tâm. Giúp tin học hóa toàn bộ các hoạt động quản lý, thay thế phương pháp thủ công truyền thống bằng quy trình xử lý tự động, chính xác và tiết kiệm thời gian. 
+
+Đối với nhóm người dùng là học viên, hệ thống hỗ trợ đăng ký khóa học, xem thời khóa biểu và theo dõi kết quả học tập trực tuyến. Đối với giáo viên, hệ thống tạo điều kiện thuận lợi trong việc quản lý lớp học, điểm danh và nhập điểm nhanh chóng, giảm thiểu sai sót. Bên cạnh đó, hệ thống còn hỗ trợ Admin trong việc quản lý chương trình đào tạo, học phí và lập các báo cáo thống kê. Giúp nâng cao hiệu quả hoạt động và chất lượng quản lý của trung tâm.
 
 ## 1.2 Scope
-
+Hệ thống bao gồm các chức năng phục vụ cho ba nhóm người dùng chính: giáo viên, học viên và Admin. Hệ thống cho phép giáo viên thực hiện các thao tác liên quan đến lớp học như xem thông tin lớp, điểm danh và nhập điểm cho học viên. Học viên có thể đăng ký khóa học, xem thời khóa biểu và tra cứu kết quả học tập. Admin quản lý chương trình đào tạo, theo dõi và quản lý học phí, thực hiện lập các báo cáo thống kê.
 ## 1.3 Definitions, Acronyms, Abbreviations
 
-| Term | Meaning |
-|------|---------|
-|      |         |
-|      |         |
-
+|   Term   |          Meaning           |
+|----------|----------------------------|
+|   Admin  |  Quản trị viên             |
+| Username |  Tên người dùng hệ thống   |
+| Fullname |  Tên đầy đủ của người dùng |
 ---
 
 # 2. Overall Description
 
 ## 2.1 Product Perspective
+Hệ thống là một ứng dụng web độc lập được phát triển bằng framework Django. Người dùng truy cập và sử dụng thông qua trình duyệt web.
+
+Ứng dụng được xây dựng theo kiến trúc Client–Server. Phía server chịu trách nhiệm xử lý logic nghiệp vụ và giao tiếp với cơ sở dữ liệu, trong khi phía client hiển thị giao diện và gửi yêu cầu đến server thông qua giao thức HTTP.
+
+Hệ thống sử dụng hệ quản trị cơ sở dữ liệu MySQL để lưu trữ và quản lý dữ liệu.
+
+Ứng dụng có tích hợp với các dịch vụ bên thứ ba nhằm mở rộng chức năng và đảm bảo tính bảo mật, bao gồm:
+
+* Dịch vụ xác thực của Google để hỗ trợ đăng nhập bằng tài khoản Google.
+
+* Cổng thanh toán Stripe để xử lý giao dịch thanh toán khóa học.
+
+Các dịch vụ này được sử dụng thông qua API chính thức do nhà cung cấp phát hành.
+
+Để vận hành, hệ thống yêu cầu môi trường server có cài đặt Python và Django. Người dùng cần có kết nối Internet để truy cập.
 
 ## 2.2 System Overview
+Hệ thống được xây dựng nhằm hỗ trợ quản lý lớp học, học viên, học phí và lịch giảng dạy một cách hiệu quả, thay thế cho phương pháp quản lý thủ công trước đây. Ngoài ra, hệ thống còn cung cấp các chức năng hỗ trợ như báo cáo thống kê, nhập và lưu điểm học viên, cũng như điểm danh lớp học.
+
+Hệ thống phục vụ các đối tượng người dùng bao gồm quản trị viên trung tâm, giáo viên và học viên. Mỗi nhóm người dùng được cung cấp các chức năng phù hợp với vai trò của mình.
+
+Các chức năng chính của hệ thống bao gồm:
+
+* Học viên có thể đăng ký khóa học trực tuyến và xem kết quả học tập.
+
+* Giáo viên có thể nhập điểm và thực hiện điểm danh lớp học.
+
+* Quản trị viên có thể quản lý học viên, giáo viên, lớp học và xem hoặc xuất báo cáo thống kê khi cần.
+
+Hệ thống sử dụng cơ chế xác thực và phân quyền người dùng nhằm đảm bảo tính bảo mật và kiểm soát quyền truy cập theo từng vai trò.
+
 
 ## 2.3 User Roles
 
 | Role | Description |
-|-----|------------|
-|     |            |
-|     |            |
+|------|------------|
+| Admin | Quản lý toàn bộ hoạt động của hệ thống bao gồm quản lý học viên, giáo viên, lớp học, học phí và xem báo cáo thống kê. Có quyền truy cập cao nhất trong hệ thống. |
+| Giáo viên | Quản lý lớp học được phân công, thực hiện nhập điểm, điểm danh và theo dõi kết quả học tập của học viên. |
+| Học viên | Đăng ký khóa học trực tuyến, xem lịch học, thanh toán online, theo dõi kết quả học tập và thông tin cá nhân của mình. |
+
 
 ## 2.4 Assumptions & Constraints
 
 ### Assumptions
-- 
-- 
+- Người dùng phải có kết nối Internet ổn định để truy cập hệ thống
+- Server được cấu hình đúng và hoạt động liên tục trong quá trình sử dụng
+- Người dùng cần có kiến thức cơ bản về sử dụng trình duyệt web
+- Dữ liệu được nhập vào hệ thống là chính xác và hợp lệ.
 
 ### Constraints
-- 
-- 
+- Hệ thống phải được phát triển bằng ngôn ngữ Python và framework Django theo định hướng công nghệ của dự án.
+- Hệ thống bắt buộc sử dụng hệ quản trị cơ sở dữ liệu MySQL để đảm bảo tính nhất quán trong triển khai và kiểm thử.
+- Phạm vi dự án chỉ bao gồm ứng dụng web, không phát triển phiên bản mobile hoặc desktop.
+- Thời gian phát triển tối đa 8 tuần.
+- Hệ thống hiện chưa tích hợp chức năng thanh toán trực tuyến thông qua các cổng thanh toán bên thứ ba.
 
 ---
 
@@ -79,10 +118,23 @@ FR-05:
 
 # 5. Non-functional Requirements
 
-NFR-01:  
-NFR-02:  
-NFR-03:  
-NFR-04:  
+NFR-01: Yêu cầu giao diện
+- Giao diện người dùng dễ sử dụng và phải đảm bảo tính đồng bộ về màu sắc, bố cục và font chữ trên tất cả các trang của hệ thống.
+- Các thành phần giao diện (menu, nút chức năng, biểu mẫu nhập liệu) phải được thiết kế nhất quán giữa các chức năng.
+- Hệ thống phải hiển thị thông báo lỗi rõ ràng và dễ hiểu khi nhập sai dữ liệu.
+
+NFR-02: Bảo mật
+- Hệ thống phải yêu cầu xác thực người dùng trước khi truy cập các chức năng quản lý (admin, giáo viên).
+- Mật khẩu người dùng phải có ít nhất 6 kí tự. Mật khẩu phải được băm trước khi lưu trữ trong cơ sở dữ liệu
+
+NFR-03: Hiệu năng
+- Hệ thống phải hỗ trợ tối thiếu 200 người dùng truy cập đồng thời trong môi trường kiểm thử mà không xảy ra lỗi nghiêm trọng (server crash hoặc HTTP 500)
+- Thời gian phản hồi trung bình cho mỗi yêu cầu không vượt quá 3 giây trong điều kiện tải bình thường. 
+
+NFR-04: Độ tin cậy & khả năng bảo trì
+- Hệ thống phải đảm bảo không mất dữ liệu khi xảy ra sự cố đột ngột.
+- Hệ thống phải có cơ chế sao lưu cơ sở dữ liệu định kỳ (tối thiểu 1 lần/ngày).
+- Việc cập nhật hệ thống không được làm ảnh hưởng đến các chức năng đã triển khai trước đó
 
 ---
 

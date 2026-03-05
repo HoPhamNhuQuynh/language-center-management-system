@@ -1,7 +1,7 @@
 # language-center-management-system
 
 ## Mô tả
-Ứng dụng web quản lý trung tâm ngoại ngữ được phát triển theo quy trình Agile có kiểm thử, bao gồm unit test, integration test và kiểm thử API. Hệ thống hỗ trợ quản lý học viên, khóa học, lớp học và phân quyền người dùng sử dụng microframework Python Flask. Hệ thống được xây dựng theo mô hình Client–Server, trong đó Backend (Flask) cung cấp RESTful API và Frontend (ReactJS) giao tiếp thông qua HTTP requests.
+Ứng dụng web quản lý trung tâm ngoại ngữ được phát triển theo quy trình Agile có kiểm thử, bao gồm unit test, integration test và kiểm thử API. Hệ thống hỗ trợ quản lý học viên, khóa học, lớp học và phân quyền người dùng sử dụng Django REST framework (viết tắt là DRF). Hệ thống được xây dựng theo mô hình Client–Server, trong đó Backend (Django) cung cấp RESTful API và Frontend (ReactJS) giao tiếp thông qua HTTP requests.
 
 ## Thành viên nhóm
 
@@ -13,7 +13,7 @@
 | 2354050145 | Nguyễn Thị Ngọc Trâm   | QA/Tester                             |
 
 ## Công nghệ sử dụng
-- Backend: Python (Flask, RESTful API)
+- Backend: Python (Django, RESTful API)
 - Frontend: ReactJS
 - Database: MySQL
 - AI (nếu có): OpenAI API
