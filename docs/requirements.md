@@ -440,4 +440,6 @@ BR-03:
 
 ## 8.1 Use Case Diagram
 
-## 8.2 ERD
+## 8.2 Use Case Specification
+
+## 8.3. ERD Diagram
