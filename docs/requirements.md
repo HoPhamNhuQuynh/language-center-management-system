@@ -84,12 +84,27 @@ Hệ thống sử dụng cơ chế xác thực và phân quyền người dùng 
 
 # 3. System Features (Functional Requirements)
 
-FR-01:  
-FR-02:  
-FR-03:  
-FR-04:  
-FR-05:  
-
+#### Nhóm 1: Học Viên
+- FR-01: Đăng ký khóa học và thanh toán học phí
+  + Hệ thống cho phép học viên đăng ký những khóa học đang hoạt động và thanh toán học phí qua các cổng thanh toán bên thứ ba.
+- FR-02: Xem lịch học và phòng học
+  + Hệ thống hiển thị thời khóa biểu cá nhân của học viên bao gồm tên lớp học, tên giáo viên, thời gian học và phòng học.
+- FR-03: Xem điểm và kết quả  
+  + Hệ thống hiển thị chi tiết kết quả học tập của học viên bao gồm bảng điểm, học lực, tình trạng học tập và nhận xét từ giáo viên.
+#### Nhóm 2: Giáo Viên
+- FR-04: Quản lý lớp học và lịch dạy
+  + Hệ thống hiển thị lịch phân công giảng dạy cá nhân, danh sách lớp học, sĩ số và danh sách học viên chi tiết của các lớp đang phụ trách.
+- FR-05: Điểm danh học viên
+  + Hệ thống cho phép giáo viên chọn trạng thái điểm danh (có mặt, vắng) của từng học viên theo buổi học. 
+- FR-06: Nhập điểm và nhận xét
+  + Hệ thống cho phép giáo viên nhập, chỉnh sửa điểm số và ghi nhận xét về tình hình học tập của học viên trong lớp mà mình phụ trách.
+#### Nhóm 3: Admin
+- FR-07: Quản lý khóa học
+  + Hệ thống cho phép admin xem, thêm, xóa, sửa và theo dõi trạng thái hoạt động của các khóa học tại trung tâm.
+- FR-08: Quản lý giáo viên và học viên
+  + Hệ thống cho phép admin quản lý thông tin, phân quyền tài khoản và theo dõi trạng thái hoạt động của tất cả giáo viên, học viên.
+- FR-09: Cấu hình học phí và chính sách
+  + Hệ thống cho phép admin thiết lập mức học phí của từng khóa học, cấu hình các chính sách hoàn học phí và bảo lưu học phí.
 ---
 
 # 4. External Interface Requirements
