@@ -167,43 +167,42 @@ BR-16: Không cho phép sắp xếp lịch học của các lớp trùng thời 
 BR-17: Một học viên được quyền đăng ký nhiều lớp học nhưng không được trùng lịch học.  
 BR-18: Việc đăng ký lớp học của học viên được xác nhận tự động sau khi thanh toán thành công.    
 BR-19: Học viên chỉ được phép hủy đăng ký khóa học khi chưa thanh toán.  
-BR-20: Trạng thái đăng ký bao gồm:   
-      * Đăng ký thành công.  
-      * Chờ thanh toán.  
-      * Hết hạn. 
-      * Đã hủy.
+BR-20: Trạng thái đăng ký bao gồm:  
+ * Đăng ký thành công.  
+ * Chờ thanh toán.  
+ * Hết hạn.   
+ * Đã hủy.
 
 ## 6.5. Thanh Toán (Payment)  
 BR-21: Sau khi đăng ký khóa học, học viên thanh toán học phí trong 30 phút.  
 BR-22: Quy định thanh toán học phí:  
-      * Dưới 5 triệu VNĐ, học viên bắt buộc thanh toán toàn bộ học phí.  
-      * Trên 5 triệu VNĐ, học viên được phép thanh toán một phần và thanh toán phần còn lại trong thời gian quy định.    
+ * Dưới 5 triệu VNĐ, học viên bắt buộc thanh toán toàn bộ học phí.  
+ * Trên 5 triệu VNĐ, học viên được phép thanh toán một phần và thanh toán phần còn lại trong thời gian quy định.    
 BR-23: Trạng thái thanh toán gồm:   
-     * Thanh toán thành công.  
-     * Thanh toán thất bại.  
-     * Chờ xử lý.  
-     * Hủy thanh toán.  
+ * Thanh toán thành công.  
+ * Thanh toán thất bại.  
+ * Chờ xử lý.  
+ * Hủy thanh toán.  
  
 ## 6.6. Quản lý điểm (Grading)  
 BR-24: Điểm của học viên phải nằm trong khoảng từ 0 điểm đến 10 điểm.  
 BR-25: Chỉnh sửa điểm chỉ được phép khi:   
-     * Chưa hết hạn nhập điểm.  
-     * Có sai sót khi nhập điểm.  
-     * Cập nhật điểm sau khi đã phúc khảo.  
+ * Chưa hết hạn nhập điểm.  
+ * Có sai sót khi nhập điểm.  
+ * Cập nhật điểm sau khi đã phúc khảo.  
 BR-26: Sau khi giáo viên submit bảng điểm, việc chỉnh sửa chỉ được thực hiện khi có quyền mở lại từ Admin.  
 BR-27: Có quy định thời hạn nhập điểm cho giáo viên.  
 BR-28: Admin được phép hỗ trợ mở lại quyền nhập điểm nếu có lý do hợp lý.  
 
-## 6.7. Quy định hệ thống (System & Policy Management)  
-BR-29: Hệ thống phải lưu lịch sử thay đổi dữ liệu.  
-BR-30: Admin được phép thay đổi chính sách học phí.  
+## 6.7. Quy định hệ thống (System & Policy Management)    
+BR-29: Admin được phép thay đổi chính sách học phí.  
 
 ## 6.8. Báo cáo (Reporting)  
-BR-31: Hệ thống cung cấp báo cáo thống kê quý, năm theo:   
-     * Tổng doanh thu.  
-     * Tổng số lớp học.   
-     * Tổng số học viên.   
-     * Top giáo viên nổi bật theo số lượng lớp giảng dạy.  
+BR-30: Hệ thống cung cấp báo cáo thống kê quý, năm theo:   
+ * Tổng doanh thu.  
+ * Tổng số lớp học.   
+ * Tổng số học viên.   
+ * Top giáo viên nổi bật theo số lượng lớp giảng dạy.  
   
 
 ---
