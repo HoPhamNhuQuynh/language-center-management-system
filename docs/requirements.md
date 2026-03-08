@@ -139,71 +139,71 @@ NFR-04: Độ tin cậy & khả năng bảo trì
 ---
 
 # 6. Business Rules
+Business Rules mô tả các quy tắc nghiệp vụ mà hệ thống phải tuân thủ trong quá trình vận hành.  
 
-6.1. Phân quyền truy cập (Access Control)  
+## 6.1. Phân quyền truy cập (Access Control)  
 BR-01: Chỉ Admin được phép tạo khóa học.  
 BR-02: Chỉ Admin được phép tạo lớp học.  
 BR-03: Giảng viên chỉ được phép xem danh sách học viên lớp đang phụ trách hiện tại.  
 BR-04: Học viên chỉ được phép xem điểm của bản thân.  
-BR-05: Admin có toàn quyền trên hệ thống, ngoại trừ xem mặt khẩu của người dùng.  
+BR-05: Admin có toàn quyền quản trị hệ thống nhưng không được phép truy cập mật khẩu gốc của người dùng.    
 BR-06: Giáo viên chỉ được phép nhập điểm của lớp đang phụ trách.  
 
-6.2. Quản lý tài khoản người dùng (User Account Management)  
+## 6.2. Quản lý tài khoản người dùng (User Account Management)  
 BR-07: Học viên được phép tự tạo tài khoản.  
 BR-08: Học viên được phép chỉnh sửa thông tin cá nhân của mình.  
-BR-09: Người dùng có quyền export dữ liệu.  
+BR-09: Người dùng được phép xuất dữ liệu mà họ có quyền truy cập ra file (CSV/PDF).    
 BR-10: Người dùng có quyền đổi mật khẩu của mình. Admin có quyền hỗ trợ khi người dùng gặp rắc rối.  
 
-6.3. Quản lý lớp học (Class Management)  
+## 6.3. Quản lý lớp học (Class Management)  
 BR-11: Chỉ Admin được quyền chỉnh sửa thông tin lớp học.  
 BR-12: Không cho phép xóa lớp khi đã có học viên đăng ký.  
 BR-13: Một lớp tối đa 30 học viên.  
-BR-14: Một giáo viên được phép dạy tối đa 5 lớp học.  
-BR-15: Một lớp học được phép có tối đa 5 giáo viên giảng dạy.  
-BR-16: Hệ thống chỉ hiển thị các lớp chưa đủ số lượng học viên.  
-BR-17: Không cho phép sắp xếp lịch học của các lớp trùng thời gian.  
+BR-14: Một giáo viên được phép dạy tối đa 5 lớp học.    
+BR-15: Học viên chỉ được xem các lớp học còn chỗ trống để đăng ký.    
+BR-16: Không cho phép sắp xếp lịch học của các lớp trùng thời gian.  
 
-6.4. Đăng ký khóa học/lớp học (Course/Class Registration)  
-BR-18: Một học viên được quyền đăng ký nhiều lớp học nhưng không được trùng lịch học.  
-BR-19: Admin không cần phê duyệt đăng ký lớp học.  
-BR-20: Học viên chỉ được phép hủy đăng ký khóa học khi chưa thanh toán.  
-BR-21: Trạng thái đăng ký bao gồm:   
+## 6.4. Đăng ký khóa học/lớp học (Course/Class Registration)  
+BR-17: Một học viên được quyền đăng ký nhiều lớp học nhưng không được trùng lịch học.  
+BR-18: Việc đăng ký lớp học của học viên được xác nhận tự động sau khi thanh toán thành công.    
+BR-19: Học viên chỉ được phép hủy đăng ký khóa học khi chưa thanh toán.  
+BR-20: Trạng thái đăng ký bao gồm:   
       * Đăng ký thành công.  
       * Chờ thanh toán.  
-      * Hết hạn.  
+      * Hết hạn. 
+      * Đã hủy.
 
-6.5. Thanh Toán (Payment)  
-BR-22: Sau khi đăng ký khóa học, học viên thanh toán học phí trong 30 phút.  
-BR-23: Quy định thanh toán học phí:  
+## 6.5. Thanh Toán (Payment)  
+BR-21: Sau khi đăng ký khóa học, học viên thanh toán học phí trong 30 phút.  
+BR-22: Quy định thanh toán học phí:  
       * Dưới 5 triệu VNĐ, học viên bắt buộc thanh toán toàn bộ học phí.  
-      * Trên 5 triệu VNĐ, học viên được phép thanh toán một phần và thanh toán phần còn lại trong thời gian quy định.  
-BR-24: Hệ thống có hỗ trợ áp dụng các chương trình khuyến mãi.  
-BR-25: Trạng thái thanh toán gồm:   
+      * Trên 5 triệu VNĐ, học viên được phép thanh toán một phần và thanh toán phần còn lại trong thời gian quy định.    
+BR-23: Trạng thái thanh toán gồm:   
      * Thanh toán thành công.  
      * Thanh toán thất bại.  
      * Chờ xử lý.  
      * Hủy thanh toán.  
  
-6.6. Quản lý điểm (Grading)  
-BR-26: Điểm của học viên phải nằm trong khoảng từ 0 điểm đến 10 điểm.  
-BR-27: Chỉnh sửa điểm chỉ được phép khi:   
+## 6.6. Quản lý điểm (Grading)  
+BR-24: Điểm của học viên phải nằm trong khoảng từ 0 điểm đến 10 điểm.  
+BR-25: Chỉnh sửa điểm chỉ được phép khi:   
      * Chưa hết hạn nhập điểm.  
      * Có sai sót khi nhập điểm.  
      * Cập nhật điểm sau khi đã phúc khảo.  
-BR-28: Giáo viên không được phép sửa điểm sau khi đã submit.  
-BR-29: Có quy định thời hạn nhập điểm cho giáo viên.  
-BR-30: Admin được phép hỗ trợ mở lại quyền nhập điểm nếu có lý do hợp lý.  
+BR-26: Sau khi giáo viên submit bảng điểm, việc chỉnh sửa chỉ được thực hiện khi có quyền mở lại từ Admin.  
+BR-27: Có quy định thời hạn nhập điểm cho giáo viên.  
+BR-28: Admin được phép hỗ trợ mở lại quyền nhập điểm nếu có lý do hợp lý.  
 
-6.7. Quy định hệ thống (System & Policy Management)  
-BR-31: Hệ thống phải lưu lịch sửa thay đổi dữ liệu.  
-BR-32: Admin được phép thay đổi chính sách học phí.  
+## 6.7. Quy định hệ thống (System & Policy Management)  
+BR-29: Hệ thống phải lưu lịch sử thay đổi dữ liệu.  
+BR-30: Admin được phép thay đổi chính sách học phí.  
 
-6.8. Báo cáo (Reporting)  
-BR-33: Hệ thống cung cấp báo cáo thống kê quý, năm theo:   
+## 6.8. Báo cáo (Reporting)  
+BR-31: Hệ thống cung cấp báo cáo thống kê quý, năm theo:   
      * Tổng doanh thu.  
      * Tổng số lớp học.   
      * Tổng số học viên.   
-     * Top giáo viên nổi bật.  
+     * Top giáo viên nổi bật theo số lượng lớp giảng dạy.  
   
 
 ---
