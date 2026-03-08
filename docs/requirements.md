@@ -177,7 +177,8 @@ BR-20: Trạng thái đăng ký bao gồm:
 BR-21: Sau khi đăng ký khóa học, học viên thanh toán học phí trong 30 phút.  
 BR-22: Quy định thanh toán học phí:  
  * Dưới 5 triệu VNĐ, học viên bắt buộc thanh toán toàn bộ học phí.  
- * Trên 5 triệu VNĐ, học viên được phép thanh toán một phần và thanh toán phần còn lại trong thời gian quy định.    
+ * Trên 5 triệu VNĐ, học viên được phép thanh toán một phần và thanh toán phần còn lại trong thời gian quy định.
+
 BR-23: Trạng thái thanh toán gồm:   
  * Thanh toán thành công.  
  * Thanh toán thất bại.  
@@ -189,7 +190,8 @@ BR-24: Điểm của học viên phải nằm trong khoảng từ 0 điểm đ�
 BR-25: Chỉnh sửa điểm chỉ được phép khi:   
  * Chưa hết hạn nhập điểm.  
  * Có sai sót khi nhập điểm.  
- * Cập nhật điểm sau khi đã phúc khảo.  
+ * Cập nhật điểm sau khi đã phúc khảo.
+
 BR-26: Sau khi giáo viên submit bảng điểm, việc chỉnh sửa chỉ được thực hiện khi có quyền mở lại từ Admin.  
 BR-27: Có quy định thời hạn nhập điểm cho giáo viên.  
 BR-28: Admin được phép hỗ trợ mở lại quyền nhập điểm nếu có lý do hợp lý.  
