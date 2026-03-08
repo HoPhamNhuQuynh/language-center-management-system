@@ -84,27 +84,41 @@ Hệ thống sử dụng cơ chế xác thực và phân quyền người dùng 
 
 # 3. System Features (Functional Requirements)
 
-#### Nhóm 1: Học Viên
-- FR-01: Đăng ký khóa học và thanh toán học phí
-  + Hệ thống cho phép học viên đăng ký những khóa học đang hoạt động và thanh toán học phí qua các cổng thanh toán bên thứ ba.
-- FR-02: Xem lịch học và phòng học
-  + Hệ thống hiển thị thời khóa biểu cá nhân của học viên bao gồm tên lớp học, tên giáo viên, thời gian học và phòng học.
-- FR-03: Xem điểm và kết quả  
-  + Hệ thống hiển thị chi tiết kết quả học tập của học viên bao gồm bảng điểm, học lực, tình trạng học tập và nhận xét từ giáo viên.
-#### Nhóm 2: Giáo Viên
-- FR-04: Quản lý lớp học và lịch dạy
-  + Hệ thống hiển thị lịch phân công giảng dạy cá nhân, danh sách lớp học, sĩ số và danh sách học viên chi tiết của các lớp đang phụ trách.
-- FR-05: Điểm danh học viên
-  + Hệ thống cho phép giáo viên chọn trạng thái điểm danh (có mặt, vắng) của từng học viên theo buổi học. 
-- FR-06: Nhập điểm và nhận xét
-  + Hệ thống cho phép giáo viên nhập, chỉnh sửa điểm số và ghi nhận xét về tình hình học tập của học viên trong lớp mà mình phụ trách.
-#### Nhóm 3: Admin
-- FR-07: Quản lý khóa học
-  + Hệ thống cho phép admin xem, thêm, xóa, sửa và theo dõi trạng thái hoạt động của các khóa học tại trung tâm.
-- FR-08: Quản lý giáo viên và học viên
-  + Hệ thống cho phép admin quản lý thông tin, phân quyền tài khoản và theo dõi trạng thái hoạt động của tất cả giáo viên, học viên.
-- FR-09: Cấu hình học phí và chính sách
-  + Hệ thống cho phép admin thiết lập mức học phí của từng khóa học, cấu hình các chính sách hoàn học phí và bảo lưu học phí.
+#### Nhóm 1: Tất cả User
+- FR-01: Đăng nhập
+  + Hệ thống cho phép người dùng đăng nhập vào hệ thống.
+
+#### Nhóm 2: Học Viên
+- FR-02: Đăng ký khóa học 
+  + Hệ thống cho phép học viên đăng ký các khóa học đang hoạt động và tự động gửi thông báo xác nhận cho học viên sau khi đã đăng ký thành công.
+- FR-03: Thanh toán học phí trực tuyến
+  + Hệ thống cho phép học viên thanh toán học phí trực tuyến thông qua các cổng thanh toán của bên thứ ba.
+- FR-04: Xem biên lai thu phí
+  + Hệ thống cho phép học viên xem biên lai thu phí điện tử sau khi đã thanh toán thành công.
+- FR-05: Xem lịch học và phòng học
+  + Hệ thống hiển thị thời khóa biểu cá nhân của học viên, bao gồm các thông tin chi tiết như tên lớp học, tên giáo viên, thời gian học và phòng học.
+- FR-06: Xem kết quả học tập  
+  + Hệ thống hiển thị chi tiết kết quả học tập của học viên, bao gồm bảng điểm, xếp loại, học lực và nhận xét từ giáo viên.
+#### Nhóm 3: Giáo Viên
+- FR-07: Xem lịch dạy
+  + Hệ thống hiển thị lịch phân công giảng dạy cá nhân và danh sách lớp học đã được phân công.
+- FR-08: Xem danh sách học viên
+  + Hệ thống hiển thị chi tiết danh sách học viên và sĩ số của các lớp đang phụ trách.
+- FR-09: Điểm danh học viên
+  + Hệ thống cho phép giáo viên chọn trạng thái điểm danh (có mặt, trễ, vắng) của từng học viên theo buổi học. 
+- FR-10: Nhập điểm và nhận xét đánh giá
+  + Hệ thống cho phép giáo viên nhập, chỉnh sửa điểm số và ghi nhận xét đánh giá về tình hình học tập của học viên trong lớp mà mình phụ trách.
+#### Nhóm 4: Admin
+- FR-11: Quản lý khóa học
+  + Hệ thống cho phép admin xem, thêm mới, sửa, xóa và theo dõi trạng thái hoạt động của các khóa học tại trung tâm.
+- FR-12: Quản lý tài khoản người dùng
+  + Hệ thống cho phép admin tạo mới tài khoản, cập nhật thông tin và theo dõi trạng thái hoạt động của người dùng.
+- FR-13: Phân quyền người dùng
+  + Hệ thống cho phép admin phân quyền người dùng bằng cách gán hoặc thay đổi vai trò cho từng tài khoản người dùng. 
+- FR-14: Cấu hình học phí 
+  + Hệ thống cho phép admin thiết lập mức học phí của từng khóa học.
+- FR-15: Xem báo cáo thống kê
+  + Hệ thống cho phép admin xem báo cáo thống kê theo quý, in báo cáo, xuất báo cáo.
 ---
 
 # 4. External Interface Requirements
