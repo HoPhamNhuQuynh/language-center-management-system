@@ -176,7 +176,7 @@ BR-03:
 | User       | Enrollment     | 1:N          | Một học viên có thể đăng ký nhiều lớp học                                                        |
 | Class      | Enrollment     | 1:N          | Một lớp học có nhiều lượt đăng ký                                                                |
 | Enrollment | Payment        | 1:N          | Một lượt đăng ký một hoặc hai giao dịch thanh toán                                               |
-| Enrollment | ScoreType      | 1:N          | Một lượt đăng ký của học viên có nhiều loại điểm và một loại điểm áp dụng cho nhiều lượt đăng ký |
+| Enrollment | ScoreType      | N:N          | Một lượt đăng ký của học viên có nhiều loại điểm và một loại điểm áp dụng cho nhiều lượt đăng ký |
 | Enrollment | Session        | N:N          | Một lượt học viên đăng ký có nhiều buổi học và một buổi học có nhiều học viên đăng ký điểm danh  |
 | Enrollment | AcademicResult | 1:1          | Một lượt đăng ký chỉ có một bảng kết quả học tập                                                 |
 
@@ -192,12 +192,12 @@ BR-03:
   + Bảng User: username và email là duy nhất
   + Bảng Profile: phone_num là duy nhất
   + Bảng Payment: transaction_id là duy nhất (mã giao dịch)
-  + Bảng Enrollment: cặp khóa u_id và class_id phải là duy nhất
+  + Bảng Enrollment: cặp khóa user_id và class_id phải là duy nhất
 - Ràng buộc Not null:
   + Tất cả các trường name, username, email, password đều không được trống
   + Bảng phụ CourseTag: cặp khóa course_id và tag_id không được trống
-  + Bảng phụ TeachingAssignment: cặp khóa course_id và tag_id không được trống
-  + Bảng phụ CourseTag: cặp khóa user_id và class_id không được trống
+  + Bảng phụ TeachingAssignment: cặp khóa user_id và class_id không được trống
+  + Bảng phụ Attendance: cặp khóa enrollment_id và session_id không được trống
 - Ràng buộc Default:
   + Tất cả các trường active, is_main mặc định là True hoặc là 1
   + Tất cả các trường created_at và updated_at tự động được hệ thống gán thời gian khi tạo hoặc sửa dữ liệu
