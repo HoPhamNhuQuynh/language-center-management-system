@@ -505,4 +505,31 @@ BR-30: Hệ thống cung cấp báo cáo thống kê quý, năm theo:
 
 ## 8.2 Use Case Specification
 
+### 8.2.1. Đăng ký khóa học trực tuyến (Online course registration)
+| Field | Content |
+|---|---|
+| Usecase ID | UC-01 |
+| Usecase Name | Đăng ký khóa học trực tuyến |
+| Actor | Học viên |
+| Description | Cho phép học viên đăng ký khóa học trực tuyến để ghi danh vào hệ thống. |
+| Pre-Condition(s) |- Học viên đã đăng nhập thành công<br>- Hệ thống hoạt động bình thường<br>- Khóa học/lớp học còn tồn tại |
+| Post-Condition(s) | - Hệ thống ghi danh học viên đã đăng ký khóa học thành công<br>- Giảm số lượng suất học còn trống<br>- Gửi thông báo về email người dùng |
+| Main Flow | <ol><li>Học viên yêu cầu xem danh sách khóa học.</li><li>Hệ thống hiển thị danh sách khóa học đang mở.</li><li>Học viên chọn một khóa học cụ thể để xem chi tiết.</li><li>Hệ thống hiển thị thông tin chi tiết: mô tả, học phí, tổng số buổi học, danh sách lớp học khả dụng.</li><li>Học viên thực hiện chọn lớp học, điền thông tin.</li><li>Hệ thống kiểm tra thông tin đăng ký hợp lệ.</li><li>Học viên nhấn “Đăng ký”.</li><li>Hệ thống tạo bản ghi đăng ký với trạng thái “đang xử lý” và thực hiện giữ chỗ tạm thời trong 30 phút.</li><li>Hệ thống yêu cầu học viên thực hiện thanh toán học phí.</li><li>Học viên chọn phương thức thanh toán “Thanh toán toàn bộ” dựa trên mức học phí.</li><li>Học viên chọn cổng thanh toán và nhấn “Thanh toán ngay”.</li><li>Hệ thống chuyển hướng đến cổng thanh toán với số tiền học phí.</li><li>Học viên thực hiện thanh toán trực tuyến.</li><li>Cổng thanh toán trả về kết quả thành công cho hệ thống.</li><li>Hệ thống xử lý dữ liệu: <ul><li>15.1. Cập nhật trạng thái đăng ký “Thành công”</li><li>15.2. Tạo bản ghi trạng thái thanh toán: “Thành công”</li></ul></li><li>Hệ thống tự động giảm số lượng chỗ trống của lớp.</li><li>Hệ thống thông báo thành công ra màn hình</li><li>Hệ thống gửi mail thông báo về học viên.</li></ol> |
+| Alternative Flow | 10a. Học viên chọn phương thức thanh toán “Thanh toán một phần” dựa trên mức học phí. <br> *Usecase tiếp tục từ bước 10 đến 13.* <br> 15a. Hệ thống xử lý dữ liệu: <ul><li>15.1. Cập nhật trạng thái đăng ký “Thành công - một phần” và thực hiện giữ chỗ đến trước ngày khai giảng 3 ngày.</li><li>15.2. Tạo bản ghi trạng thái thanh toán “Thành công”.</li></ul>*Usecase tiếp tục bước 15.* |
+| Exception Flow | 6a. Hệ thống kiểm tra thông tin sĩ số lớp đã đầy và hiển thị thông báo “Lớp đã đủ số lượng đăng ký”, *quay lại bước 5 usecase*. <br> 6b. Hệ thống kiểm tra thông tin học viên bị trùng lịch học và hiển thị thông báo “Trùng lịch học với lớp X”, *quay lại bước 5 usecase*. <br> 6c. Hệ thống kiểm tra học viên đã ghi danh trong danh sách lớp và hiển thị thông báo “Bạn đã đăng ký lớp này”, *quay lại bước 5 usecase*. <br> 8a. và 15a.1. Hệ thống kiểm tra quá hạn giữ chỗ, tự động chuyển trạng thái bản ghi đăng ký thành “Hết hạn”, *usecase kết thúc*. <br> 9a. Học viên chọn “Hủy đăng ký”, hệ thống hỏi xác nhận hủy. <ul><li>9a.1. Học viên chọn xác nhận xóa, hệ thống cập nhật trạng thái bản ghi đăng ký thành “Đã hủy” và hiển thị thông báo “Đã hủy đăng ký khóa học”, *usecase kết thúc*.</li><li>9a.2. Học viên chọn từ chối hủy đăng ký, *quay lại bước 9*.</li></ul>13a. Cổng thanh toán trả về kết quả thanh toán thất bại, ghi nhận bản ghi thanh toán với trạng thái “Thất bại”, hiển thị thông báo “Thanh toán thất bại”, *usecase quay lại bước 11*. |
+
+### 8.2.4. Nhập điểm (Enter grades)
+| Field | Content |
+|---|---|
+| Usecase ID | UC-04 |
+| Usecase Name | Nhập điểm |
+| Actor | Giáo viên |
+| Description | Cho phép giáo viên nhập điểm cho các học viên để lưu trữ kết quả học tập vào hệ thống. |
+| Pre-Condition(s) |- Giáo viên đã đăng nhập thành công vào hệ thống. <br>- Hệ thống hoạt động bình thường. |
+| Post-Condition(s) | Các giá trị điểm của học viên được lưu an toàn, hợp lệ và chính xác vào hệ thống. |
+| Main Flow | <ol><li>Giáo viên yêu cầu xem danh sách lớp được phân công giảng dạy.</li><li>Hệ thống hiển thị danh sách lớp học phân công cho giáo viên trong giai đoạn hiện tại.</li><li>Giáo viên chọn xem một lớp học cụ thể.</li><li>Hệ thống hiển thị thông tin chi tiết của lớp học.</li><li>Giáo viên chọn mục "Nhập điểm".</li><li>Hệ thống kiểm tra quyền nhập điểm của giáo viên hợp lệ.</li><li>Hệ thống kiểm tra thời hạn nhập điểm hợp lệ.</li><li>Hệ thống kiểm tra bảng điểm vẫn chưa ở trạng thái "Submited"</li><li>Hệ thống hiển thị bảng tổng hợp danh sách các học viên trong lớp kèm các cột điểm của khóa học.</li><li>Giáo viên nhập điểm cho các học viên trong lớp học.</li><li>Hệ thống kiểm tra giá trị điểm do giáo viên nhập hợp lệ.</li><li>Giáo viên chọn "Lưu bảng điểm".</li><li>Hệ thống lưu bảng điểm vào cơ sở dữ liệu thành công.</li><li>Giáo viên chọn "Submit bảng điểm".</li><li>Hệ thống khóa bảng điểm, chuyển trạng thái bảng điểm thành "Submmited"</li></ol> |
+| Alternative Flow | 12a. Giáo viên chỉ lưu bảng điểm mà không submit, hiển thị thông báo "Lưu bảng điểm thành công", *usecase kết thúc*. |
+| Exception Flow | 6a. Hệ thống kiểm tra giáo viên không có quyền nhập điểm, hiển thị thông báo "Hệ thống yêu cầu quyền nhập điểm, vui lòng liên hệ quản trị viên hỗ trợ", *usecase kết thúc*. <br> 7a. Hệ thống kiểm tra quá thời hạn nhập điểm, hiển thị thông báo "Đã quá thời gian nhập điểm, vui lòng liên hệ quản trị viên để được hỗ trợ", *usecase kết thúc*.<br> 8a. Hệ thống kiểm tra bảng điểm đã được submit, hiển thị thông báo "Bảng điểm đã được submit, hiện không thể chỉnh sửa và chỉ được xem, vui lòng liên hệ quản trị viên để được hỗ trợ", *usecase kết thúc*. <br> 11a. Hệ thống kiểm tra giá trị điểm nhập không hợp lệ, hiển thị thông báo "Giá trị điểm nhập vào không hợp lệ, điểm phải nằm trong 0 đến 10", *usecase quay lại bước 10*. <br> 12a. Giáo viên chọn hủy nhập điểm, hệ thống yêu cầu xác nhận: <ul><li>12a.1. Giáo viên xác nhận hủy, hệ thống không lưu bảng điểm, hiển thị thông báo "Đã hủy nhập điểm", *usecase kết thúc*. </li><li>12a.2. Giáo viên từ chối hủy nhập điểm, *quay lại bước 2*.</li></ul>13a. Hệ thống bị lỗi khi lưu điểm, hoàn tác hệ thống và hiển thị thông báo "Lỗi khi lưu điểm, vui lòng thực hiện lại sau", *usecase quay lại bước 12*. |
+
+
 ## 8.3. ERD Diagram
