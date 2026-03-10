@@ -84,9 +84,9 @@ Hệ thống sử dụng cơ chế xác thực và phân quyền người dùng 
 
 # 3. System Features (Functional Requirements)
 
-#### Nhóm 1: Tất cả User
+#### Nhóm 1: Tất cả người dùng
 - FR-01: Đăng nhập
-  + Hệ thống cho phép người dùng đăng nhập vào hệ thống.
+  + Hệ thống cho phép người dùng đăng nhập để sử dụng các tính năng.
 
 #### Nhóm 2: Học Viên
 - FR-02: Đăng ký khóa học 
@@ -118,7 +118,9 @@ Hệ thống sử dụng cơ chế xác thực và phân quyền người dùng 
 - FR-14: Cấu hình học phí 
   + Hệ thống cho phép admin thiết lập mức học phí của từng khóa học.
 - FR-15: Xem báo cáo thống kê
-  + Hệ thống cho phép admin xem báo cáo thống kê theo quý, in báo cáo, xuất báo cáo.
+  + Hệ thống cho phép admin xem báo cáo thống kê theo quý, in và xuất báo cáo.
+- FR-16: Xếp lịch học
+  + Hệ thống cho phép admin sắp xếp lịch học của từng lớp học và phân công lịch giảng dạy cho giáo viên.
 ---
 
 # 4. External Interface Requirements
