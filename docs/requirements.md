@@ -159,26 +159,27 @@ BR-03:
 - 
 
 ## 7.3 Relationships
-| A          | B              | Relationship | Description                                                                                      |
-|------------|----------------|--------------|--------------------------------------------------------------------------------------------------|
-| User       | Profile        | 1:1          | Một người dùng có một hồ sơ thông tin riêng biệt                                                 |
-| Role       | User           | 1:N          | Một vai trò được gắn cho nhiều người dùng                                                        |
-| Level      | Course         | 1:N          | Một mức độ có nhiều khóa học                                                                     |
-| Course     | Tag            | N:N          | Một khóa học có nhiều thẻ và một thẻ được gắn cho nhiều khóa học                                 |
-| Course     | Class          | 1:N          | Một khóa học có nhiều lớp học                                                                    |
-| Course     | ScoreType      | 1:N          | Một khóa học có nhiều cột điểm                                                                   |
-| Class      | User           | N:N          | Một lớp học có nhiều giáo viên và một giáo viên dạy nhiều lớp học                                |
-| Class      | Schedule       | 1:N          | Một lớp học có trong nhiều khung lịch học                                                        |
-| Room       | Schedule       | 1:N          | Một phòng học có trong nhiều khung lịch học                                                      |
-| Schedule   | Session        | 1:N          | Một khung lịch học có nhiều buổi học                                                             |
-| Room       | Session        | 1:N          | Một phòng học được sử dụng cho nhiều buổi học                                                    |
-| User       | Session        | 1:N          | Một giáo viên tham gia nhiều buổi học                                                            |
-| User       | Enrollment     | 1:N          | Một học viên có thể đăng ký nhiều lớp học                                                        |
-| Class      | Enrollment     | 1:N          | Một lớp học có nhiều lượt đăng ký                                                                |
-| Enrollment | Payment        | 1:N          | Một lượt đăng ký một hoặc hai giao dịch thanh toán                                               |
-| Enrollment | ScoreType      | N:N          | Một lượt đăng ký của học viên có nhiều loại điểm và một loại điểm áp dụng cho nhiều lượt đăng ký |
-| Enrollment | Session        | N:N          | Một lượt học viên đăng ký có nhiều buổi học và một buổi học có nhiều học viên đăng ký điểm danh  |
-| Enrollment | AcademicResult | 1:1          | Một lượt đăng ký chỉ có một bảng kết quả học tập                                                 |
+| A          | B                  | Relationship | Description                                                                                      |
+|------------|--------------------|--------------|--------------------------------------------------------------------------------------------------|
+| User       | Profile            | 1:1          | Một người dùng có một hồ sơ thông tin riêng biệt                                                 |
+| Role       | User               | 1:N          | Một vai trò được gắn cho nhiều người dùng                                                        |
+| Level      | Course             | 1:N          | Một mức độ có nhiều khóa học                                                                     |
+| Course     | Tag                | N:N          | Một khóa học có nhiều thẻ và một thẻ được gắn cho nhiều khóa học                                 |
+| Course     | Class              | 1:N          | Một khóa học có nhiều lớp học                                                                    |
+| Course     | ScoreType          | 1:N          | Một khóa học có nhiều cột điểm                                                                   |
+| User       | TeachingAssignment | 1:N          | Một giáo viên được phân công dạy nhiều lớp học                                                   |
+| Class      | TeachingAssignment | 1:N          | Một lớp có nhiều giáo viên phụ trách                                                             |
+| Class      | Schedule           | 1:N          | Một lớp học có trong nhiều khung lịch học                                                        |
+| Room       | Schedule           | 1:N          | Một phòng học có trong nhiều khung lịch học                                                      |
+| Schedule   | Session            | 1:N          | Một khung lịch học có nhiều buổi học                                                             |
+| Room       | Session            | 1:N          | Một phòng học được sử dụng cho nhiều buổi học                                                    |
+| User       | Session            | 1:N          | Một giáo viên tham gia nhiều buổi học                                                            |
+| User       | Enrollment         | 1:N          | Một học viên có thể đăng ký nhiều lớp học                                                        |
+| Class      | Enrollment         | 1:N          | Một lớp học có nhiều lượt đăng ký                                                                |
+| Enrollment | Payment            | 1:N          | Một lượt đăng ký một hoặc hai giao dịch thanh toán                                               |
+| Enrollment | ScoreType          | N:N          | Một lượt đăng ký của học viên có nhiều loại điểm và một loại điểm áp dụng cho nhiều lượt đăng ký |
+| Enrollment | Session            | N:N          | Một lượt học viên đăng ký có nhiều buổi học và một buổi học có nhiều học viên đăng ký điểm danh  |
+| Enrollment | AcademicResult     | 1:1          | Một lượt đăng ký chỉ có một bảng kết quả học tập                                                 |
 
 ## 7.4 Data Constraints
 - Ràng buộc Primary Key:
@@ -201,7 +202,7 @@ BR-03:
 - Ràng buộc Default:
   + Tất cả các trường active, is_main mặc định là True hoặc là 1
   + Tất cả các trường created_at và updated_at tự động được hệ thống gán thời gian khi tạo hoặc sửa dữ liệu
-  + Tất cả các trường capacity đều được định nghĩa sẵn
+  + Tất cả các trường capacity mặc định là 30
   + Tất cả các trường kiểu enum chỉ được nhận các giá trị đã được định nghĩa sẵn
 - Ràng buộc miền giá trị:
   + Thời gian:
@@ -216,9 +217,10 @@ BR-03:
     + Bảng ScoreType: weight phải lớn hơn 0 và nhỏ hơn hoặc bằng 3
 - Ràng buộc Enum:
   + Tất cả các trường kiểu enum chỉ được nhận các giá trị đã được định nghĩa sẵn:
-    + Bảng Enrollment: trường enrollment_status
-    + Bảng Payment: trường payment_status
-    + Bảng Attendance: trường attendance_status
+    + Bảng Enrollment: trường enrollment_status (Chờ, Đang học, Dừng học)
+    + Bảng Payment: trường payment_status (Chờ, Thành công, Thất bại), trường payment_method (Stripe, Banking)
+    + Bảng Attendance: trường attendance_status (Vắng, Trễ, Có mặt)
+    + Bảng User: trường auth_provider (Facebook, Google)
 ---
 
 # 8. System Models
