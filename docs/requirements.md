@@ -442,4 +442,35 @@ BR-03:
 
 ## 8.2 Use Case Specification
 
+### 8.2.2. Thanh toán học phí trực tuyến
+- Usecase ID: UC02
+- Tên Use Case: Thanh toán học phí trực tuyến
+- Mô tả: Use case cho phép học viên thanh toán học phí trực tuyến thông qua các cổng thanh toán bên thứ ba
+- Actor chính: Học viên
+- Actor phụ: Cổng thanh toán bên thứ 3 
+- Tiền điều kiện: 
+  + Học viên đã đăng nhập vào hệ thống
+  + Học viên đã chọn đăng ký khóa học
+- Hậu điều kiện: 
+  + Hệ thống cập nhật trạng thái thanh toán  
+  + Hệ thống cập nhật trạng thái khóa học của học viên
+  + Hệ thống tạo hóa đơn điện tử
+- Luồng hoạt động chính:
+  + B1: UC này bắt đầu khi học viên chọn chức năng thanh toán học phí
+  + B2: Hệ thống truy xuất dữ liệu và hiển thị chi tiết hóa đơn (Tên lớp, tên học viên, tổng hóa đơn)
+  + B3: Học viên chọn phương thức thanh toán
+  + B4: Hệ thống chuyển sang giao diện cổng thanh toán tương ứng
+  + B5: Học viên nhập thông tin thanh toán
+  + B6: Học viên thanh toán qua cổng thanh toán 
+  + B7: Hệ thống kiểm tra tình trạng thanh toán được gửi về từ cổng thanh toán bên thứ ba
+  + B8: Hệ thống cập nhật trạng thái thanh toán
+  + B9: Hệ thống cập nhật trạng thái khóa học
+  + B10: Hệ thống tạo hóa đơn
+  + B11: Kết thúc
+- Luồng thay thế:
+  + B2.1: Nếu truy xuất dữ liệu hóa đơn bị lỗi thì thông báo và quay về màn hình chọn chức năng thanh toán
+  + B5.1: Nếu thông tin thanh toán sai thì cổng thanh toán báo lỗi và bắt học viên nhập lại thông tin thanh toán
+  + B7.1: Nếu cổng thanh toán trả về kết quả thất bại thì thông báo và quay lại màn hình chọn chức năng thanh toán
+- Luồng ngoại lệ: trong quá trình giao dịch nếu có sự cố thì quay về màn hình chọn chức năng thanh toán
+
 ## 8.3. ERD Diagram
