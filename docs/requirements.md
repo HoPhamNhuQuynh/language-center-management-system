@@ -442,35 +442,17 @@ BR-03:
 
 ## 8.2 Use Case Specification
 
-### 8.2.2. Thanh toán học phí trực tuyến
-- Usecase ID: UC02
-- Tên Use Case: Thanh toán học phí trực tuyến
-- Mô tả: Use case cho phép học viên thanh toán học phí trực tuyến thông qua các cổng thanh toán bên thứ ba
-- Actor chính: Học viên
-- Actor phụ: Cổng thanh toán bên thứ 3 
-- Tiền điều kiện: 
-  + Học viên đã đăng nhập vào hệ thống
-  + Học viên đã chọn đăng ký khóa học
-- Hậu điều kiện: 
-  + Hệ thống cập nhật trạng thái thanh toán  
-  + Hệ thống cập nhật trạng thái khóa học của học viên
-  + Hệ thống tạo hóa đơn điện tử
-- Luồng hoạt động chính:
-  + B1: UC này bắt đầu khi học viên chọn chức năng thanh toán học phí
-  + B2: Hệ thống truy xuất dữ liệu và hiển thị chi tiết hóa đơn (Tên lớp, tên học viên, tổng hóa đơn)
-  + B3: Học viên chọn phương thức thanh toán
-  + B4: Hệ thống chuyển sang giao diện cổng thanh toán tương ứng
-  + B5: Học viên nhập thông tin thanh toán
-  + B6: Học viên thanh toán qua cổng thanh toán 
-  + B7: Hệ thống kiểm tra tình trạng thanh toán được gửi về từ cổng thanh toán bên thứ ba
-  + B8: Hệ thống cập nhật trạng thái thanh toán
-  + B9: Hệ thống cập nhật trạng thái khóa học
-  + B10: Hệ thống tạo hóa đơn
-  + B11: Kết thúc
-- Luồng thay thế:
-  + B2.1: Nếu truy xuất dữ liệu hóa đơn bị lỗi thì thông báo và quay về màn hình chọn chức năng thanh toán
-  + B5.1: Nếu thông tin thanh toán sai thì cổng thanh toán báo lỗi và bắt học viên nhập lại thông tin thanh toán
-  + B7.1: Nếu cổng thanh toán trả về kết quả thất bại thì thông báo và quay lại màn hình chọn chức năng thanh toán
-- Luồng ngoại lệ: trong quá trình giao dịch nếu có sự cố thì quay về màn hình chọn chức năng thanh toán
+### 8.2.2. Thanh toán học phí trực tuyến (Online tuition payment)
 
+| Field | Content                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+|---|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Usecase ID | UC-02                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| Usecase Name | Thanh toán học phí trực tuyến                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| Actor | Học viên (Actor chính), Cổng thanh toán bên thứ 3 (Actor phụ)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| Description | Cho phép học viên thanh toán học phí trực tuyến thông qua các cổng thanh toán bên thứ ba.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| Pre-Condition(s) | - Học viên đã đăng nhập vào hệ thống<br>- Học viên đã chọn đăng ký khóa học                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| Post-Condition(s) | - Hệ thống cập nhật trạng thái thanh toán<br>- Hệ thống cập nhật trạng thái khóa học của học viên<br>- Hệ thống tạo hóa đơn điện tử                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| Main Flow | <ol><li>Học viên yêu cầu thanh toán học phí.</li><li>Hệ thống truy xuất dữ liệu và hiển thị chi tiết hóa đơn (Tên khóa, mã khóa, tên lớp, mã lớp, tên học viên, mã học viên, tổng hóa đơn).</li><li>Học viên chọn phương thức thanh toán.</li><li>Hệ thống chuyển hướng sang cổng thanh toán.</li><li>Học viên thanh toán qua cổng thanh toán.</li><li>Hệ thống kiểm tra tình trạng thanh toán được gửi về từ cổng thanh toán bên thứ ba.</li><li>Hệ thống cập nhật trạng thái thanh toán.</li><li>Hệ thống cập nhật trạng thái khóa học.</li><li>Hệ thống tạo hóa đơn.</li><li>Kết thúc.</li></ol> |
+| Alternative Flow | 2a. Hệ thống truy xuất dữ liệu hóa đơn bị lỗi, hiển thị thông báo, *quay về màn hình chọn chức năng thanh toán*. <br><br> 6a. Cổng thanh toán trả về kết quả thất bại, hệ thống hiển thị thông báo, *quay lại màn hình chọn chức năng thanh toán*.                                                                                                                                                                                                                                                                                                                                                  |
+| Exception Flow | 4a. Trong quá trình giao dịch nếu có sự cố mạng xảy ra, cổng thanh toán không phản hồi, hết thời gian giao dịch trước khi thanh toán thì hệ thống thông báo lỗi, *quay về màn hình chọn chức năng thanh toán*.                                                                                                                                                                                                                                                                                                                                                                                      |
 ## 8.3. ERD Diagram
