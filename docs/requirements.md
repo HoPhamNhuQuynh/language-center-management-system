@@ -502,7 +502,7 @@ BR-30: Hệ thống cung cấp báo cáo thống kê quý, năm theo:
 # 8. System Models
 
 ## 8.1 Use Case Diagram
-
+![usecase-diagram](screenshots/usecase-diagram.png)
 ## 8.2 Use Case Specification
 
 ## 8.3. ERD Diagram
