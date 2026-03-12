@@ -506,3 +506,4 @@ BR-30: Hệ thống cung cấp báo cáo thống kê quý, năm theo:
 ## 8.2 Use Case Specification
 
 ## 8.3. ERD Diagram
+![erd-diagram](screenshots/erd.png)
