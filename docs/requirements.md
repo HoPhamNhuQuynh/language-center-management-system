@@ -84,12 +84,43 @@ Hệ thống sử dụng cơ chế xác thực và phân quyền người dùng 
 
 # 3. System Features (Functional Requirements)
 
-FR-01:  
-FR-02:  
-FR-03:  
-FR-04:  
-FR-05:  
+#### Nhóm 1: Tất cả người dùng
+- FR-01: Đăng nhập
+  + Hệ thống cho phép người dùng đăng nhập để sử dụng các tính năng.
 
+#### Nhóm 2: Học Viên
+- FR-02: Đăng ký khóa học 
+  + Hệ thống cho phép học viên đăng ký các khóa học đang hoạt động và tự động gửi thông báo xác nhận cho học viên sau khi đã đăng ký thành công.
+- FR-03: Thanh toán học phí trực tuyến
+  + Hệ thống cho phép học viên thanh toán học phí trực tuyến thông qua các cổng thanh toán của bên thứ ba.
+- FR-04: Xem biên lai thu phí
+  + Hệ thống cho phép học viên xem biên lai thu phí điện tử sau khi đã thanh toán thành công.
+- FR-05: Xem lịch học và phòng học
+  + Hệ thống hiển thị thời khóa biểu cá nhân của học viên, bao gồm các thông tin chi tiết như tên lớp học, tên giáo viên, thời gian học và phòng học.
+- FR-06: Xem kết quả học tập  
+  + Hệ thống hiển thị chi tiết kết quả học tập của học viên, bao gồm bảng điểm, xếp loại, học lực và nhận xét từ giáo viên.
+#### Nhóm 3: Giáo Viên
+- FR-07: Xem lịch dạy
+  + Hệ thống hiển thị lịch phân công giảng dạy cá nhân và danh sách lớp học đã được phân công.
+- FR-08: Xem danh sách học viên
+  + Hệ thống hiển thị chi tiết danh sách học viên và sĩ số của các lớp đang phụ trách.
+- FR-09: Điểm danh học viên
+  + Hệ thống cho phép giáo viên chọn trạng thái điểm danh (có mặt, trễ, vắng) của từng học viên theo buổi học. 
+- FR-10: Nhập điểm và nhận xét đánh giá
+  + Hệ thống cho phép giáo viên nhập, chỉnh sửa điểm số và ghi nhận xét đánh giá về tình hình học tập của học viên trong lớp mà mình phụ trách.
+#### Nhóm 4: Admin
+- FR-11: Quản lý khóa học
+  + Hệ thống cho phép admin xem, thêm mới, sửa, xóa và theo dõi trạng thái hoạt động của các khóa học tại trung tâm.
+- FR-12: Quản lý tài khoản người dùng
+  + Hệ thống cho phép admin tạo mới tài khoản, cập nhật thông tin và theo dõi trạng thái hoạt động của người dùng.
+- FR-13: Phân quyền người dùng
+  + Hệ thống cho phép admin phân quyền người dùng bằng cách gán hoặc thay đổi vai trò cho từng tài khoản người dùng. 
+- FR-14: Cấu hình học phí 
+  + Hệ thống cho phép admin thiết lập mức học phí của từng khóa học.
+- FR-15: Xem báo cáo thống kê
+  + Hệ thống cho phép admin xem báo cáo thống kê theo quý, in và xuất báo cáo.
+- FR-16: Xếp lịch học
+  + Hệ thống cho phép admin sắp xếp lịch học của từng lớp học và phân công lịch giảng dạy cho giáo viên.
 ---
 
 # 4. External Interface Requirements
