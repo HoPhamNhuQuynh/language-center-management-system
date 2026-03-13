@@ -134,7 +134,7 @@ Môi trường kiểm thử được thiết lập nhằm giả lập tối đa 
 
 - **Quản lý dữ liệu và Server:**
     * **Phân vùng lưu trữ:** Toàn bộ dữ liệu kiểm thử được quản lý tập trung trên hệ quản trị CSDL MySQL. Nhóm thực hiện truy vấn trực tiếp thông qua công cụ quản trị để xác minh tính toàn vẹn và chính xác của dữ liệu sau mỗi thao tác nghiệp vụ.
-    * **Triển khai nội bộ (Local Deployment):** Trong giai đoạn này, hoạt động kiểm thử được thực hiện chủ yếu trên môi trường Localhost để đảm bảo tốc độ phản hồi nhanh và tính bảo mật cao trong quá trình phát triển sơ bộ.
+    * **Triển khai nội bộ:** Trong giai đoạn này, hoạt động kiểm thử được thực hiện chủ yếu trên môi trường Localhost để đảm bảo tốc độ phản hồi nhanh và tính bảo mật cao trong quá trình phát triển sơ bộ.
 ## 10. TEST SCHEDULE  
 (Lịch trình test: thời gian bắt đầu, kết thúc từng giai đoạn.)
 
