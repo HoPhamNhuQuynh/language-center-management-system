@@ -95,7 +95,7 @@ Hệ thống Quản lý Trung tâm Ngoại ngữ được xây dựng dựa trê
 | Lịch học          | schedule           | Định nghĩa lịch trình lặp lại (thứ, giờ) cho các lớp học.          |
 | Phòng học         | room               | Quản lý phòng học cho các buổi học.                                |
 | Buổi học          | session            | Lưu trữ thông tin từng buổi học thực tế phục vụ điểm danh.         |
-| Điếm số           | score              | Lưu trữ điểm số chi tiết của học viên theo từng cột điểm.          |
+| Điểm số           | score              | Lưu trữ điểm số chi tiết của học viên theo từng cột điểm.          |
 | Thanh toán        | payment            | Lưu trữ lịch sử giao dịch tài chính. Đảm bảo độ chính xác cao.     |
 | Kết quả toàn khóa | academic_result    | Ghi nhận kết quả học tập của học viên sau khóa học.                |
 
@@ -125,9 +125,21 @@ Hệ thống Quản lý Trung tâm Ngoại ngữ được xây dựng dựa trê
 * **Cột trạng thái:** Sử dụng các tiền tố như `is_`, `has_`, hoặc các tính từ như `active`.
 
 #### 4.1.4. Quy ước về Khóa và Chỉ mục
-* **Primary key:** `pk_[tên_bảng]`.
-* **Foreign key:** `fk_[tên_bảng_con]_[tên_bảng_con]`.
-* **Unique Index:** `uk_[tên_bảng]_[tên_cột]`.
+* **Khóa chính (Primary Key):** `pk_[tên_bảng]`
+* **Khóa ngoại (Foreign Key):** `fk_[bảng_con]_[bảng_cha]`
+* **Ràng buộc duy nhất (Unique Key):** `uk_[tên_bảng]_[tên_cột]`
+* **Chỉ mục (Index):** `idx_[tên_bảng]_[tên_cột]`
+
+#### 4.1.5. Quy ước kiểu dữ liệu (Data Type Conventions)
+
+| Kiểu dữ liệu | Mục đích sử dụng                                                                       |
+|--------------|----------------------------------------------------------------------------------------|
+| INT          | Sử dụng cho các trường định danh, khóa chính (Primary Key) và khóa ngoại (Foreign Key) |
+| VARCHAR      | Lưu trữ chuỗi ký tự ngắn                                                               |
+| TEXT         | Lưu trữ nội dung văn bản dài hoặc mô tả                                                |
+| DATETIME     | Lưu thời điểm bao gồm ngày và giờ                                                      |
+| DECIMAL      | Lưu trữ các giá trị số chính xác                                                       |
+| BIT          | Lưu trạng thái nhị phân (0: không, 1: có)                                              |
 
 
 ### 4.2. Chi tiết cấu trúc các bảng (Table Schema Details)
@@ -145,7 +157,7 @@ Dưới đây là chi tiết cấu trúc vật lý của các bảng trong cơ s
 | `password`      | VARCHAR(255) |      |                                               |                 | Mật khẩu xác thực                             |
 | `auth_provider` | ENUM         |      | LOCAL                                         |                 | Kiểu login của tài khoản                      |
 | `provider_id`   | VARCHAR(255) |      |                                               |                 | Mã xác thực từ Google                         |
-| `role_id`       | INT          |  FK  | 1                                             |                 | Khóa ngoại tham chiếu tới bảng `role`         |
+| `role_id`       | INT          |  FK  |                                               | NOTNULL         | Khóa ngoại tham chiếu tới bảng `role`         |
 | `active`        | BIT          |      | TRUE                                          |                 | Trạng thái hoạt động                          |
 | `created_at`    | DATETIME     |      | CURRENT_TIMESTAMP                             |                 | Thời gian tạo tài khoản                       |
 | `updated_at`    | DATETIME     |      | CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP |                 | Thời gian cập nhật tài khoản cho lần gần nhất |
@@ -182,7 +194,7 @@ Dưới đây là chi tiết cấu trúc vật lý của các bảng trong cơ s
 |:---------------|:--------------|:----:|:----------------------------------------------|:----------------|:---------------------------------------|
 | id             | INT           |  PK  |                                               | AI              | Mã khóa học                            |
 | name           | NVARCHAR(255) |      |                                               | NOTNULL, UNIQUE | Tên khóa học                           |
-| price          | DECIMAL(8,2)  |      | 0.0                                           | NOTNULL         | Giá của khóa học                       |
+| price          | DECIMAL(8,2)  |      | 2000000                                       | NOTNULL         | Giá của khóa học                       |
 | description    | TEXT          |      |                                               |                 | Mô tả về khóa học                      |
 | image          | VARCHAR(255)  |      | /images/default-avatar.png                    |                 | Hình ảnh về khóa học                   |
 | total_sessions | INT           |      | 0                                             | NOTNULL         | Tổng số buổi học                       |
@@ -297,7 +309,7 @@ Dưới đây là chi tiết cấu trúc vật lý của các bảng trong cơ s
 | id                | INT          |  PK  |                                               | AI        | Mã đăng ký/ghi danh                    |
 | user_id           | INT          |  FK  |                                               | NOTNULL   | Khóa ngoại tham chiếu tới bảng `user`  |
 | class_id          | INT          |  FK  |                                               | NOTNULL   | Khóa ngoại tham chiếu tới bảng `class` |
-| enrollment_status | ENUM         |      | PENDING                                       |           | Trạng thái đăng ký                     |
+| enrollment_status | ENUM         |      | PENDING_PAYMENT                               |           | Trạng thái đăng ký                     |
 | active            | BIT          |      | TRUE                                          |           | Trạng thái hoạt động                   |
 | created_at        | DATETIME     |      | CURRENT_TIMESTAMP                             |           | Thời gian tạo                          |
 | updated_at        | DATETIME     |      | CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP |           | Thời gian cập nhật gần nhất            |
@@ -368,47 +380,70 @@ Dưới đây là chi tiết cấu trúc vật lý của các bảng trong cơ s
 | updated_at | DATETIME      |      | CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP |                 | Thời gian cập nhật gần nhất             |
 
 ### 4.3. Chỉ mục và Ràng buộc (Indexes & Constraints)
-- Ràng buộc Primary Key:
-  + Tất cả các bảng đều phải có một ID duy nhất làm khóa chính
-  + Bảng Profile: Sử dụng id của bảng User làm khóa chính
-- Ràng buộc Foreign Key:
-  + Tất cả các trường khóa ngoại bắt buộc phải tham chiếu đến một bảng cha tương ứng
-- Ràng buộc xóa:
-  + Không được phép xóa một dữ liệu khi dữ liệu con của nó đang hoạt động
-- Ràng buộc Unique:
-  + Bảng User: username và email là duy nhất
-  + Bảng Profile: phone_num là duy nhất
-  + Bảng Payment: transaction_id là duy nhất (mã giao dịch)
-  + Bảng Enrollment: cặp khóa user_id và class_id phải là duy nhất
-- Ràng buộc Not null:
-  + Tất cả các trường name, username, email, password đều không được trống
-  + Bảng phụ CourseTag: cặp khóa course_id và tag_id không được trống
-  + Bảng phụ TeachingAssignment: cặp khóa user_id và class_id không được trống
-  + Bảng phụ Attendance: cặp khóa enrollment_id và session_id không được trống
-- Ràng buộc Default:
-  + Tất cả các trường active, is_main mặc định là True hoặc là 1
-  + Tất cả các trường created_at và updated_at tự động được hệ thống gán thời gian khi tạo hoặc sửa dữ liệu
-  + Tất cả các trường capacity mặc định là 30
-  + Tất cả các trường kiểu enum chỉ được nhận các giá trị đã được định nghĩa sẵn
-- Ràng buộc miền giá trị:
-  + Thời gian:
-    + Bảng Class: end_date phải lớn hơn hoặc bằng start_date
-    + Bảng Schedule: end_time phải lớn hơn start_time
-  + Giá trị:
-    + Bảng Course: price phải lớn hơn hoặc bằng 0 và total_sessions cũng phải lớn hơn 0
-    + Bảng Class: capacity phải lớn hơn 0 và nhỏ hơn hoặc bằng 30
-    + Bảng Room: capacity phải lớn hơn 0 và nhỏ hơn hoặc bằng 30
-    + Bảng Payment: amount phải lớn hơn hoặc bằng 0
-    + Bảng AcademicResult: score_value và average_score phải lớn hơn hoặc bằng 0 và phải nhỏ hơn hoặc bằng 10
-    + Bảng ScoreType: weight phải lớn hơn 0 và nhỏ hơn hoặc bằng 3
-- Ràng buộc Enum:
-  + Tất cả các trường kiểu enum chỉ được nhận các giá trị đã được định nghĩa sẵn:
-    + Bảng Enrollment: trường enrollment_status (Chờ, Đang học, Dừng học)
-    + Bảng Payment: trường payment_status (Chờ, Thành công, Thất bại), trường payment_method (Stripe, Banking)
-    + Bảng Attendance: trường attendance_status (Vắng, Trễ, Có mặt)
-    + Bảng User: trường auth_provider (Facebook, Google)
----
+#### 4.3.1. Chỉ mục (Indexes)
 
+| Bảng                | Chỉ mục                                                      | Lý do                                                               |
+|:--------------------|:-------------------------------------------------------------|:--------------------------------------------------------------------|
+| enrollment          | idx_enrollment_user (user_id)                                | Tăng tốc truy vấn và JOIN khi tìm các lớp của một user              |
+| enrollment          | idx_enrollment_class (class_id)                              | Tăng tốc truy vấn danh sách học viên trong một lớp                  |
+| enrollment          | uk_enrollment_user_class (user_id, class_id)                 | Ngăn chặn user đăng ký cùng một lớp nhiều lần                       |
+| payment             | idx_payment_enrollment (enrollment_id)                       | Tăng tốc truy vấn lịch sử thanh toán theo enrollment                |
+| attendance          | idx_attendance_enrollment (enrollment_id)                    | Tăng tốc truy vấn điểm danh của một học viên                        |
+| attendance          | idx_attendance_session (session_id)                          | Tăng tốc truy vấn danh sách điểm danh theo buổi học                 |
+| attendance          | uk_attendance_enrollment_session (enrollment_id, session_id) | Ngăn chặn điểm danh trùng cho cùng một học viên trong cùng một buổi |
+| score               | idx_score_enrollment (enrollment_id)                         | Tăng tốc truy vấn bảng điểm của học viên                            |
+| score               | idx_score_type (score_type_id)                               | Tăng tốc JOIN với bảng loại điểm                                    |
+| session             | idx_session_schedule (schedule_id)                           | Tăng tốc truy vấn các buổi học theo lịch                            |
+| session             | idx_session_room (room_id)                                   | Tăng tốc truy vấn lịch sử dụng phòng học                            |
+| session             | idx_session_teacher (user_id)                                | Tăng tốc truy vấn các buổi dạy của giáo viên                        |
+| schedule            | idx_schedule_class (class_id)                                | Tăng tốc truy vấn lịch học của một lớp                              |
+| schedule            | idx_schedule_room (room_id)                                  | Tăng tốc kiểm tra lịch phòng học                                    |
+| teaching_assignment | uk_teacher_class (user_id, class_id)                         | Đảm bảo một giáo viên không được gán trùng cho cùng một lớp         |
+| course_tag          | uk_course_tag (course_id, tag_id)                            | Ngăn chặn một tag bị gán nhiều lần cho cùng một khóa học            |
+
+
+#### 4.3.2. Ràng buộc dữ liệu (Constraints)
+* **Ràng buộc toàn vẹn tham chiếu (Referential Integrity)**
+  - Tất cả các trường Foreign key phải tham chiếu tới bản ghi hợp lệ ở bản cha.
+  - Không được phép xóa bản ghi ở bảng cha nếu vẫn còn bản ghi con tham chiếu tới nó.
+
+* **Ràng buộc miền giá trị (Domain Constraints)**
+  - Ràng buộc thời gian
+
+      | Bảng     | Ràng buộc              |
+      |:---------|:-----------------------|
+      | class    | end_date >= start_date |
+      | schedule | end_time > start_time  |
+    
+  - Ràng buộc giá trị số
+
+      | Bảng            | Trường         | Ràng buộc                |
+      |:----------------|:---------------|:-------------------------|
+      | course          | price          | price >= 0               |
+      | course          | total_sessions | total_sessions > 0       |
+      | class           | capacity       | capacity > 0             |
+      | room            | capacity       | capacity > 0             |
+      | payment         | amount         | amount >= 0              |
+      | academic_result | average_score  | 0 <= average_score <= 10 |
+      | score           | score_value    | 0 <= score_value <= 10   |
+      | score_type      | weight         | 0 < weight <= 3          |
+      | schedule        | day_of_week    | 1 <= day_of_week <= 7    |
+
+* **Ràng buộc Enum (Enumerated Values)**   
+
+  | Bảng       | Trường            | Ràng buộc                                    |
+  |:-----------|:------------------|:---------------------------------------------|
+  | user       | auth_provider     | LOCAL, GOOGLE, FACEBOOK                      |
+  | enrollment | enrollment_status | SUCCESS, PENDING_PAYMENT, EXPIRED, CANCELLED |
+  | payment    | payment_method    | MoMo, Banking, Stripe                        |
+  | payment    | payment_status    | SUCCESS, FAILED, PENDING, CANCELLED          |
+  | attendance | attendance_status | ABSENT, LATE, PRESENT                        |
+
+* **Ràng buộc logic nghiệp vụ** 
+  - Một học viên chỉ được đăng ký một lần cho mỗi lớp.
+  - Một học viên chỉ có một bản ghi điểm danh cho mỗi buổi học.
+  - Một khóa học không thể có tag trùng lập.
+  - Một giáo viên không thể được gán trùng cho cùng 1 lớp.
 
 ---
 
