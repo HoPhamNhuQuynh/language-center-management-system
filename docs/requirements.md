@@ -158,27 +158,26 @@ BR-10: Người dùng có quyền đổi mật khẩu của mình. Admin có quy
 ## 6.3. Class Management  
 BR-11: Chỉ Admin được quyền chỉnh sửa thông tin lớp học.  
 BR-12: Không cho phép xóa lớp khi đã có học viên đăng ký.  
-BR-13: Một lớp tối đa 30 học viên.  
-BR-14: Một giáo viên được phép dạy tối đa 5 lớp học.    
+BR-13: Một lớp tối thiểu 10 học viên, tối đa 30 học viên.  
+BR-14: Một giáo viên được phép dạy nhiều lớp nhưng không được trùng lịch.    
 BR-15: Học viên chỉ được xem các lớp học còn chỗ trống để đăng ký.    
 BR-16: Không cho phép sắp xếp lịch học của các lớp trùng thời gian.  
 
 ## 6.4. Course/Class Registration  
 BR-17: Một học viên được quyền đăng ký nhiều lớp học nhưng không được trùng lịch học.  
-BR-18: Việc đăng ký lớp học của học viên được xác nhận tự động sau khi thanh toán thành công.    
+BR-18: Việc đăng ký lớp học của học viên được xác nhận tự động sau khi thanh toán thành công.   
 BR-19: Học viên chỉ được phép hủy đăng ký khóa học khi chưa thanh toán.  
 BR-20: Trạng thái đăng ký bao gồm:  
 * Đăng ký thành công.  
 * Thanh toán một phần.  
 * Chờ thanh toán.  
-* Hết hạn.  
-* Đã hủy.
+* Hết hạn.
 
 ## 6.5. Payment  
 BR-21: Sau khi đăng ký khóa học, học viên thanh toán học phí trong 30 phút.  
 BR-22: Quy định thanh toán học phí:  
  * Dưới 5 triệu VNĐ, học viên bắt buộc thanh toán toàn bộ học phí.  
- * Trên 5 triệu VNĐ, học viên được phép thanh toán một phần và thanh toán phần còn lại trong thời gian quy định.
+ * Trên 5 triệu VNĐ, học viên được phép thanh toán 50% và thanh toán phần còn lại trước kkhai giảng 3 ngày.
 
 BR-23: Trạng thái thanh toán gồm:   
  * Thanh toán thành công.  
