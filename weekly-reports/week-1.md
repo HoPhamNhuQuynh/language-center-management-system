@@ -33,7 +33,7 @@
 | Testing            | Chưa bắt đầu | 0%  |
 | Báo cáo            | Chưa bắt đầu | 0%  |
 
-**Tổng tiến độ: 70%**
+**Tổng tiến độ: 10%**
 
 ---
 
