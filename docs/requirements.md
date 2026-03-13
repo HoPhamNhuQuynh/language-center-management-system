@@ -177,7 +177,7 @@ BR-20: Trạng thái đăng ký bao gồm:
 BR-21: Sau khi đăng ký khóa học, học viên thanh toán học phí trong 30 phút.  
 BR-22: Quy định thanh toán học phí:  
  * Dưới 5 triệu VNĐ, học viên bắt buộc thanh toán toàn bộ học phí.  
- * Trên 5 triệu VNĐ, học viên được phép thanh toán 50% và thanh toán phần còn lại trước kkhai giảng 3 ngày.
+ * Trên 5 triệu VNĐ, học viên được phép thanh toán 50% và thanh toán phần còn lại trước khi khai giảng 3 ngày.
 
 BR-23: Trạng thái thanh toán gồm:   
  * Thanh toán thành công.  
