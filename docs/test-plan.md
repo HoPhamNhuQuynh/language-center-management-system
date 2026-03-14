@@ -7,19 +7,64 @@ Prepared by:
 ---
 
 ## 1. INTRODUCTION  
-(Giới thiệu dự án, mục đích của tài liệu test plan.)
+### 1.1 Giới thiệu dự án
+Dự án Hệ thống quản lý trung tâm ngoại ngữ được xây dựng nhằm hỗ trợ quản lý và tổ chức các hoạt động đào tạo một cách có hiệu quả hệ thống.  
+Thông qua hệ thống các vai trò có thể thực hiện các chức năng quản lý, theo dõi khóa học. Việc áp dụng hệ thống giúp tự động hóa quy trình quản lý giảm sai sót khi xử lý dữ liệu và nâng cao hiệu quả hoạt động của trung tâm.
+
+### 1.2 Mục tiêu dự án 
+Tài liệu được xây dựng nhằm mô tả kế hoạch kiểm thử cho dự án. Xác định phạm vi kiểm thử, các chức năng cần kiểm thử, chiến lược kiểm thử, tài nguyên kiểm thử và lịch trình thực hiện kiểm thử.  
+Quá trình kiểm thử là đảm bảo các chức năng của hệ thống hoạt động theo yêu cầu đã được xác định, phát hiện và xử lý các lỗi trước khi hệ thống được đưa vào sử dụng.
+
 
 ## 2. SCOPE  
-(Phạm vi kiểm thử: test những chức năng nào, không test những gì.)
+### 2.1 Chức năng được kiểm thử
+1. Chức năng chung:
+* Đăng nhập hệ thống
+
+2. Chức năng cho học viên:
+* Đăng ký khóa học
+* Thanh toán học phí trực tuyến
+* Xem biên lai thu phí
+* Xem lịch học và phòng học
+* Xem kết quả học tập
+  
+3. Chức năng cho giáo viên:
+* Xem lịch dạy
+* Xem danh sách học viên
+* Điểm danh học viên
+* Nhập điểm và nhận xét đánh giá
+
+4. Chức năng cho Admin:
+* Quản lý khóa học
+* Quản lý tài khoản người dùng
+* Phân quyền người dùng
+* Cấu hình học phí
+* Xem báo cáo thống kê 
+* Xếp lịch học
+
+### 2.2 Chức năng không kiểm thử 
+Kiểm thử hiệu năng hệ thống
+Kiểm thử bảo mật nâng cao
+Kiểm thử trên nhiều thiết bị hoặc nền tảng khác nhau
+Tích hợp với các hệ thống bên thứ ba ngoài phạm vi dự án.
+
 
 ## 3. QUALITY OBJECTIVES  
-(Mục tiêu chất lượng mong muốn đạt được.)
+Đảm bảo hệ thống quản lý trung tâm ngoại ngữ đáp ứng đúng các yêu cầu đã được đặc tả và hoạt động ổn định trong quá trình sử dụng.
 
 ### 3.1 Primary Objectives  
-(Mục tiêu chính: đảm bảo đúng requirement, giảm lỗi nghiêm trọng...)
+Mục tiêu chính: Xác minh rằng các chức năng của hệ thống được triển khai đúng theo các yêu cầu chức năng đã xác định:  
+* Đảm bảo các chức năng chính hoạt động ổn định.
+* Phát hiện và giảm thiểu các lỗi nghiêm trọng có thể ảnh hưởng đến hoạt động của hệ thống.
+* Đảm bảo dữ liệu được lưu trữ và xử lý trong quá trình vận hành hệ thống.
+
 
 ### 3.2 Secondary Objectives  
-(Mục tiêu phụ: cải thiện usability, tối ưu hiệu năng, v.v.)
+Ngoài mục tiêu chính, kiểm thử cũng hướng đến các mục tiêu phụ nhằm nâng cao chất lượng tổng thể của hệ thống:  
+* Đảm bảo giao diện hệ thống rõ ràng và dễ sử dụng.
+* Hạn chế các lỗi nhỏ.
+* Đảm bảo hệ thống phản hồi trong thời gian hợp lý.
+* Kiểm tra tính nhất quán và chính xác của thông tin hiển thị trên hệ thống.
 
 ## 4. TEST APPROACH  
 (Mô tả cách tiếp cận test: manual/automation, black-box/white-box...)
@@ -82,10 +127,17 @@ Prepared by:
 (Môi trường test: OS, browser, database, server...)
 
 ## 10. TEST SCHEDULE  
-(Lịch trình test: thời gian bắt đầu, kết thúc từng giai đoạn.)
+| Giai đoạn  | Nội dung                                                    | Thời gian               |
+|-------------|-------------------------------------------------------------|-------------------------|
+| Chuẩn bị    | Chuẩn bị môi trường kiểm thử, thiết kế các test case       | 17-03-2026 - 23-03-2026 |
+| Thực hiện   | Kiểm thử các chức năng hệ thống                             | 24-03-2026 - 30-03-2026 |
+| Sửa lỗi     | Sửa các lỗi đã phát hiện và thực hiện kiểm thử lại          | 31-03-2026 - 06-04-2026 |
+| Báo cáo     | Tổng hợp kết quả kiểm thử và báo cáo                        | 07-04-2026 - 13-04-2026 |
 
 ## 11. APPROVALS  
-(Người phê duyệt test plan.)
+Hồ Phạm Như Quỳnh
+Trần Mỹ Ân
+Hồ Phạm Ngọc Hân
 
 ## 12. TERMS / ACRONYMS  
 (Giải thích các thuật ngữ viết tắt sử dụng trong tài liệu.)
