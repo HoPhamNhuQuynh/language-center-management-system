@@ -607,3 +607,21 @@ BR-30: Hệ thống cung cấp báo cáo thống kê quý, năm theo:
 
 ## 8.3. ERD Diagram
 ![erd-diagram](screenshots/erd.png)
+---
+
+# 9. Wireframes UI
+
+## 9.1 UI Trang Chủ
+![UI-trang-chu](screenshots/trang-chu-1.png)
+![UI-trang-chu](screenshots/trang-chu-2.png)
+![UI-trang-chu](screenshots/trang-chu-3.png)
+![UI-trang-chu](screenshots/trang-chu-4.png)
+
+## 9.2 UI Đăng Ký Khóa Học
+![UI-dang-ky-khoa-hoc](screenshots/dang-ky-khoa-hoc-1.png)
+![UI-dang-ky-khoa-hoc](screenshots/dang-ky-khoa-hoc-2.png)
+![UI-dang-ky-khoa-hoc](screenshots/dang-ky-khoa-hoc-3.png)
+
+## 9.3 UI Xem Lịch Học - Thời Khóa Biểu
+![UI-xem-lich-hoc-thoi-khoa-bieu](screenshots/xem-khoa-hoc-va-thoi-khoa-bieu.png)
+
