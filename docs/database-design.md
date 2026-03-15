@@ -238,17 +238,19 @@ Dưới đây là chi tiết cấu trúc vật lý của các bảng trong cơ s
 
 **8. Bảng: `class`**
 
-| Tên cột    | Kiểu dữ liệu  | Khóa | Mặc định                                      | Ràng buộc       | Mô tả                                   |
-|:-----------|:--------------|:----:|:----------------------------------------------|:----------------|:----------------------------------------|
-| id         | INT           |  PK  |                                               | AI              | Mã lớp                                  |
-| name       | NVARCHAR(100) |      |                                               | NOTNULL, UNIQUE | Tên lớp                                 |
-| start_date | DATE          |      |                                               | NOTNULL         | Ngày bắt đầu                            |
-| end_date   | DATE          |      |                                               | NOTNULL         | Ngày kết thúc                           |
-| capacity   | INT           |      | 30                                            | NOTNULL         | Sĩ số tối đa                            |
-| course_id  | INT           |  FK  |                                               | NOTNULL         | Khóa ngoại tham chiếu tới bảng `course` |
-| active     | BIT           |      | TRUE                                          |                 | Trạng thái hoạt động                    |
-| created_at | DATETIME      |      | CURRENT_TIMESTAMP                             |                 | Thời gian tạo                           |
-| updated_at | DATETIME      |      | CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP |                 | Thời gian cập nhật                      |
+| Tên cột        | Kiểu dữ liệu  | Khóa | Mặc định                                      | Ràng buộc       | Mô tả                                   |
+|:---------------|:--------------|:----:|:----------------------------------------------|:----------------|:----------------------------------------|
+| id             | INT           |  PK  |                                               | AI              | Mã lớp                                  |
+| name           | NVARCHAR(100) |      |                                               | NOTNULL, UNIQUE | Tên lớp                                 |
+| start_date     | DATE          |      |                                               | NOTNULL         | Ngày bắt đầu                            |
+| end_date       | DATE          |      |                                               | NOTNULL         | Ngày kết thúc                           |
+| capacity       | INT           |      | 30                                            | NOTNULL         | Sĩ số tối đa                            |
+| grade_deadline | DATETIME      |      |                                               | NOTNULL         | Thời gian hết hạn nhập điểm             |
+| grade_status   | ENUM          |      | DRAFT                                         | NOTNULL         | Trạng thái nhập điểm của lớp            |
+| course_id      | INT           |  FK  |                                               | NOTNULL         | Khóa ngoại tham chiếu tới bảng `course` |
+| active         | BIT           |      | TRUE                                          |                 | Trạng thái hoạt động                    |
+| created_at     | DATETIME      |      | CURRENT_TIMESTAMP                             |                 | Thời gian tạo                           |
+| updated_at     | DATETIME      |      | CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP |                 | Thời gian cập nhật                      |
 
 **9. Bảng: `room`**
 
@@ -304,15 +306,16 @@ Dưới đây là chi tiết cấu trúc vật lý của các bảng trong cơ s
 
 **13. Bảng: `enrollment`**
 
-| Tên cột           | Kiểu dữ liệu | Khóa | Mặc định                                      | Ràng buộc | Mô tả                                  |
-|:------------------|:-------------|:----:|:----------------------------------------------|:----------|:---------------------------------------|
-| id                | INT          |  PK  |                                               | AI        | Mã đăng ký/ghi danh                    |
-| user_id           | INT          |  FK  |                                               | NOTNULL   | Khóa ngoại tham chiếu tới bảng `user`  |
-| class_id          | INT          |  FK  |                                               | NOTNULL   | Khóa ngoại tham chiếu tới bảng `class` |
-| enrollment_status | ENUM         |      | PENDING_PAYMENT                               |           | Trạng thái đăng ký                     |
-| active            | BIT          |      | TRUE                                          |           | Trạng thái hoạt động                   |
-| created_at        | DATETIME     |      | CURRENT_TIMESTAMP                             |           | Thời gian tạo                          |
-| updated_at        | DATETIME     |      | CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP |           | Thời gian cập nhật gần nhất            |
+| Tên cột           | Kiểu dữ liệu | Khóa | Mặc định                                      | Ràng buộc                         | Mô tả                                  |
+|:------------------|:-------------|:----:|:----------------------------------------------|:----------------------------------|:---------------------------------------|
+| id                | INT          |  PK  |                                               | AI                                | Mã đăng ký/ghi danh                    |
+| user_id           | INT          |  FK  |                                               | NOTNULL                           | Khóa ngoại tham chiếu tới bảng `user`  |
+| class_id          | INT          |  FK  |                                               | NOTNULL                           | Khóa ngoại tham chiếu tới bảng `class` |
+| enrollment_status | ENUM         |      | PENDING_PAYMENT                               |                                   | Trạng thái đăng ký                     |
+| payment_deadline  | DATETIME     |      |                                               | *created_at* + INTERVAL 30 MINUTE | Thời hạn thanh toán học phí            |
+| active            | BIT          |      | TRUE                                          |                                   | Trạng thái hoạt động                   |
+| created_at        | DATETIME     |      | CURRENT_TIMESTAMP                             |                                   | Thời gian tạo                          |
+| updated_at        | DATETIME     |      | CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP |                                   | Thời gian cập nhật gần nhất            |
 
 **14. Bảng: `payment`**
 
@@ -438,6 +441,7 @@ Dưới đây là chi tiết cấu trúc vật lý của các bảng trong cơ s
   | payment    | payment_method    | MoMo, Banking, Stripe                        |
   | payment    | payment_status    | SUCCESS, FAILED, PENDING, CANCELLED          |
   | attendance | attendance_status | ABSENT, LATE, PRESENT                        |
+  | class      | grade_status      | DRAFT, SUBMITTED, REOPENED                   |
 
 * **Ràng buộc logic nghiệp vụ** 
   - Một học viên chỉ được đăng ký một lần cho mỗi lớp.
