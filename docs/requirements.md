@@ -246,13 +246,13 @@ BR-30: Hệ thống cung cấp báo cáo thống kê quý, năm theo:
 Các thực thể dưới đây đại diện cho các đối tượng dữ liệu chính của hệ thống.
 Chi tiết thiết kế cơ sở dữ liệu của hệ thống được mô tả trong tài liệu riêng: [Database Design Document](./database-design.md)
 
-
 ### Quản lý người dùng và phân quyền (User & Access Management) 
 | Entity Name | Description                                     |
 |-------------|-------------------------------------------------|
 | `User`      | Đại diện cho người dùng sử dụng hệ thống.       |
 | `Profile`   | Đại diện cho thông tin người sử dụng hệ thống.  |
 | `Role`      | Đại diện cho vai trò người dùng trong hệ thống. |
+
 
 ### Quản lý khóa học (Course Management)
 | Entity Name | Description                                        |
@@ -271,11 +271,13 @@ Chi tiết thiết kế cơ sở dữ liệu của hệ thống được mô t�
 | `Session`            | Đại diện buổi học cụ thể của lớp.                     |
 | `TeachingAssignment` | Thể hiện thông tin phân công giảng dạy cho giáo viên. |
 
+
 ### Đăng ký và thanh toán (Enrollment & Payment Management)
 | Entity Name  | Description                                 |
 |--------------|---------------------------------------------|
 | `Enrollment` | Thể hiện cho đăng ký khóa học.              |
 | `Payment`    | Đại diện cho giao dịch thanh toán khóa học. |
+
 
 ### Quản lý kết quả học tập (Academic Result Management)
 | Entity Name      | Description                                                   |
@@ -447,7 +449,7 @@ Chi tiết thiết kế cơ sở dữ liệu của hệ thống được mô t�
 | payment_deadline  | datetime  | Thời hạn thanh toán đăng ký khóa học    |
 | active            | boolean   | Trạng thái hoạt động của thực thể       |
 | created_at        | datetime  | Ngày tạo của thực thể                   |
-| updated_at        | datetime  | Ngày cập nhật thông tin thực thể        |
+| updated_at        | datetime  | Ngày cập nhật thông tin thực thể        
 
 
 ### 7.2.13. Payment
