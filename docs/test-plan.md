@@ -35,8 +35,8 @@ Dưới đây là bảng phân công vai trò và trách nhiệm cụ thể củ
 | :--- | :--- | :--- |
 | **Tester (Chuyên trách)** | Nguyễn Thị Ngọc Trâm | - Thiết kế các kịch bản kiểm thử (Test Case) chi tiết.<br>- Thực hiện kiểm thử thủ công (Manual Test).<br>- Log lỗi và theo dõi trạng thái sửa lỗi. |
 | **Developer FE & Tester** | Hồ Phạm Ngọc Hân | - Phát triển giao diện người dùng (Front-end).<br>- Thực hiện Unit Test cho các module Front-end.<br>- Hỗ trợ thực hiện kiểm thử hệ thống. |
-| **Developer BE & Tester** | Trần Mỹ Ân | - Phát triển logic và cơ sở dữ liệu (Back-end).<br>- Thực hiện Unit Test cho các API.<br>- Hỗ trợ kiểm thử tích hợp (Integration Test). |
-| **Developer (Fix Bug)** | Hồ Phạm Ngọc Hân, Trần Mỹ Ân | - Tiếp nhận báo cáo lỗi từ Tester.<br>- Thực hiện sửa lỗi (Fix Bug) trong phần code mình phụ trách. |
+| **Developer BE & Tester** | Trần Mỹ Ân, Hồ Phạm Như Quỳnh | - Phát triển logic và cơ sở dữ liệu .<br>- Thực hiện Unit Test cho các API.<br>- Hỗ trợ kiểm thử tích hợp . |
+| **Developer (Fix Bug)** | Hồ Phạm Ngọc Hân, Trần Mỹ Ân, Hồ Phạm Như Quỳnh | - Tiếp nhận báo cáo lỗi từ Tester.<br>- Thực hiện sửa lỗi (Fix Bug) trong phần code mình phụ trách. |
   
 ## 6. ENTRY AND EXIT CRITERIA
 
@@ -70,26 +70,61 @@ Hoạt động kiểm thử sẽ được tiếp tục sau khi:
 - Môi trường kiểm thử được khôi phục về trạng thái ổn định.
 - Developer bàn giao bản build mới đã qua kiểm tra sơ bộ, đảm bảo các tính năng chính có thể truy cập được.
 
-## 8. TEST STRATEGY  
-(Chiến lược test tổng thể.)
+## 8. TEST STRATEGY 
+Chiến lược kiểm thử này mô tả cách tiếp cận toàn diện để đảm bảo chất lượng cho hệ thống quản lý trung tâm ngoại ngữ. Bao gồm việc xác định các loại kiểm thử, vòng đời lỗi, cũng như cách phân loại mức độ nghiêm trọng và độ ưu tiên của lỗi, giúp đội ngũ tối ưu hóa thời gian và nguồn lực.
 
-### 8.1 QA Role in Test Process  
-(Vai trò QA trong toàn bộ quy trình phát triển.)
+### 8.1 QA Role in Test Process (Vai trò của QA trong quy trình test)
 
-### 8.2 Bug Life Cycle  
-(Mô tả vòng đời bug: New → Assigned → Fixed → Retest → Closed...)
+Đội ngũ QA giữ vai trò then chốt trong suốt vòng đời phát triển dự án, không chỉ là tìm lỗi mà còn đảm bảo quy trình làm việc được thực hiện đúng chuẩn:
+* **Tham gia phân tích yêu cầu:** QA đọc và phân tích tài liệu yêu cầu ngay từ giai đoạn đầu để phát hiện các lỗ hổng logic hoặc yêu cầu không rõ ràng.
+* **Thiết kế Test Case/Test Plan:** Xây dựng các kịch bản kiểm thử chi tiết và lập kế hoạch kiểm thử tổng thể.
+* **Thực hiện kiểm thử:** Tiến hành các loại kiểm thử (chức năng, tích hợp, hồi quy) theo test case đã thiết kế.
+* **Báo cáo và quản lý lỗi:** Ghi lại lỗi chính xác, theo dõi tiến độ sửa lỗi của Dev và thực hiện kiểm tra lại.
+* **Đảm bảo chất lượng sản phẩm:** Đánh giá độ ổn định của hệ thống trước khi quyết định cho phép bàn giao (Deploy).
 
-### 8.3 Testing Types  
+### 8.2 Bug Life Cycle (Vòng đời của lỗi)
+
+Để quản lý lỗi hiệu quả và đảm bảo không có lỗi nào bị bỏ sót, dự án sẽ áp dụng vòng đời lỗi chuẩn như sau:
+
+| Trạng thái | Mô tả | Người thực hiện chính |
+| :--- | :--- | :--- |
+| **New** | Tester phát hiện lỗi và tạo báo cáo lỗi (Bug Report). | Tester |
+| **Open** | Lỗi đã được tạo, đang chờ Dev xem xét. | PM |
+| **Assigned** | Lỗi được chỉ định cho một Developer cụ thể để sửa. | Developer |
+| **Fixed** | Developer đã sửa xong lỗi ở môi trường Dev và chuyển trạng thái để chờ kiểm tra. | Developer |
+| **Retest** | Tester tiến hành kiểm tra lại trên môi trường Staging/Test xem lỗi đã thực sự được sửa chưa. | Tester |
+| **Closed** | Lỗi đã được sửa và không còn ảnh hưởng đến hệ thống, chính thức đóng lỗi. | Tester |
+
+
+
+### 8.3 Testing Types 
 (Liệt kê các loại test: Functional, Regression, Integration, v.v.)
 
-### 8.4 Bug Severity and Priority Definition  
-(Định nghĩa mức độ nghiêm trọng và độ ưu tiên.)
+### 8.4 Bug Severity and Priority Definition 
 
-#### Severity List  
-(Định nghĩa Critical, High, Medium, Low.)
+Việc phân loại mức độ nghiêm trọng và độ ưu tiên giúp nhóm tập trung nguồn lực vào những lỗi quan trọng nhất, đảm bảo tính ổn định của hệ thống.
 
-#### Priority List  
-(Định nghĩa P1, P2, P3...)
+* **Mức độ nghiêm trọng (Severity):** Tác động kỹ thuật của lỗi đến hệ thống.
+* **Độ ưu tiên (Priority):** Mức độ khẩn cấp cần sửa lỗi.
+
+#### Severity List
+
+| Mức độ | Tên | Định nghĩa và ví dụ |
+| :---: | :--- | :--- |
+| **1** | **Critical (Chí mạng)** | **Định nghĩa:** Lỗi làm hệ thống sập, không thể hoạt động được, gây mất dữ liệu nghiêm trọng. Không có phương án thay thế.<br>**Ví dụ:** Không thể đăng nhập vào hệ thống với tài khoản admin, trang chủ bị lỗi 500, không thể thực hiện giao dịch thanh toán. |
+| **2** | **High (Nghiêm trọng)** | **Định nghĩa:** Lỗi làm các chức năng chính không hoạt động nhưng không sập hệ thống. Có phương án thay thế nhưng phức tạp.<br>**Ví dụ:** Lỗi chức năng đăng ký khóa học mới, không thể xuất báo cáo tài chính hàng tháng, tính sai học phí. |
+| **3** | **Medium (Trung bình)** | **Định nghĩa:** Lỗi làm các chức năng nhỏ hoặc phụ hoạt động sai yêu cầu, không ảnh hưởng đến luồng chính.<br>**Ví dụ:** Hiển thị sai định dạng ngày tháng trong báo cáo, các trường nhập liệu không giới hạn ký tự. |
+| **4** | **Low (Thấp)** | **Định nghĩa:** Lỗi giao diện, lỗi chính tả, lỗi UX nhẹ, không ảnh hưởng đến chức năng kỹ thuật.<br>**Ví dụ:** Sai lỗi chính tả trên, giao diện bị lệch nhẹ trên trình duyệt cũ, màu sắc nút bấm không đúng thiết kế. |
+
+#### Priority List 
+
+| Mức độ | Tên | Định nghĩa và ví dụ |
+| :---: | :--- | :--- |
+| **P1** | **Urgent (Khẩn cấp)** | **Định nghĩa:** Cần sửa lỗi ngay lập tức để Tester có thể tiếp tục làm việc, hoặc lỗi ảnh hưởng đến tiến độ bàn giao sản phẩm.<br>**Ví dụ:** Lỗi Critical ở mục trên, lỗi khiến Tester không thể kiểm tra các chức năng khác. |
+| **P2** | **High (Sớm)** | **Định nghĩa:** Cần sửa lỗi trong thời gian sớm nhất, trước khi bàn giao phiên bản hiện tại.<br>**Ví dụ:** Lỗi High ở mục trên, lỗi gây khó chịu lớn cho người dùng. |
+| **P3** | **Medium (Trung bình)** | **Định nghĩa:** Có thể sửa lỗi sau khi các lỗi P1, P2 đã hoàn tất, không ảnh hưởng đến tiến độ bàn giao.<br>**Ví dụ:** Lỗi Medium ở mục trên, lỗi ít ảnh hưởng đến trải nghiệm người dùng. |
+| **P4** | **Low (Sau)** | **Định nghĩa:** Có thể sửa lỗi trong các phiên bản sau, hoặc khi có thời gian rảnh.<br>**Ví dụ:** Lỗi Low ở mục trên, các lỗi chính tả, giao diện nhỏ.
+
 
 ## 9. RESOURCE AND ENVIRONMENT NEEDS
 
