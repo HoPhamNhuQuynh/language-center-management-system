@@ -29,24 +29,24 @@ Quá trình kiểm thử là đảm bảo các chức năng của hệ thống h
 * Xem kết quả học tập
   
 3. Chức năng cho giáo viên:
-* Xem lịch dạy
-* Xem danh sách học viên
-* Điểm danh học viên
-* Nhập điểm và nhận xét đánh giá
+* Xem lịch dạy  
+* Xem danh sách học viên  
+* Điểm danh học viên  
+* Nhập điểm và nhận xét đánh giá  
 
 4. Chức năng cho Admin:
-* Quản lý khóa học
-* Quản lý tài khoản người dùng
-* Phân quyền người dùng
-* Cấu hình học phí
-* Xem báo cáo thống kê 
-* Xếp lịch học
-
+* Quản lý khóa học  
+* Quản lý tài khoản người dùng  
+* Phân quyền người dùng  
+* Cấu hình học phí  
+* Xem báo cáo thống kê   
+* Xếp lịch học  
+ 
 ### 2.2 Chức năng không kiểm thử 
-Kiểm thử hiệu năng hệ thống
-Kiểm thử bảo mật nâng cao
-Kiểm thử trên nhiều thiết bị hoặc nền tảng khác nhau
-Tích hợp với các hệ thống bên thứ ba ngoài phạm vi dự án.
+Kiểm thử hiệu năng hệ thống.  
+Kiểm thử bảo mật nâng cao.  
+Kiểm thử trên nhiều thiết bị hoặc nền tảng khác nhau.  
+Tích hợp với các hệ thống bên thứ ba ngoài phạm vi dự án.  
 
 
 ## 3. QUALITY OBJECTIVES  
@@ -129,15 +129,15 @@ Ngoài mục tiêu chính, kiểm thử cũng hướng đến các mục tiêu p
 ## 10. TEST SCHEDULE  
 | Giai đoạn  | Nội dung                                                    | Thời gian               |
 |-------------|-------------------------------------------------------------|-------------------------|
-| Chuẩn bị    | Chuẩn bị môi trường kiểm thử, thiết kế các test case       | 17-03-2026 - 23-03-2026 |
-| Thực hiện   | Kiểm thử các chức năng hệ thống                             | 24-03-2026 - 30-03-2026 |
-| Sửa lỗi     | Sửa các lỗi đã phát hiện và thực hiện kiểm thử lại          | 31-03-2026 - 06-04-2026 |
-| Báo cáo     | Tổng hợp kết quả kiểm thử và báo cáo                        | 07-04-2026 - 13-04-2026 |
+| Chuẩn bị    | Chuẩn bị môi trường kiểm thử, thiết kế các test case       | 17-03-2026 - 22-03-2026 |
+| Thực hiện   | Kiểm thử các chức năng hệ thống                             | 19-03-2026 - 29-03-2026 |
+| Sửa lỗi     | Sửa các lỗi đã phát hiện và thực hiện kiểm thử lại          | 25-03-2026 - 05-04-2026 |
+| Báo cáo     | Tổng hợp kết quả kiểm thử và báo cáo                        | 02-04-2026 - 12-04-2026 |
 
 ## 11. APPROVALS  
-Hồ Phạm Như Quỳnh
-Trần Mỹ Ân
-Hồ Phạm Ngọc Hân
+Hồ Phạm Như Quỳnh  
+Trần Mỹ Ân  
+Hồ Phạm Ngọc Hân  
 
 ## 12. TERMS / ACRONYMS  
 (Giải thích các thuật ngữ viết tắt sử dụng trong tài liệu.)
