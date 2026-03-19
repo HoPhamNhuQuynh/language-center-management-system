@@ -20,6 +20,7 @@ Liệt kê các thực thể chính trong hệ thống.
 
 ### 2.2 ER Diagram  
 Chèn hình ERD và ghi chú ngắn giải thích tổng quan quan hệ giữa các thực thể.
+![erd-diagram](screenshots/erd.png)
 
 ---
 

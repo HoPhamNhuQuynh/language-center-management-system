@@ -605,8 +605,6 @@ BR-30: Hệ thống cung cấp báo cáo thống kê quý, năm theo:
 | Alternative Flow | 2a. Nếu hệ thống không lấy được dữ liệu hóa đơn, hệ thống hiển thị thông báo: "Không thể tải thông tin thanh toán lúc này, vui lòng thử lại sau". Hệ thống giữ nguyên ở trang hiện tại hoặc quay về trang đăng ký. <br><br>5a. Nếu học viên không thanh toán mà bấm nút "Hủy" hoặc "Quay lại" trên cổng thanh toán. Cổng thanh toán trả kết quả "Đã hủy" về hệ thống. Hệ thống hiển thị thông báo: "Giao dịch đã bị hủy", sau đó quay lại màn hình chọn phương thức thanh toán.<br><br> 6a. Nếu số dư không đủ hoặc thẻ bị lỗi, cổng thanh toán trả về kết quả thất bại. Hệ thống hiển thị thông báo: "Thanh toán thất bại. Vui lòng kiểm tra lại số dư hoặc thử phương thức thanh toán khác". Hệ thống quay lại màn hình chọn phương thức thanh toán. |
 | Exception Flow | 6b. Trong quá trình chờ đợi kết quả, nếu xảy ra sự cố mạng, cổng thanh toán không phản hồi hoặc hết thời gian giao dịch mà chưa xác nhận được trạng thái thanh toán. Hệ thống hiển thị thông báo lỗi: "Giao dịch quá thời gian xử lý hoặc mất kết nối. Vui lòng kiểm tra lại lịch sử giao dịch trước khi thực hiện lại". Hệ thống quay về màn hình chọn chức năng thanh toán.                                                                                                                                                                                                                                                                                                                                                                          |
 
-## 8.3. ERD Diagram
-![erd-diagram](screenshots/erd.png)
 ---
 
 # 9. Wireframes UI
@@ -621,7 +619,19 @@ BR-30: Hệ thống cung cấp báo cáo thống kê quý, năm theo:
 ![UI-dang-ky-khoa-hoc](screenshots/dang-ky-khoa-hoc-1.png)
 ![UI-dang-ky-khoa-hoc](screenshots/dang-ky-khoa-hoc-2.png)
 ![UI-dang-ky-khoa-hoc](screenshots/dang-ky-khoa-hoc-3.png)
+![UI-dang-ky-khoa-hoc](screenshots/dang-ky-khoa-hoc-4.png)
 
 ## 9.3 UI Xem Lịch Học - Thời Khóa Biểu
 ![UI-xem-lich-hoc-thoi-khoa-bieu](screenshots/xem-khoa-hoc-va-thoi-khoa-bieu.png)
+
+## 9.4 UI Báo Cáo
+![UI-bao-cao](screenshots/bao-cao.png)
+
+## 9.5 UI Xem Lịch Dạy
+![UI-xem-lich-day](screenshots/xem-lich-day.png)
+
+## 9.6 UI Quản Lý Cấu Hình
+![UI-quan-ly-cau-hinh](screenshots/cau-hinh.png)
+
+
 
