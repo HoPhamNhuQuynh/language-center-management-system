@@ -461,9 +461,9 @@ BR-03:
 | Usecase ID | UC-05 |
 | Usecase Name | Cấu hình học phí và chính sách |
 | Actor | Admin |
-| Description | Admin thiết lập mức học phí cho các khóa học và cấu hình các chính sách liên quan như phương thức thanh toán, quy định thanh toán chi tiết cho các khóa học. |
+| Description | Admin thiết lập mức học phí cho các khóa học. |
 | Pre-Condition(s) | Admin đã đăng nhập hệ thống<br>Hệ thống đã tồn tại các khóa học cần được cấu hình học phí và chính sách. |
-| Post-Condition(s) | Thông tin học phí của khóa học được cập nhật thành công trong hệ thống.<br>Chính sách thanh toán được lưu vào hệ thống.<br>Cấu hình này sẽ được áp dụng khi sinh viên đăng ký khóa học. |
+| Post-Condition(s) | Thông tin học phí của khóa học được cập nhật thành công trong hệ thống.<br>Cấu hình này sẽ được áp dụng khi sinh viên đăng ký khóa học. |
 | Main Flow | <ol> <li>Admin truy cập chức năng Cấu hình học phí.</li> <li>Hệ thống hiển thị danh sách các khóa học.</li> <li>Admin chọn khóa học cần thiết lập học phí.</li> <li>Hệ thống hiển thị thông tin: mã khóa học, tên khóa học, học phí, phương thức thanh toán.</li> <li>Admin chọn nút “Thiết lập”.</li> <li>Admin nhập mức học phí.</li> <li>Admin nhấn “Lưu”.</li> <li>Hệ thống kiểm tra dữ liệu hợp lệ.</li> <li>Hệ thống lưu học phí vào hệ thống.</li> </ol>
 | Alternative Flow | 7a. Admin nhấn “Hủy”.<br>-Hệ thống hiển thị "Xác nhận hủy?" <br>-Admin nhấn "Có".<br>-Hệ thống quay lại màn hình khóa học.<br>9a. Admin chọn khóa học đã có học phí, nhấn "Chỉnh sửa".<br>Use case tiếp tục từ bước 4 tới bước 9.|
 | Exception Flow | 8a. Hệ thống phát hiện học phí sai định dạng (Admin nhập chữ, hoặc số âm) và hiển thị thông báo "Vui lòng nhập học phí hợp lệ!", quay lại bước 6 usecase. |
