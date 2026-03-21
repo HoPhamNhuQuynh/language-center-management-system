@@ -634,3 +634,14 @@ Chi tiết thiết kế cơ sở dữ liệu của hệ thống được mô t�
 
 ## 8.3. ERD Diagram
 ![erd-diagram](screenshots/erd.png)
+
+# 9. Wireframes UI
+
+## 9.9. UI Đăng ký tài khoản 
+![UI-dang-ky-tai-khoan](screenshots/Dang-ky-tai-khoan.png)
+## 9.10. UI Đăng nhập
+![UI-dang-nhap](screenshots/Dang-nhap.png)
+## 9.11. UI Điểm danh
+![UI-diem-danh](screenshots/Diem-danh.png)
+## 9.12. UI Nhập điểm
+![UI-nhap-diem](screenshots/Nhap-diem.png)
