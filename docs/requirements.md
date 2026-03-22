@@ -32,9 +32,9 @@ Hệ thống sử dụng hệ quản trị cơ sở dữ liệu MySQL để lưu
 
 Ứng dụng có tích hợp với các dịch vụ bên thứ ba nhằm mở rộng chức năng và đảm bảo tính bảo mật, bao gồm:
 
-* Dịch vụ xác thực của Google để hỗ trợ đăng nhập bằng tài khoản Google.
+* Dịch vụ xác thực của Google, Facebook để hỗ trợ đăng nhập tài khoản.
 
-* Cổng thanh toán Stripe để xử lý giao dịch thanh toán khóa học.
+* Cổng thanh toán MoMo, VNPay để xử lý giao dịch thanh toán khóa học.
 
 Các dịch vụ này được sử dụng thông qua API chính thức do nhà cung cấp phát hành.
 
@@ -77,8 +77,7 @@ Hệ thống sử dụng cơ chế xác thực và phân quyền người dùng 
 - Hệ thống phải được phát triển bằng ngôn ngữ Python và framework Django theo định hướng công nghệ của dự án.
 - Hệ thống bắt buộc sử dụng hệ quản trị cơ sở dữ liệu MySQL để đảm bảo tính nhất quán trong triển khai và kiểm thử.
 - Phạm vi dự án chỉ bao gồm ứng dụng web, không phát triển phiên bản mobile hoặc desktop.
-- Thời gian phát triển tối đa 8 tuần.
-- Hệ thống hiện chưa tích hợp chức năng thanh toán trực tuyến thông qua các cổng thanh toán bên thứ ba.
+- Thời gian phát triển tối đa 10 tuần.
 
 ---
 
@@ -142,8 +141,8 @@ Hệ thống sử dụng cơ chế xác thực và phân quyền người dùng 
 - Hệ quản trị cơ sở dữ liệu: MySQL
 - Trình duyệt hỗ trợ: Google Chrome, Microsoft Edge,...
 - Dịch vụ tích hợp: 
-  + Dịch vụ xác thực đăng nhập (Google OAuth 2.0)
-  + Dịch vụ xử lý thanh toán trực tuyến (Stripe API)
+  + Dịch vụ xác thực đăng nhập (OAuth 2.0)
+  + Dịch vụ xử lý thanh toán trực tuyến (MoMo, VNPay)
 
 ---
 
@@ -580,7 +579,7 @@ Chi tiết thiết kế cơ sở dữ liệu của hệ thống được mô t�
 - Ràng buộc Enum:
   + Tất cả các trường kiểu enum chỉ được nhận các giá trị đã được định nghĩa sẵn:
     + Bảng Enrollment: trường enrollment_status (Chờ, Đang học, Dừng học)
-    + Bảng Payment: trường payment_status (Chờ, Thành công, Thất bại), trường payment_method (Stripe, Banking)
+    + Bảng Payment: trường payment_status (Chờ, Thành công, Thất bại), trường payment_method (MoMo, VNPay)
     + Bảng Attendance: trường attendance_status (Vắng, Trễ, Có mặt)
     + Bảng User: trường auth_provider (Facebook, Google)
 ---
@@ -601,8 +600,8 @@ Chi tiết thiết kế cơ sở dữ liệu của hệ thống được mô t�
 | Pre-Condition(s) |- Học viên đã đăng nhập thành công<br>- Hệ thống hoạt động bình thường<br>- Khóa học/lớp học còn tồn tại |
 | Post-Condition(s) | - Hệ thống ghi danh học viên đã đăng ký khóa học thành công<br>- Giảm số lượng suất học còn trống<br>- Gửi thông báo về email người dùng |
 | Main Flow | <ol><li>Học viên yêu cầu xem danh sách khóa học.</li><li>Hệ thống hiển thị danh sách khóa học đang mở.</li><li>Học viên chọn một khóa học cụ thể để xem chi tiết.</li><li>Hệ thống hiển thị thông tin chi tiết: mô tả, học phí, tổng số buổi học, danh sách lớp học khả dụng.</li><li>Học viên thực hiện chọn lớp học, điền thông tin.</li><li>Học viên nhấn “Đăng ký”.</li><li>Hệ thống kiểm tra thông tin đăng ký hợp lệ.</li><li>Hệ thống tạo bản ghi đăng ký với trạng thái “đang xử lý” và thực hiện giữ chỗ tạm thời trong 30 phút.</li><li>Hệ thống yêu cầu học viên thực hiện thanh toán học phí.</li><li>Học viên chọn phương thức thanh toán “Thanh toán toàn bộ” dựa trên mức học phí.</li><li>Học viên chọn cổng thanh toán và nhấn “Thanh toán ngay”.</li><li>Hệ thống chuyển hướng đến cổng thanh toán với số tiền học phí.</li><li>Học viên thực hiện thanh toán trực tuyến.</li><li>Cổng thanh toán trả về kết quả thành công cho hệ thống.</li><li>Hệ thống xử lý dữ liệu: <ul><li>15.1. Cập nhật trạng thái đăng ký “Thành công”</li><li>15.2. Tạo bản ghi trạng thái thanh toán: “Thành công”</li></ul></li><li>Hệ thống thông báo thành công ra màn hình</li><li>Hệ thống gửi mail thông báo về học viên.</li></ol> |
-| Alternative Flow | 10a. Học viên chọn phương thức thanh toán “Thanh toán một phần” dựa trên mức học phí. <br> *Usecase tiếp tục từ bước 10 đến 13.* <br> 15a. Hệ thống xử lý dữ liệu: <ul><li>15.1. Cập nhật trạng thái đăng ký “Thành công - một phần” và thực hiện giữ chỗ đến trước ngày khai giảng 3 ngày.</li><li>15.2. Tạo bản ghi trạng thái thanh toán “Thành công”.</li></ul>*Usecase tiếp tục bước 16.* <br> 9a. Học viên chọn “Hủy đăng ký”, hệ thống hỏi xác nhận hủy. <ul><li>9a.1. Học viên chọn xác nhận xóa, hệ thống cập nhật trạng thái bản ghi đăng ký thành “Đã hủy” và hiển thị thông báo “Đã hủy đăng ký khóa học”, *usecase kết thúc*.</li><li>9a.2. Học viên chọn từ chối hủy đăng ký, *quay lại bước 9*.</li></ul> |
-| Exception Flow | 7a. Hệ thống kiểm tra thông tin sĩ số lớp đã đầy và hiển thị thông báo “Lớp đã đủ số lượng đăng ký”, *quay lại bước 5 usecase*. <br> 7b. Hệ thống kiểm tra thông tin học viên bị trùng lịch học và hiển thị thông báo “Trùng lịch học với lớp X”, *quay lại bước 5 usecase*. <br> 7c. Hệ thống kiểm tra học viên đã ghi danh trong danh sách lớp và hiển thị thông báo “Bạn đã đăng ký lớp này”, *quay lại bước 5 usecase*. <br> 8a. và 15a.1. Hệ thống kiểm tra quá hạn giữ chỗ, tự động chuyển trạng thái bản ghi đăng ký thành “Hết hạn”, *usecase kết thúc*. <br> 14a. Cổng thanh toán trả về kết quả thanh toán thất bại, ghi nhận bản ghi thanh toán với trạng thái “Thất bại”, hiển thị thông báo “Thanh toán thất bại”, *usecase quay lại bước 11*. |
+| Alternative Flow | 10a. Học viên chọn phương thức thanh toán “Thanh toán một phần” dựa trên mức học phí. <br> *Usecase tiếp tục từ bước 10 đến 13.* <br> 15a. Hệ thống xử lý dữ liệu: <ul><li>15.1. Cập nhật trạng thái đăng ký “Thành công - một phần” và thực hiện giữ chỗ đến trước ngày khai giảng 3 ngày.</li><li>15.2. Tạo bản ghi trạng thái thanh toán “Thành công”.</li></ul>*Usecase tiếp tục bước 16.* <br> 9a. Học viên chọn “Hủy đăng ký”, hệ thống hỏi xác nhận hủy. <ul><li>9a.1. Học viên chọn xác nhận xóa, hệ thống xóa bản ghi đăng ký và hiển thị thông báo “Đã hủy đăng ký khóa học”, *usecase kết thúc*.</li><li>9a.2. Học viên chọn từ chối hủy đăng ký, *quay lại bước 9*.</li></ul> |
+| Exception Flow | 7a. Hệ thống kiểm tra thông tin sĩ số lớp đã đầy và hiển thị thông báo “Lớp đã đủ số lượng đăng ký”, *quay lại bước 5 usecase*. <br> 7b. Hệ thống kiểm tra thông tin học viên bị trùng lịch học và hiển thị thông báo “Trùng lịch học với lớp X”, *quay lại bước 5 usecase*. <br> 7c. Hệ thống kiểm tra học viên đã ghi danh trong danh sách lớp và hiển thị thông báo “Bạn đã đăng ký lớp này”, *quay lại bước 5 usecase*. <br> 8a. và 15a.1. Hệ thống kiểm tra quá hạn giữ chỗ, tự động xóa bản ghi đăng ký và hiển thị thông báo "Thời gian giữ chỗ đã hết. Vui lòng thực hiện đăng ký mới", *usecase kết thúc*. <br> 14a. Cổng thanh toán trả về kết quả thanh toán thất bại, ghi nhận bản ghi thanh toán với trạng thái “Thất bại”, hiển thị thông báo “Thanh toán thất bại”, *usecase quay lại bước 11*. |
 
 ### 8.2.2. Thanh toán học phí trực tuyến (Online tuition payment)
 

@@ -1,6 +1,6 @@
 # TÀI LIỆU THIẾT KẾ CƠ SỞ DỮ LIỆU (DATABASE DESIGN)
 **Dự án:** Hệ thống quản lý trung tâm ngoại ngữ (Language Center) <br>
-**Phiên bản:** 1.0
+**Phiên bản:** 1.1
 
 ---
 
@@ -324,7 +324,7 @@ Dưới đây là chi tiết cấu trúc vật lý của các bảng trong cơ s
 | id             | INT            |  PK  |                                               |           | Mã bản ghi thanh toán                       |
 | enrollment_id  | INT            |  FK  |                                               |           | Khóa ngoại tham chiếu tới bảng `enrollment` |
 | amount         | DECIMAL(10, 2) |      |                                               | NOTNULL   | Số tiền thanh toán                          |
-| payment_method | ENUM           |      | BANKING                                       |           | Phương thức thanh toán                      |
+| payment_method | ENUM           |      | VNPay                                         |           | Phương thức thanh toán                      |
 | payment_status | ENUM           |      | PENDING                                       |           | Trạng thái thanh toán                       |
 | transaction_id | VARCHAR(255)   |      |                                               | UNIQUE    | Mã giao dịch từ cổng thanh toán             |
 | paid_at        | DATETIME       |      |                                               |           | Thời gian thanh toán thành công             |
@@ -434,20 +434,21 @@ Dưới đây là chi tiết cấu trúc vật lý của các bảng trong cơ s
 
 * **Ràng buộc Enum (Enumerated Values)**   
 
-  | Bảng       | Trường            | Ràng buộc                                    |
-  |:-----------|:------------------|:---------------------------------------------|
-  | user       | auth_provider     | LOCAL, GOOGLE, FACEBOOK                      |
-  | enrollment | enrollment_status | SUCCESS, PENDING_PAYMENT, EXPIRED, CANCELLED |
-  | payment    | payment_method    | MoMo, Banking, Stripe                        |
-  | payment    | payment_status    | SUCCESS, FAILED, PENDING, CANCELLED          |
-  | attendance | attendance_status | ABSENT, LATE, PRESENT                        |
-  | class      | grade_status      | DRAFT, SUBMITTED, REOPENED                   |
+  | Bảng       | Trường            | Ràng buộc                                  |
+  |:-----------|:------------------|:-------------------------------------------|
+  | user       | auth_provider     | LOCAL, GOOGLE, FACEBOOK                    |
+  | enrollment | enrollment_status | SUCCESS, PENDING_PAYMENT, PARTICAL_PAYMENT |
+  | payment    | payment_method    | MoMo, VNPay                                |
+  | payment    | payment_status    | SUCCESS, FAILED, PENDING                   |
+  | attendance | attendance_status | ABSENT, LATE, PRESENT                      |
+  | class      | grade_status      | DRAFT, SUBMITTED, REOPENED                 |
 
 * **Ràng buộc logic nghiệp vụ** 
-  - Một học viên chỉ được đăng ký một lần cho mỗi lớp.
+  - Một học viên chỉ được đăng ký một lần cho mỗi lớp.d
   - Một học viên chỉ có một bản ghi điểm danh cho mỗi buổi học.
   - Một khóa học không thể có tag trùng lập.
   - Một giáo viên không thể được gán trùng cho cùng 1 lớp.
+  - Khi một người dùng được tạo ra mặc định là học viên của hệ thống.
 
 ---
 
