@@ -580,7 +580,7 @@ BR-30: Hệ thống cung cấp báo cáo thống kê quý, năm theo:
 - Ràng buộc Enum:
   + Tất cả các trường kiểu enum chỉ được nhận các giá trị đã được định nghĩa sẵn:
     + Bảng Enrollment: trường enrollment_status (Chờ, Đang học, Dừng học)
-    + Bảng Payment: trường payment_status (Chờ, Thành công, Thất bại), trường payment_method (Stripe, Banking)
+    + Bảng Payment: trường payment_status (Thành công, chờ thanh toán, thanh toán 1 phần), trường payment_method (Stripe, Banking)
     + Bảng Attendance: trường attendance_status (Vắng, Trễ, Có mặt)
     + Bảng User: trường auth_provider (Facebook, Google)
 ---
@@ -620,18 +620,30 @@ BR-30: Hệ thống cung cấp báo cáo thống kê quý, năm theo:
 ![UI-dang-ky-khoa-hoc](screenshots/dang-ky-khoa-hoc-2.png)
 ![UI-dang-ky-khoa-hoc](screenshots/dang-ky-khoa-hoc-3.png)
 ![UI-dang-ky-khoa-hoc](screenshots/dang-ky-khoa-hoc-4.png)
+![UI-dang-ky-khoa-hoc](screenshots/dang-ky-khoa-hoc-5.png)
 
 ## 9.3 UI Xem Lịch Học - Thời Khóa Biểu
 ![UI-xem-lich-hoc-thoi-khoa-bieu](screenshots/xem-khoa-hoc-va-thoi-khoa-bieu.png)
 
 ## 9.4 UI Báo Cáo
-![UI-bao-cao](screenshots/bao-cao.png)
+![UI-bao-cao-thong-ke](screenshots/bao-cao-thong-ke.png)
 
 ## 9.5 UI Xem Lịch Dạy
 ![UI-xem-lich-day](screenshots/xem-lich-day.png)
 
 ## 9.6 UI Quản Lý Cấu Hình
-![UI-quan-ly-cau-hinh](screenshots/cau-hinh.png)
+![UI-quan-ly-cau-hinh](screenshots/quan-ly-cau-hinh.png)
+
+## 9.7 UI Biên Lai
+![UI-bien-lai](screenshots/bien-lai.png)
+
+## 9.6 UI Điều Hướng
+### Admin
+![UI-dieu-huong-admin](screenshots/dieu-huong-admin.png)
+### Teacher
+![UI-dieu-huong-teacher](screenshots/dieu-huong-teacher.png)
+
+
 
 
 
