@@ -28,6 +28,7 @@
 | Docker             | Chưa bắt đầu  | 0%   |
 | Testing            | Chưa bắt đầu  | 0%   |
 | Báo cáo            | Chưa bắt đầu  | 0%   |
+
 **Tổng tiến độ: 27.14%**
 ---
 ## 3. Kế hoạch tuần tới
