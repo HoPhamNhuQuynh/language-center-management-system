@@ -32,9 +32,9 @@ Hệ thống sử dụng hệ quản trị cơ sở dữ liệu MySQL để lưu
 
 Ứng dụng có tích hợp với các dịch vụ bên thứ ba nhằm mở rộng chức năng và đảm bảo tính bảo mật, bao gồm:
 
-* Dịch vụ xác thực của Google để hỗ trợ đăng nhập bằng tài khoản Google.
+* Dịch vụ xác thực của Google, Facebook để hỗ trợ đăng nhập tài khoản.
 
-* Cổng thanh toán Stripe để xử lý giao dịch thanh toán khóa học.
+* Cổng thanh toán MoMo, VNPay để xử lý giao dịch thanh toán khóa học.
 
 Các dịch vụ này được sử dụng thông qua API chính thức do nhà cung cấp phát hành.
 
@@ -77,8 +77,7 @@ Hệ thống sử dụng cơ chế xác thực và phân quyền người dùng 
 - Hệ thống phải được phát triển bằng ngôn ngữ Python và framework Django theo định hướng công nghệ của dự án.
 - Hệ thống bắt buộc sử dụng hệ quản trị cơ sở dữ liệu MySQL để đảm bảo tính nhất quán trong triển khai và kiểm thử.
 - Phạm vi dự án chỉ bao gồm ứng dụng web, không phát triển phiên bản mobile hoặc desktop.
-- Thời gian phát triển tối đa 8 tuần.
-- Hệ thống hiện chưa tích hợp chức năng thanh toán trực tuyến thông qua các cổng thanh toán bên thứ ba.
+- Thời gian phát triển tối đa 10 tuần.
 
 ---
 
@@ -142,8 +141,8 @@ Hệ thống sử dụng cơ chế xác thực và phân quyền người dùng 
 - Hệ quản trị cơ sở dữ liệu: MySQL
 - Trình duyệt hỗ trợ: Google Chrome, Microsoft Edge,...
 - Dịch vụ tích hợp: 
-  + Dịch vụ xác thực đăng nhập (Google OAuth 2.0)
-  + Dịch vụ xử lý thanh toán trực tuyến (Stripe API)
+  + Dịch vụ xác thực đăng nhập (OAuth 2.0)
+  + Dịch vụ xử lý thanh toán trực tuyến (MoMo, VNPay)
 
 ---
 
@@ -172,7 +171,7 @@ NFR-04: Độ tin cậy & khả năng bảo trì
 # 6. Business Rules
 Business Rules mô tả các quy tắc nghiệp vụ mà hệ thống phải tuân thủ trong quá trình vận hành.  
 
-## 6.1. Phân quyền truy cập (Access Control)  
+## 6.1. Access Control  
 BR-01: Chỉ Admin được phép tạo khóa học.  
 BR-02: Chỉ Admin được phép tạo lớp học.  
 BR-03: Giảng viên chỉ được phép xem danh sách học viên lớp đang phụ trách hiện tại.  
@@ -180,35 +179,35 @@ BR-04: Học viên chỉ được phép xem điểm của bản thân.
 BR-05: Admin có toàn quyền quản trị hệ thống nhưng không được phép truy cập mật khẩu gốc của người dùng.    
 BR-06: Giáo viên chỉ được phép nhập điểm của lớp đang phụ trách.  
 
-## 6.2. Quản lý tài khoản người dùng (User Account Management)  
+## 6.2. User Account Management  
 BR-07: Học viên được phép tự tạo tài khoản.  
 BR-08: Học viên được phép chỉnh sửa thông tin cá nhân của mình.  
 BR-09: Người dùng được phép xuất dữ liệu mà họ có quyền truy cập ra file (CSV/PDF).    
 BR-10: Người dùng có quyền đổi mật khẩu của mình. Admin có quyền hỗ trợ khi người dùng gặp rắc rối.  
 
-## 6.3. Quản lý lớp học (Class Management)  
+## 6.3. Class Management  
 BR-11: Chỉ Admin được quyền chỉnh sửa thông tin lớp học.  
 BR-12: Không cho phép xóa lớp khi đã có học viên đăng ký.  
-BR-13: Một lớp tối đa 30 học viên.  
-BR-14: Một giáo viên được phép dạy tối đa 5 lớp học.    
+BR-13: Một lớp tối thiểu 10 học viên, tối đa 30 học viên.  
+BR-14: Một giáo viên được phép dạy nhiều lớp nhưng không được trùng lịch.    
 BR-15: Học viên chỉ được xem các lớp học còn chỗ trống để đăng ký.    
 BR-16: Không cho phép sắp xếp lịch học của các lớp trùng thời gian.  
 
-## 6.4. Đăng ký khóa học/lớp học (Course/Class Registration)  
+## 6.4. Course/Class Registration  
 BR-17: Một học viên được quyền đăng ký nhiều lớp học nhưng không được trùng lịch học.  
-BR-18: Việc đăng ký lớp học của học viên được xác nhận tự động sau khi thanh toán thành công.    
+BR-18: Việc đăng ký lớp học của học viên được xác nhận tự động sau khi thanh toán thành công.   
 BR-19: Học viên chỉ được phép hủy đăng ký khóa học khi chưa thanh toán.  
 BR-20: Trạng thái đăng ký bao gồm:  
- * Đăng ký thành công.  
- * Chờ thanh toán.  
- * Hết hạn.   
- * Đã hủy.
+* Đăng ký thành công.  
+* Thanh toán một phần.  
+* Chờ thanh toán.  
+* Hết hạn.
 
-## 6.5. Thanh Toán (Payment)  
+## 6.5. Payment  
 BR-21: Sau khi đăng ký khóa học, học viên thanh toán học phí trong 30 phút.  
 BR-22: Quy định thanh toán học phí:  
  * Dưới 5 triệu VNĐ, học viên bắt buộc thanh toán toàn bộ học phí.  
- * Trên 5 triệu VNĐ, học viên được phép thanh toán một phần và thanh toán phần còn lại trong thời gian quy định.
+ * Trên 5 triệu VNĐ, học viên được phép thanh toán 50% và thanh toán phần còn lại trước khi khai giảng 3 ngày.
 
 BR-23: Trạng thái thanh toán gồm:   
  * Thanh toán thành công.  
@@ -216,7 +215,7 @@ BR-23: Trạng thái thanh toán gồm:
  * Chờ xử lý.  
  * Hủy thanh toán.  
  
-## 6.6. Quản lý điểm (Grading)  
+## 6.6. Grading  
 BR-24: Điểm của học viên phải nằm trong khoảng từ 0 điểm đến 10 điểm.  
 BR-25: Chỉnh sửa điểm chỉ được phép khi:   
  * Chưa hết hạn nhập điểm.  
@@ -227,10 +226,10 @@ BR-26: Sau khi giáo viên submit bảng điểm, việc chỉnh sửa chỉ đ�
 BR-27: Có quy định thời hạn nhập điểm cho giáo viên.  
 BR-28: Admin được phép hỗ trợ mở lại quyền nhập điểm nếu có lý do hợp lý.  
 
-## 6.7. Quy định hệ thống (System & Policy Management)    
+## 6.7. System & Policy Management    
 BR-29: Admin được phép thay đổi chính sách học phí.  
 
-## 6.8. Báo cáo (Reporting)  
+## 6.8. Reporting  
 BR-30: Hệ thống cung cấp báo cáo thống kê quý, năm theo:   
  * Tổng doanh thu.  
  * Tổng số lớp học.   
@@ -243,46 +242,49 @@ BR-30: Hệ thống cung cấp báo cáo thống kê quý, năm theo:
 # 7. Data Requirements
 
 ## 7.1 Data Entities
+Các thực thể dưới đây đại diện cho các đối tượng dữ liệu chính của hệ thống.
+Chi tiết thiết kế cơ sở dữ liệu của hệ thống được mô tả trong tài liệu riêng: [Database Design Document](./database-design.md)
+
+### Quản lý người dùng và phân quyền (User & Access Management) 
+| Entity Name | Description                                     |
+|-------------|-------------------------------------------------|
+| `User`      | Đại diện cho người dùng sử dụng hệ thống.       |
+| `Profile`   | Đại diện cho thông tin người sử dụng hệ thống.  |
+| `Role`      | Đại diện cho vai trò người dùng trong hệ thống. |
 
 
-### 👤 Quản lý người dùng và phân quyền (User & Access Management) 
-| Entity Name | Description |
-|---|---|
-| `User` | Đại diện cho người dùng sử dụng hệ thống. |
-| `Profile` | Đại diện cho thông tin người sử dụng hệ thống. |
-| `Role` | Đại diện cho vai trò người dùng trong hệ thống. |
-
-### 📚 Quản lý khóa học (Course Management)
-| Entity Name | Description |
-|---|---|
-| `Course` | Đại diện cho khóa học. |
-| `Tag` | Đại diện cho các thẻ của khóa học. |
-| `CourseTag` | Đại diện mối quan hệ giữa các thẻ và các khóa học. |
-| `Level` | Đại diện cho mức độ của khóa học. |
+### Quản lý khóa học (Course Management)
+| Entity Name | Description                                        |
+|-------------|----------------------------------------------------|
+| `Course`    | Đại diện cho khóa học.                             |
+| `Tag`       | Đại diện cho các thẻ của khóa học.                 |
+| `Level`     | Đại diện cho mức độ của khóa học.                  |
 
 
-### 🏫 Quản lý lớp học và lịch học (Class & Scheduling Management)
-| Entity Name | Description |
-|---|---|
-| `Class` | Đại diện cho lớp học cụ thể của khóa học. |
-| `Room` | Đại diện cho phòng học. |
-| `Schedule` | Đại diện lịch học của lớp. |
-| `Session` | Đại diện buổi học cụ thể của lớp. |
+### Quản lý lớp học và lịch học (Class & Scheduling Management)
+| Entity Name          | Description                                           |
+|----------------------|-------------------------------------------------------|
+| `Class`              | Đại diện cho lớp học cụ thể của khóa học.             |
+| `Room`               | Đại diện cho phòng học.                               |
+| `Schedule`           | Đại diện lịch học của lớp.                            |
+| `Session`            | Đại diện buổi học cụ thể của lớp.                     |
 | `TeachingAssignment` | Thể hiện thông tin phân công giảng dạy cho giáo viên. |
 
-### 💳 Đăng ký và thanh toán (Enrollment & Payment Management)
-| Entity Name | Description |
-|---|---|
-| `Enrollment` | Thể hiện cho đăng ký khóa học. |
-| `Payment` | Đại diện cho giao dịch thanh toán khóa học. |
 
-### 🎓 Quản lý kết quả học tập (Academic Result Management)
-| Entity Name | Description |
-|---|---|
-| `Attendance` | Đại diện cho sự điểm danh của học viên trong các buổi học. |
-| `AcademicResult` | Đại diện kết quả học tập toàn khóa học của học viên. |
-| `Score` | Đại diện thông tin điểm chi tiết. |
-| `ScoreType` | Đại diện cho cột điểm số. |
+### Đăng ký và thanh toán (Enrollment & Payment Management)
+| Entity Name  | Description                                 |
+|--------------|---------------------------------------------|
+| `Enrollment` | Thể hiện cho đăng ký khóa học.              |
+| `Payment`    | Đại diện cho giao dịch thanh toán khóa học. |
+
+
+### Quản lý kết quả học tập (Academic Result Management)
+| Entity Name      | Description                                                   |
+|------------------|---------------------------------------------------------------|
+| `Attendance`     | Thể hiện thông tin điểm danh của học viên trong từng buổi học |
+| `AcademicResult` | Đại diện kết quả học tập toàn khóa học của học viên.          |
+| `Score`          | Đại diện thông tin điểm chi tiết.                             |
+| `ScoreType`      | Đại diện cho cột điểm số.                                     |
 
 ---
 
@@ -290,232 +292,229 @@ BR-30: Hệ thống cung cấp báo cáo thống kê quý, năm theo:
 
 ### 7.2.1. User
 
-| Attribute | Data Type | Description |
-|---|---|---|
-| id | int | Định danh duy nhất của thực thể |
-| email | string | Địa chỉ email của người dùng |
-| username | string | Tên đăng nhập của người dùng |
-| password | string | Mật khẩu xác thực của người dùng |
-| auth_provider | enum | Kiểu login của tài khoản |
-| provider_id | string | Định danh xác thực từ Google |
-| role_id | int | Vai trò người dùng |
-| active | boolean | Trạng thái hoạt động của người dùng |
-| created_at | datetime | Thời gian tạo tài khoản người dùng |
-| updated_at | datetime | Thời gian cập nhật tài khoản người dùng gần nhất |
+| Attribute     | Data Type | Description                                      |
+|---------------|-----------|--------------------------------------------------|
+| id            | int       | Định danh duy nhất của thực thể                  |
+| email         | string    | Địa chỉ email của người dùng                     |
+| username      | string    | Tên đăng nhập của người dùng                     |
+| password      | string    | Mật khẩu xác thực của người dùng                 |
+| auth_provider | enum      | Kiểu login của tài khoản                         |
+| provider_id   | string    | Định danh xác thực từ Google                     |
+| role_id       | int       | Vai trò người dùng                               |
+| active        | boolean   | Trạng thái hoạt động của người dùng              |
+| created_at    | datetime  | Thời gian tạo tài khoản người dùng               |
+| updated_at    | datetime  | Thời gian cập nhật tài khoản người dùng gần nhất |
 
 
 ### 7.2.2. Profile
 
-| Attribute | Data Type | Description |
-|---|---|---|
-| user_id | int | Định danh người dùng, đồng thời là khóa chính của hồ sơ |
-| first_name | string | Tên người dùng |
-| last_name | string | Họ người dùng |
-| avatar | string | Ảnh đại diện của người dùng |
-| phone_num | string | Số điện thoại người dùng |
+| Attribute  | Data Type | Description                                             |
+|------------|-----------|---------------------------------------------------------|
+| user_id    | int       | Định danh người dùng, đồng thời là khóa chính của hồ sơ |
+| first_name | string    | Tên người dùng                                          |
+| last_name  | string    | Họ người dùng                                           |
+| avatar     | string    | Ảnh đại diện của người dùng                             |
+| phone_num  | string    | Số điện thoại người dùng                                |
 
 
 ### 7.2.3. Role
 
-| Attribute | Data Type | Description |
-|---|---|---|
-| id | int | Định danh duy nhất của thực thể |
-| name | string | Vai trò của người dùng |
-| active | boolean | Trạng thái hoạt động của thực thể |
-| created_at | datetime | Ngày tạo của thực thể |
-| updated_at | datetime | Ngày cập nhật thông tin thực thể |
+| Attribute  | Data Type | Description                       |
+|------------|-----------|-----------------------------------|
+| id         | int       | Định danh duy nhất của thực thể   |
+| name       | string    | Vai trò của người dùng            |
+| active     | boolean   | Trạng thái hoạt động của thực thể |
+| created_at | datetime  | Ngày tạo của thực thể             |
+| updated_at | datetime  | Ngày cập nhật thông tin thực thể  |
 
 
 ### 7.2.4. Course
 
-| Attribute | Data Type | Description |
-|---|---|---|
-| id | int | Định danh duy nhất của khóa học |
-| name | string | Tên khóa học |
-| price | float | Giá của khóa học |
-| description | string | Mô tả về khóa học |
-| image | string | Hình ảnh khóa học |
-| total_sessions | int | Tổng số buổi học |
-| level_id | int | Trình độ của khóa học |
-| active | boolean | Trạng thái hoạt động của thực thể |
-| created_at | datetime | Ngày tạo của thực thể |
-| updated_at | datetime | Ngày cập nhật thông tin thực thể |
+| Attribute      | Data Type | Description                       |
+|----------------|-----------|-----------------------------------|
+| id             | int       | Định danh duy nhất của khóa học   |
+| name           | string    | Tên khóa học                      |
+| price          | float     | Giá của khóa học                  |
+| description    | string    | Mô tả về khóa học                 |
+| image          | string    | Hình ảnh khóa học                 |
+| total_sessions | int       | Tổng số buổi học                  |
+| level_id       | int       | Trình độ của khóa học             |
+| active         | boolean   | Trạng thái hoạt động của thực thể |
+| created_at     | datetime  | Ngày tạo của thực thể             |
+| updated_at     | datetime  | Ngày cập nhật thông tin thực thể  |
 
 
 ### 7.2.5. Tag
 
-| Attribute | Data Type | Description |
-|---|---|---|
-| id | int | Định danh duy nhất của thực thể |
-| name | string | Tên thẻ |
-| active | boolean | Trạng thái hoạt động của thực thể |
-| created_at | datetime | Ngày tạo của thực thể |
-| updated_at | datetime | Ngày cập nhật thông tin thực thể |
+| Attribute  | Data Type | Description                       |
+|------------|-----------|-----------------------------------|
+| id         | int       | Định danh duy nhất của thực thể   |
+| name       | string    | Tên thẻ                           |
+| active     | boolean   | Trạng thái hoạt động của thực thể |
+| created_at | datetime  | Ngày tạo của thực thể             |
+| updated_at | datetime  | Ngày cập nhật thông tin thực thể  |
 
 
-### 7.2.6. CourseTag
 
-| Attribute | Data Type | Description |
-|---|---|---|
-| course_id | int | Xác định khóa học cụ thể. |
-| tag_id | int | Xác định thẻ cụ thể. |
+### 7.2.6. Level
 
-
-### 7.2.7. Level
-
-| Attribute | Data Type | Description |
-|---|---|---|
-| id | int | Định danh duy nhất của thực thể |
-| name | string | Mức độ |
-| description | string | Mô tả về mức độ |
-| active | boolean | Trạng thái hoạt động của thực thể |
-| created_at | datetime | Ngày tạo của thực thể |
-| updated_at | datetime | Ngày cập nhật thông tin thực thể |
+| Attribute   | Data Type | Description                       |
+|-------------|-----------|-----------------------------------|
+| id          | int       | Định danh duy nhất của thực thể   |
+| name        | string    | Mức độ                            |
+| description | string    | Mô tả về mức độ                   |
+| active      | boolean   | Trạng thái hoạt động của thực thể |
+| created_at  | datetime  | Ngày tạo của thực thể             |
+| updated_at  | datetime  | Ngày cập nhật thông tin thực thể  |
 
 
-### 7.2.8. Class
+### 7.2.7. Class
 
-| Attribute | Data Type | Description |
-|---|---|---|
-| id | int | Định danh duy nhất của lớp học |
-| name | string | Tên lớp học |
-| start_date | date | Ngày bắt đầu của lớp học |
-| end_date | date | Ngày kết thúc của lớp học |
-| capacity | int | Số lượng học viên tối đa của lớp học |
-| course_id | int | Khóa học mà lớp học thuộc về |
-| active | boolean | Trạng thái hoạt động của thực thể |
-| created_at | datetime | Ngày tạo của thực thể |
-| updated_at | datetime | Ngày cập nhật thông tin thực thể |
-
-
-### 7.2.9. Room
-
-| Attribute | Data Type | Description |
-|---|---|---|
-| id | int | Định danh duy nhất của thực thể |
-| name | string | Tên phòng học |
-| capacity | int | Sức chứa của phòng |
-| active | boolean | Trạng thái hoạt động của thực thể |
-| created_at | datetime | Ngày tạo của thực thể |
-| updated_at | datetime | Ngày cập nhật thông tin thực thể |
+| Attribute      | Data Type | Description                          |
+|----------------|-----------|--------------------------------------|
+| id             | int       | Định danh duy nhất của lớp học       |
+| name           | string    | Tên lớp học                          |
+| start_date     | date      | Ngày bắt đầu của lớp học             |
+| end_date       | date      | Ngày kết thúc của lớp học            |
+| capacity       | int       | Số lượng học viên tối đa của lớp học |
+| grade_deadline | datetime  | Thời hạn giáo viên nhập điểm         |
+| grade_status   | enum      | Trạng thái nhập điểm                 |
+| course_id      | int       | Khóa học mà lớp học thuộc về         |
+| active         | boolean   | Trạng thái hoạt động của thực thể    |
+| created_at     | datetime  | Ngày tạo của thực thể                |
+| updated_at     | datetime  | Ngày cập nhật thông tin thực thể     |
 
 
-### 7.2.10. Schedule
+### 7.2.8. Room
 
-| Attribute | Data Type | Description |
-|---|---|---|
-| id | int | Định danh duy nhất của thực thể |
-| class_id | int | Xác định lịch học này của lớp học nào |
-| start_time | datetime | Thời gian dự kiến bắt đầu của lịch học |
-| end_time | datetime | Thời gian dự kiến kết thúc lịch học |
-| room_id | int | Xác định phòng học cho lịch học |
-| day_of_weeks | int | Xác định lớp học diễn ra vào thứ mấy |
-| active | boolean | Trạng thái hoạt động của thực thể |
-| created_at | datetime | Ngày tạo của thực thể |
-| updated_at | datetime | Ngày cập nhật thông tin thực thể |
+| Attribute  | Data Type | Description                       |
+|------------|-----------|-----------------------------------|
+| id         | int       | Định danh duy nhất của thực thể   |
+| name       | string    | Tên phòng học                     |
+| capacity   | int       | Sức chứa của phòng                |
+| active     | boolean   | Trạng thái hoạt động của thực thể |
+| created_at | datetime  | Ngày tạo của thực thể             |
+| updated_at | datetime  | Ngày cập nhật thông tin thực thể  |
 
 
-### 7.2.11. Session
+### 7.2.9. Schedule
 
-| Attribute | Data Type | Description |
-|---|---|---|
-| id | int | Định danh duy nhất của thực thể |
-| schedule_id | int | Xác định buổi học này được sắp xếp theo lịch học nào. |
-| user_id | int | Xác định giáo viên dạy buổi học. |
-| start_time | datetime | Thời gian bắt đầu thực tế của buổi học |
-| end_time | datetime | Thời gian kết thúc thực tế buổi học |
-| room_id | int | Xác định phòng học thực tế cho buổi học |
-| date | date | Xác định buổi học này diễn ra vào ngày nào |
-| active | boolean | Trạng thái hoạt động của thực thể |
-| created_at | datetime | Ngày tạo của thực thể |
-| updated_at | datetime | Ngày cập nhật thông tin thực thể |
-
-
-### 7.2.12. TeachingAssignment
-
-| Attribute | Data Type | Description |
-|---|---|---|
-| user_id | int | Định danh giảng viên được phân công. |
-| class_id | int | Xác định lớp được phân công. |
-| is_main | boolean | Xác định giáo viên chính của lớp. |
+| Attribute    | Data Type | Description                            |
+|--------------|-----------|----------------------------------------|
+| id           | int       | Định danh duy nhất của thực thể        |
+| class_id     | int       | Xác định lịch học này của lớp học nào  |
+| start_time   | datetime  | Thời gian dự kiến bắt đầu của lịch học |
+| end_time     | datetime  | Thời gian dự kiến kết thúc lịch học    |
+| room_id      | int       | Xác định phòng học cho lịch học        |
+| day_of_weeks | int       | Xác định lớp học diễn ra vào thứ mấy   |
+| active       | boolean   | Trạng thái hoạt động của thực thể      |
+| created_at   | datetime  | Ngày tạo của thực thể                  |
+| updated_at   | datetime  | Ngày cập nhật thông tin thực thể       |
 
 
-### 7.2.13. Enrollment
+### 7.2.10. Session
 
-| Attribute | Data Type | Description |
-|---|---|---|
-| id | int | Định danh duy nhất của thực thể |
-| user_id | int | Định danh của học viên đăng ký khóa học |
-| class_id | int | Định danh của lớp học được đăng ký |
-| enrollment_status | enum | Trạng thái đăng ký |
-| active | boolean | Trạng thái hoạt động của thực thể |
-| created_at | datetime | Ngày tạo của thực thể |
-| updated_at | datetime | Ngày cập nhật thông tin thực thể |
-
-
-### 7.2.14. Payment
-
-| Attribute | Data Type | Description |
-|---|---|---|
-| id | int | Định danh duy nhất của thực thể |
-| enrollment_id | int | Xác định thanh toán cho đăng ký nào |
-| amount | float | Số tiền thanh toán |
-| payment_method | enum | Phương thức thanh toán |
-| payment_status | enum | Trạng thái thanh toán |
-| transaction_id | string | Định danh từ cổng thanh toán |
-| paid_at | datetime | Thời điểm thanh toán thành công |
-| created_at | datetime | Ngày tạo của thực thể |
-| updated_at | datetime | Ngày cập nhật thông tin thực thể |
+| Attribute   | Data Type | Description                                           |
+|-------------|-----------|-------------------------------------------------------|
+| id          | int       | Định danh duy nhất của thực thể                       |
+| schedule_id | int       | Xác định buổi học này được sắp xếp theo lịch học nào. |
+| user_id     | int       | Xác định giáo viên dạy buổi học.                      |
+| start_time  | datetime  | Thời gian bắt đầu thực tế của buổi học                |
+| end_time    | datetime  | Thời gian kết thúc thực tế buổi học                   |
+| room_id     | int       | Xác định phòng học thực tế cho buổi học               |
+| date        | date      | Xác định buổi học này diễn ra vào ngày nào            |
+| active      | boolean   | Trạng thái hoạt động của thực thể                     |
+| created_at  | datetime  | Ngày tạo của thực thể                                 |
+| updated_at  | datetime  | Ngày cập nhật thông tin thực thể                      |
 
 
-### 7.2.15. Attendance
+### 7.2.11. TeachingAssignment
 
-| Attribute | Data Type | Description |
-|---|---|---|
-| enrollment_id | int | Xác định học viên đã đăng ký lớp học của buổi học này |
-| session_id | int | Xác định buổi học cụ thể của lớp học |
-| attendance_status | enum | Trạng thái điểm danh |
-| note | string | Ghi chú đối với các trường hợp cần chú thích thêm |
-| created_at | datetime | Ngày tạo của thực thể |
+| Attribute | Data Type | Description                          |
+|-----------|-----------|--------------------------------------|
+| user_id   | int       | Định danh giảng viên được phân công. |
+| class_id  | int       | Xác định lớp được phân công.         |
+| is_main   | boolean   | Xác định giáo viên chính của lớp.    |
 
 
-### 7.2.16. AcademicResult
+### 7.2.12. Enrollment
 
-| Attribute | Data Type | Description |
-|---|---|---|
-| id | int | Định danh duy nhất của thực thể |
-| enrollment_id | int | Xác định điểm thuộc về ai và lớp học nào |
-| average_score | float | Điểm trung bình toàn khóa học |
-| comment | string | Nhận xét của giáo viên |
-| active | boolean | Trạng thái hoạt động của thực thể |
-| created_at | datetime | Ngày tạo của thực thể |
-| updated_at | datetime | Ngày cập nhật thông tin thực thể |
-
-
-### 7.2.17. Score
-
-| Attribute | Data Type | Description |
-|---|---|---|
-| id | int | Định danh duy nhất của thực thể |
-| enrollment_id | int | Xác định điểm thuộc về ai và lớp học nào |
-| score_value | float | Số điểm |
-| score_type_id | int | Xác định cột điểm |
-| active | boolean | Trạng thái hoạt động của thực thể |
-| created_at | datetime | Ngày tạo của thực thể |
-| updated_at | datetime | Ngày cập nhật thông tin thực thể |
+| Attribute         | Data Type | Description                             |
+|-------------------|-----------|-----------------------------------------|
+| id                | int       | Định danh duy nhất của thực thể         |
+| user_id           | int       | Định danh của học viên đăng ký khóa học |
+| class_id          | int       | Định danh của lớp học được đăng ký      |
+| enrollment_status | enum      | Trạng thái đăng ký                      |
+| payment_deadline  | datetime  | Thời hạn thanh toán đăng ký khóa học    |
+| active            | boolean   | Trạng thái hoạt động của thực thể       |
+| created_at        | datetime  | Ngày tạo của thực thể                   |
+| updated_at        | datetime  | Ngày cập nhật thông tin thực thể        
 
 
-### 7.2.18. ScoreType
+### 7.2.13. Payment
 
-| Attribute | Data Type | Description |
-|---|---|---|
-| id | int | Định danh duy nhất của thực thể |
-| name | string | Tên cột điểm |
-| weight | float | Hệ số của cột điểm |
-| course_id | int | Thuộc khóa học nào |
-| active | boolean | Trạng thái hoạt động của thực thể |
-| created_at | datetime | Ngày tạo của thực thể |
-| updated_at | datetime | Ngày cập nhật thông tin thực thể |
+| Attribute      | Data Type | Description                         |
+|----------------|-----------|-------------------------------------|
+| id             | int       | Định danh duy nhất của thực thể     |
+| enrollment_id  | int       | Xác định thanh toán cho đăng ký nào |
+| amount         | float     | Số tiền thanh toán                  |
+| payment_method | enum      | Phương thức thanh toán              |
+| payment_status | enum      | Trạng thái thanh toán               |
+| transaction_id | string    | Định danh từ cổng thanh toán        |
+| paid_at        | datetime  | Thời điểm thanh toán thành công     |
+| created_at     | datetime  | Ngày tạo của thực thể               |
+| updated_at     | datetime  | Ngày cập nhật thông tin thực thể    |
+
+
+### 7.2.14. Attendance
+
+| Attribute         | Data Type | Description                                           |
+|-------------------|-----------|-------------------------------------------------------|
+| enrollment_id     | int       | Xác định học viên đã đăng ký lớp học của buổi học này |
+| session_id        | int       | Xác định buổi học cụ thể của lớp học                  |
+| attendance_status | enum      | Trạng thái điểm danh                                  |
+| note              | string    | Ghi chú đối với các trường hợp cần chú thích thêm     |
+| created_at        | datetime  | Ngày tạo của thực thể                                 |
+| updated_at        | datetime  | Ngày cập nhật thông tin thực thể                      |
+
+
+### 7.2.15. AcademicResult
+
+| Attribute     | Data Type | Description                              |
+|---------------|-----------|------------------------------------------|
+| id            | int       | Định danh duy nhất của thực thể          |
+| enrollment_id | int       | Xác định điểm thuộc về ai và lớp học nào |
+| average_score | float     | Điểm trung bình toàn khóa học            |
+| comment       | string    | Nhận xét của giáo viên                   |
+| active        | boolean   | Trạng thái hoạt động của thực thể        |
+| created_at    | datetime  | Ngày tạo của thực thể                    |
+| updated_at    | datetime  | Ngày cập nhật thông tin thực thể         |
+
+
+### 7.2.16. Score
+
+| Attribute     | Data Type | Description                              |
+|---------------|-----------|------------------------------------------|
+| id            | int       | Định danh duy nhất của thực thể          |
+| enrollment_id | int       | Xác định điểm thuộc về ai và lớp học nào |
+| score_value   | float     | Số điểm                                  |
+| score_type_id | int       | Xác định cột điểm                        |
+| active        | boolean   | Trạng thái hoạt động của thực thể        |
+| created_at    | datetime  | Ngày tạo của thực thể                    |
+| updated_at    | datetime  | Ngày cập nhật thông tin thực thể         |
+
+
+### 7.2.17. ScoreType
+
+| Attribute  | Data Type | Description                       |
+|------------|-----------|-----------------------------------|
+| id         | int       | Định danh duy nhất của thực thể   |
+| name       | string    | Tên cột điểm                      |
+| weight     | float     | Hệ số của cột điểm                |
+| course_id  | int       | Thuộc khóa học nào                |
+| active     | boolean   | Trạng thái hoạt động của thực thể |
+| created_at | datetime  | Ngày tạo của thực thể             |
+| updated_at | datetime  | Ngày cập nhật thông tin thực thể  |
 
 ---
 
@@ -580,7 +579,7 @@ BR-30: Hệ thống cung cấp báo cáo thống kê quý, năm theo:
 - Ràng buộc Enum:
   + Tất cả các trường kiểu enum chỉ được nhận các giá trị đã được định nghĩa sẵn:
     + Bảng Enrollment: trường enrollment_status (Chờ, Đang học, Dừng học)
-    + Bảng Payment: trường payment_status (Chờ, Thành công, Thất bại), trường payment_method (Stripe, Banking)
+    + Bảng Payment: trường payment_status (Chờ, Thành công, Thất bại), trường payment_method (MoMo, VNPay)
     + Bảng Attendance: trường attendance_status (Vắng, Trễ, Có mặt)
     + Bảng User: trường auth_provider (Facebook, Google)
 ---
@@ -591,19 +590,46 @@ BR-30: Hệ thống cung cấp báo cáo thống kê quý, năm theo:
 ![usecase-diagram](screenshots/usecase-diagram.png)
 ## 8.2 Use Case Specification
 
+### 8.2.1. Đăng ký khóa học trực tuyến (Online course registration)
+| Field | Content |
+|---|---|
+| Usecase ID | UC-01 |
+| Usecase Name | Đăng ký khóa học trực tuyến |
+| Actor | Học viên |
+| Description | Cho phép học viên đăng ký khóa học trực tuyến để ghi danh vào hệ thống. |
+| Pre-Condition(s) |- Học viên đã đăng nhập thành công<br>- Hệ thống hoạt động bình thường<br>- Khóa học/lớp học còn tồn tại |
+| Post-Condition(s) | - Hệ thống ghi danh học viên đã đăng ký khóa học thành công<br>- Giảm số lượng suất học còn trống<br>- Gửi thông báo về email người dùng |
+| Main Flow | <ol><li>Học viên yêu cầu xem danh sách khóa học.</li><li>Hệ thống hiển thị danh sách khóa học đang mở.</li><li>Học viên chọn một khóa học cụ thể để xem chi tiết.</li><li>Hệ thống hiển thị thông tin chi tiết: mô tả, học phí, tổng số buổi học, danh sách lớp học khả dụng.</li><li>Học viên thực hiện chọn lớp học, điền thông tin.</li><li>Học viên nhấn “Đăng ký”.</li><li>Hệ thống kiểm tra thông tin đăng ký hợp lệ.</li><li>Hệ thống tạo bản ghi đăng ký với trạng thái “đang xử lý” và thực hiện giữ chỗ tạm thời trong 30 phút.</li><li>Hệ thống yêu cầu học viên thực hiện thanh toán học phí.</li><li>Học viên chọn phương thức thanh toán “Thanh toán toàn bộ” dựa trên mức học phí.</li><li>Học viên chọn cổng thanh toán và nhấn “Thanh toán ngay”.</li><li>Hệ thống chuyển hướng đến cổng thanh toán với số tiền học phí.</li><li>Học viên thực hiện thanh toán trực tuyến.</li><li>Cổng thanh toán trả về kết quả thành công cho hệ thống.</li><li>Hệ thống xử lý dữ liệu: <ul><li>15.1. Cập nhật trạng thái đăng ký “Thành công”</li><li>15.2. Tạo bản ghi trạng thái thanh toán: “Thành công”</li></ul></li><li>Hệ thống thông báo thành công ra màn hình</li><li>Hệ thống gửi mail thông báo về học viên.</li></ol> |
+| Alternative Flow | 10a. Học viên chọn phương thức thanh toán “Thanh toán một phần” dựa trên mức học phí. <br> *Usecase tiếp tục từ bước 10 đến 13.* <br> 15a. Hệ thống xử lý dữ liệu: <ul><li>15.1. Cập nhật trạng thái đăng ký “Thành công - một phần” và thực hiện giữ chỗ đến trước ngày khai giảng 3 ngày.</li><li>15.2. Tạo bản ghi trạng thái thanh toán “Thành công”.</li></ul>*Usecase tiếp tục bước 16.* <br> 9a. Học viên chọn “Hủy đăng ký”, hệ thống hỏi xác nhận hủy. <ul><li>9a.1. Học viên chọn xác nhận xóa, hệ thống xóa bản ghi đăng ký và hiển thị thông báo “Đã hủy đăng ký khóa học”, *usecase kết thúc*.</li><li>9a.2. Học viên chọn từ chối hủy đăng ký, *quay lại bước 9*.</li></ul> |
+| Exception Flow | 7a. Hệ thống kiểm tra thông tin sĩ số lớp đã đầy và hiển thị thông báo “Lớp đã đủ số lượng đăng ký”, *quay lại bước 5 usecase*. <br> 7b. Hệ thống kiểm tra thông tin học viên bị trùng lịch học và hiển thị thông báo “Trùng lịch học với lớp X”, *quay lại bước 5 usecase*. <br> 7c. Hệ thống kiểm tra học viên đã ghi danh trong danh sách lớp và hiển thị thông báo “Bạn đã đăng ký lớp này”, *quay lại bước 5 usecase*. <br> 8a. và 15a.1. Hệ thống kiểm tra quá hạn giữ chỗ, tự động xóa bản ghi đăng ký và hiển thị thông báo "Thời gian giữ chỗ đã hết. Vui lòng thực hiện đăng ký mới", *usecase kết thúc*. <br> 14a. Cổng thanh toán trả về kết quả thanh toán thất bại, ghi nhận bản ghi thanh toán với trạng thái “Thất bại”, hiển thị thông báo “Thanh toán thất bại”, *usecase quay lại bước 11*. |
+
 ### 8.2.2. Thanh toán học phí trực tuyến (Online tuition payment)
 
-| Field | Content                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
-|---|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Usecase ID | UC-02                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| Usecase Name | Thanh toán học phí trực tuyến                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
-| Actor | Học viên (Actor chính), Cổng thanh toán bên thứ 3 (Actor phụ)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
-| Description | Cho phép học viên thanh toán học phí trực tuyến thông qua các cổng thanh toán bên thứ ba.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
-| Pre-Condition(s) | - Học viên đã đăng nhập vào hệ thống<br>- Học viên đã xác nhận đăng ký khóa học                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| Field             | Content                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+|-------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Usecase ID        | UC-02                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| Usecase Name      | Thanh toán học phí trực tuyến                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| Actor             | Học viên (Actor chính), Cổng thanh toán bên thứ 3 (Actor phụ)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| Description       | Cho phép học viên thanh toán học phí trực tuyến thông qua các cổng thanh toán bên thứ ba.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| Pre-Condition(s)  | - Học viên đã đăng nhập vào hệ thống<br>- Học viên đã xác nhận đăng ký khóa học                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 | Post-Condition(s) | - Hệ thống cập nhật trạng thái thanh toán<br>- Hệ thống cập nhật trạng thái khóa học của học viên<br>- Hệ thống tạo hóa đơn điện tử                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
-| Main Flow | <ol><li>Học viên nhấn nút "Thanh toán".</li><li>Hệ thống truy xuất dữ liệu và hiển thị chi tiết hóa đơn (Tên khóa, mã khóa, tên lớp, mã lớp, tên học viên, mã học viên, tổng hóa đơn).</li><li>Học viên chọn phương thức thanh toán.</li><li>Hệ thống chuyển hướng sang cổng thanh toán.</li><li>Học viên thanh toán qua cổng thanh toán.</li><li>Hệ thống kiểm tra tình trạng thanh toán được gửi về từ cổng thanh toán bên thứ ba.</li><li>Hệ thống cập nhật trạng thái thanh toán.</li><li>Hệ thống cập nhật trạng thái khóa học.</li><li>Hệ thống hiển thị thông báo thành công và cho phép xem và tải hóa đơn.</li><li>Kết thúc.</li></ol>                                                                                                        |
-| Alternative Flow | 2a. Nếu hệ thống không lấy được dữ liệu hóa đơn, hệ thống hiển thị thông báo: "Không thể tải thông tin thanh toán lúc này, vui lòng thử lại sau". Hệ thống giữ nguyên ở trang hiện tại hoặc quay về trang đăng ký. <br><br>5a. Nếu học viên không thanh toán mà bấm nút "Hủy" hoặc "Quay lại" trên cổng thanh toán. Cổng thanh toán trả kết quả "Đã hủy" về hệ thống. Hệ thống hiển thị thông báo: "Giao dịch đã bị hủy", sau đó quay lại màn hình chọn phương thức thanh toán.<br><br> 6a. Nếu số dư không đủ hoặc thẻ bị lỗi, cổng thanh toán trả về kết quả thất bại. Hệ thống hiển thị thông báo: "Thanh toán thất bại. Vui lòng kiểm tra lại số dư hoặc thử phương thức thanh toán khác". Hệ thống quay lại màn hình chọn phương thức thanh toán. |
-| Exception Flow | 6b. Trong quá trình chờ đợi kết quả, nếu xảy ra sự cố mạng, cổng thanh toán không phản hồi hoặc hết thời gian giao dịch mà chưa xác nhận được trạng thái thanh toán. Hệ thống hiển thị thông báo lỗi: "Giao dịch quá thời gian xử lý hoặc mất kết nối. Vui lòng kiểm tra lại lịch sử giao dịch trước khi thực hiện lại". Hệ thống quay về màn hình chọn chức năng thanh toán.                                                                                                                                                                                                                                                                                                                                                                          |
+| Main Flow         | <ol><li>Học viên nhấn nút "Thanh toán".</li><li>Hệ thống truy xuất dữ liệu và hiển thị chi tiết hóa đơn (Tên khóa, mã khóa, tên lớp, mã lớp, tên học viên, mã học viên, tổng hóa đơn).</li><li>Học viên chọn phương thức thanh toán.</li><li>Hệ thống chuyển hướng sang cổng thanh toán.</li><li>Học viên thanh toán qua cổng thanh toán.</li><li>Hệ thống kiểm tra tình trạng thanh toán được gửi về từ cổng thanh toán bên thứ ba.</li><li>Hệ thống cập nhật trạng thái thanh toán.</li><li>Hệ thống cập nhật trạng thái khóa học.</li><li>Hệ thống hiển thị thông báo thành công và cho phép xem và tải hóa đơn.</li><li>Kết thúc.</li></ol>                                                                                                        |
+| Alternative Flow  | 2a. Nếu hệ thống không lấy được dữ liệu hóa đơn, hệ thống hiển thị thông báo: "Không thể tải thông tin thanh toán lúc này, vui lòng thử lại sau". Hệ thống giữ nguyên ở trang hiện tại hoặc quay về trang đăng ký. <br><br>5a. Nếu học viên không thanh toán mà bấm nút "Hủy" hoặc "Quay lại" trên cổng thanh toán. Cổng thanh toán trả kết quả "Đã hủy" về hệ thống. Hệ thống hiển thị thông báo: "Giao dịch đã bị hủy", sau đó quay lại màn hình chọn phương thức thanh toán.<br><br> 6a. Nếu số dư không đủ hoặc thẻ bị lỗi, cổng thanh toán trả về kết quả thất bại. Hệ thống hiển thị thông báo: "Thanh toán thất bại. Vui lòng kiểm tra lại số dư hoặc thử phương thức thanh toán khác". Hệ thống quay lại màn hình chọn phương thức thanh toán. |
+| Exception Flow    | 6b. Trong quá trình chờ đợi kết quả, nếu xảy ra sự cố mạng, cổng thanh toán không phản hồi hoặc hết thời gian giao dịch mà chưa xác nhận được trạng thái thanh toán. Hệ thống hiển thị thông báo lỗi: "Giao dịch quá thời gian xử lý hoặc mất kết nối. Vui lòng kiểm tra lại lịch sử giao dịch trước khi thực hiện lại". Hệ thống quay về màn hình chọn chức năng thanh toán.                                                                                                                                                                                                       
+
+### 8.2.4. Nhập điểm (Enter grades)
+| Field | Content |
+|---|---|
+| Usecase ID | UC-04 |
+| Usecase Name | Nhập điểm |
+| Actor | Giáo viên |
+| Description | Cho phép giáo viên nhập điểm cho các học viên để lưu trữ kết quả học tập vào hệ thống. |
+| Pre-Condition(s) |- Giáo viên đã đăng nhập thành công vào hệ thống. <br>- Hệ thống hoạt động bình thường. |
+| Post-Condition(s) | Các giá trị điểm của học viên được lưu an toàn, hợp lệ và chính xác vào hệ thống. |
+| Main Flow | <ol><li>Giáo viên yêu cầu xem danh sách lớp được phân công giảng dạy.</li><li>Hệ thống hiển thị danh sách lớp học phân công cho giáo viên trong giai đoạn hiện tại.</li><li>Giáo viên chọn xem một lớp học cụ thể.</li><li>Hệ thống hiển thị thông tin chi tiết của lớp học.</li><li>Giáo viên chọn mục "Nhập điểm".</li><li>Hệ thống kiểm tra quyền nhập điểm của giáo viên hợp lệ.</li><li>Hệ thống kiểm tra thời hạn nhập điểm hợp lệ.</li><li>Hệ thống kiểm tra bảng điểm vẫn chưa ở trạng thái "Submited"</li><li>Hệ thống hiển thị bảng tổng hợp danh sách các học viên trong lớp kèm các cột điểm của khóa học.</li><li>Giáo viên nhập điểm cho các học viên trong lớp học.</li><li>Hệ thống kiểm tra giá trị điểm do giáo viên nhập hợp lệ.</li><li>Giáo viên chọn "Lưu bảng điểm".</li><li>Hệ thống lưu bảng điểm vào cơ sở dữ liệu thành công.</li><li>Giáo viên chọn "Submit bảng điểm".</li><li>Hệ thống khóa bảng điểm, chuyển trạng thái bảng điểm thành "Submitted"</li></ol> |
+| Alternative Flow | 12a. Giáo viên chỉ lưu bảng điểm mà không submit, hiển thị thông báo "Lưu bảng điểm thành công", *usecase kết thúc*. <br> 12b. Giáo viên chọn hủy nhập điểm, hệ thống yêu cầu xác nhận: <ul><li>12b.1. Giáo viên xác nhận hủy, hệ thống không lưu bảng điểm, hiển thị thông báo "Đã hủy nhập điểm", *usecase kết thúc*. </li><li>12b.2. Giáo viên từ chối hủy nhập điểm, *quay lại bước 2*.</li></ul> 16a. Quản trị viên mở lại trạng thái nhập điểm cho giáo viên nhập điểm phúc khảo. <br>16b. Hệ thống chuyển trạng thái bảng điểm từ "Submitted" sang "Reopened". <br>16c. Giáo viên truy cập lại chức năng nhập điểm của lớp học. <br>16d. Hệ thống cho phép chỉnh sửa các điểm cần phúc khảo. <br>16e. Giáo viên cập nhật điểm cho học viên. <br>16f. Giáo viên chọn "Lưu bảng điểm". <br>16g. Hệ thống lưu thay đổi điểm vào cơ sở dữ liệu. <br>16h. Giáo viên chọn "Submit bảng điểm". <br>16i. Hệ thống khóa bảng điểm và chuyển trạng thái trở lại "Submitted". <br>*Usecase kết thúc*. |
+| Exception Flow | 6a. Hệ thống kiểm tra giáo viên không có quyền nhập điểm, hiển thị thông báo "Hệ thống yêu cầu quyền nhập điểm, vui lòng liên hệ quản trị viên hỗ trợ", *usecase kết thúc*. <br> 7a. Hệ thống kiểm tra quá thời hạn nhập điểm, hiển thị thông báo "Đã quá thời gian nhập điểm, vui lòng liên hệ quản trị viên để được hỗ trợ", *usecase kết thúc*.<br> 8a. Hệ thống kiểm tra bảng điểm đã được submit, hiển thị thông báo "Bảng điểm đã được submit, hiện không thể chỉnh sửa và chỉ được xem, vui lòng liên hệ quản trị viên để được hỗ trợ", *usecase kết thúc*. <br> 11a. Hệ thống kiểm tra giá trị điểm nhập không hợp lệ, hiển thị thông báo "Giá trị điểm nhập vào không hợp lệ, điểm phải nằm trong 0 đến 10", *usecase quay lại bước 10*. <br> 13a. Hệ thống bị lỗi khi lưu điểm, hoàn tác hệ thống và hiển thị thông báo "Lỗi khi lưu điểm, vui lòng thực hiện lại sau", *usecase quay lại bước 12*. |
+
 
 ## 8.3. ERD Diagram
 ![erd-diagram](screenshots/erd.png)
