@@ -625,7 +625,7 @@ BR-30: Hệ thống cung cấp báo cáo thống kê quý, năm theo:
 ## 9.3 UI Xem Lịch Học - Thời Khóa Biểu
 ![UI-xem-lich-hoc-thoi-khoa-bieu](screenshots/xem-khoa-hoc-va-thoi-khoa-bieu.png)
 
-## 9.4 UI Báo Cáo
+## 9.4 UI Báo Cáo Thống Kê
 ![UI-bao-cao-thong-ke](screenshots/bao-cao-thong-ke.png)
 
 ## 9.5 UI Xem Lịch Dạy
@@ -637,11 +637,6 @@ BR-30: Hệ thống cung cấp báo cáo thống kê quý, năm theo:
 ## 9.7 UI Biên Lai
 ![UI-bien-lai](screenshots/bien-lai.png)
 
-## 9.6 UI Điều Hướng
-### Admin
-![UI-dieu-huong-admin](screenshots/dieu-huong-admin.png)
-### Teacher
-![UI-dieu-huong-teacher](screenshots/dieu-huong-teacher.png)
 
 
 
