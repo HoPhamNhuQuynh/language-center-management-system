@@ -655,11 +655,6 @@ Chi tiết thiết kế cơ sở dữ liệu của hệ thống được mô t�
 | Main Flow | <ol> <li>Admin truy cập chức năng Cấu hình học phí.</li> <li>Hệ thống hiển thị danh sách các khóa học và thông tin: mã khóa học, tên khóa học, học phí.</li> <li>Admin nhập mức học phí.</li> <li>Admin nhấn “Lưu”.</li> <li>Hệ thống kiểm tra học phí hợp lệ.</li> <li>Hệ thống lưu học phí vào cơ sở dữ liệu.</li> </ol>
 | Alternative Flow | 7a. Admin nhấn “Hủy”.<br>-Hệ thống hiển thị "Xác nhận hủy?" <br>-Admin nhấn "Có".<br>-Hệ thống quay lại màn hình khóa học.|
 | Exception Flow | 8a. Hệ thống phát hiện học phí sai định dạng (Admin nhập chữ, hoặc số âm) và hiển thị thông báo "Vui lòng nhập học phí hợp lệ!", quay lại bước 6 usecase. |
-
-| Post-Condition(s) | Thông tin học phí của khóa học được cập nhật thành công trong hệ thống.<br>Cấu hình này sẽ được áp dụng khi học viên đăng ký khóa học. |
-| Main Flow | <ol><li>Admin truy cập chức năng Cấu hình học phí.</li><li>Hệ thống hiển thị danh sách các khóa học và thông tin: mã khóa học, tên khóa học, học phí.</li><li>Admin nhập mức học phí.</li><li>Admin nhấn “Lưu”.</li><li>Hệ thống kiểm tra học phí hợp lệ.</li><li>Hệ thống lưu học phí vào cơ sở dữ liệu.</li></ol> |
-| Alternative Flow | 7a. Admin nhấn “Hủy”.<br>-Hệ thống hiển thị "Xác nhận hủy?"<br>-Admin nhấn "Có".<br>-Hệ thống quay lại màn hình khóa học. |
-| Exception Flow | 8a. Hệ thống phát hiện học phí sai định dạng (Admin nhập chữ, hoặc số âm) và hiển thị thông báo "Vui lòng nhập học phí hợp lệ!", quay lại bước 6 usecase. |
 ---
 ## 8.3. ERD Diagram
 ![erd-diagram](screenshots/erd.png)
