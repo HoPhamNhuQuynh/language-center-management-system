@@ -609,33 +609,41 @@ BR-30: Hệ thống cung cấp báo cáo thống kê quý, năm theo:
 
 # 9. Wireframes UI
 
-## 9.1 UI Trang Chủ
+## 9.1 UI Báo Cáo Thống Kê
+![UI-bao-cao-thong-ke](screenshots/bao-cao-thong-ke.png)
+
+## 9.2 UI Biên Lai
+![UI-bien-lai](screenshots/bien-lai.png)
+
+## 9.3 UI Đăng Ký Khóa Học
+### 9.3.1 UI chọn khóa học
+![UI-dang-ky-khoa-hoc](screenshots/dang-ky-khoa-hoc-1.png)
+### 9.3.2 UI chọn lớp học
+![UI-dang-ky-khoa-hoc](screenshots/dang-ky-khoa-hoc-2.png)
+### 9.3.3 UI thanh toán học phí
+![UI-dang-ky-khoa-hoc](screenshots/dang-ky-khoa-hoc-3.png)
+### 9.3.4 UI xác nhận hủy hoặc tiếp tục thanh toán khi người dùng bấm vào dấu x
+![UI-dang-ky-khoa-hoc](screenshots/dang-ky-khoa-hoc-4.png)
+### 9.3.5 UI xem biên lai khi người dùng thanh toán thành công
+![UI-dang-ky-khoa-hoc](screenshots/dang-ky-khoa-hoc-5.png)
+
+## 9.4 UI Trang Chủ
 ![UI-trang-chu](screenshots/trang-chu-1.png)
 ![UI-trang-chu](screenshots/trang-chu-2.png)
 ![UI-trang-chu](screenshots/trang-chu-3.png)
 ![UI-trang-chu](screenshots/trang-chu-4.png)
 
-## 9.2 UI Đăng Ký Khóa Học
-![UI-dang-ky-khoa-hoc](screenshots/dang-ky-khoa-hoc-1.png)
-![UI-dang-ky-khoa-hoc](screenshots/dang-ky-khoa-hoc-2.png)
-![UI-dang-ky-khoa-hoc](screenshots/dang-ky-khoa-hoc-3.png)
-![UI-dang-ky-khoa-hoc](screenshots/dang-ky-khoa-hoc-4.png)
-![UI-dang-ky-khoa-hoc](screenshots/dang-ky-khoa-hoc-5.png)
-
-## 9.3 UI Xem Lịch Học - Thời Khóa Biểu
-![UI-xem-lich-hoc-thoi-khoa-bieu](screenshots/xem-khoa-hoc-va-thoi-khoa-bieu.png)
-
-## 9.4 UI Báo Cáo Thống Kê
-![UI-bao-cao-thong-ke](screenshots/bao-cao-thong-ke.png)
-
-## 9.5 UI Xem Lịch Dạy
-![UI-xem-lich-day](screenshots/xem-lich-day.png)
-
-## 9.6 UI Quản Lý Cấu Hình
+## 9.5 UI Quản Lý Cấu Hình
 ![UI-quan-ly-cau-hinh](screenshots/quan-ly-cau-hinh.png)
 
-## 9.7 UI Biên Lai
-![UI-bien-lai](screenshots/bien-lai.png)
+## 9.6 UI Xem Lịch Học - Thời Khóa Biểu
+![UI-xem-lich-hoc-thoi-khoa-bieu](screenshots/xem-khoa-hoc-va-thoi-khoa-bieu.png)
+
+## 9.7 UI Xem Lịch Dạy
+![UI-xem-lich-day](screenshots/xem-lich-day.png)
+
+
+
 
 
 
