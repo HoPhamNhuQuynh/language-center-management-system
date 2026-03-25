@@ -603,7 +603,7 @@ Chi tiết thiết kế cơ sở dữ liệu của hệ thống được mô t�
 | Exception Flow | 11a. Hệ thống phát hiện thông tin bắt buộc chưa được nhập và hiển thị “ Vui lòng nhập thông tin đầy đủ!”, quay lại bước 9 usecase.<br>11b. Hệ thống phát hiện ngày bắt đầu lớn hơn ngày kết thúc và hiển thị “Ngày bắt đầu phải nhỏ hơn ngày kết thúc!”, quay lại bước 9 usecase.<br>11c. Hệ thống phát hiện ngày kết thúc nhỏ hơn ngày bắt đầu và hiển thị “Ngày bắt đầu phải nhỏ hơn ngày kết thúc!”, quay lại bước 9 usecase.<br>12a. Hệ thống phát hiện phòng học bị sắp xếp trong cùng khung giờ và hiển thị “Phòng học đã được sử dụng!”, quay lại bước 9 usecase.<br>12b. Hệ thống phát hiện giáo viên trùng lịch dạy và hiển thị “Giáo viên có lịch dạy trong thời gian này!”, quay lại bước 9 usecase. |
 
 
-<<<<<<< HEAD
+
 ### 8.2.1. Đăng ký khóa học trực tuyến (Online course registration)
 | Field | Content |
 |---|---|
@@ -682,6 +682,6 @@ Chi tiết thiết kế cơ sở dữ liệu của hệ thống được mô t�
 | Alternative Flow | 7a. Admin nhấn “Hủy”.<br>-Hệ thống hiển thị "Xác nhận hủy?"<br>-Admin nhấn "Có".<br>-Hệ thống quay lại màn hình khóa học. |
 | Exception Flow | 8a. Hệ thống phát hiện học phí sai định dạng (Admin nhập chữ, hoặc số âm) và hiển thị thông báo "Vui lòng nhập học phí hợp lệ!", quay lại bước 6 usecase. |
 ---
->>>>>>> ab7152845be521b6e185d515bcca953f1a3fa121
+
 ## 8.3. ERD Diagram
 ![erd-diagram](screenshots/erd.png)
