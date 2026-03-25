@@ -140,4 +140,22 @@ Trần Mỹ Ân
 Hồ Phạm Ngọc Hân  
 
 ## 12. TERMS / ACRONYMS  
-(Giải thích các thuật ngữ viết tắt sử dụng trong tài liệu.)
+| Viết tắt | Tên đầy đủ                     | Ý nghĩa                                                                 |
+|----------|--------------------------------|-------------------------------------------------------------------------|
+| QA       | Quality Assurance              | Đảm bảo chất lượng phần mềm, chịu trách nhiệm kiểm thử và quy trình     |
+| FE       | Front-end                      | Phần giao diện người dùng của hệ thống                                 |
+| BE       | Back-end                       | Phần xử lý logic và cơ sở dữ liệu phía server                          |
+| UI       | User Interface                 | Giao diện người dùng                                                    |
+| API      | Application Programming Interface | Giao diện lập trình ứng dụng, cho phép các hệ thống giao tiếp với nhau |
+| PM       | Project Manager                | Người quản lý dự án                                                     |
+| Dev      | Developer                      | Lập trình viên                                                         |
+| DB       | Database                       | Cơ sở dữ liệu                                                          |
+| GET      | HTTP GET Method                | Phương thức lấy dữ liệu từ server                                      |
+| POST     | HTTP POST Method               | Phương thức gửi dữ liệu lên server                                     |
+| PUT      | HTTP PUT Method                | Phương thức cập nhật dữ liệu                                           |
+| DELETE   | HTTP DELETE Method             | Phương thức xóa dữ liệu                                                |
+| UX       | User Experience                | Trải nghiệm người dùng                                                 |
+| RAM      | Random Access Memory           | Bộ nhớ truy cập ngẫu nhiên của máy tính                                |
+| CPU      | Central Processing Unit        | Bộ xử lý trung tâm                                                     |
+| REST     | Representational State Transfer | Kiến trúc thiết kế API                                                |
+| CRUD     | Create Read Update Delete      | Các thao tác cơ bản với dữ liệu                                        |
