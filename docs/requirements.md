@@ -637,11 +637,15 @@ Chi tiết thiết kế cơ sở dữ liệu của hệ thống được mô t�
 
 # 9. Wireframes UI
 
-## 9.9. UI Đăng ký tài khoản 
-![UI-dang-ky-tai-khoan](screenshots/Dang-ky-tai-khoan.png)
-## 9.10. UI Đăng nhập
-![UI-dang-nhap](screenshots/Dang-nhap.png)
-## 9.11. UI Điểm danh
-![UI-diem-danh](screenshots/Diem-danh.png)
-## 9.12. UI Nhập điểm
-![UI-nhap-diem](screenshots/Nhap-diem.png)
+## 9.10. UI Đăng ký tài khoản 
+![UI-dang-ky-tai-khoan](screenshots/dang-ky-tai-khoan.png)
+## 9.11. UI Đăng nhập
+![UI-dang-nhap](screenshots/dang-nhap.png)
+## 9.12. UI Điểm danh
+![UI-diem-danh](screenshots/diem-danh.png)
+## 9.13. UI Nhập điểm
+![UI-nhap-diem](screenshots/nhap-diem.png)
+## 9.14. UI Thông tin học viên
+![UI-thong-tin-hoc-vien](screenshots/thong-tin-hoc-vien.png)
+## 9.15. UI Chi tiết lịch sử thanh toán
+![UI-chi-tiet-lich-su-thanh-toan](screenshots/chi-tiet-lich-su-thanh-toan.png)
