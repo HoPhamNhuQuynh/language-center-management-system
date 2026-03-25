@@ -579,7 +579,7 @@ Chi tiết thiết kế cơ sở dữ liệu của hệ thống được mô t�
 - Ràng buộc Enum:
   + Tất cả các trường kiểu enum chỉ được nhận các giá trị đã được định nghĩa sẵn:
     + Bảng Enrollment: trường enrollment_status (Chờ, Đang học, Dừng học)
-    + Bảng Payment: trường payment_status (Chờ, Thành công, Thất bại), trường payment_method (MoMo, VNPay)
+    + Bảng Payment: trường payment_status (Thành công, chờ thanh toán, thanh toán 1 phần), trường payment_method (Stripe, Banking)
     + Bảng Attendance: trường attendance_status (Vắng, Trễ, Có mặt)
     + Bảng User: trường auth_provider (Facebook, Google)
 ---
@@ -629,6 +629,49 @@ Chi tiết thiết kế cơ sở dữ liệu của hệ thống được mô t�
 | Main Flow | <ol><li>Giáo viên yêu cầu xem danh sách lớp được phân công giảng dạy.</li><li>Hệ thống hiển thị danh sách lớp học phân công cho giáo viên trong giai đoạn hiện tại.</li><li>Giáo viên chọn xem một lớp học cụ thể.</li><li>Hệ thống hiển thị thông tin chi tiết của lớp học.</li><li>Giáo viên chọn mục "Nhập điểm".</li><li>Hệ thống kiểm tra quyền nhập điểm của giáo viên hợp lệ.</li><li>Hệ thống kiểm tra thời hạn nhập điểm hợp lệ.</li><li>Hệ thống kiểm tra bảng điểm vẫn chưa ở trạng thái "Submited"</li><li>Hệ thống hiển thị bảng tổng hợp danh sách các học viên trong lớp kèm các cột điểm của khóa học.</li><li>Giáo viên nhập điểm cho các học viên trong lớp học.</li><li>Hệ thống kiểm tra giá trị điểm do giáo viên nhập hợp lệ.</li><li>Giáo viên chọn "Lưu bảng điểm".</li><li>Hệ thống lưu bảng điểm vào cơ sở dữ liệu thành công.</li><li>Giáo viên chọn "Submit bảng điểm".</li><li>Hệ thống khóa bảng điểm, chuyển trạng thái bảng điểm thành "Submitted"</li></ol> |
 | Alternative Flow | 12a. Giáo viên chỉ lưu bảng điểm mà không submit, hiển thị thông báo "Lưu bảng điểm thành công", *usecase kết thúc*. <br> 12b. Giáo viên chọn hủy nhập điểm, hệ thống yêu cầu xác nhận: <ul><li>12b.1. Giáo viên xác nhận hủy, hệ thống không lưu bảng điểm, hiển thị thông báo "Đã hủy nhập điểm", *usecase kết thúc*. </li><li>12b.2. Giáo viên từ chối hủy nhập điểm, *quay lại bước 2*.</li></ul> 16a. Quản trị viên mở lại trạng thái nhập điểm cho giáo viên nhập điểm phúc khảo. <br>16b. Hệ thống chuyển trạng thái bảng điểm từ "Submitted" sang "Reopened". <br>16c. Giáo viên truy cập lại chức năng nhập điểm của lớp học. <br>16d. Hệ thống cho phép chỉnh sửa các điểm cần phúc khảo. <br>16e. Giáo viên cập nhật điểm cho học viên. <br>16f. Giáo viên chọn "Lưu bảng điểm". <br>16g. Hệ thống lưu thay đổi điểm vào cơ sở dữ liệu. <br>16h. Giáo viên chọn "Submit bảng điểm". <br>16i. Hệ thống khóa bảng điểm và chuyển trạng thái trở lại "Submitted". <br>*Usecase kết thúc*. |
 | Exception Flow | 6a. Hệ thống kiểm tra giáo viên không có quyền nhập điểm, hiển thị thông báo "Hệ thống yêu cầu quyền nhập điểm, vui lòng liên hệ quản trị viên hỗ trợ", *usecase kết thúc*. <br> 7a. Hệ thống kiểm tra quá thời hạn nhập điểm, hiển thị thông báo "Đã quá thời gian nhập điểm, vui lòng liên hệ quản trị viên để được hỗ trợ", *usecase kết thúc*.<br> 8a. Hệ thống kiểm tra bảng điểm đã được submit, hiển thị thông báo "Bảng điểm đã được submit, hiện không thể chỉnh sửa và chỉ được xem, vui lòng liên hệ quản trị viên để được hỗ trợ", *usecase kết thúc*. <br> 11a. Hệ thống kiểm tra giá trị điểm nhập không hợp lệ, hiển thị thông báo "Giá trị điểm nhập vào không hợp lệ, điểm phải nằm trong 0 đến 10", *usecase quay lại bước 10*. <br> 13a. Hệ thống bị lỗi khi lưu điểm, hoàn tác hệ thống và hiển thị thông báo "Lỗi khi lưu điểm, vui lòng thực hiện lại sau", *usecase quay lại bước 12*. |
+
+
+---
+
+# 9. Wireframes UI
+
+## 9.1 UI Báo Cáo Thống Kê
+![UI-bao-cao-thong-ke](screenshots/bao-cao-thong-ke.png)
+
+## 9.2 UI Biên Lai
+![UI-bien-lai](screenshots/bien-lai.png)
+
+## 9.3 UI Đăng Ký Khóa Học
+### 9.3.1 UI chọn khóa học
+![UI-dang-ky-khoa-hoc](screenshots/dang-ky-khoa-hoc-1.png)
+### 9.3.2 UI chọn lớp học
+![UI-dang-ky-khoa-hoc](screenshots/dang-ky-khoa-hoc-2.png)
+### 9.3.3 UI thanh toán học phí
+![UI-dang-ky-khoa-hoc](screenshots/dang-ky-khoa-hoc-3.png)
+### 9.3.4 UI xác nhận hủy hoặc tiếp tục thanh toán khi người dùng bấm vào dấu x
+![UI-dang-ky-khoa-hoc](screenshots/dang-ky-khoa-hoc-4.png)
+### 9.3.5 UI xem biên lai khi người dùng thanh toán thành công
+![UI-dang-ky-khoa-hoc](screenshots/dang-ky-khoa-hoc-5.png)
+
+## 9.4 UI Trang Chủ
+![UI-trang-chu](screenshots/trang-chu-1.png)
+![UI-trang-chu](screenshots/trang-chu-2.png)
+![UI-trang-chu](screenshots/trang-chu-3.png)
+![UI-trang-chu](screenshots/trang-chu-4.png)
+
+## 9.5 UI Quản Lý Cấu Hình
+![UI-quan-ly-cau-hinh](screenshots/quan-ly-cau-hinh.png)
+
+## 9.6 UI Xem Lịch Học - Thời Khóa Biểu
+![UI-xem-lich-hoc-thoi-khoa-bieu](screenshots/xem-khoa-hoc-va-thoi-khoa-bieu.png)
+
+## 9.7 UI Xem Lịch Dạy
+![UI-xem-lich-day](screenshots/xem-lich-day.png)
+
+
+
+
+
 
 
 ## 8.3. ERD Diagram
