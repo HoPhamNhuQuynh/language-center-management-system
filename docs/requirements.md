@@ -693,5 +693,21 @@ Chi tiết thiết kế cơ sở dữ liệu của hệ thống được mô t�
 ![UI-thong-tin-hoc-vien](screenshots/thong-tin-hoc-vien.png)
 ## 9.15. UI Chi tiết lịch sử thanh toán
 ![UI-chi-tiet-lich-su-thanh-toan](screenshots/chi-tiet-lich-su-thanh-toan.png)
+## 9.16. UI About us
+![UI-About-us](screenshots/About-us-1.png)
+![UI-About-us](screenshots/About-us-2.png)
+## 9.17. UI quản lý khóa học
+![UI-Quan-ly-khoa-hoc](screenshots/UI-quan-ly-khoa-hoc.png)
+## 9.18. UI thêm khóa học
+![UI-Them-khoa-hoc](screenshots/UI-tao-khoa-hoc.png)
+## 9.19. UI quản lý lớp học
+![UI-Quan-ly-lop-hoc](screenshots/UI-quan-ly-lop-hoc.png)
+## 9.20.  UI thêm lớp học
+![UI-Them-lop-hoc](screenshots/UI-tao-lop-hoc.png)
+## 9.21. UI quản lý buổi học
+![UI-Quan-ly-buoi-hoc](screenshots/UI-quan-ly-buoi-hoc.png)
+## 9.22. UI thêm buổi học
+![UI-Them-buoi-hoc](screenshots/UI-tao-buoi-hoc.png)
+
 
 
