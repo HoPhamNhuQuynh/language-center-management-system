@@ -633,3 +633,6 @@ Chi tiết thiết kế cơ sở dữ liệu của hệ thống được mô t�
 
 ## 8.3. ERD Diagram
 ![erd-diagram](screenshots/erd.png)
+
+## 9.9. UI Chi tiết kết quả học tập
+![result-academic](screenshots/ket-qua-hoc-tap.png)
