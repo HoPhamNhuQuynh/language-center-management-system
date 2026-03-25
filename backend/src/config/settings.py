@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'enrollments.apps.EnrollmentsConfig',
     'grades.apps.GradesConfig',
     'core.apps.CoreConfig',
+    'drf_yasg',
 ]
 
 MIDDLEWARE = [
@@ -93,7 +94,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'language_center_db',
         'USER': 'root',
-        'PASSWORD': 'Nhuquynh261105@',
+        'PASSWORD': 'root',
         'HOST': '', # mặc định localhost
         'PORT': '3306',
     }
