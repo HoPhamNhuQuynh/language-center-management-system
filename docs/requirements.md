@@ -589,6 +589,7 @@ Chi tiết thiết kế cơ sở dữ liệu của hệ thống được mô t�
 ## 8.1 Use Case Diagram
 ![usecase-diagram](screenshots/usecase-diagram.png)
 ## 8.2 Use Case Specification
+<<<<<<< HEAD
 ### 8.2.3 Quản lý sắp xếp lịch học
 | Field | Content |
 |---|---|
@@ -604,6 +605,8 @@ Chi tiết thiết kế cơ sở dữ liệu của hệ thống được mô t�
 
 
 
+=======
+>>>>>>> f0aeba7cea006437ec345e8078f0daf3a0fe353e
 ### 8.2.1. Đăng ký khóa học trực tuyến (Online course registration)
 | Field | Content |
 |---|---|
@@ -658,10 +661,6 @@ Chi tiết thiết kế cơ sở dữ liệu của hệ thống được mô t�
 | Exception Flow | 6a. Hệ thống kiểm tra giáo viên không có quyền nhập điểm, hiển thị thông báo "Hệ thống yêu cầu quyền nhập điểm, vui lòng liên hệ quản trị viên hỗ trợ", *usecase kết thúc*. <br> 7a. Hệ thống kiểm tra quá thời hạn nhập điểm, hiển thị thông báo "Đã quá thời gian nhập điểm, vui lòng liên hệ quản trị viên để được hỗ trợ", *usecase kết thúc*.<br> 8a. Hệ thống kiểm tra bảng điểm đã được submit, hiển thị thông báo "Bảng điểm đã được submit, hiện không thể chỉnh sửa và chỉ được xem, vui lòng liên hệ quản trị viên để được hỗ trợ", *usecase kết thúc*. <br> 11a. Hệ thống kiểm tra giá trị điểm nhập không hợp lệ, hiển thị thông báo "Giá trị điểm nhập vào không hợp lệ, điểm phải nằm trong 0 đến 10", *usecase quay lại bước 10*. <br> 13a. Hệ thống bị lỗi khi lưu điểm, hoàn tác hệ thống và hiển thị thông báo "Lỗi khi lưu điểm, vui lòng thực hiện lại sau", *usecase quay lại bước 12*. |
 
 
-=======
-=======
->>>>>>> ab7152845be521b6e185d515bcca953f1a3fa121
-
 ### 8.2.5 Cấu hình học phí và chính sách
 | Field | Content |
 |---|---|
@@ -670,18 +669,14 @@ Chi tiết thiết kế cơ sở dữ liệu của hệ thống được mô t�
 | Actor | Admin |
 | Description | Admin thiết lập mức học phí cho các khóa học. |
 | Pre-Condition(s) | Admin đã đăng nhập hệ thống<br>Hệ thống đã tồn tại các khóa học cần được cấu hình học phí và chính sách. |
-<<<<<<< HEAD
 | Post-Condition(s) | Thông tin học phí của khóa học được cập nhật thành công trong hệ thống.<br>Cấu hình này sẽ được áp dụng khi sinh viên đăng ký khóa học. |
 | Main Flow | <ol> <li>Admin truy cập chức năng Cấu hình học phí.</li> <li>Hệ thống hiển thị danh sách các khóa học và thông tin: mã khóa học, tên khóa học, học phí.</li> <li>Admin nhập mức học phí.</li> <li>Admin nhấn “Lưu”.</li> <li>Hệ thống kiểm tra học phí hợp lệ.</li> <li>Hệ thống lưu học phí vào cơ sở dữ liệu.</li> </ol>
 | Alternative Flow | 7a. Admin nhấn “Hủy”.<br>-Hệ thống hiển thị "Xác nhận hủy?" <br>-Admin nhấn "Có".<br>-Hệ thống quay lại màn hình khóa học.|
 | Exception Flow | 8a. Hệ thống phát hiện học phí sai định dạng (Admin nhập chữ, hoặc số âm) và hiển thị thông báo "Vui lòng nhập học phí hợp lệ!", quay lại bước 6 usecase. |
+---
+<<<<<<< HEAD
 
 =======
-| Post-Condition(s) | Thông tin học phí của khóa học được cập nhật thành công trong hệ thống.<br>Cấu hình này sẽ được áp dụng khi học viên đăng ký khóa học. |
-| Main Flow | <ol><li>Admin truy cập chức năng Cấu hình học phí.</li><li>Hệ thống hiển thị danh sách các khóa học và thông tin: mã khóa học, tên khóa học, học phí.</li><li>Admin nhập mức học phí.</li><li>Admin nhấn “Lưu”.</li><li>Hệ thống kiểm tra học phí hợp lệ.</li><li>Hệ thống lưu học phí vào cơ sở dữ liệu.</li></ol> |
-| Alternative Flow | 7a. Admin nhấn “Hủy”.<br>-Hệ thống hiển thị "Xác nhận hủy?"<br>-Admin nhấn "Có".<br>-Hệ thống quay lại màn hình khóa học. |
-| Exception Flow | 8a. Hệ thống phát hiện học phí sai định dạng (Admin nhập chữ, hoặc số âm) và hiển thị thông báo "Vui lòng nhập học phí hợp lệ!", quay lại bước 6 usecase. |
----
-
+>>>>>>> f0aeba7cea006437ec345e8078f0daf3a0fe353e
 ## 8.3. ERD Diagram
 ![erd-diagram](screenshots/erd.png)
