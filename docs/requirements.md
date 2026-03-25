@@ -589,8 +589,21 @@ Chi tiết thiết kế cơ sở dữ liệu của hệ thống được mô t�
 ## 8.1 Use Case Diagram
 ![usecase-diagram](screenshots/usecase-diagram.png)
 ## 8.2 Use Case Specification
+### 8.2.3 Quản lý sắp xếp lịch học
+| Field | Content |
+|---|---|
+| Usecase ID | UC-03 |
+| Usecase Name | Quản lý sắp xếp lịch học |
+| Actor | Admin |
+| Description | Admin sắp xếp lịch học cho các lớp học bằng cách phân công giáo viên, phòng học và thời gian biểu phù hợp. |
+| Pre-Condition(s) | Admin đã đăng nhập hệ thống<br>Khóa học và lớp học đã được tạo<br>Danh sách học viên,  giáo viên và phòng học đã có trong hệ thống. |
+| Post-Condition(s) | Lịch học của lớp học được lưu vào hệ thống.<br>Giáo viên có thể xem lịch dạy của mình.<br>Học viên có thể xem lịch học của mình. |
+| Main Flow | <ol><li>Admin truy cập chức năng Quản lý khóa học</li><li>Hệ thống hiển thị danh sách khóa học</li><li>Admin chọn khóa học cần sắp xếp lịch học.</li><li>Hệ thống hiển thị các lớp có trong danh sách.</li><li>Admin chọn lớp học cần sắp xếp.</li><li>Hệ thống hiển thị thông tin chi tiết: mã lớp, tên lớp, khóa học, trạng thái hoạt động.</li><li>Admin nhấn “Thêm”.</li><li>Hệ thống hiển thị các thông tin: ngày học, thời gian bắt đầu, thời gian kết thúc, phòng học, giáo viên.</li><li>Admin nhập thông tin buổi học.</li><li>Admin chọn ca cho lớp học.</li><li>Admin nhấn “Lưu”.</li><li>Hệ thống kiểm tra dữ liệu:<ul><li>Không để trống thông tin.</li><li>Thời gian kết thúc lớn hơn thời gian bắt đầu.</li></ul></li><li>Hệ thống kiểm tra trùng lịch:<ul><li>Phòng học bị trùng.</li><li>Giáo viên bị trùng.</li></ul></li><li>Nếu thông tin hợp lệ, hệ thống lưu buổi học.</li><li>Hệ thống thông báo “Hoàn tất”.</li><li>Hệ thống cập nhật danh sách buổi học của lớp.</li><li>Hệ thống hiển thị buổi học đã được thêm vào danh sách.</li><li>Admin tiếp tục thêm các buổi học khác cho lớp.</li><li>Sau khi hoàn thành, hệ thống cập nhật lịch học trên trang đăng ký.</li></ol> |
+| Alternative Flow | 16a. Admin chọn một buổi học đã tồn tại trong danh sách.<br>-Admin chọn "Cập nhật".<br>Usecase tiếp tục từ bước 8 tới bước 16, 18.<br><br>16b. Admin chọn một buổi học đã tồn tại trong danh sách.<br>-Admin nhấn “Xoá”.<br>-Hệ thống hiển thị thông báo xác nhận xóa buổi học.<br>- Admin xác nhận thao tác xóa.<br>- Hệ thống xóa buổi học khỏi lớp học.<br>- Hệ thống cập nhật lại danh sách lịch học của lớp.<br>- Hệ thống hiển thị thông báo “Hoàn tất”. |
+| Exception Flow | 11a. Hệ thống phát hiện thông tin bắt buộc chưa được nhập và hiển thị “ Vui lòng nhập thông tin đầy đủ!”, quay lại bước 9 usecase.<br>11b. Hệ thống phát hiện ngày bắt đầu lớn hơn ngày kết thúc và hiển thị “Ngày bắt đầu phải nhỏ hơn ngày kết thúc!”, quay lại bước 9 usecase.<br>11c. Hệ thống phát hiện ngày kết thúc nhỏ hơn ngày bắt đầu và hiển thị “Ngày bắt đầu phải nhỏ hơn ngày kết thúc!”, quay lại bước 9 usecase.<br>12a. Hệ thống phát hiện phòng học bị sắp xếp trong cùng khung giờ và hiển thị “Phòng học đã được sử dụng!”, quay lại bước 9 usecase.<br>12b. Hệ thống phát hiện giáo viên trùng lịch dạy và hiển thị “Giáo viên có lịch dạy trong thời gian này!”, quay lại bước 9 usecase. |
 
 
+<<<<<<< HEAD
 ### 8.2.1. Đăng ký khóa học trực tuyến (Online course registration)
 | Field | Content |
 |---|---|
@@ -646,6 +659,8 @@ Chi tiết thiết kế cơ sở dữ liệu của hệ thống được mô t�
 
 
 =======
+=======
+>>>>>>> ab7152845be521b6e185d515bcca953f1a3fa121
 
 ### 8.2.5 Cấu hình học phí và chính sách
 | Field | Content |
@@ -655,10 +670,18 @@ Chi tiết thiết kế cơ sở dữ liệu của hệ thống được mô t�
 | Actor | Admin |
 | Description | Admin thiết lập mức học phí cho các khóa học. |
 | Pre-Condition(s) | Admin đã đăng nhập hệ thống<br>Hệ thống đã tồn tại các khóa học cần được cấu hình học phí và chính sách. |
+<<<<<<< HEAD
 | Post-Condition(s) | Thông tin học phí của khóa học được cập nhật thành công trong hệ thống.<br>Cấu hình này sẽ được áp dụng khi sinh viên đăng ký khóa học. |
 | Main Flow | <ol> <li>Admin truy cập chức năng Cấu hình học phí.</li> <li>Hệ thống hiển thị danh sách các khóa học và thông tin: mã khóa học, tên khóa học, học phí.</li> <li>Admin nhập mức học phí.</li> <li>Admin nhấn “Lưu”.</li> <li>Hệ thống kiểm tra học phí hợp lệ.</li> <li>Hệ thống lưu học phí vào cơ sở dữ liệu.</li> </ol>
 | Alternative Flow | 7a. Admin nhấn “Hủy”.<br>-Hệ thống hiển thị "Xác nhận hủy?" <br>-Admin nhấn "Có".<br>-Hệ thống quay lại màn hình khóa học.|
 | Exception Flow | 8a. Hệ thống phát hiện học phí sai định dạng (Admin nhập chữ, hoặc số âm) và hiển thị thông báo "Vui lòng nhập học phí hợp lệ!", quay lại bước 6 usecase. |
 
+=======
+| Post-Condition(s) | Thông tin học phí của khóa học được cập nhật thành công trong hệ thống.<br>Cấu hình này sẽ được áp dụng khi học viên đăng ký khóa học. |
+| Main Flow | <ol><li>Admin truy cập chức năng Cấu hình học phí.</li><li>Hệ thống hiển thị danh sách các khóa học và thông tin: mã khóa học, tên khóa học, học phí.</li><li>Admin nhập mức học phí.</li><li>Admin nhấn “Lưu”.</li><li>Hệ thống kiểm tra học phí hợp lệ.</li><li>Hệ thống lưu học phí vào cơ sở dữ liệu.</li></ol> |
+| Alternative Flow | 7a. Admin nhấn “Hủy”.<br>-Hệ thống hiển thị "Xác nhận hủy?"<br>-Admin nhấn "Có".<br>-Hệ thống quay lại màn hình khóa học. |
+| Exception Flow | 8a. Hệ thống phát hiện học phí sai định dạng (Admin nhập chữ, hoặc số âm) và hiển thị thông báo "Vui lòng nhập học phí hợp lệ!", quay lại bước 6 usecase. |
+---
+>>>>>>> ab7152845be521b6e185d515bcca953f1a3fa121
 ## 8.3. ERD Diagram
 ![erd-diagram](screenshots/erd.png)
