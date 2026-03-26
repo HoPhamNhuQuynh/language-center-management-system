@@ -229,7 +229,6 @@ Trần Mỹ Ân
 Hồ Phạm Ngọc Hân  
 
 ## 12. TERMS / ACRONYMS  
-<<<<<<< HEAD
 | Viết tắt | Tên đầy đủ                     | Ý nghĩa                                                                 |
 |----------|--------------------------------|-------------------------------------------------------------------------|
 | QA       | Quality Assurance              | Đảm bảo chất lượng phần mềm, chịu trách nhiệm kiểm thử và quy trình     |
@@ -249,6 +248,4 @@ Hồ Phạm Ngọc Hân
 | CPU      | Central Processing Unit        | Bộ xử lý trung tâm                                                     |
 | REST     | Representational State Transfer | Kiến trúc thiết kế API                                                |
 | CRUD     | Create Read Update Delete      | Các thao tác cơ bản với dữ liệu                                        |
-=======
-(Giải thích các thuật ngữ viết tắt sử dụng trong tài liệu.)
->>>>>>> develop
+
