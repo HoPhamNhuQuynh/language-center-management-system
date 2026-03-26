@@ -643,7 +643,7 @@ Chi tiết thiết kế cơ sở dữ liệu của hệ thống được mô t�
 | Exception Flow | 6a. Hệ thống kiểm tra giáo viên không có quyền nhập điểm, hiển thị thông báo "Hệ thống yêu cầu quyền nhập điểm, vui lòng liên hệ quản trị viên hỗ trợ", *usecase kết thúc*. <br> 7a. Hệ thống kiểm tra quá thời hạn nhập điểm, hiển thị thông báo "Đã quá thời gian nhập điểm, vui lòng liên hệ quản trị viên để được hỗ trợ", *usecase kết thúc*.<br> 8a. Hệ thống kiểm tra bảng điểm đã được submit, hiển thị thông báo "Bảng điểm đã được submit, hiện không thể chỉnh sửa và chỉ được xem, vui lòng liên hệ quản trị viên để được hỗ trợ", *usecase kết thúc*. <br> 11a. Hệ thống kiểm tra giá trị điểm nhập không hợp lệ, hiển thị thông báo "Giá trị điểm nhập vào không hợp lệ, điểm phải nằm trong 0 đến 10", *usecase quay lại bước 10*. <br> 13a. Hệ thống bị lỗi khi lưu điểm, hoàn tác hệ thống và hiển thị thông báo "Lỗi khi lưu điểm, vui lòng thực hiện lại sau", *usecase quay lại bước 12*. |
 
 
-<<<<<<< HEAD
+
 ### 8.2.5 Cấu hình học phí và chính sách
 | Field | Content |
 |---|---|
@@ -659,7 +659,7 @@ Chi tiết thiết kế cơ sở dữ liệu của hệ thống được mô t�
 ---
 ## 8.3. ERD Diagram
 ![erd-diagram](screenshots/erd.png)
-=======
+
 ---
 
 # 9. Wireframes UI
@@ -740,4 +740,4 @@ Chi tiết thiết kế cơ sở dữ liệu của hệ thống được mô t�
 
 
 
->>>>>>> 330d91164f18cf76fcb7ff70189a4ae6851c5ce6
+
