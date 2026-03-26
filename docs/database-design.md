@@ -99,6 +99,9 @@ Hệ thống Quản lý Trung tâm Ngoại ngữ được xây dựng dựa trê
 | Thanh toán        | payment            | Lưu trữ lịch sử giao dịch tài chính. Đảm bảo độ chính xác cao.     |
 | Kết quả toàn khóa | academic_result    | Ghi nhận kết quả học tập của học viên sau khóa học.                |
 
+### 2.2 ER Diagram  
+Chèn hình ERD và ghi chú ngắn giải thích tổng quan quan hệ giữa các thực thể.
+![erd-diagram](screenshots/erd-diagram.png)
 
 ---
 

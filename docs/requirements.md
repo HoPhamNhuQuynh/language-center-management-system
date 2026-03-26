@@ -579,7 +579,7 @@ Chi tiết thiết kế cơ sở dữ liệu của hệ thống được mô t�
 - Ràng buộc Enum:
   + Tất cả các trường kiểu enum chỉ được nhận các giá trị đã được định nghĩa sẵn:
     + Bảng Enrollment: trường enrollment_status (Chờ, Đang học, Dừng học)
-    + Bảng Payment: trường payment_status (Chờ, Thành công, Thất bại), trường payment_method (MoMo, VNPay)
+    + Bảng Payment: trường payment_status (Thành công, chờ thanh toán, thanh toán 1 phần), trường payment_method (Stripe, Banking)
     + Bảng Attendance: trường attendance_status (Vắng, Trễ, Có mặt)
     + Bảng User: trường auth_provider (Facebook, Google)
 ---
@@ -643,6 +643,7 @@ Chi tiết thiết kế cơ sở dữ liệu của hệ thống được mô t�
 | Exception Flow | 6a. Hệ thống kiểm tra giáo viên không có quyền nhập điểm, hiển thị thông báo "Hệ thống yêu cầu quyền nhập điểm, vui lòng liên hệ quản trị viên hỗ trợ", *usecase kết thúc*. <br> 7a. Hệ thống kiểm tra quá thời hạn nhập điểm, hiển thị thông báo "Đã quá thời gian nhập điểm, vui lòng liên hệ quản trị viên để được hỗ trợ", *usecase kết thúc*.<br> 8a. Hệ thống kiểm tra bảng điểm đã được submit, hiển thị thông báo "Bảng điểm đã được submit, hiện không thể chỉnh sửa và chỉ được xem, vui lòng liên hệ quản trị viên để được hỗ trợ", *usecase kết thúc*. <br> 11a. Hệ thống kiểm tra giá trị điểm nhập không hợp lệ, hiển thị thông báo "Giá trị điểm nhập vào không hợp lệ, điểm phải nằm trong 0 đến 10", *usecase quay lại bước 10*. <br> 13a. Hệ thống bị lỗi khi lưu điểm, hoàn tác hệ thống và hiển thị thông báo "Lỗi khi lưu điểm, vui lòng thực hiện lại sau", *usecase quay lại bước 12*. |
 
 
+<<<<<<< HEAD
 ### 8.2.5 Cấu hình học phí và chính sách
 | Field | Content |
 |---|---|
@@ -658,3 +659,85 @@ Chi tiết thiết kế cơ sở dữ liệu của hệ thống được mô t�
 ---
 ## 8.3. ERD Diagram
 ![erd-diagram](screenshots/erd.png)
+=======
+---
+
+# 9. Wireframes UI
+
+## 9.1 UI Báo Cáo Thống Kê
+![UI-bao-cao-thong-ke](screenshots/bao-cao-thong-ke.png)
+
+## 9.2 UI Biên Lai
+![UI-bien-lai](screenshots/bien-lai.png)
+
+## 9.3 UI Đăng Ký Khóa Học
+### 9.3.1 UI chọn khóa học
+![UI-dang-ky-khoa-hoc](screenshots/dang-ky-khoa-hoc-1.png)
+### 9.3.2 UI chọn lớp học
+![UI-dang-ky-khoa-hoc](screenshots/dang-ky-khoa-hoc-2.png)
+### 9.3.3 UI thanh toán học phí
+![UI-dang-ky-khoa-hoc](screenshots/dang-ky-khoa-hoc-3.png)
+### 9.3.4 UI xác nhận hủy hoặc tiếp tục thanh toán khi người dùng bấm vào dấu x
+![UI-dang-ky-khoa-hoc](screenshots/dang-ky-khoa-hoc-4.png)
+### 9.3.5 UI xem biên lai khi người dùng thanh toán thành công
+![UI-dang-ky-khoa-hoc](screenshots/dang-ky-khoa-hoc-5.png)
+
+## 9.4 UI Trang Chủ
+![UI-trang-chu](screenshots/trang-chu-1.png)
+![UI-trang-chu](screenshots/trang-chu-2.png)
+![UI-trang-chu](screenshots/trang-chu-3.png)
+![UI-trang-chu](screenshots/trang-chu-4.png)
+
+## 9.5 UI Quản Lý Cấu Hình
+![UI-quan-ly-cau-hinh](screenshots/quan-ly-cau-hinh.png)
+
+## 9.6 UI Xem Lịch Học - Thời Khóa Biểu
+![UI-xem-lich-hoc-thoi-khoa-bieu](screenshots/xem-khoa-hoc-va-thoi-khoa-bieu.png)
+
+## 9.7 UI Xem Lịch Dạy
+![UI-xem-lich-day](screenshots/xem-lich-day.png)
+
+
+
+
+
+
+
+## 8.3. ERD Diagram
+![erd-diagram](screenshots/erd.png)
+
+
+# 9. Wireframes UI
+## 9.9. UI Chi tiết kết quả học tập
+![result-academic](screenshots/ket-qua-hoc-tap.png)
+## 9.10. UI Đăng ký tài khoản 
+![UI-dang-ky-tai-khoan](screenshots/dang-ky-tai-khoan.png)
+## 9.11. UI Đăng nhập
+![UI-dang-nhap](screenshots/dang-nhap.png)
+## 9.12. UI Điểm danh
+![UI-diem-danh](screenshots/diem-danh.png)
+## 9.13. UI Nhập điểm
+![UI-nhap-diem](screenshots/nhap-diem.png)
+## 9.14. UI Thông tin học viên
+![UI-thong-tin-hoc-vien](screenshots/thong-tin-hoc-vien.png)
+## 9.15. UI Chi tiết lịch sử thanh toán
+![UI-chi-tiet-lich-su-thanh-toan](screenshots/chi-tiet-lich-su-thanh-toan.png)
+## 9.16. UI About us
+![UI-About-us](screenshots/About-us-1.png)
+![UI-About-us](screenshots/About-us-2.png)
+## 9.17. UI quản lý khóa học
+![UI-Quan-ly-khoa-hoc](screenshots/UI-quan-ly-khoa-hoc.png)
+## 9.18. UI thêm khóa học
+![UI-Them-khoa-hoc](screenshots/UI-tao-khoa-hoc.png)
+## 9.19. UI quản lý lớp học
+![UI-Quan-ly-lop-hoc](screenshots/UI-quan-ly-lop-hoc.png)
+## 9.20.  UI thêm lớp học
+![UI-Them-lop-hoc](screenshots/UI-tao-lop-hoc.png)
+## 9.21. UI quản lý buổi học
+![UI-Quan-ly-buoi-hoc](screenshots/UI-quan-ly-buoi-hoc.png)
+## 9.22. UI thêm buổi học
+![UI-Them-buoi-hoc](screenshots/UI-tao-buoi-hoc.png)
+
+
+
+>>>>>>> 330d91164f18cf76fcb7ff70189a4ae6851c5ce6
