@@ -21,8 +21,8 @@ class User(AbstractUser):
                                 )
     provider_id = models.CharField(max_length=255, null=True, blank=True)
     updated_at = models.DateTimeField(auto_now=True) 
-    classrooms = models.ManyToManyField('classes.ClassRoom', through='classes.TeachingAssignment', related_name='teached_classes')
-    enrollments = models.ManyToManyField('classes.ClassRoom', through='enrollments.Enrollment', related_name='enrolled_classes')
+    classrooms = models.ManyToManyField('classes.ClassRoom', through='classes.TeachingAssignment', related_name='teachers')
+    enrollments = models.ManyToManyField('classes.ClassRoom', through='enrollments.Enrollment', related_name='students')
 
     def __str__(self):
         return self.username
