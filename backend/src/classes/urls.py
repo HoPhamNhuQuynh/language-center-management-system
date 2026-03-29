@@ -1,6 +1,11 @@
-from django.contrib import admin
-from django.urls import path
+
+from django.urls import path, include
+from .views import ClassRoomViewSet
+from rest_framework.routers import DefaultRouter
+
+route = DefaultRouter()
+route.register('', ClassRoomViewSet, basename='classroom')
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('', include(route.urls)),
 ]
