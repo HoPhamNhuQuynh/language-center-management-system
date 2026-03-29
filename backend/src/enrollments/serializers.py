@@ -1,17 +1,30 @@
 from enrollments.models import Enrollment, Payment
 from rest_framework import serializers
+from rest_framework.validators import UniqueTogetherValidator
 
 class EnrollmentSerializer(serializers.ModelSerializer):
-    user_name = serializers.CharField(source='user.username', read_only=True)
+    user_first_name = serializers.CharField(source='user.first_name', read_only=True)
+    user_last_name = serializers.CharField(source='user.last_name', read_only=True)
     class_name = serializers.CharField(source='classroom.name', read_only=True)
 
     class Meta:
         model = Enrollment
-        fields = ['enrollment_status','payment_deadline','user_name','class_name']
+        fields = ['id','user','user_first_name','user_last_name','classroom','class_name','enrollment_status','payment_deadline','created_at','updated_at']
+
+        # hoc vien da dang ky lop
+        validators = [
+            UniqueTogetherValidator(
+                queryset=Enrollment.objects.all(),
+                fields = ['user','classroom']
+            )
+        ]
 
 class PaymentSerializer(serializers.ModelSerializer):
-    user_name = serializers.CharField(source='enrollment.user.username', read_only=True)
+    user_first_name = serializers.CharField(source='enrollment.user.first_name', read_only=True)
+    user_last_name = serializers.CharField(source='enrollment.user.last_name', read_only=True)
     class_name = serializers.CharField(source='enrollment.classroom.name', read_only=True)
+
+    amount = serializers.DecimalField(max_digits=10, decimal_places=2, coerce_to_string=False)
     class Meta:
         model = Payment
-        fields = ['amount','payment_method','transaction_id','paid_at','user_name','class_name']
+        fields = ['id','user_first_name','user_last_name','class_name','enrollment','amount','payment_method','transaction_id','paid_at']

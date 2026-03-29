@@ -1,5 +1,5 @@
-
-from datetime import timedelta, timezone
+from django.utils import timezone
+from datetime import timedelta
 from django.db import models
 from core.models import BaseActiveModel, TimeStampedModel
 from django.conf import settings
