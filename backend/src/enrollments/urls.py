@@ -1,6 +1,11 @@
-from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+
+from enrollments.views import PaymentViewSet
+
+r = DefaultRouter()
+r.register('payments', PaymentViewSet,'payment')
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('', include(r.urls)),
 ]
