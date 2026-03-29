@@ -188,32 +188,30 @@ BR-10: Người dùng có quyền đổi mật khẩu của mình. Admin có quy
 ## 6.3. Class Management  
 BR-11: Chỉ Admin được quyền chỉnh sửa thông tin lớp học.  
 BR-12: Không cho phép xóa lớp khi đã có học viên đăng ký.  
-BR-13: Một lớp tối thiểu 10 học viên, tối đa 30 học viên.  
-BR-14: Một giáo viên được phép dạy nhiều lớp nhưng không được trùng lịch.    
+BR-13: Một lớp tối thiểu 10 học viên và tối đa 30 học viên.     
+BR-14: Một giáo viên được phép dạy nhiều lớp nhưng không được trùng lịch.   
 BR-15: Học viên chỉ được xem các lớp học còn chỗ trống để đăng ký.    
-BR-16: Không cho phép sắp xếp lịch học của các lớp trùng thời gian.  
+BR-16: Không cho phép sắp xếp lịch học của các lớp trùng thời gian.   
 
 ## 6.4. Course/Class Registration  
 BR-17: Một học viên được quyền đăng ký nhiều lớp học nhưng không được trùng lịch học.  
 BR-18: Việc đăng ký lớp học của học viên được xác nhận tự động sau khi thanh toán thành công.   
 BR-19: Học viên chỉ được phép hủy đăng ký khóa học khi chưa thanh toán.  
 BR-20: Trạng thái đăng ký bao gồm:  
-* Đăng ký thành công.  
-* Thanh toán một phần.  
-* Chờ thanh toán.  
-* Hết hạn.
+ * Đăng ký thành công.  
+ * Thanh toán một phần.   
+ * Chờ thanh toán.  
 
 ## 6.5. Payment  
 BR-21: Sau khi đăng ký khóa học, học viên thanh toán học phí trong 30 phút.  
 BR-22: Quy định thanh toán học phí:  
  * Dưới 5 triệu VNĐ, học viên bắt buộc thanh toán toàn bộ học phí.  
- * Trên 5 triệu VNĐ, học viên được phép thanh toán 50% và thanh toán phần còn lại trước khi khai giảng 3 ngày.
+ * Trên 5 triệu VNĐ, học viên được phép thanh toán 50% học phí và thanh toán phần còn lại trước khi khai giảng 3 ngày.  
 
 BR-23: Trạng thái thanh toán gồm:   
  * Thanh toán thành công.  
  * Thanh toán thất bại.  
- * Chờ xử lý.  
- * Hủy thanh toán.  
+ * Chờ xử lý.    
  
 ## 6.6. Grading  
 BR-24: Điểm của học viên phải nằm trong khoảng từ 0 điểm đến 10 điểm.  
@@ -226,11 +224,12 @@ BR-26: Sau khi giáo viên submit bảng điểm, việc chỉnh sửa chỉ đ�
 BR-27: Có quy định thời hạn nhập điểm cho giáo viên.  
 BR-28: Admin được phép hỗ trợ mở lại quyền nhập điểm nếu có lý do hợp lý.  
 
-## 6.7. System & Policy Management    
-BR-29: Admin được phép thay đổi chính sách học phí.  
+## 6.7. Quy định hệ thống (System & Policy Management)    
+BR-29: Admin được phép thay đổi chính sách học phí.   
+BR-30: Khóa học mới có học phí tối thiểu 2 triệu VNĐ.  
 
-## 6.8. Reporting  
-BR-30: Hệ thống cung cấp báo cáo thống kê quý, năm theo:   
+## 6.8. Báo cáo (Reporting)  
+BR-31: Hệ thống cung cấp báo cáo thống kê quý, năm theo:   
  * Tổng doanh thu.  
  * Tổng số lớp học.   
  * Tổng số học viên.   
@@ -579,7 +578,7 @@ Chi tiết thiết kế cơ sở dữ liệu của hệ thống được mô t�
 - Ràng buộc Enum:
   + Tất cả các trường kiểu enum chỉ được nhận các giá trị đã được định nghĩa sẵn:
     + Bảng Enrollment: trường enrollment_status (Chờ, Đang học, Dừng học)
-    + Bảng Payment: trường payment_status (Chờ, Thành công, Thất bại), trường payment_method (MoMo, VNPay)
+    + Bảng Payment: trường payment_status (Thành công, chờ thanh toán, thanh toán 1 phần), trường payment_method (Stripe, Banking)
     + Bảng Attendance: trường attendance_status (Vắng, Trễ, Có mặt)
     + Bảng User: trường auth_provider (Facebook, Google)
 ---
@@ -589,7 +588,6 @@ Chi tiết thiết kế cơ sở dữ liệu của hệ thống được mô t�
 ## 8.1 Use Case Diagram
 ![usecase-diagram](screenshots/usecase-diagram.png)
 ## 8.2 Use Case Specification
-
 ### 8.2.1. Đăng ký khóa học trực tuyến (Online course registration)
 | Field | Content |
 |---|---|
@@ -615,7 +613,20 @@ Chi tiết thiết kế cơ sở dữ liệu của hệ thống được mô t�
 | Post-Condition(s) | - Hệ thống cập nhật trạng thái thanh toán<br>- Hệ thống cập nhật trạng thái khóa học của học viên<br>- Hệ thống tạo hóa đơn điện tử                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
 | Main Flow         | <ol><li>Học viên nhấn nút "Thanh toán".</li><li>Hệ thống truy xuất dữ liệu và hiển thị chi tiết hóa đơn (Tên khóa, mã khóa, tên lớp, mã lớp, tên học viên, mã học viên, tổng hóa đơn).</li><li>Học viên chọn phương thức thanh toán.</li><li>Hệ thống chuyển hướng sang cổng thanh toán.</li><li>Học viên thanh toán qua cổng thanh toán.</li><li>Hệ thống kiểm tra tình trạng thanh toán được gửi về từ cổng thanh toán bên thứ ba.</li><li>Hệ thống cập nhật trạng thái thanh toán.</li><li>Hệ thống cập nhật trạng thái khóa học.</li><li>Hệ thống hiển thị thông báo thành công và cho phép xem và tải hóa đơn.</li><li>Kết thúc.</li></ol>                                                                                                        |
 | Alternative Flow  | 2a. Nếu hệ thống không lấy được dữ liệu hóa đơn, hệ thống hiển thị thông báo: "Không thể tải thông tin thanh toán lúc này, vui lòng thử lại sau". Hệ thống giữ nguyên ở trang hiện tại hoặc quay về trang đăng ký. <br><br>5a. Nếu học viên không thanh toán mà bấm nút "Hủy" hoặc "Quay lại" trên cổng thanh toán. Cổng thanh toán trả kết quả "Đã hủy" về hệ thống. Hệ thống hiển thị thông báo: "Giao dịch đã bị hủy", sau đó quay lại màn hình chọn phương thức thanh toán.<br><br> 6a. Nếu số dư không đủ hoặc thẻ bị lỗi, cổng thanh toán trả về kết quả thất bại. Hệ thống hiển thị thông báo: "Thanh toán thất bại. Vui lòng kiểm tra lại số dư hoặc thử phương thức thanh toán khác". Hệ thống quay lại màn hình chọn phương thức thanh toán. |
-| Exception Flow    | 6b. Trong quá trình chờ đợi kết quả, nếu xảy ra sự cố mạng, cổng thanh toán không phản hồi hoặc hết thời gian giao dịch mà chưa xác nhận được trạng thái thanh toán. Hệ thống hiển thị thông báo lỗi: "Giao dịch quá thời gian xử lý hoặc mất kết nối. Vui lòng kiểm tra lại lịch sử giao dịch trước khi thực hiện lại". Hệ thống quay về màn hình chọn chức năng thanh toán.                                                                                                                                                                                                       
+| Exception Flow    | 6b. Trong quá trình chờ đợi kết quả, nếu xảy ra sự cố mạng, cổng thanh toán không phản hồi hoặc hết thời gian giao dịch mà chưa xác nhận được trạng thái thanh toán. Hệ thống hiển thị thông báo lỗi: "Giao dịch quá thời gian xử lý hoặc mất kết nối. Vui lòng kiểm tra lại lịch sử giao dịch trước khi thực hiện lại". Hệ thống quay về màn hình chọn chức năng thanh toán.                                                                                                                
+ ### 8.2.3 Quản lý sắp xếp lịch học
+| Field | Content |
+|---|---|
+| Usecase ID | UC-03 |
+| Usecase Name | Quản lý sắp xếp lịch học |
+| Actor | Admin |
+| Description | Admin sắp xếp lịch học cho các lớp học bằng cách phân công giáo viên, phòng học và thời gian biểu phù hợp. |
+| Pre-Condition(s) | Admin đã đăng nhập hệ thống<br>Khóa học và lớp học đã được tạo<br>Danh sách học viên,  giáo viên và phòng học đã có trong hệ thống. |
+| Post-Condition(s) | Lịch học của lớp học được lưu vào hệ thống.<br>Giáo viên có thể xem lịch dạy của mình.<br>Học viên có thể xem lịch học của mình. |
+| Main Flow | <ol><li>Admin truy cập chức năng Quản lý khóa học</li><li>Hệ thống hiển thị danh sách khóa học</li><li>Admin chọn khóa học cần sắp xếp lịch học.</li><li>Hệ thống hiển thị các lớp có trong danh sách.</li><li>Admin chọn lớp học cần sắp xếp.</li><li>Hệ thống hiển thị thông tin chi tiết: mã lớp, tên lớp, khóa học, trạng thái hoạt động.</li><li>Admin nhấn “Thêm”.</li><li>Hệ thống hiển thị các thông tin: ngày học, thời gian bắt đầu, thời gian kết thúc, phòng học, giáo viên.</li><li>Admin nhập thông tin buổi học.</li><li>Admin chọn ca cho lớp học.</li><li>Admin nhấn “Lưu”.</li><li>Hệ thống kiểm tra dữ liệu:<ul><li>Không để trống thông tin.</li><li>Thời gian kết thúc lớn hơn thời gian bắt đầu.</li></ul></li><li>Hệ thống kiểm tra trùng lịch:<ul><li>Phòng học bị trùng.<li>Giáo viên bị trùng</li></ul></li><li>Nếu thông tin hợp lệ, hệ thống lưu buổi học.</li><li>Hệ thống thông báo “Hoàn tất”.</li><li>Hệ thống cập nhật danh sách buổi học của lớp.</li><li>Hệ thống hiển thị buổi học đã được thêm vào danh sách.</li><li>Admin tiếp tục thêm các buổi học khác cho lớp.</li><li>Sau khi hoàn thành, hệ thống cập nhật lịch học trên trang đăng ký. |
+| Alternative Flow | 16a. Admin chọn một buổi học đã tồn tại trong danh sách.<br>-Admin chọn "Cập nhật".<br>Usecase tiếp tục từ bước 8 tới bước 16, 18.<br>16b. Admin chọn một buổi học đã tồn tại trong danh sách.<br>-Admin nhấn “Xoá”<br>-Hệ thống hiển thị thông báo xác nhận xóa buổi học.<br>- Admin xác nhận thao tác xóa.<br>- Hệ thống xóa buổi học khỏi lớp học.<br>- Hệ thống cập nhật lại danh sách lịch học của lớp.<br>- Hệ thống hiển thị thông báo “Hoàn tất”. |
+| Exception Flow | 11a. Hệ thống phát hiện thông tin bắt buộc chưa được nhập và hiển thị “ Vui lòng nhập thông tin đầy đủ!”, quay lại bước 9 usecase.<br>11b. Hệ thống phát hiện ngày bắt đầu lớn hơn ngày kết thúc và hiển thị “Ngày bắt đầu phải nhỏ hơn ngày kết thúc!”, quay lại bước 9 usecase.<br>11c. Hệ thống phát hiện ngày kết thúc nhỏ hơn ngày bắt đầu và hiển thị “Ngày bắt đầu phải nhỏ hơn ngày kết thúc!”, quay lại bước 9 usecase.<br>12a. Hệ thống phát hiện phòng học bị sắp xếp trong cùng khung giờ và hiển thị “Phòng học đã được sử dụng!”, quay lại bước 9 usecase.<br>12b. Hệ thống phát hiện giáo viên trùng lịch dạy và hiển thị “Giáo viên có lịch dạy trong thời gian này!”, quay lại bước 9 usecase. |
+                                                                                      
 
 ### 8.2.4. Nhập điểm (Enter grades)
 | Field | Content |
@@ -631,5 +642,101 @@ Chi tiết thiết kế cơ sở dữ liệu của hệ thống được mô t�
 | Exception Flow | 6a. Hệ thống kiểm tra giáo viên không có quyền nhập điểm, hiển thị thông báo "Hệ thống yêu cầu quyền nhập điểm, vui lòng liên hệ quản trị viên hỗ trợ", *usecase kết thúc*. <br> 7a. Hệ thống kiểm tra quá thời hạn nhập điểm, hiển thị thông báo "Đã quá thời gian nhập điểm, vui lòng liên hệ quản trị viên để được hỗ trợ", *usecase kết thúc*.<br> 8a. Hệ thống kiểm tra bảng điểm đã được submit, hiển thị thông báo "Bảng điểm đã được submit, hiện không thể chỉnh sửa và chỉ được xem, vui lòng liên hệ quản trị viên để được hỗ trợ", *usecase kết thúc*. <br> 11a. Hệ thống kiểm tra giá trị điểm nhập không hợp lệ, hiển thị thông báo "Giá trị điểm nhập vào không hợp lệ, điểm phải nằm trong 0 đến 10", *usecase quay lại bước 10*. <br> 13a. Hệ thống bị lỗi khi lưu điểm, hoàn tác hệ thống và hiển thị thông báo "Lỗi khi lưu điểm, vui lòng thực hiện lại sau", *usecase quay lại bước 12*. |
 
 
+
+### 8.2.5 Cấu hình học phí và chính sách
+| Field | Content |
+|---|---|
+| Usecase ID | UC-05 |
+| Usecase Name | Cấu hình học phí và chính sách |
+| Actor | Admin |
+| Description | Admin thiết lập mức học phí cho các khóa học. |
+| Pre-Condition(s) | Admin đã đăng nhập hệ thống<br>Hệ thống đã tồn tại các khóa học cần được cấu hình học phí và chính sách. |
+| Post-Condition(s) | Thông tin học phí của khóa học được cập nhật thành công trong hệ thống.<br>Cấu hình này sẽ được áp dụng khi sinh viên đăng ký khóa học. |
+| Main Flow | <ol> <li>Admin truy cập chức năng Cấu hình học phí.</li> <li>Hệ thống hiển thị danh sách các khóa học và thông tin: mã khóa học, tên khóa học, học phí.</li> <li>Admin nhập mức học phí.</li> <li>Admin nhấn “Lưu”.</li> <li>Hệ thống kiểm tra học phí hợp lệ.</li> <li>Hệ thống lưu học phí vào cơ sở dữ liệu.</li> </ol>
+| Alternative Flow | 7a. Admin nhấn “Hủy”.<br>-Hệ thống hiển thị "Xác nhận hủy?" <br>-Admin nhấn "Có".<br>-Hệ thống quay lại màn hình khóa học.|
+| Exception Flow | 8a. Hệ thống phát hiện học phí sai định dạng (Admin nhập chữ, hoặc số âm) và hiển thị thông báo "Vui lòng nhập học phí hợp lệ!", quay lại bước 6 usecase. |
+---
 ## 8.3. ERD Diagram
 ![erd-diagram](screenshots/erd.png)
+
+---
+
+# 9. Wireframes UI
+
+## 9.1 UI Báo Cáo Thống Kê
+![UI-bao-cao-thong-ke](screenshots/bao-cao-thong-ke.png)
+
+## 9.2 UI Biên Lai
+![UI-bien-lai](screenshots/bien-lai.png)
+
+## 9.3 UI Đăng Ký Khóa Học
+### 9.3.1 UI chọn khóa học
+![UI-dang-ky-khoa-hoc](screenshots/dang-ky-khoa-hoc-1.png)
+### 9.3.2 UI chọn lớp học
+![UI-dang-ky-khoa-hoc](screenshots/dang-ky-khoa-hoc-2.png)
+### 9.3.3 UI thanh toán học phí
+![UI-dang-ky-khoa-hoc](screenshots/dang-ky-khoa-hoc-3.png)
+### 9.3.4 UI xác nhận hủy hoặc tiếp tục thanh toán khi người dùng bấm vào dấu x
+![UI-dang-ky-khoa-hoc](screenshots/dang-ky-khoa-hoc-4.png)
+### 9.3.5 UI xem biên lai khi người dùng thanh toán thành công
+![UI-dang-ky-khoa-hoc](screenshots/dang-ky-khoa-hoc-5.png)
+
+## 9.4 UI Trang Chủ
+![UI-trang-chu](screenshots/trang-chu-1.png)
+![UI-trang-chu](screenshots/trang-chu-2.png)
+![UI-trang-chu](screenshots/trang-chu-3.png)
+![UI-trang-chu](screenshots/trang-chu-4.png)
+
+## 9.5 UI Quản Lý Cấu Hình
+![UI-quan-ly-cau-hinh](screenshots/quan-ly-cau-hinh.png)
+
+## 9.6 UI Xem Lịch Học - Thời Khóa Biểu
+![UI-xem-lich-hoc-thoi-khoa-bieu](screenshots/xem-khoa-hoc-va-thoi-khoa-bieu.png)
+
+## 9.7 UI Xem Lịch Dạy
+![UI-xem-lich-day](screenshots/xem-lich-day.png)
+
+
+
+
+
+
+
+## 8.3. ERD Diagram
+![erd-diagram](screenshots/erd.png)
+
+
+# 9. Wireframes UI
+## 9.9. UI Chi tiết kết quả học tập
+![result-academic](screenshots/ket-qua-hoc-tap.png)
+## 9.10. UI Đăng ký tài khoản 
+![UI-dang-ky-tai-khoan](screenshots/dang-ky-tai-khoan.png)
+## 9.11. UI Đăng nhập
+![UI-dang-nhap](screenshots/dang-nhap.png)
+## 9.12. UI Điểm danh
+![UI-diem-danh](screenshots/diem-danh.png)
+## 9.13. UI Nhập điểm
+![UI-nhap-diem](screenshots/nhap-diem.png)
+## 9.14. UI Thông tin học viên
+![UI-thong-tin-hoc-vien](screenshots/thong-tin-hoc-vien.png)
+## 9.15. UI Chi tiết lịch sử thanh toán
+![UI-chi-tiet-lich-su-thanh-toan](screenshots/chi-tiet-lich-su-thanh-toan.png)
+## 9.16. UI About us
+![UI-About-us](screenshots/About-us-1.png)
+![UI-About-us](screenshots/About-us-2.png)
+## 9.17. UI quản lý khóa học
+![UI-Quan-ly-khoa-hoc](screenshots/UI-quan-ly-khoa-hoc.png)
+## 9.18. UI thêm khóa học
+![UI-Them-khoa-hoc](screenshots/UI-tao-khoa-hoc.png)
+## 9.19. UI quản lý lớp học
+![UI-Quan-ly-lop-hoc](screenshots/UI-quan-ly-lop-hoc.png)
+## 9.20.  UI thêm lớp học
+![UI-Them-lop-hoc](screenshots/UI-tao-lop-hoc.png)
+## 9.21. UI quản lý buổi học
+![UI-Quan-ly-buoi-hoc](screenshots/UI-quan-ly-buoi-hoc.png)
+## 9.22. UI thêm buổi học
+![UI-Them-buoi-hoc](screenshots/UI-tao-buoi-hoc.png)
+
+
+
+
