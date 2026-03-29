@@ -4,7 +4,7 @@ from enrollments.models import Enrollment, Payment
 from enrollments import serializers
 
 class EnrollmentViewSet(viewsets.ViewSet, generics.ListAPIView):
-    queryset = Enrollment.objects.all()
+    queryset = Enrollment.objects.filter(active=True)
     serializer_class = serializers.EnrollmentSerializer
 
 class PaymentViewSet(viewsets.ViewSet, generics.ListAPIView):
