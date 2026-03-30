@@ -656,10 +656,6 @@ Chi tiết thiết kế cơ sở dữ liệu của hệ thống được mô t�
 | Alternative Flow | 7a. Admin nhấn “Hủy”.<br>-Hệ thống hiển thị "Xác nhận hủy?" <br>-Admin nhấn "Có".<br>-Hệ thống quay lại màn hình khóa học.|
 | Exception Flow | 8a. Hệ thống phát hiện học phí sai định dạng (Admin nhập chữ, hoặc số âm) và hiển thị thông báo "Vui lòng nhập học phí hợp lệ!", quay lại bước 6 usecase. |
 ---
-## 8.3. ERD Diagram
-![erd-diagram](screenshots/erd.png)
-
----
 
 # 9. Wireframes UI
 
@@ -696,46 +692,49 @@ Chi tiết thiết kế cơ sở dữ liệu của hệ thống được mô t�
 ## 9.7 UI Xem Lịch Dạy
 ![UI-xem-lich-day](screenshots/xem-lich-day.png)
 
-
-
-
-
-
-
-## 8.3. ERD Diagram
-![erd-diagram](screenshots/erd.png)
-
-
-# 9. Wireframes UI
-## 9.9. UI Chi tiết kết quả học tập
+## 9.8. UI Chi tiết kết quả học tập
 ![result-academic](screenshots/ket-qua-hoc-tap.png)
-## 9.10. UI Đăng ký tài khoản 
+
+## 9.9. UI Đăng ký tài khoản 
 ![UI-dang-ky-tai-khoan](screenshots/dang-ky-tai-khoan.png)
-## 9.11. UI Đăng nhập
+
+## 9.10. UI Đăng nhập
 ![UI-dang-nhap](screenshots/dang-nhap.png)
-## 9.12. UI Điểm danh
+
+## 9.11. UI Điểm danh
 ![UI-diem-danh](screenshots/diem-danh.png)
-## 9.13. UI Nhập điểm
+
+## 9.12. UI Nhập điểm
 ![UI-nhap-diem](screenshots/nhap-diem.png)
-## 9.14. UI Thông tin học viên
+
+## 9.13. UI Thông tin học viên
 ![UI-thong-tin-hoc-vien](screenshots/thong-tin-hoc-vien.png)
-## 9.15. UI Chi tiết lịch sử thanh toán
+
+## 9.14. UI Chi tiết lịch sử thanh toán
 ![UI-chi-tiet-lich-su-thanh-toan](screenshots/chi-tiet-lich-su-thanh-toan.png)
-## 9.16. UI About us
+
+## 9.15. UI About us
 ![UI-About-us](screenshots/About-us-1.png)
 ![UI-About-us](screenshots/About-us-2.png)
-## 9.17. UI quản lý khóa học
+
+## 9.16. UI quản lý khóa học
 ![UI-Quan-ly-khoa-hoc](screenshots/UI-quan-ly-khoa-hoc.png)
-## 9.18. UI thêm khóa học
+
+## 9.17. UI thêm khóa học
 ![UI-Them-khoa-hoc](screenshots/UI-tao-khoa-hoc.png)
-## 9.19. UI quản lý lớp học
+
+## 9.18. UI quản lý lớp học
 ![UI-Quan-ly-lop-hoc](screenshots/UI-quan-ly-lop-hoc.png)
-## 9.20.  UI thêm lớp học
+
+## 9.19.  UI thêm lớp học
 ![UI-Them-lop-hoc](screenshots/UI-tao-lop-hoc.png)
-## 9.21. UI quản lý buổi học
+
+## 9.20. UI quản lý buổi học
 ![UI-Quan-ly-buoi-hoc](screenshots/UI-quan-ly-buoi-hoc.png)
-## 9.22. UI thêm buổi học
+
+## 9.21. UI thêm buổi học
 ![UI-Them-buoi-hoc](screenshots/UI-tao-buoi-hoc.png)
+
 
 
 
