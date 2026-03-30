@@ -20,32 +20,12 @@ class TeachingAssignmentSerializer(serializers.ModelSerializer):
 
 
 class ClassRoomSerializer(serializers.ModelSerializer):
-    asssignments = TeachingAssignmentSerializer(many=True, required=False)
     course_name = serializers.ReadOnlyField(source='course.name')
-    main_teacher = serializers.SerializerMethodField()
-
+    
     class Meta:
         model = ClassRoom
-        fields = ['id', 'name', 'course_name', 'start_date', 'end_date', 'created_at', 'asssignments', 'main_teacher']
-
-    def get_main_teacher(self, obj):
-        main_teacher = obj.teachers.filter(is_main=True).first()
-
-        if main_teacher:
-            return {
-                'id': main_teacher.id,
-                'name': f"{main_teacher.teacher.username}"
-            }
-        return None
-    
-    def validate_main_teacher(self, value):
-        main_teacher_count = len([item for item in value if item.get('is_main') is True])
-
-        if main_teacher_count > 1:
-            raise serializers.ValidationError('Một lớp chỉ có một giáo viên chính!')
-        
-        return value 
-    
+        fields = ['id', 'name', 'course_name', 'course', 'start_date', 'end_date']
+  
     def create(self, validated_data):
         assignments_data = validated_data.pop('teachers', [])
         classroom = ClassRoom.objects.create(**validated_data)
@@ -77,6 +57,20 @@ class ClassRoomSerializer(serializers.ModelSerializer):
                         defaults={'is_main': t_data.get('is_main', False)}
                     )   
         return instance
-
-
     
+class ClassRoomDetailSerializer(ClassRoomSerializer):
+    main_teacher = serializers.SerializerMethodField()
+
+    class Meta:
+        model = ClassRoomSerializer.Meta.model
+        fields = ClassRoomSerializer.Meta.fields + ['created_at', 'main_teacher', 'grade_deadline', 'grade_status']
+    
+    def get_main_teacher(self, obj):
+        main_teacher = obj.teachingassignment_set.filter(is_main=True).first()
+
+        if main_teacher:
+            return {
+                'id': main_teacher.teacher.id,
+                'name': f"{main_teacher.teacher.last_name} {main_teacher.teacher.first_name}"
+            }
+        return None

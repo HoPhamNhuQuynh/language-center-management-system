@@ -3,7 +3,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from cloudinary.models import CloudinaryField
 '''
-    User, Profile, Role
+    User, Profile
 '''
 
 class User(AbstractUser):
@@ -24,6 +24,14 @@ class User(AbstractUser):
     classrooms = models.ManyToManyField('classes.ClassRoom', through='classes.TeachingAssignment', related_name='teachers')
     enrollments = models.ManyToManyField('classes.ClassRoom', through='enrollments.Enrollment', related_name='students')
 
+    @property
+    def is_teacher(self):
+        return self.groups.filter(name='Teacher').exists()
+
+    @property
+    def is_student(self):
+        return self.groups.filter(name='Student').exists()
+
     def __str__(self):
         return self.username
 
@@ -34,3 +42,4 @@ class Profile(models.Model):
 
     def __str__(self):
         return self.user.username
+    
