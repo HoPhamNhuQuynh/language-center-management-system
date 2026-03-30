@@ -1,6 +1,11 @@
-from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from users import views
+
+
+r = DefaultRouter()
+r.register('users', views.UserViewSet,'user')
 
 urlpatterns = [
-    # path('admin/', admin.site.urls),
+    path('', include(r.urls)),
 ]
