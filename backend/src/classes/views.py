@@ -3,7 +3,6 @@ from rest_framework import viewsets, generics, filters, permissions
 from .serializers import ClassRoomSerializer, ClassRoomDetailSerializer
 from .models import ClassRoom
 from .paginators import ClassRoomPaginator
-from core.permissions import *
 
 class ClassRoomViewSet(viewsets.ModelViewSet):
     serializer_class = ClassRoomSerializer
@@ -15,14 +14,14 @@ class ClassRoomViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         query = ClassRoom.objects.filter(active=True).all()
 
-        if self.action in ['list', 'retrieve']:
+        if self.request.user.is_staff or self.action == 'retrieve':
             return query.prefetch_related('teachingassignment_set__teacher').select_related('course')
 
         return query
     
     def get_permissions(self):
-        if self.action in ['create', 'update', 'destroy', 'partial_update']:
-            return [permissions.IsAdminUser()]
+        # if self.action in ['create', 'update', 'destroy', 'partial_update']:
+        #     return [permissions.IsAdminUser()]
         return [permissions.AllowAny()]
         
     def get_serializer_class(self, *args, **kwargs):

@@ -2,6 +2,7 @@
 from rest_framework import serializers
 from classes.models import ClassRoom, TeachingAssignment
 from django.db import transaction
+from users.models import User
 
 class ItemSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
@@ -21,41 +22,39 @@ class TeachingAssignmentSerializer(serializers.ModelSerializer):
 
 class ClassRoomSerializer(serializers.ModelSerializer):
     course_name = serializers.ReadOnlyField(source='course.name')
-    
+    teacher_id = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(),
+        write_only=True
+    )
+
     class Meta:
         model = ClassRoom
-        fields = ['id', 'name', 'course_name', 'course', 'start_date', 'end_date']
+        fields = ['id', 'name', 'course_name', 'course', 'start_date', 'end_date', 'teacher_id']
   
     def create(self, validated_data):
-        assignments_data = validated_data.pop('teachers', [])
+        teacher = validated_data.pop('teacher_id', None)
         classroom = ClassRoom.objects.create(**validated_data)
 
-        for data in assignments_data:
-            TeachingAssignment.objects.create(
-                classroom=classroom,
-                teacher=data['teacher'],
-                is_main=data['is_main']
-            )
+        TeachingAssignment.objects.create(
+            classroom=classroom,
+            teacher=teacher,
+            is_main=True
+        )
         return classroom
 
     def update(self, instance, validated_data):
-        assignments_data = validated_data.pop('teachers', None)
-
+        teacher = validated_data.pop('teacher_id', [])
         instance = super().update(instance, validated_data)
 
-        if assignments_data:
+        if teacher:
             with transaction.atomic():
-                new_main_teacher = next((t for t in assignments_data if t.get('is_main')), None)
+                TeachingAssignment.objects.filter(classroom=instance, is_main=True).update(is_main=False)
 
-                if new_main_teacher:
-                    TeachingAssignment.objects.filter(classroom=instance, is_main=True).update(is_main=False)
-
-                for t_data in assignments_data:
-                    TeachingAssignment.objects.update_or_create(
-                        classroom = instance,
-                        teacher=t_data['teacher'],
-                        defaults={'is_main': t_data.get('is_main', False)}
-                    )   
+                TeachingAssignment.objects.update_or_create(
+                    classroom = instance,
+                    teacher=teacher,
+                     defaults={"is_main": True}
+                )   
         return instance
     
 class ClassRoomDetailSerializer(ClassRoomSerializer):
