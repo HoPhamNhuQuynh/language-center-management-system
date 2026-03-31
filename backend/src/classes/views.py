@@ -20,8 +20,8 @@ class ClassRoomViewSet(viewsets.ModelViewSet):
         return query
     
     def get_permissions(self):
-        # if self.action in ['create', 'update', 'destroy', 'partial_update']:
-        #     return [permissions.IsAdminUser()]
+        if self.action in ['create', 'update', 'destroy', 'partial_update']:
+            return [permissions.IsAdminUser()]
         return [permissions.AllowAny()]
         
     def get_serializer_class(self, *args, **kwargs):
