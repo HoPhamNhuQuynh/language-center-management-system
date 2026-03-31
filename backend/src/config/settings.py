@@ -54,15 +54,26 @@ INSTALLED_APPS = [
     'grades.apps.GradesConfig',
     'core.apps.CoreConfig',
     'drf_yasg',
+    'oauth2_provider',
+    'corsheaders',
 ]
+
+CLIENT_ID = "aJ7nxWPdKdjy8isgOPQsGKPzR9E2Keehq8A7D4gr"
+CLIENT_SECRET = "fCxz6BFuPTTmgtFHf8vCxJDlNzYTGvrfwXaVpDO3WQI9ZFIitOZYUj4csqHHPwoSANhlSPTdQMNUCYpW35EdGBQ7EpDEdrovmLxuaO9eqawgGj2CHFRHZK7Ftnui1kUV"
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.AllowAny',
-    ]
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'oauth2_provider.contrib.rest_framework.OAuth2Authentication',
+    )
 }
 
+CORS_ALLOW_ALL_ORIGINS = True
+
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
