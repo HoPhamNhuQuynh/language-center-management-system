@@ -56,6 +56,10 @@ INSTALLED_APPS = [
     'drf_yasg',
     'oauth2_provider',
     'corsheaders',
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
 ]
 
 CLIENT_ID = "aJ7nxWPdKdjy8isgOPQsGKPzR9E2Keehq8A7D4gr"
