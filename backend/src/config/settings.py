@@ -61,21 +61,48 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
-    # 'allauth.socialaccount.providers.facebook',
+    'allauth.socialaccount.providers.facebook',
+    'django_extensions',
 ]
 SITE_ID = 1 
 
-LOGIN_REDIRECT_URL = '/admin'
-LOGIN_URL = '/auth/login/'
+LOGIN_REDIRECT_URL = '/accounts/logout/'
 
 SOCIALACCOUNT_ADAPTER = 'users.adapter.SocialAccountAdapter'
 
-ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_LOGIN_METHODS = {'email'}
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
+
+OAUTH2_PROVIDER = {
+    'ACCESS_TOKEN_EXPIRE_SECONDS': 900,
+    'REFRESH_TOKEN_EXPIRE_SECONDS': 86400 * 30, 
+}
+
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+            'prompt': 'select_account',
+        }
+    }
+}
+
+# ACCOUNT_EMAIL_REQUIRED = True
+SOCIALACCOUNT_QUERY_EMAIL = True
+ACCOUNT_EMAIL_VERIFICATION = "none"
+ACCOUNT_SIGNUP_FIELDS = ['email*', 'username*', 'password1*', 'password2*']
+
+# cho phép ngrok kết nối server
+ALLOWED_HOSTS = ['*', 'localhost', '127.0.0.1'] 
+ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'https'
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
@@ -83,7 +110,8 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'oauth2_provider.contrib.rest_framework.OAuth2Authentication',
-    )
+    ),
+    'ROTATE_REFRESH_TOKEN': True,
 }
 
 CORS_ALLOW_ALL_ORIGINS = True

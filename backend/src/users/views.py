@@ -8,14 +8,13 @@ from django.contrib.auth import get_user_model
 from oauth2_provider.models import Application
 from .utils import generate_auth_token
 
+User = get_user_model()
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.filter(is_active=True)
     serializer_class = serializers.UserSerializer
 
-User = get_user_model()
-
-class GoogleTokenExchangeViewSet(APIView):
+class SocialTokenExchangeViewSet(APIView):
     def post(self, request):
         google_token = request.data.get('google_token')
 
