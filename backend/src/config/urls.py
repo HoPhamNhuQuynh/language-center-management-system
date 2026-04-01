@@ -34,11 +34,12 @@ schema_view = get_schema_view(
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('courses.urls')),
-    path('', include('classes.urls')),
-    path('', include('enrollments.urls')),
-    path('', include('grades.urls')),
-    path('', include('users.urls')),
+    path('api/', include('courses.urls')),
+    path('api/', include('classes.urls')),
+    path('api/', include('enrollments.urls')),
+    path('api/', include('grades.urls')),
+    path('api/', include('users.urls')),
+    # url cho swagger 
     re_path(r'^swagger(?P<format>\.json|\.yaml)$',
             schema_view.without_ui(cache_timeout=0),
             name='schema-json'),
@@ -48,6 +49,8 @@ urlpatterns = [
     re_path(r'^redoc/$',
             schema_view.with_ui('redoc',cache_timeout=0),
             name='schema-redoc'),
-    path('o/', include('oauth2_provider.urls',
+    # url cho authentication  
+    path('oauth/', include('oauth2_provider.urls',
             namespace='oauth2_provider')),
+    path('auth/', include('allauth.urls')),
 ]

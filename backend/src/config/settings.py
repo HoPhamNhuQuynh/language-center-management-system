@@ -60,10 +60,22 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
+    # 'allauth.socialaccount.providers.facebook',
 ]
+SITE_ID = 1 
 
-CLIENT_ID = "aJ7nxWPdKdjy8isgOPQsGKPzR9E2Keehq8A7D4gr"
-CLIENT_SECRET = "fCxz6BFuPTTmgtFHf8vCxJDlNzYTGvrfwXaVpDO3WQI9ZFIitOZYUj4csqHHPwoSANhlSPTdQMNUCYpW35EdGBQ7EpDEdrovmLxuaO9eqawgGj2CHFRHZK7Ftnui1kUV"
+LOGIN_REDIRECT_URL = '/admin'
+LOGIN_URL = '/auth/login/'
+
+SOCIALACCOUNT_ADAPTER = 'users.adapter.SocialAccountAdapter'
+
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
@@ -78,6 +90,7 @@ CORS_ALLOW_ALL_ORIGINS = True
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
