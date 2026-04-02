@@ -11,7 +11,7 @@ class Attendance(TimeStampedModel):
         LATE = "LATE", "Trễ"
         PRESENT = "PRESENT", "Có mặt"
 
-    attendance_status = models.CharField(max_length=20, choices=Status, default=Status.ABSENT)
+    attendance_status = models.CharField(max_length=20, choices=Status.choices, default=Status.ABSENT)
     note = models.TextField(null=True, blank=True)
     enrollment = models.ForeignKey('enrollments.Enrollment', on_delete=models.PROTECT)
     session = models.ForeignKey('classes.Session', on_delete=models.PROTECT)
