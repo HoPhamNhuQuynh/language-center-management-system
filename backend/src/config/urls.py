@@ -22,7 +22,7 @@ from drf_yasg import openapi
 
 schema_view = get_schema_view(
     openapi.Info(
-        title="Languege Center API",
+        title="Language Center API",
         default_version='v1',
         description="APIs for LanguageCenterManagementSystem",
         contact=openapi.Contact(email="admin.com"),

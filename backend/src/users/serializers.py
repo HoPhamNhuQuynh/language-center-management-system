@@ -1,5 +1,4 @@
 from urllib import request
-
 from users.models import User, Profile
 from rest_framework import serializers, status
 from rest_framework.response import Response
@@ -8,12 +7,36 @@ class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
         fields = ['phone_num','avatar']
+        extra_kwargs = {
+            'avatar': {'required': False},
+            'phone_num': {'required': False}
+        }
 
-class UserSerializer(serializers.ModelSerializer):
-    profile = ProfileSerializer()
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+
+        if instance.avatar:
+            data['avatar'] = instance.avatar.url
+
+        return data
+
+    def validate_phone_num(self, value):
+        current_user = self.context['request'].user
+
+        if Profile.objects.filter(phone_num=value).exclude(user=current_user).exists():
+            raise serializers.ValidationError('this phone number is already in use')
+        return value
+
+class SimpleUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id','first_name','last_name','username', 'email', 'password','auth_provider','date_joined',
+        fields = ['id','first_name','last_name','email']
+
+class UserSerializer(SimpleUserSerializer):
+    profile = ProfileSerializer()
+    class Meta:
+        model = SimpleUserSerializer.Meta.model
+        fields = SimpleUserSerializer.Meta.fields + ['username', 'email', 'password','auth_provider','date_joined',
                   'last_login','profile']
         extra_kwargs = {
             'password': {
@@ -52,3 +75,4 @@ class UserSerializer(serializers.ModelSerializer):
                 setattr(profile, attr, value)
             profile.save()
         return instance
+

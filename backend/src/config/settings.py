@@ -62,8 +62,8 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
 ]
 
-CLIENT_ID = "aJ7nxWPdKdjy8isgOPQsGKPzR9E2Keehq8A7D4gr"
-CLIENT_SECRET = "fCxz6BFuPTTmgtFHf8vCxJDlNzYTGvrfwXaVpDO3WQI9ZFIitOZYUj4csqHHPwoSANhlSPTdQMNUCYpW35EdGBQ7EpDEdrovmLxuaO9eqawgGj2CHFRHZK7Ftnui1kUV"
+CLIENT_ID = "EQph8dDGEKjsNdKPzfGtl9n0Pa8Uuq1yerJfyxQ3"
+CLIENT_SECRET = "HCDsfV5mFIDYqtRiKJV2OaBxZ6vUe8XNv3YEq9sU130Yfw6yhFxOOHDIGoEJMo63OfR8Yh7pjLTHO05alcWfNojjuJ9qIpDJrNThDpPDQfWw0XMv2fMTJPHYliJ6fe2k"
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
@@ -85,6 +85,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'allauth.account.middleware.AccountMiddleware'
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -115,7 +116,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'language_center_db',
         'USER': 'root',
-        'PASSWORD': 'Nhuquynh261105@',
+        'PASSWORD': 'root',
         'HOST': '', # mặc định localhost
         'PORT': '3306',
     }
@@ -157,3 +158,5 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+
+SITE_ID = 1
