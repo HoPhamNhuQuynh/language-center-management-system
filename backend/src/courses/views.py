@@ -7,13 +7,13 @@ from courses import serializers
 class CourseViewSet(viewsets.ModelViewSet):
     queryset = Course.objects.all()
     serializer_class = serializers.CourseSerializer
-class LevelListCreateView(generics.ListCreateAPIView):
+class LevelViewSet(generics.ListCreateAPIView, viewsets.ViewSet):
     queryset = Level.objects.all()
     serializer_class = serializers.LevelSerializer
-    permission_classes = [IsAdminUser]
-class ScoreTypeCreateView(generics.CreateAPIView):
+    #permission_classes = [IsAdminUser]
+class ScoreTypeViewSet(generics.CreateAPIView, viewsets.ViewSet):
     queryset = ScoreType.objects.all()
     serializer_class = serializers.ScoreTypeSerializer
-class TagListView(generics.ListAPIView):
+class TagViewSet(generics.ListAPIView, viewsets.ViewSet):
     queryset = Tag.objects.all()
     serializer_class = serializers.TagSerializer
