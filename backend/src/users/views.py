@@ -49,7 +49,12 @@ class SocialTokenExchangeViewSet(APIView):
         return Response({
             'access_token': access_token.token,
             'refresh_token': refresh_token.token,
-            'expires_in': 36000,
+            'expires_in': 900,
             'token_type': 'Bearer',
             'scope': access_token.scope
         })
+    
+# class RegisterView(APIView):
+#     def post(self, request):
+#         user = request.data
+#         ...

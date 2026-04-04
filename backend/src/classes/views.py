@@ -31,6 +31,7 @@ class ClassRoomViewSet(viewsets.ModelViewSet):
             return serializers.ClassRoomDetailSerializer
         return serializers.ClassRoomSerializer
     
+    # /classes/id/sessions/
     @action(methods=['get'], url_path='sessions', detail=True)
     def get_sessions(self, request, pk):
         sessions = Session.objects.select_related('schedule').filter(schedule__classroom=self.get_object())

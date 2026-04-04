@@ -198,3 +198,5 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+
+# python manage.py runserver_plus --cert-file cert.crt --key-file cert.key
