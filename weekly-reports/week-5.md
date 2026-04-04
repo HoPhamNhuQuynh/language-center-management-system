@@ -19,15 +19,15 @@
 
 ---
 ## 2. Tiến độ tổng thể
-| Hạng mục           | Trạng thái    | %    |
-|--------------------|---------------|------|
-| Phân tích yêu cầu  | Đã hoàn thành | 100% |
-| Thiết kế kiến trúc | Đã hoàn thành | 100% |
-| Backend API        | Đang làm      | 60%  |
-| Frontend UI        | Chưa bắt đầu  | 0%   |
-| Docker             | Chưa bắt đầu  | 0%   |
-| Testing            | Chưa bắt đầu  | 20%  |
-| Báo cáo            | Chưa bắt đầu  | 0%   |
+| Hạng mục           | Trạng thái     | %    |
+|--------------------|----------------|------|
+| Phân tích yêu cầu  | Đã hoàn thành  | 100% |
+| Thiết kế kiến trúc | Đã hoàn thành  | 100% |
+| Backend API        | Đang thực hiện | 60%  |
+| Frontend UI        | Chưa bắt đầu   | 0%   |
+| Docker             | Chưa bắt đầu   | 0%   |
+| Testing            | Đang thực hiện | 20%  |
+| Báo cáo            | Chưa bắt đầu   | 0%   |
 
 **Tổng tiến độ: 40%**
 ---
