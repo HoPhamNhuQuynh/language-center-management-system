@@ -2,9 +2,12 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import viewsets, filters, permissions, status
 from . import serializers
-from .models import ClassRoom, Session
+from .models import ClassRoom, Session, TeachingAssignment
 from .paginators import ClassRoomPaginator
 from enrollments.serializers import EnrollmentSerializer
+from rest_framework.exceptions import ValidationError
+from django.db.models.deletion import ProtectedError
+from django.db.models import Prefetch
 
 class ClassRoomViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.ClassRoomSerializer
@@ -17,7 +20,12 @@ class ClassRoomViewSet(viewsets.ModelViewSet):
         query = ClassRoom.objects.filter(active=True).all()
 
         if self.request.user.is_staff or self.action == 'retrieve':
-            return query.prefetch_related('teachingassignment_set__teacher').select_related('course')
+            return query.prefetch_related(
+                Prefetch(
+                    'teachingassignment_set',
+                    queryset=TeachingAssignment.objects.select_related('teacher')
+                )
+            ).select_related('course')
 
         return query
     
@@ -30,6 +38,12 @@ class ClassRoomViewSet(viewsets.ModelViewSet):
         if self.request.user.is_staff or self.action == 'retrieve':
             return serializers.ClassRoomDetailSerializer
         return serializers.ClassRoomSerializer
+    
+    def perform_destroy(self, instance):
+        try:
+            instance.delete()
+        except ProtectedError:
+            raise ValidationError("Không thể xóa lớp học khi đã gán dữ liệu liên quan.")
     
     @action(methods=['get'], url_path='sessions', detail=True)
     def get_sessions(self, request, pk):
