@@ -22,7 +22,7 @@ from drf_yasg import openapi
 
 schema_view = get_schema_view(
     openapi.Info(
-        title="Languege Center API",
+        title="Language Center API",
         default_version='v1',
         description="APIs for LanguageCenterManagementSystem",
         contact=openapi.Contact(email="admin.com"),
@@ -47,5 +47,7 @@ urlpatterns = [
             name='schema-swagger-ui'),
     re_path(r'^redoc/$',
             schema_view.with_ui('redoc',cache_timeout=0),
-            name='schema-redoc')
+            name='schema-redoc'),
+    path('o/', include('oauth2_provider.urls',
+            namespace='oauth2_provider')),
 ]
