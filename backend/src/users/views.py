@@ -1,25 +1,18 @@
 
-from rest_framework import viewsets, permissions, status, generics
+from rest_framework import viewsets, permissions, status, generics, parsers
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from core.permissions import IsStudent
 
 from classes.serializers import ClassRoomSerializer
 from users.models import User, Profile
-from users.serializers import UserSerializer, SimpleUserSerializer, ProfileSerializer
+from users.serializers import UserSerializer, ProfileSerializer
 
 
-class UserViewSet(viewsets.ViewSet, generics.ListAPIView, generics.CreateAPIView, generics.RetrieveAPIView, generics.DestroyAPIView):
+class UserViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.RetrieveDestroyAPIView):
     queryset = User.objects.filter(is_active=True)
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAdminUser]
-
-    def get_serializer_class(self):
-        if self.action == 'list':
-            return SimpleUserSerializer
-        if self.action == 'update_avatar':
-            return ProfileSerializer
-        return UserSerializer
-
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -50,7 +43,7 @@ class UserViewSet(viewsets.ViewSet, generics.ListAPIView, generics.CreateAPIView
         return Response(s.data, status=status.HTTP_200_OK)
 
     @action(methods=['get'], url_path="me/enrollments", detail=False,
-            permission_classes=[permissions.IsAuthenticated])
+            permission_classes=[IsStudent])
     def get_enrollments(self, request):
         classrooms = request.user.enrollments.all()
 

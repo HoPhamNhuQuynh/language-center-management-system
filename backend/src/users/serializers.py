@@ -1,7 +1,9 @@
-from urllib import request
+
+from django.contrib.auth.models import Group
+from django.db import transaction
+
 from users.models import User, Profile
-from rest_framework import serializers, status
-from rest_framework.response import Response
+from rest_framework import serializers
 
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
@@ -13,31 +15,38 @@ class ProfileSerializer(serializers.ModelSerializer):
         }
 
     def to_representation(self, instance):
+        if not instance:
+            return None
+
         data = super().to_representation(instance)
 
         if instance.avatar:
-            data['avatar'] = instance.avatar.url
+            try:
+                data['avatar'] = instance.avatar.url
+            except AttributeError:
+                data['avatar'] = str(instance.avatar)
 
         return data
 
     def validate_phone_num(self, value):
-        current_user = self.context['request'].user
+        user = self.context['request'].user
 
-        if Profile.objects.filter(phone_num=value).exclude(user=current_user).exists():
-            raise serializers.ValidationError('this phone number is already in use')
+        qs = Profile.objects.filter(phone_num=value)
+
+        if self.instance:
+            qs = qs.exclude(user=self.instance.user)
+
+        if qs.exists():
+            raise serializers.ValidationError('Phone number already exists')
+
         return value
 
-class SimpleUserSerializer(serializers.ModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
+    profile = ProfileSerializer(required=False, allow_null=True)
     class Meta:
         model = User
-        fields = ['id','first_name','last_name','email']
-
-class UserSerializer(SimpleUserSerializer):
-    profile = ProfileSerializer()
-    class Meta:
-        model = SimpleUserSerializer.Meta.model
-        fields = SimpleUserSerializer.Meta.fields + ['username', 'email', 'password','auth_provider','date_joined',
-                  'last_login','profile']
+        fields = ['id','first_name','last_name','email','username', 'email', 'password','auth_provider','date_joined',
+                  'last_login', 'profile']
         extra_kwargs = {
             'password': {
                 'write_only': True
@@ -45,16 +54,17 @@ class UserSerializer(SimpleUserSerializer):
         }
 
     def create(self, validated_data):
-        profile_data = validated_data.pop('profile')
+        profile_data = validated_data.pop('profile', {})
 
-        user = User(**validated_data)
-        user.set_password(user.password)
-        user.save()
+        with transaction.atomic():
+            user = User(**validated_data)
+            user.set_password(user.password)
+            user.save()
 
-        Profile.objects.create(
-            user=user,
-            **profile_data
-        )
+        teacher_group, _ = Group.objects.get_or_create(name='teacher')
+        user.groups.add(teacher_group)
+
+        Profile.objects.create(user=user, **profile_data)
 
         return user
 
@@ -70,7 +80,7 @@ class UserSerializer(SimpleUserSerializer):
         instance.save()
 
         if profile_data is not None:
-            profile = instance.profile
+            profile, _ = Profile.objects.get_or_create(user=instance)
             for attr, value in profile_data.items():
                 setattr(profile, attr, value)
             profile.save()
