@@ -126,6 +126,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -156,7 +157,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'language_center_db',
         'USER': 'root',
-        'PASSWORD': 'Nhuquynh261105@',
+        'PASSWORD': 'root',
         'HOST': '', # mặc định localhost
         'PORT': '3306',
     }
@@ -199,4 +200,3 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
-# python manage.py runserver_plus --cert-file cert.crt --key-file cert.key
