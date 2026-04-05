@@ -44,7 +44,7 @@ class ClassRoomViewSet(viewsets.ModelViewSet):
             instance.delete()
         except ProtectedError:
             raise ValidationError("Không thể xóa lớp học khi đã gán dữ liệu liên quan.")
-    
+
     @action(methods=['get'], url_path='sessions', detail=True)
     def get_sessions(self, request, pk):
         sessions = Session.objects.select_related('schedule').filter(schedule__classroom=self.get_object())

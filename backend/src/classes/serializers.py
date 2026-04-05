@@ -54,7 +54,7 @@ class ClassRoomSerializer(serializers.ModelSerializer):
                 TeachingAssignment.objects.update_or_create(
                     classroom = instance,
                     teacher=teacher,
-                     defaults={"is_main": True}
+                    defaults={"is_main": True}
                 )   
         return instance
     
@@ -91,6 +91,7 @@ class SessionSerializer(serializers.ModelSerializer):
         data = super().to_representation(instance)
 
         request = self.context.get('request')
+        
         if request and request.user and request.user.is_authenticated and request.user.is_staff:
             data['room'] = RoomSerializer(instance.room).data
             data['user'] = instance.user.id
