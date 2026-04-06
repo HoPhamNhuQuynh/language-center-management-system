@@ -33,7 +33,7 @@ class User(AbstractUser):
         return self.groups.filter(name='Student').exists()
 
     def __str__(self):
-        return self.username
+        return f"{self.first_name} {self.last_name}"
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)

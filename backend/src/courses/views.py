@@ -1,6 +1,6 @@
-
 from rest_framework import viewsets,generics,filters,status
-from courses.models import Course,Tag
+from rest_framework.permissions import IsAdminUser
+from courses.models import Course, Level, ScoreType, Tag
 from courses import serializers
 from courses.serializers import CourseSerializer, CourseDetailSerializer
 from rest_framework.decorators import action

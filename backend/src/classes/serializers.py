@@ -1,8 +1,9 @@
 
 from rest_framework import serializers
-from classes.models import ClassRoom, TeachingAssignment
+from classes.models import ClassRoom, TeachingAssignment, Session, Room
 from django.db import transaction
 from users.models import User
+from users.serializers import UserSerializer
 
 class ItemSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
@@ -53,7 +54,7 @@ class ClassRoomSerializer(serializers.ModelSerializer):
                 TeachingAssignment.objects.update_or_create(
                     classroom = instance,
                     teacher=teacher,
-                     defaults={"is_main": True}
+                    defaults={"is_main": True}
                 )   
         return instance
     
@@ -73,3 +74,28 @@ class ClassRoomDetailSerializer(ClassRoomSerializer):
                 'name': f"{main_teacher.teacher.last_name} {main_teacher.teacher.first_name}"
             }
         return None
+
+class RoomSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Room    
+        fields = ["id", "name", "capacity"]
+
+    
+class SessionSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Session
+        fields = ["id", "date", "start_time", "end_time"]
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+
+        request = self.context.get('request')
+        
+        if request and request.user and request.user.is_authenticated and request.user.is_staff:
+            data['room'] = RoomSerializer(instance.room).data
+            data['user'] = instance.user.id
+            data['created_at'] = instance.created_at
+            data['active'] = instance.active
+
+        return data

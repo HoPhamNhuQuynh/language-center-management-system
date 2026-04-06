@@ -19,10 +19,11 @@ from django.urls import path, include, re_path
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
+from django.views.generic import RedirectView
 
 schema_view = get_schema_view(
     openapi.Info(
-        title="Languege Center API",
+        title="Language Center API",
         default_version='v1',
         description="APIs for LanguageCenterManagementSystem",
         contact=openapi.Contact(email="admin.com"),
@@ -33,12 +34,14 @@ schema_view = get_schema_view(
 )
 
 urlpatterns = [
+    path('', RedirectView.as_view(url='swagger/', permanent=False)),
     path('admin/', admin.site.urls),
-    path('', include('courses.urls')),
-    path('', include('classes.urls')),
-    path('', include('enrollments.urls')),
-    path('', include('grades.urls')),
-    path('', include('users.urls')),
+    path('api/', include('courses.urls')),
+    path('api/', include('classes.urls')),
+    path('api/', include('enrollments.urls')),
+    path('api/', include('grades.urls')),
+    path('api/', include('users.urls')),
+    # url cho swagger 
     re_path(r'^swagger(?P<format>\.json|\.yaml)$',
             schema_view.without_ui(cache_timeout=0),
             name='schema-json'),
@@ -47,5 +50,7 @@ urlpatterns = [
             name='schema-swagger-ui'),
     re_path(r'^redoc/$',
             schema_view.with_ui('redoc',cache_timeout=0),
-            name='schema-redoc')
+            name='schema-redoc'),
+    # url cho authentication  
+    path('accounts/', include('allauth.urls')),
 ]

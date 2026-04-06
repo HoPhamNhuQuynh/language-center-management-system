@@ -44,7 +44,7 @@ class Session(BaseActiveModel, TimeStampedModel):
     start_time = models.TimeField()
     end_time = models.TimeField()
     date = models.DateField()
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, null=True)
     schedule = models.ForeignKey(Schedule, on_delete=models.PROTECT)
     room = models.ForeignKey(Room, on_delete=models.SET_NULL, null=True)
 
