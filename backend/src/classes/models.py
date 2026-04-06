@@ -17,7 +17,7 @@ class ClassRoom(BaseActiveModel, TimeStampedModel):
     end_date = models.DateField()
     capacity = models.PositiveIntegerField(default=30)
     grade_deadline = models.DateTimeField(null=True)
-    grade_status = models.CharField(max_length=20, choices=Status, default=Status.DRAFT)
+    grade_status = models.CharField(max_length=20, choices=Status.choices, default=Status.DRAFT)
     course = models.ForeignKey('courses.Course', on_delete=models.PROTECT)
 
     def __str__(self):
