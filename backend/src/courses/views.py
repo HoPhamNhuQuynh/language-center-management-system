@@ -22,3 +22,10 @@ class CourseViewSet(viewsets.ViewSet,generics.ListAPIView,generics.CreateAPIView
 class TagViewSet(viewsets.ViewSet,generics.CreateAPIView):
     queryset = Tag.objects.all()
     serializer_class = serializers.TagSerializer
+class LevelViewSet(generics.ListCreateAPIView, viewsets.ViewSet):
+    queryset = Level.objects.all()
+    serializer_class = serializers.LevelSerializer
+    #permission_classes = [IsAdminUser]
+class ScoreTypeViewSet(generics.ListCreateAPIView, viewsets.ViewSet):
+    queryset = ScoreType.objects.all()
+    serializer_class = serializers.ScoreTypeSerializer
