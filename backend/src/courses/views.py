@@ -1,15 +1,19 @@
-from rest_framework import viewsets,generics,filters,status
-from rest_framework.permissions import IsAdminUser
-from courses.models import Course, Level, ScoreType, Tag
+from rest_framework import viewsets, status, permissions
+from courses.models import Course, Tag, ScoreType, Level
 from courses import serializers
-from courses.serializers import CourseSerializer, CourseDetailSerializer
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from classes.models import ClassRoom
 from classes.serializers import ClassRoomSerializer
+from classes.models import ClassRoom
 
-class CourseViewSet(viewsets.ViewSet,generics.ListAPIView,generics.CreateAPIView,generics.RetrieveAPIView):
-      queryset = Course.objects.filter(active=True)
+class CourseViewSet(viewsets.ModelViewSet):
+      queryset = Course.objects.filter(active=True).select_related('level').prefetch_related('tags').all()
+
+      def get_permissions(self):
+        if self.action in ['list', 'retrieve']:
+            return [permissions.AllowAny()]
+        return [permissions.IsAdminUser()]   
+
       def get_serializer_class(self):
         if self.action == 'retrieve':
             return serializers.CourseDetailSerializer
@@ -17,15 +21,33 @@ class CourseViewSet(viewsets.ViewSet,generics.ListAPIView,generics.CreateAPIView
       
       @action(methods=['get'], url_path='classes', detail=True)
       def get_classes(self, request, pk):
-          classes = ClassRoom.objects.select_related('course').filter(course=self.get_object(),active=True)
-          return Response(ClassRoomSerializer(classes,many=True).data,status=status.HTTP_200_OK) 
-class TagViewSet(viewsets.ViewSet,generics.CreateAPIView):
-    queryset = Tag.objects.all()
+          classes = ClassRoom.objects.filter(course_id=pk)
+          return Response(ClassRoomSerializer(classes, many=True).data, status=status.HTTP_200_OK) 
+
+class TagViewSet(viewsets.ModelViewSet):
+    queryset = Tag.objects.filter(active=True).all()
     serializer_class = serializers.TagSerializer
-class LevelViewSet(generics.ListCreateAPIView, viewsets.ViewSet):
+
+    def get_permissions(self):
+        if self.action == 'list':
+            return [permissions.AllowAny()]
+        return [permissions.IsAdminUser()]
+    
+class LevelViewSet(viewsets.ModelViewSet):
     queryset = Level.objects.all()
     serializer_class = serializers.LevelSerializer
-    #permission_classes = [IsAdminUser]
-class ScoreTypeViewSet(generics.ListCreateAPIView, viewsets.ViewSet):
+
+    def get_permissions(self):
+        if self.action == 'list':
+            return [permissions.AllowAny()]
+        return [permissions.IsAdminUser()]
+
+class ScoreTypeViewSet(viewsets.ModelViewSet):
     queryset = ScoreType.objects.all()
     serializer_class = serializers.ScoreTypeSerializer
+
+    def get_permissions(self):
+        if self.action == 'list':
+            return [permissions.AllowAny()]
+        return [permissions.IsAdminUser()]
+    

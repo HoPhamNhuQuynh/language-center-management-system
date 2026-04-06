@@ -1,35 +1,45 @@
-from rest_framework import viewsets, status, permissions, generics
+from rest_framework import viewsets, status, permissions, generics, parsers
 from rest_framework.views import APIView
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.contrib.auth import get_user_model
 from oauth2_provider.models import Application
 from users.models import User, Profile
-from users.serializers import UserSerializer, SimpleUserSerializer, ProfileSerializer
-from classes.serializers import ClassRoomSerializer
+from users.serializers import UserSerializer, ProfileSerializer, UserDetailSerializer
+from enrollments.serializers import EnrollmentSerializer, PaymentSerializer
+from enrollments.models import Payment
 from .utils import generate_auth_token
 import requests
+from config import settings
+from core.permissions import IsStudent
+from .perms import IsAdminOrSelf
+from oauth2_provider.models import AccessToken
+from rest_framework.throttling import AnonRateThrottle
+
+class SocialLoginThrottle(AnonRateThrottle):
+    scope = 'social_login'
+
 
 User = get_user_model()
 
-class UserViewSet(viewsets.ViewSet, generics.ListAPIView, generics.CreateAPIView, generics.RetrieveAPIView, generics.DestroyAPIView):
+class UserViewSet(viewsets.ViewSet, generics.DestroyAPIView, generics.ListCreateAPIView):
     queryset = User.objects.filter(is_active=True)
-    serializer_class = UserSerializer
-    permission_classes = [permissions.IsAdminUser]
+    parser_classes = [parsers.MultiPartParser]
+
+    def get_permissions(self):
+        if self.action == 'destroy':
+            return [IsAdminOrSelf()]
+        return [permissions.IsAdminUser()]
 
     def get_serializer_class(self):
-        if self.action == 'list':
-            return SimpleUserSerializer
-        if self.action == 'update_avatar':
-            return ProfileSerializer
+        if self.action in ['current_user'] or (self.request.user and self.request.user.is_authenticated and self.request.user.is_staff):
+            return UserDetailSerializer
         return UserSerializer
 
-
-    def destroy(self, request, *args, **kwargs):
-        instance = self.get_object()
+    def perform_destroy(self, instance):
         instance.is_active = False
         instance.save()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        AccessToken.objects.filter(user=instance).delete()
 
     @action(methods=['get', 'patch'], url_path="me", detail=False,
             permission_classes=[permissions.IsAuthenticated])
@@ -46,7 +56,7 @@ class UserViewSet(viewsets.ViewSet, generics.ListAPIView, generics.CreateAPIView
     @action(methods=['patch'], url_path="me/avatar", detail=False,
             permission_classes=[permissions.IsAuthenticated])
     def update_avatar(self, request):
-        profile, created = Profile.objects.get_or_create(user=request.user)
+        profile, _ = Profile.objects.get_or_create(user=request.user)
 
         s = ProfileSerializer(profile, data= request.data, partial=True, context={'request': request})
         s.is_valid(raise_exception=True)
@@ -54,52 +64,95 @@ class UserViewSet(viewsets.ViewSet, generics.ListAPIView, generics.CreateAPIView
         return Response(s.data, status=status.HTTP_200_OK)
 
     @action(methods=['get'], url_path="me/enrollments", detail=False,
-            permission_classes=[permissions.IsAuthenticated])
+            permission_classes=[IsStudent])
     def get_enrollments(self, request):
-        classrooms = request.user.enrollments.all()
+        enrollments = request.user.enrollments.select_related('classroom').filter(active=True).all()
+        return Response(EnrollmentSerializer(enrollments, many=True).data, status=status.HTTP_200_OK)
+    
+    @action(methods=['get'], url_path="me/payments", detail=False,
+            permission_classes=[IsStudent])
+    def get_payments(self, request):
+        payments = Payment.objects.filter(
+            enrollment__user=request.user
+        ).select_related('enrollment__classroom')
 
-        serializer = ClassRoomSerializer(classrooms, many=True)
-
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(PaymentSerializer(payments, many=True).data, status=status.HTTP_200_OK)
 
 class SocialTokenExchangeViewSet(APIView):
+    throttle_classes = [SocialLoginThrottle]
     def post(self, request):
-        google_token = request.data.get('google_token')
+        provider = request.data.get('provider', '').upper()
+        social_access_token = request.data.get('access_token')
 
-        if not google_token:
-            return Response({'error': 'Missing google_toke'}, status=status.HTTP_400_BAD_REQUEST)
+        if not provider or not social_access_token:
+            return Response({'error': 'Missing provider or access_token'}, status=status.HTTP_400_BAD_REQUEST)
         
-        google_response = requests.get('https://www.googleapis.com/oauth2/v3/userinfo',
-                                    params={'access_token': google_token}
-                            )
-        if google_response.status_code != 200:
-            return Response({'error': 'Invalid Google Token'}, status=status.HTTP_400_BAD_REQUEST)
+        if provider not in User.AuthProvider.values:
+            return Response({'error': 'Unsupported provider'}, status=status.HTTP_400_BAD_REQUEST)
         
-        user_data = google_response.json()
-        email = user_data.get('email')
+        email = None
+        user_info = {}
 
-        user, created = User.objects.get_or_create(email=email, defaults={
-            'username': email.split('@')[0],
-            'auth_provider': User.AuthProvider.GOOGLE
-        })
-
-        if created:
-            user.set_unuseable_password()
+        if provider == User.AuthProvider.GOOGLE:
+            google_response = requests.get(
+                'https://www.googleapis.com/oauth2/v3/userinfo',
+                params={'access_token': social_access_token}
+            )
+            if google_response.status_code != 200:
+                return Response({'error': 'Invalid Google Token'}, status=status.HTTP_400_BAD_REQUEST)
+            user_info = google_response.json()
+            email = user_info.get('email')
+        elif provider == User.AuthProvider.FACEBOOK:
+            fb_response = requests.get(
+                'https://graph.facebook.com/me',
+                params={
+                    'fields': 'id,name,email',
+                    'access_token': social_access_token
+                }
+            )
+            if fb_response.status_code != 200:
+                return Response({'error': 'Invalid Facebook Token'}, status=status.HTTP_400_BAD_REQUEST)
+            user_info = fb_response.json()
+            email = user_info.get('email')
+        else:
+            return Response({'error': 'Unsupported provider'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        if not email:
+            return Response({'error': 'Email not provided by social network'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        user = User.objects.filter(email=email).first()
+        if user:
+            if user.auth_provider != provider:
+                return Response({
+                    'error': f'This email is registed by {user.auth_provider}. Please use the right way to login in system.'},
+                    status=status.HTTP_400_BAD_REQUEST)
+        else:
+            user = User.objects.create(
+                email=email,
+                username=email.split('@')[0],
+                first_name=user_info.get('name', '').split(' ')[0],
+                auth_provider=provider
+            )
+            user.set_unusable_password()
             user.save()
 
         try: 
             app = Application.objects.get(name='Language Center')
         except:
-            return Response({'error': 'OAuth2 application not found in Admin'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({'error': 'OAuth2 application not found'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
         access_token, refresh_token = generate_auth_token(user, app)
+
+        oauth2_settings = getattr(settings, 'OAUTH2_PROVIDER', {})
+        expires_in = oauth2_settings.get('ACCESS_TOKEN_EXPIRE_SECONDS', 3600)
 
         return Response({
             'access_token': access_token.token,
             'refresh_token': refresh_token.token,
-            'expires_in': 900,
+            'expires_in': expires_in,
             'token_type': 'Bearer',
-            'scope': access_token.scope
+            'user': {
+                'email': user.email,
+                'provider': user.auth_provider
+            }
         })
-    
-

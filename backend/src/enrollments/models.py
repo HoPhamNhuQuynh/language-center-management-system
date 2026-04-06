@@ -20,12 +20,12 @@ class Enrollment(BaseActiveModel, TimeStampedModel):
                                         default=Status.PENDING_PAYMENT
                                     )
     payment_deadline = models.DateTimeField(blank=True, null=True)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
+    student = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
     classroom = models.ForeignKey('classes.ClassRoom', on_delete=models.PROTECT)
     score_types = models.ManyToManyField('courses.ScoreType', through='grades.Score')
 
     class Meta:
-        unique_together = ['user', 'classroom']
+        unique_together = ['student', 'classroom']
 
     def save(self, *args, **kwargs):
         if not self.payment_deadline:

@@ -17,16 +17,12 @@ class ClassRoomViewSet(viewsets.ModelViewSet):
     ordering_fields = ["-id"]
 
     def get_queryset(self):
-        query = ClassRoom.objects.filter(active=True).all()
-
-        if self.request.user.is_staff or self.action == 'retrieve':
-            return query.prefetch_related(
-                Prefetch(
-                    'teachingassignment_set',
-                    queryset=TeachingAssignment.objects.select_related('teacher')
-                )
-            ).select_related('course')
-
+        query = ClassRoom.objects.filter(active=True).prefetch_related(
+            Prefetch(
+                'teachingassignment_set',
+                queryset=TeachingAssignment.objects.select_related('teacher')
+            )
+        ).select_related('course')
         return query
     
     def get_permissions(self):
@@ -35,7 +31,8 @@ class ClassRoomViewSet(viewsets.ModelViewSet):
         return [permissions.AllowAny()]
         
     def get_serializer_class(self, *args, **kwargs):
-        if self.request.user.is_staff or self.action == 'retrieve':
+        user = self.request.user
+        if (user.is_authenticated and user.is_staff) or self.action == 'retrieve':
             return serializers.ClassRoomDetailSerializer
         return serializers.ClassRoomSerializer
     
@@ -43,15 +40,14 @@ class ClassRoomViewSet(viewsets.ModelViewSet):
         try:
             instance.delete()
         except ProtectedError:
-            raise ValidationError("Không thể xóa lớp học khi đã gán dữ liệu liên quan.")
+            raise ValidationError("Không thể xóa lớp học do ràng buộc dữ liệu.")
 
     @action(methods=['get'], url_path='sessions', detail=True)
     def get_sessions(self, request, pk):
-        sessions = Session.objects.select_related('schedule').filter(schedule__classroom=self.get_object())
+        sessions = Session.objects.select_related('schedule', 'room', 'user').filter(schedule__classroom_id=pk)
         return Response(serializers.SessionSerializer(sessions, many=True, context={"request": request}).data, status=status.HTTP_200_OK)
     
     @action(methods=['get'], url_path='students', detail=True)
     def get_students(self, request, pk):
         enrollments = self.get_object().enrollment_set.filter(active=True, enrollment_status__in=['SUCCESS', 'PARTIAL_PAYMENT']).select_related('user')
-
         return Response(EnrollmentSerializer(enrollments, many=True, context={"request": request}).data, status=status.HTTP_200_OK)

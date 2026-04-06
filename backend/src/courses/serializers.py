@@ -1,30 +1,6 @@
 from courses.models import Course, Level, ScoreType, Tag
 from rest_framework import serializers
-
-class CourseSerializer(serializers.ModelSerializer):
-    level_name = serializers.CharField(source='level.name', read_only=True)
-    image = serializers.ImageField(use_url=True,required=False,allow_null=True)
-
-    class Meta:
-        model = Course
-        fields = ['id','name','price','description','image','total_sessions','level','level_name']
-
-    def validate_name(self, value):
-        if not value.strip():
-            raise serializers.ValidationError("Tên khóa học không được để trống.")
-        return value
-    def validate_total_sessions(self, value):
-        if value <= 0:
-            raise serializers.ValidationError("Số buổi học phải lớn hơn 0.")
-        return value
-
-class CourseDetailSerializer(serializers.ModelSerializer):
-    level_name = serializers.ReadOnlyField(source='level.name')
-    image = serializers.ImageField(use_url=True,required=False,allow_null=True)
-
-    class Meta:
-        model = Course
-        fields = '__all__'
+from core.serializers import ItemImageSerializer
 
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
@@ -35,7 +11,29 @@ class TagSerializer(serializers.ModelSerializer):
         if not value.strip():
             raise serializers.ValidationError("Tên tag không được để trống.")
         return value
-        fields = ['name','price','description','image','total_sessions','level_name']
+
+class CourseSerializer(ItemImageSerializer):
+    level_name = serializers.ReadOnlyField(source='level.name')
+    tags = TagSerializer(many=True, read_only=True)
+    class Meta:
+        model = Course
+        fields = ['id', 'name', 'image', 'total_sessions', 'level', 'level_name', 'tags']
+
+    def validate_name(self, value):
+        if not value.strip():
+            raise serializers.ValidationError("Tên khóa học không được để trống.")
+        return value
+    
+    def validate_total_sessions(self, value):
+        if value <= 0:
+            raise serializers.ValidationError("Số buổi học phải lớn hơn 0.")
+        return value
+
+class CourseDetailSerializer(CourseSerializer):
+    class Meta:
+        model = CourseSerializer.Meta.model
+        fields = CourseSerializer.Meta.fields + ['price', 'description', 'active', 'created_at']
+
 
 class LevelSerializer(serializers.ModelSerializer):
     class Meta:
@@ -46,6 +44,7 @@ class LevelSerializer(serializers.ModelSerializer):
         if not value.strip():
             raise serializers.ValidationError("Tên cấp độ không được để trống.")
         return value   
+    
 class ScoreTypeSerializer(serializers.ModelSerializer):
     course_name = serializers.ReadOnlyField(source='course.name')
 
