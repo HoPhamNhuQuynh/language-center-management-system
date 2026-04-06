@@ -11,7 +11,7 @@ class LevelViewSet(generics.ListCreateAPIView, viewsets.ViewSet):
     queryset = Level.objects.all()
     serializer_class = serializers.LevelSerializer
     #permission_classes = [IsAdminUser]
-class ScoreTypeViewSet(generics.CreateAPIView, viewsets.ViewSet):
+class ScoreTypeViewSet(generics.ListCreateAPIView, viewsets.ViewSet):
     queryset = ScoreType.objects.all()
     serializer_class = serializers.ScoreTypeSerializer
 class TagViewSet(generics.ListAPIView, viewsets.ViewSet):
