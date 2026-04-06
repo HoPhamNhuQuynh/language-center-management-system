@@ -9,6 +9,7 @@ from users.serializers import UserSerializer, SimpleUserSerializer, ProfileSeria
 from classes.serializers import ClassRoomSerializer
 from .utils import generate_auth_token
 import requests
+from config import settings
 
 User = get_user_model()
 
@@ -64,42 +65,72 @@ class UserViewSet(viewsets.ViewSet, generics.ListAPIView, generics.CreateAPIView
 
 class SocialTokenExchangeViewSet(APIView):
     def post(self, request):
-        google_token = request.data.get('google_token')
+        provider = request.data.get('provider', '').upper()
+        social_access_token = request.data.get('access_token')
 
-        if not google_token:
-            return Response({'error': 'Missing google_toke'}, status=status.HTTP_400_BAD_REQUEST)
+        if not provider or not social_access_token:
+            return Response({'error': 'Missing provider or access_token'}, status=status.HTTP_400_BAD_REQUEST)
         
-        google_response = requests.get('https://www.googleapis.com/oauth2/v3/userinfo',
-                                    params={'access_token': google_token}
-                            )
-        if google_response.status_code != 200:
-            return Response({'error': 'Invalid Google Token'}, status=status.HTTP_400_BAD_REQUEST)
+        if provider not in User.AuthProvider.values:
+            return Response({'error': 'Unsupported provider'}, status=status.HTTP_400_BAD_REQUEST)
         
-        user_data = google_response.json()
-        email = user_data.get('email')
+        email = None
+        user_info = {}
+
+        if provider == User.AuthProvider.GOOGLE:
+            google_response = requests.get(
+                'https://www.googleapis.com/oauth2/v3/userinfo',
+                params={'access_token': social_access_token}
+            )
+            if google_response.status_code != 200:
+                return Response({'error': 'Invalid Google Token'}, status=status.HTTP_400_BAD_REQUEST)
+            user_info = google_response.json()
+            email = user_info.get('email')
+        elif provider == User.AuthProvider.FACEBOOK:
+            fb_response = requests.get(
+                'https://graph.facebook.com/me',
+                params={
+                    'fields': 'id,name,email',
+                    'access_token': social_access_token
+                }
+            )
+            if fb_response.status_code != 200:
+                return Response({'error': 'Invalid Facebook Token'}, status=status.HTTP_400_BAD_REQUEST)
+            user_info = fb_response.json()
+            email = user_info.get('email')
+        else:
+            return Response({'error': 'Unsupported provider'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        if not email:
+            return Response({'error': 'Email not provided by social network'}, status=status.HTTP_400_BAD_REQUEST)
 
         user, created = User.objects.get_or_create(email=email, defaults={
             'username': email.split('@')[0],
-            'auth_provider': User.AuthProvider.GOOGLE
+            'first_name': user_info.get('name', '').split(' ')[0], 
+            'auth_provider': provider 
         })
 
         if created:
-            user.set_unuseable_password()
+            user.set_unusable_password()
             user.save()
 
         try: 
             app = Application.objects.get(name='Language Center')
         except:
-            return Response({'error': 'OAuth2 application not found in Admin'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({'error': 'OAuth2 application not found'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
         access_token, refresh_token = generate_auth_token(user, app)
+
+        oauth2_settings = getattr(settings, 'OAUTH2_PROVIDER', {})
+        expires_in = oauth2_settings.get('ACCESS_TOKEN_EXPIRE_SECONDS', 3600)
 
         return Response({
             'access_token': access_token.token,
             'refresh_token': refresh_token.token,
-            'expires_in': 900,
+            'expires_in': expires_in,
             'token_type': 'Bearer',
-            'scope': access_token.scope
+            'user': {
+                'email': user.email,
+                'provider': user.auth_provider
+            }
         })
-    
-

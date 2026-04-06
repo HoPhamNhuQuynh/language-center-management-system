@@ -3,21 +3,26 @@ from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
 
 class EnrollmentSerializer(serializers.ModelSerializer):
-    user_first_name = serializers.CharField(source='user.first_name', read_only=True)
+    _first_name = serializers.CharField(source='user.first_name', read_only=True)
     user_last_name = serializers.CharField(source='user.last_name', read_only=True)
     class_name = serializers.CharField(source='classroom.name', read_only=True)
 
     class Meta:
         model = Enrollment
-        fields = ['id','user','user_first_name','user_last_name','classroom','class_name','enrollment_status','payment_deadline','created_at','updated_at']
+        fields = ['id','user','classroom','class_name','enrollment_status']
 
-        # hoc vien da dang ky lop
         validators = [
             UniqueTogetherValidator(
                 queryset=Enrollment.objects.all(),
                 fields = ['user','classroom']
             )
         ]
+
+class EnrollmentDetailSerializer(EnrollmentSerializer):
+
+    class Meta:
+        model = EnrollmentSerializer.Meta.model
+        fields = EnrollmentSerializer.Meta.fields + ['payment_deadline','created_at','updated_at']
 
 class PaymentSerializer(serializers.ModelSerializer):
     user_first_name = serializers.CharField(source='enrollment.user.first_name', read_only=True)
