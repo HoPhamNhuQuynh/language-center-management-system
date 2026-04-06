@@ -17,16 +17,12 @@ class ClassRoomViewSet(viewsets.ModelViewSet):
     ordering_fields = ["-id"]
 
     def get_queryset(self):
-        query = ClassRoom.objects.filter(active=True).all()
-
-        if self.request.user.is_staff or self.action == 'retrieve':
-            return query.prefetch_related(
-                Prefetch(
-                    'teachingassignment_set',
-                    queryset=TeachingAssignment.objects.select_related('teacher')
-                )
-            ).select_related('course')
-
+        query = ClassRoom.objects.filter(active=True).prefetch_related(
+            Prefetch(
+                'teachingassignment_set',
+                queryset=TeachingAssignment.objects.select_related('teacher')
+            )
+        ).select_related('course')
         return query
     
     def get_permissions(self):
@@ -43,7 +39,7 @@ class ClassRoomViewSet(viewsets.ModelViewSet):
         try:
             instance.delete()
         except ProtectedError:
-            raise ValidationError("Không thể xóa lớp học khi đã gán dữ liệu liên quan.")
+            raise ValidationError("Không thể xóa lớp học do ràng buộc dữ liệu.")
 
     @action(methods=['get'], url_path='sessions', detail=True)
     def get_sessions(self, request, pk):

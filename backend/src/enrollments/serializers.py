@@ -1,35 +1,52 @@
 from enrollments.models import Enrollment, Payment
 from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
+from users.serializers import UserSerializer
+from classes.serializers import ClassRoomSerializer
 
 class EnrollmentSerializer(serializers.ModelSerializer):
-    _first_name = serializers.CharField(source='user.first_name', read_only=True)
-    user_last_name = serializers.CharField(source='user.last_name', read_only=True)
-    class_name = serializers.CharField(source='classroom.name', read_only=True)
-
     class Meta:
         model = Enrollment
-        fields = ['id','user','classroom','class_name','enrollment_status']
+        fields = ['id','student','classroom','enrollment_status', 'payment_deadline']
+        extra_kwargs = {
+            'enrollment_status': {
+                'read_only': True
+            },
+            'payment_deadline': {
+                'read_only': True
+            }
+        }
 
         validators = [
             UniqueTogetherValidator(
                 queryset=Enrollment.objects.all(),
-                fields = ['user','classroom']
+                fields = ['student','classroom'],
+                message="Sinh viên này đã đăng ký lớp học này rồi."
             )
         ]
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+
+        data['student'] = UserSerializer(instance.student).data
+        data['classroom'] = ClassRoomSerializer(instance.classroom).data
+
+        return data
 
 class EnrollmentDetailSerializer(EnrollmentSerializer):
 
     class Meta:
         model = EnrollmentSerializer.Meta.model
-        fields = EnrollmentSerializer.Meta.fields + ['payment_deadline','created_at','updated_at']
+        fields = EnrollmentSerializer.Meta.fields + ['created_at','updated_at', 'active']
 
 class PaymentSerializer(serializers.ModelSerializer):
-    user_first_name = serializers.CharField(source='enrollment.user.first_name', read_only=True)
-    user_last_name = serializers.CharField(source='enrollment.user.last_name', read_only=True)
-    class_name = serializers.CharField(source='enrollment.classroom.name', read_only=True)
-
-    amount = serializers.DecimalField(max_digits=10, decimal_places=2, coerce_to_string=False)
     class Meta:
         model = Payment
-        fields = ['id','user_first_name','user_last_name','class_name','enrollment','amount','payment_method','transaction_id','paid_at']
+        fields = ['id', 'enrollment', 'amount', 'payment_method', 'paid_at']
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+
+        data['classroom'] = instance.enrollment.classroom.name
+        
+        return data 

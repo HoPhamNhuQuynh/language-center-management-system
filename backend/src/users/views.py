@@ -5,8 +5,9 @@ from rest_framework.response import Response
 from django.contrib.auth import get_user_model
 from oauth2_provider.models import Application
 from users.models import User, Profile
-from users.serializers import UserSerializer, ProfileSerializer
-from classes.serializers import ClassRoomSerializer
+from users.serializers import UserSerializer, ProfileSerializer, UserDetailSerializer
+from enrollments.serializers import EnrollmentSerializer, PaymentSerializer
+from enrollments.models import Payment
 from .utils import generate_auth_token
 import requests
 from config import settings
@@ -16,14 +17,17 @@ User = get_user_model()
 
 class UserViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.RetrieveDestroyAPIView):
     queryset = User.objects.filter(is_active=True)
-    serializer_class = UserSerializer
     permission_classes = [permissions.IsAdminUser]
+    parser_classes = [parsers.MultiPartParser]
 
-    def destroy(self, request, *args, **kwargs):
-        instance = self.get_object()
+    def get_serializer_class(self):
+        if self.action in ['current_user', 'retrieve', 'update', 'partial_update']:
+            return UserDetailSerializer
+        return UserSerializer
+
+    def perform_destroy(self, instance):
         instance.is_active = False
         instance.save()
-        return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(methods=['get', 'patch'], url_path="me", detail=False,
             permission_classes=[permissions.IsAuthenticated])
@@ -40,7 +44,7 @@ class UserViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.Retriev
     @action(methods=['patch'], url_path="me/avatar", detail=False,
             permission_classes=[permissions.IsAuthenticated])
     def update_avatar(self, request):
-        profile, created = Profile.objects.get_or_create(user=request.user)
+        profile, _ = Profile.objects.get_or_create(user=request.user)
 
         s = ProfileSerializer(profile, data= request.data, partial=True, context={'request': request})
         s.is_valid(raise_exception=True)
@@ -50,11 +54,17 @@ class UserViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.Retriev
     @action(methods=['get'], url_path="me/enrollments", detail=False,
             permission_classes=[IsStudent])
     def get_enrollments(self, request):
-        classrooms = request.user.enrollments.all()
+        enrollments = request.user.enrollments.select_related('classroom').filter(active=True).all()
+        return Response(EnrollmentSerializer(enrollments, many=True).data, status=status.HTTP_200_OK)
+    
+    @action(methods=['get'], url_path="me/payments", detail=False,
+            permission_classes=[IsStudent])
+    def get_payments(self, request):
+        payments = Payment.objects.filter(
+            enrollment__user=request.user
+        ).select_related('enrollment__classroom')
 
-        serializer = ClassRoomSerializer(classrooms, many=True)
-
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(PaymentSerializer(payments, many=True).data, status=status.HTTP_200_OK)
 
 class SocialTokenExchangeViewSet(APIView):
     def post(self, request):
