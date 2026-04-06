@@ -34,7 +34,7 @@ class ClassRoomSerializer(serializers.ModelSerializer):
                 (a for a in classroom.teachingassignment_set.all() if a.is_main),
                 None
             )
-        data['main_teacher'] = UserSerializer(assignment.user).data if assignment else None
+        data['main_teacher'] = UserSerializer(assignment.teacher).data if assignment else None
         return data
   
     def create(self, validated_data):
@@ -51,7 +51,7 @@ class ClassRoomSerializer(serializers.ModelSerializer):
         return classroom
 
     def update(self, instance, validated_data):
-        main_teacher = validated_data.pop('main_teacher_id', [])
+        main_teacher = validated_data.pop('main_teacher_id', None)
         instance = super().update(instance, validated_data)
 
         if main_teacher:

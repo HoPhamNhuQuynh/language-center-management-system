@@ -17,8 +17,7 @@ class CourseSerializer(ItemImageSerializer):
     tags = TagSerializer(many=True, read_only=True)
     class Meta:
         model = Course
-        fields = ['id', 'name', 'price', 'description', 'image', 'total_sessions', 'level', 'level_name']
-
+        fields = ['id', 'name', 'image', 'total_sessions', 'level', 'level_name', 'tags']
 
     def validate_name(self, value):
         if not value.strip():
@@ -29,6 +28,12 @@ class CourseSerializer(ItemImageSerializer):
         if value <= 0:
             raise serializers.ValidationError("Số buổi học phải lớn hơn 0.")
         return value
+
+class CourseDetailSerializer(CourseSerializer):
+    class Meta:
+        model = CourseSerializer.Meta.model
+        fields = CourseSerializer.Meta.fields + ['price', 'description', 'active', 'created_at']
+
 
 class LevelSerializer(serializers.ModelSerializer):
     class Meta:

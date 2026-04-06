@@ -46,7 +46,5 @@ class PaymentSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
-
         data['classroom'] = instance.enrollment.classroom.name
-        
         return data 
