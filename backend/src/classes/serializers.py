@@ -6,15 +6,6 @@ from users.models import User
 from users.serializers import UserSerializer
 from courses.serializers import CourseSerializer
 
-class ItemSerializer(serializers.ModelSerializer):
-    def to_representation(self, instance):
-        data = super().to_representation(instance)
-
-        if instance.image:
-            data['image'] = instance.image.url
-        
-        return data
-
 class TeachingAssignmentSerializer(serializers.ModelSerializer):
 
     class Meta:

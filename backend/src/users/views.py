@@ -12,22 +12,34 @@ from .utils import generate_auth_token
 import requests
 from config import settings
 from core.permissions import IsStudent
+from .perms import IsAdminOrSelf
+from oauth2_provider.models import AccessToken
+from rest_framework.throttling import AnonRateThrottle
+
+class SocialLoginThrottle(AnonRateThrottle):
+    scope = 'social_login'
+
 
 User = get_user_model()
 
-class UserViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.RetrieveDestroyAPIView):
+class UserViewSet(viewsets.ViewSet, generics.DestroyAPIView, generics.ListCreateAPIView):
     queryset = User.objects.filter(is_active=True)
-    permission_classes = [permissions.IsAdminUser]
     parser_classes = [parsers.MultiPartParser]
 
+    def get_permissions(self):
+        if self.action == 'destroy':
+            return [IsAdminOrSelf()]
+        return [permissions.IsAdminUser()]
+
     def get_serializer_class(self):
-        if self.action in ['current_user', 'retrieve', 'update', 'partial_update']:
+        if self.action in ['current_user'] or (self.request.user and self.request.user.is_authenticated and self.request.user.is_staff):
             return UserDetailSerializer
         return UserSerializer
 
     def perform_destroy(self, instance):
         instance.is_active = False
         instance.save()
+        AccessToken.objects.filter(user=instance).delete()
 
     @action(methods=['get', 'patch'], url_path="me", detail=False,
             permission_classes=[permissions.IsAuthenticated])
@@ -67,6 +79,7 @@ class UserViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.Retriev
         return Response(PaymentSerializer(payments, many=True).data, status=status.HTTP_200_OK)
 
 class SocialTokenExchangeViewSet(APIView):
+    throttle_classes = [SocialLoginThrottle]
     def post(self, request):
         provider = request.data.get('provider', '').upper()
         social_access_token = request.data.get('access_token')
@@ -106,14 +119,20 @@ class SocialTokenExchangeViewSet(APIView):
         
         if not email:
             return Response({'error': 'Email not provided by social network'}, status=status.HTTP_400_BAD_REQUEST)
-
-        user, created = User.objects.get_or_create(email=email, defaults={
-            'username': email.split('@')[0],
-            'first_name': user_info.get('name', '').split(' ')[0], 
-            'auth_provider': provider 
-        })
-
-        if created:
+        
+        user = User.objects.filter(email=email).first()
+        if user:
+            if user.auth_provider != provider:
+                return Response({
+                    'error': f'This email is registed by {user.auth_provider}. Please use the right way to login in system.'},
+                    status=status.HTTP_400_BAD_REQUEST)
+        else:
+            user = User.objects.create(
+                email=email,
+                username=email.split('@')[0],
+                first_name=user_info.get('name', '').split(' ')[0],
+                auth_provider=provider
+            )
             user.set_unusable_password()
             user.save()
 
