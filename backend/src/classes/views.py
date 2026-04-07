@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework import viewsets, filters, permissions, status
 from . import serializers
 from .models import ClassRoom, Session, TeachingAssignment
-from .paginators import ClassRoomPaginator
+from core import paginators
 from enrollments.serializers import EnrollmentSerializer
 from rest_framework.exceptions import ValidationError
 from django.db.models.deletion import ProtectedError
@@ -11,7 +11,7 @@ from django.db.models import Prefetch
 
 class ClassRoomViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.ClassRoomSerializer
-    pagination_class = ClassRoomPaginator
+    pagination_class = paginators.ClassRoomPaginator
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ["name"]
     ordering_fields = ["-id"]

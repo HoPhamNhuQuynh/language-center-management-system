@@ -7,7 +7,7 @@ from classes.serializers import ClassRoomSerializer
 class EnrollmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Enrollment
-        fields = ['id','student','classroom','enrollment_status', 'payment_deadline']
+        fields = ['id', 'student', 'classroom', 'enrollment_status', 'payment_deadline']
         extra_kwargs = {
             'enrollment_status': {
                 'read_only': True
@@ -27,8 +27,6 @@ class EnrollmentSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
-
-        data['student'] = UserSerializer(instance.student).data
         data['classroom'] = ClassRoomSerializer(instance.classroom).data
 
         return data

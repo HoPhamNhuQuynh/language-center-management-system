@@ -1,10 +1,8 @@
-
 from rest_framework import serializers
 from classes.models import ClassRoom, TeachingAssignment, Session, Room
 from django.db import transaction
 from users.models import User
 from users.serializers import UserSerializer
-from courses.serializers import CourseSerializer
 
 class TeachingAssignmentSerializer(serializers.ModelSerializer):
 
@@ -23,12 +21,12 @@ class ClassRoomSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ClassRoom
-        fields = ['id', 'name', 'course', 'start_date', 'end_date', 'main_teacher', 'main_teacher_id']
+        fields = ['id', 'name', 'course', 'start_date', 'end_date', 'main_teacher_id']
 
     def to_representation(self, classroom):
         data = super().to_representation(classroom)
 
-        data['course'] = CourseSerializer(classroom.course).data
+        data['course'] = classroom.course.name
 
         assignment = next(
                 (a for a in classroom.teachingassignment_set.all() if a.is_main),

@@ -1,19 +1,18 @@
 from rest_framework import viewsets, generics, permissions
-from rest_framework.response import Response
-from rest_framework.exceptions import NotFound
 from enrollments.models import Enrollment, Payment
 from enrollments.serializers import PaymentSerializer, EnrollmentSerializer, EnrollmentDetailSerializer
-from core.permissions import IsStudent
+from core import core_perms
 from .perms import IsEnrollmentOwner
 
 
 class EnrollmentViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
-        user = self.request.user
-        qs = Enrollment.objects.select_related('student', 'classroom')
-        if user.is_staff:
-            return qs.all()
-        return qs.filter(student=user, active=True)
+        if getattr(self, 'swagger_fake_view', False):
+            return Enrollment.objects.none()
+    
+        if self.request.user and (self.request.user.is_staff or self.request.user.is_superuser):
+            return Enrollment.objects.select_related('student', 'classroom').all()
+        return Enrollment.objects.select_related('student', 'classroom').filter(student=self.request.user, active=True)
     
     def get_serializer_class(self):
         if self.action == 'retrieve' or self.request.user.is_staff:
@@ -22,7 +21,7 @@ class EnrollmentViewSet(viewsets.ModelViewSet):
     
     def get_permissions(self):
         if self.action == 'create':
-            return [IsStudent()]
+            return [core_perms.IsStudent()]
         if self.action == 'destroy':
             return [IsEnrollmentOwner()]
         return [permissions.IsAuthenticated()]
