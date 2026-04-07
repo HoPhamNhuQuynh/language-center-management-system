@@ -1,47 +1,45 @@
-from rest_framework import viewsets, status, permissions, generics, parsers
+from rest_framework import viewsets, status, permissions, generics
 from rest_framework.views import APIView
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.contrib.auth import get_user_model
 from oauth2_provider.models import Application
-from users.models import User, Profile
-from users.serializers import UserSerializer, ProfileSerializer, UserDetailSerializer
+from users.models import User
+from users import serializers
 from enrollments.serializers import EnrollmentSerializer, PaymentSerializer
-from enrollments.models import Payment
+from enrollments.models import Payment, Enrollment
 from .utils import generate_auth_token
 import requests
 from config import settings
-from core.permissions import IsStudent
-from .perms import IsAdminOrSelf
+from core import core_perms
 from oauth2_provider.models import AccessToken
 from rest_framework.throttling import AnonRateThrottle
+from core import core_perms
 
 class SocialLoginThrottle(AnonRateThrottle):
     scope = 'social_login'
 
-
 User = get_user_model()
 
 class UserViewSet(viewsets.ViewSet, generics.DestroyAPIView, generics.ListCreateAPIView):
-    queryset = User.objects.filter(is_active=True)
-    parser_classes = [parsers.MultiPartParser]
+    queryset = User.objects.all()
 
     def get_permissions(self):
-        if self.action == 'destroy':
-            return [IsAdminOrSelf()]
-        return [permissions.IsAdminUser()]
+        if self.action == 'create':
+            return [permissions.AllowAny()]
+        return [core_perms.IsAdmin()]
 
     def get_serializer_class(self):
-        if self.action in ['current_user'] or (self.request.user and self.request.user.is_authenticated and self.request.user.is_staff):
-            return UserDetailSerializer
-        return UserSerializer
+        if self.action in ['current_user'] or self.request.user.is_admin:
+            return serializers.UserDetailSerializer
+        return serializers.UserSerializer
 
     def perform_destroy(self, instance):
         instance.is_active = False
         instance.save()
         AccessToken.objects.filter(user=instance).delete()
 
-    @action(methods=['get', 'patch'], url_path="me", detail=False,
+    @action(methods=['get', 'patch', 'delete'], url_path="me", detail=False,
             permission_classes=[permissions.IsAuthenticated])
     def current_user(self, request):
         u = request.user
@@ -50,31 +48,44 @@ class UserViewSet(viewsets.ViewSet, generics.DestroyAPIView, generics.ListCreate
             s.is_valid(raise_exception=True)
             s.save()
             return Response(s.data, status=status.HTTP_200_OK)
+        elif request.method.__eq__("DELETE"):
+            u.is_active = False
+            u.save()
+            AccessToken.objects.filter(user=u).delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
 
         return Response(self.get_serializer(u).data, status=status.HTTP_200_OK)
 
     @action(methods=['patch'], url_path="me/avatar", detail=False,
             permission_classes=[permissions.IsAuthenticated])
     def update_avatar(self, request):
-        profile, _ = Profile.objects.get_or_create(user=request.user)
+        profile = self.get_object().profile
 
-        s = ProfileSerializer(profile, data= request.data, partial=True, context={'request': request})
+        s = serializers.ProfileSerializer(profile, data= request.data, partial=True)
         s.is_valid(raise_exception=True)
         s.save()
         return Response(s.data, status=status.HTTP_200_OK)
+    
+    @action(methods=['patch'], url_path="me/password", detail=False,
+            permission_classes=[permissions.IsAuthenticated])
+    def update_password(self, request):
+        u = request.user
+        s = serializers.PasswordUpdateSerializer(u, data=request.data, partial=True)
+        s.is_valid(raise_exception=True)
+        u = s.save()
+        return Response(serializers.UserSerializer(u).data, status=status.HTTP_200_OK)
 
     @action(methods=['get'], url_path="me/enrollments", detail=False,
-            permission_classes=[IsStudent])
+            permission_classes=[core_perms.IsStudent])
     def get_enrollments(self, request):
-        enrollments = request.user.enrollments.select_related('classroom').filter(active=True).all()
+        user = request.user
+        enrollments = Enrollment.objects.filter(student=user).select_related('classroom')
         return Response(EnrollmentSerializer(enrollments, many=True).data, status=status.HTTP_200_OK)
     
     @action(methods=['get'], url_path="me/payments", detail=False,
-            permission_classes=[IsStudent])
+            permission_classes=[core_perms.IsStudent])
     def get_payments(self, request):
-        payments = Payment.objects.filter(
-            enrollment__user=request.user
-        ).select_related('enrollment__classroom')
+        payments = Payment.objects.filter(enrollment__student=request.user).select_related('enrollment__classroom')
 
         return Response(PaymentSerializer(payments, many=True).data, status=status.HTTP_200_OK)
 
