@@ -74,22 +74,37 @@ class RoomSerializer(serializers.ModelSerializer):
     class Meta:
         model = Room    
         fields = ["id", "name", "capacity"]
+    
+    def validate_capacity(self, capacity):
+        if capacity < 0 or capacity > 100:
+            raise serializers.ValidationError("Sức chứa phòng học không hợp lệ.")
+        return capacity
 
     
 class SessionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Session
-        fields = ["id", "date", "start_time", "end_time"]
+        fields = ["id", "date", "start_time", "end_time", "user"]
+    
+    def validate(self, data):
+        end_time = data.get('end_time')
+        start_time = data.get('start_time')
+
+        if end_time and start_time and end_time <= start_time:
+            raise serializers.ValidationError({
+                "end_time": "Giờ kết thúc phải lớn hơn giờ bắt đầu."
+            })
+        
+        return data
 
     def to_representation(self, session):
         data = super().to_representation(session)
-
-        request = self.context.get('request')
+        data['teacher_fullname'] = f'{session.user.last_name} {session.user.last_name}'
+        data['room'] = RoomSerializer(session.room).data
         
-        if request and request.user and request.user.is_authenticated and request.user.is_staff:
-            data['room'] = RoomSerializer(session.room).data
-            data['user'] = session.user.id
+        request = self.context.get('request')
+        if request and request.user and request.user.is_admin:
             data['created_at'] = session.created_at
             data['active'] = session.active
 

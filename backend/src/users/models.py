@@ -26,11 +26,11 @@ class User(AbstractUser):
 
     @property
     def is_teacher(self):
-        return self.groups.filter(name='Teacher').exists()
+        return self.is_authenticated and self.groups.filter(name='Teacher').exists()
 
     @property
     def is_student(self):
-        return self.groups.filter(name='Student').exists()
+        return self.is_authenticated and self.groups.filter(name='Student').exists()
     
     @property
     def is_admin(self):
