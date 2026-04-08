@@ -1,7 +1,8 @@
-from django.urls import path
-from grades.views import ClassScoreListAPIView
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+
+route = DefaultRouter()
 
 urlpatterns = [
-    path('classes/<int:class_id>/scores', ClassScoreListAPIView.as_view(), name='class-score-list'),
-
+    path('', include(route.urls)),
 ]
