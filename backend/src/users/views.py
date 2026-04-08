@@ -59,7 +59,7 @@ class UserViewSet(viewsets.ViewSet, generics.DestroyAPIView, generics.ListCreate
 
     @action(methods=['patch'], url_path="me/avatar", detail=False)
     def update_avatar(self, request):
-        profile = self.get_object().profile
+        profile = request.user.profile
 
         s = serializers.ProfileSerializer(profile, data= request.data, partial=True)
         s.is_valid(raise_exception=True)
