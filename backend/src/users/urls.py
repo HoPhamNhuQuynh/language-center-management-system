@@ -12,8 +12,9 @@ r.register('users', views.UserViewSet,'user')
 auth_patterns = [
     path('login/', csrf_exempt(TokenView.as_view()), name='login'),
     path('logout/', csrf_exempt(RevokeTokenView.as_view()), name='logout'),
-    path('social-login/', SocialTokenExchangeViewSet.as_view(), name='social_login'),
-    # path('register/', RegisterView.as_view(), name='register'),
+    path('social-login/', csrf_exempt(SocialTokenExchangeViewSet.as_view()), name='social_login'),
+    path('refresh/', csrf_exempt(views.RefreshTokenView.as_view()), name='logout'),
+    path('register/', views.RegisterView.as_view(), name='register'),
 ]
 
 urlpatterns = [

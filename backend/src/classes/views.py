@@ -28,6 +28,8 @@ class ClassRoomViewSet(viewsets.ModelViewSet):
     def get_permissions(self):
         if self.action in ['create', 'update', 'destroy', 'partial_update']:
             return [permissions.IsAdminUser()]
+        if self.action in ['get_sessions', 'get_students']:
+            return [permissions.IsAuthenticated()]
         return [permissions.AllowAny()]
         
     def get_serializer_class(self, *args, **kwargs):
@@ -49,5 +51,5 @@ class ClassRoomViewSet(viewsets.ModelViewSet):
     
     @action(methods=['get'], url_path='students', detail=True)
     def get_students(self, request, pk):
-        enrollments = self.get_object().enrollment_set.filter(active=True, enrollment_status__in=['SUCCESS', 'PARTIAL_PAYMENT']).select_related('user')
+        enrollments = self.get_object().enrollment_set.filter(active=True, enrollment_status__in=['SUCCESS', 'PARTIAL_PAYMENT']).select_related('student')
         return Response(EnrollmentSerializer(enrollments, many=True, context={"request": request}).data, status=status.HTTP_200_OK)

@@ -100,11 +100,11 @@ class SessionSerializer(serializers.ModelSerializer):
 
     def to_representation(self, session):
         data = super().to_representation(session)
-        data['teacher_fullname'] = f'{session.user.last_name} {session.user.last_name}'
+        data['teacher_fullname'] = f'{session.user.last_name} {session.user.first_name}'
         data['room'] = RoomSerializer(session.room).data
         
         request = self.context.get('request')
-        if request and request.user and request.user.is_admin:
+        if request and request.user and request.user.is_authenticated and request.user.is_admin:
             data['created_at'] = session.created_at
             data['active'] = session.active
 

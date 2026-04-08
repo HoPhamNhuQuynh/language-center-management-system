@@ -88,8 +88,8 @@ class UserSerializer(serializers.ModelSerializer):
         user.set_password(user.password)
         user.save()
 
-        student_group, _ = Group.objects.get_or_create(name="Student")
-        user.groups.add(student_group)
+        user_group, _ = Group.objects.get_or_create(name='Student')
+        user.groups.add(user_group)
 
         return user
     
@@ -104,6 +104,7 @@ class UserDetailSerializer(UserSerializer):
     class Meta:
         model = UserSerializer.Meta.model
         fields = UserSerializer.Meta.fields + ['date_joined', 'last_login', 'profile']
+        extra_kwargs = UserSerializer.Meta.extra_kwargs
         
     @transaction.atomic
     def create(self, validated_data):
@@ -120,8 +121,12 @@ class UserDetailSerializer(UserSerializer):
 
         user.save()
 
-        teacher_group, _ = Group.objects.get_or_create(name='Teacher')
-        user.groups.add(teacher_group)
+        request = self.context.get('request')
+        if request and request.user and request.user.is_authenticated and request.user.is_admin:
+            user_group, _ = Group.objects.get_or_create(name='Teacher')
+
+        user_group, _ = Group.objects.get_or_create(name='Student')
+        user.groups.add(user_group)
 
         if profile_data:    
             Profile.objects.create(user=user, **profile_data)
@@ -130,7 +135,7 @@ class UserDetailSerializer(UserSerializer):
 
     def update(self, instance, validated_data):
         profile_data = validated_data.pop('profile', None)
-        list_attrs_to_drop = ['password', 'avatar', 'date_joined', 'last_login']
+        list_attrs_to_drop = ['password', 'avatar', 'date_joined', 'last_login', 'auth_provider']
         for attr in list_attrs_to_drop:
             validated_data.pop(attr, None)
 
