@@ -32,7 +32,7 @@ class ClassRoomViewSet(viewsets.ModelViewSet):
         
     def get_serializer_class(self, *args, **kwargs):
         user = self.request.user
-        if user.is_admin or user.is_teacher or self.action == 'retrieve':
+        if user.is_authenticated and (user.is_admin or user.is_teacher or self.action == 'retrieve'):
             return serializers.ClassRoomDetailSerializer
         return serializers.ClassRoomSerializer
     

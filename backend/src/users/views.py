@@ -27,6 +27,8 @@ class UserViewSet(viewsets.ViewSet, generics.DestroyAPIView, generics.ListCreate
     def get_permissions(self):
         if self.action == 'create':
             return [permissions.AllowAny()]
+        if self.action in ['current_user', 'update_avatar', 'update_password', 'get_payments', 'get_enrollments']:
+            return [permissions.IsAuthenticated()]
         return [core_perms.IsAdmin()]
 
     def get_serializer_class(self):
@@ -39,8 +41,7 @@ class UserViewSet(viewsets.ViewSet, generics.DestroyAPIView, generics.ListCreate
         instance.save()
         AccessToken.objects.filter(user=instance).delete()
 
-    @action(methods=['get', 'patch', 'delete'], url_path="me", detail=False,
-            permission_classes=[permissions.IsAuthenticated])
+    @action(methods=['get', 'patch', 'delete'], url_path="me", detail=False)
     def current_user(self, request):
         u = request.user
         if request.method.__eq__("PATCH"):
@@ -56,8 +57,7 @@ class UserViewSet(viewsets.ViewSet, generics.DestroyAPIView, generics.ListCreate
 
         return Response(self.get_serializer(u).data, status=status.HTTP_200_OK)
 
-    @action(methods=['patch'], url_path="me/avatar", detail=False,
-            permission_classes=[permissions.IsAuthenticated])
+    @action(methods=['patch'], url_path="me/avatar", detail=False)
     def update_avatar(self, request):
         profile = self.get_object().profile
 
@@ -66,8 +66,7 @@ class UserViewSet(viewsets.ViewSet, generics.DestroyAPIView, generics.ListCreate
         s.save()
         return Response(s.data, status=status.HTTP_200_OK)
     
-    @action(methods=['patch'], url_path="me/password", detail=False,
-            permission_classes=[permissions.IsAuthenticated])
+    @action(methods=['patch'], url_path="me/password", detail=False)
     def update_password(self, request):
         u = request.user
         s = serializers.PasswordUpdateSerializer(u, data=request.data, partial=True)
@@ -75,15 +74,13 @@ class UserViewSet(viewsets.ViewSet, generics.DestroyAPIView, generics.ListCreate
         u = s.save()
         return Response(serializers.UserSerializer(u).data, status=status.HTTP_200_OK)
 
-    @action(methods=['get'], url_path="me/enrollments", detail=False,
-            permission_classes=[core_perms.IsStudent])
+    @action(methods=['get'], url_path="me/enrollments", detail=False)
     def get_enrollments(self, request):
         user = request.user
         enrollments = Enrollment.objects.filter(student=user).select_related('classroom')
         return Response(EnrollmentSerializer(enrollments, many=True).data, status=status.HTTP_200_OK)
     
-    @action(methods=['get'], url_path="me/payments", detail=False,
-            permission_classes=[core_perms.IsStudent])
+    @action(methods=['get'], url_path="me/payments", detail=False)
     def get_payments(self, request):
         payments = Payment.objects.filter(enrollment__student=request.user).select_related('enrollment__classroom')
 
