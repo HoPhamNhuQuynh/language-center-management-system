@@ -1,15 +1,15 @@
 
-from rest_framework import permissions
+from rest_framework.permissions import BasePermission
 
-class IsTeacher(permissions.IsAuthenticated):
+class IsTeacher(BasePermission):
     def has_permission(self, request, view):
-        return bool(request.user and request.user.is_teacher)
+        return bool(request.user and request.user.is_authenticated and request.user.is_teacher)
         
     
-class IsStudent(permissions.IsAuthenticated):
+class IsStudent(BasePermission):
     def has_permission(self, request, view):        
-        return bool(request.user and request.user.is_student)
+        return bool(request.user and request.user.is_authenticated and request.user.is_student)
     
-class IsAdmin(permissions.IsAuthenticated):
+class IsAdmin(BasePermission):
     def has_permission(self, request, view):        
-        return bool(request.user and (request.user.is_staff or request.user.is_superuser))
+        return bool(request.user and request.user.is_authenticated and (request.user.is_staff or request.user.is_superuser))

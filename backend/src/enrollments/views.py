@@ -28,6 +28,7 @@ class EnrollmentViewSet(viewsets.ModelViewSet):
     
 class PaymentViewSet(viewsets.ViewSet, generics.ListAPIView):
     serializer_class = PaymentSerializer
+    permission_classes = [permissions.IsAdminUser]
 
     def get_queryset(self):
         user = self.request.user

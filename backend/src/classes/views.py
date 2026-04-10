@@ -8,6 +8,9 @@ from enrollments.serializers import EnrollmentSerializer
 from rest_framework.exceptions import ValidationError
 from django.db.models.deletion import ProtectedError
 from django.db.models import Prefetch
+from grades.serializers import ScoreSerializer
+from grades.models import Score
+from core import core_perms
 
 class ClassRoomViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.ClassRoomSerializer
@@ -27,9 +30,11 @@ class ClassRoomViewSet(viewsets.ModelViewSet):
     
     def get_permissions(self):
         if self.action in ['create', 'update', 'destroy', 'partial_update']:
-            return [permissions.IsAdminUser()]
+            return [core_perms.IsAdmin()]
         if self.action in ['get_sessions', 'get_students']:
             return [permissions.IsAuthenticated()]
+        if self.action == 'get_scores':
+            return [(core_perms.IsAdmin | core_perms.IsTeacher)()]
         return [permissions.AllowAny()]
         
     def get_serializer_class(self, *args, **kwargs):
@@ -53,3 +58,9 @@ class ClassRoomViewSet(viewsets.ModelViewSet):
     def get_students(self, request, pk):
         enrollments = self.get_object().enrollment_set.filter(active=True, enrollment_status__in=['SUCCESS', 'PARTIAL_PAYMENT']).select_related('student')
         return Response(EnrollmentSerializer(enrollments, many=True, context={"request": request}).data, status=status.HTTP_200_OK)
+
+    @action(methods=['get'], url_path='scores', detail=True)
+    def get_scores(self, request, pk):
+        scores = Score.objects.select_related('score_type', 'enrollment').filter(active=True, enrollment__classroom_id=pk)
+
+        return Response(ScoreSerializer(scores, many=True).data, status=status.HTTP_200_OK)

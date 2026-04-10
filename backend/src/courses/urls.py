@@ -5,8 +5,8 @@ from courses.views import CourseViewSet, LevelViewSet, ScoreTypeViewSet, TagView
 r = DefaultRouter()
 r.register('courses', CourseViewSet, basename='course')
 r.register('tags', TagViewSet, basename='tag')
-r.register('levels', TagViewSet, basename='level')
-r.register('score-types', TagViewSet, basename='score-type')
+r.register('levels', LevelViewSet, basename='level')
+r.register('score-types', ScoreTypeViewSet, basename='score-type')
 
 
 urlpatterns = [

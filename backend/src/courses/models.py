@@ -10,7 +10,7 @@ class Course(BaseActiveModel, TimeStampedModel):
     name = models.CharField(max_length=255, unique=True)
     price = models.DecimalField(max_digits=10, decimal_places=2, default=2000000)
     description = models.TextField()
-    image = CloudinaryField(folder='language_center_testing/courses/', default='language_center_testing/defaults/abroad')
+    image = CloudinaryField(folder='language_center_testing/courses/', default='language_center_testing/courses/lxkpvpnsh95v520gb0on')
     total_sessions = models.PositiveIntegerField(default=0)
     
     level = models.ForeignKey('Level', on_delete=models.PROTECT)
