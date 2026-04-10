@@ -124,8 +124,8 @@ class UserDetailSerializer(UserSerializer):
         request = self.context.get('request')
         if request and request.user and request.user.is_authenticated and request.user.is_admin:
             user_group, _ = Group.objects.get_or_create(name='Teacher')
-
-        user_group, _ = Group.objects.get_or_create(name='Student')
+        else:
+            user_group, _ = Group.objects.get_or_create(name='Student')
         user.groups.add(user_group)
 
         if profile_data:    

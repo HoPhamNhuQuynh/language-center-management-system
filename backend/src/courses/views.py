@@ -1,4 +1,4 @@
-from rest_framework import viewsets, status, permissions
+from rest_framework import viewsets, status, permissions, parsers
 from courses.models import Course, Tag, ScoreType, Level
 from courses import serializers
 from rest_framework.decorators import action
@@ -8,9 +8,10 @@ from classes.models import ClassRoom
 
 class CourseViewSet(viewsets.ModelViewSet):
       queryset = Course.objects.filter(active=True).select_related('level').prefetch_related('tags').all()
+      parser_classes = [parsers.MultiPartParser]
 
       def get_permissions(self):
-        if self.action in ['list', 'retrieve']:
+        if self.action in ['list', 'retrieve', 'get_classes']:
             return [permissions.AllowAny()]
         return [permissions.IsAdminUser()]   
 

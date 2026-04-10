@@ -34,7 +34,8 @@ import cloudinary
 cloudinary.config( 
   cloud_name = "desvczltb", 
   api_key = "823159465662566", 
-  api_secret = "IJlWI6FrtaaJMxey_SRXUx--LOM"
+  api_secret = "IJlWI6FrtaaJMxey_SRXUx--LOM",
+  secure=True
 )
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
@@ -79,7 +80,7 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 OAUTH2_PROVIDER = {
-    'ACCESS_TOKEN_EXPIRE_SECONDS': 900,
+    'ACCESS_TOKEN_EXPIRE_SECONDS': 36000,
     'REFRESH_TOKEN_EXPIRE_SECONDS': 86400 * 30, 
 }
 
@@ -167,7 +168,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'language_center_db',
         'USER': 'root',
-        'PASSWORD': 'root',
+        'PASSWORD': 'Nhuquynh261105@',
         'HOST': '', # mặc định localhost
         'PORT': '3306',
     }
