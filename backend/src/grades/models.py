@@ -16,6 +16,18 @@ class Attendance(TimeStampedModel):
     enrollment = models.ForeignKey('enrollments.Enrollment', on_delete=models.PROTECT)
     session = models.ForeignKey('classes.Session', on_delete=models.PROTECT)
 
+    class Meta:
+        indexes = [
+            models.Index(fields=['session'], name='idx_attendance_session')
+        ]
+
+        constraints = [
+            models.UniqueConstraint(
+                fields=['enrollment', 'session'],
+                name='uk_attendance_enrollment_session'
+            )
+        ]
+
 class AcademicResult(TimeStampedModel, BaseActiveModel):
     average_score = models.FloatField()
     comment = models.TextField(null=True, blank=True)
@@ -25,3 +37,9 @@ class Score(BaseActiveModel, TimeStampedModel):
     score_value = models.FloatField()
     enrollment = models.ForeignKey('enrollments.Enrollment', on_delete=models.CASCADE)
     score_type = models.ForeignKey('courses.ScoreType', on_delete=models.PROTECT)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['enrollment'], name='idx_score_enrollment'),
+            models.Index(fields=['score_type'], name='idx_score_type')
+        ]
