@@ -9,6 +9,9 @@ class EnrollmentSerializer(serializers.ModelSerializer):
         model = Enrollment
         fields = ['id', 'student', 'classroom', 'enrollment_status', 'payment_deadline']
         extra_kwargs = {
+            'student': {
+                'read_only': True
+            },
             'enrollment_status': {
                 'read_only': True
             },
@@ -17,13 +20,14 @@ class EnrollmentSerializer(serializers.ModelSerializer):
             }
         }
 
-        validators = [
-            UniqueTogetherValidator(
-                queryset=Enrollment.objects.all(),
-                fields = ['student','classroom'],
-                message="Sinh viên này đã đăng ký lớp học này rồi."
-            )
-        ]
+    def validate(self, attrs):
+        student = self.context['request'].user
+        classroom = attrs.get('classroom')
+
+        if Enrollment.objects.filter(student=student, classroom=classroom).exists():
+            raise serializers.ValidationError("Sinh viên này đã đăng ký lớp học này rồi.")
+
+        return attrs
 
     def to_representation(self, instance):
         data = super().to_representation(instance)

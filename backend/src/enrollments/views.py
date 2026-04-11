@@ -5,7 +5,7 @@ from core import core_perms
 from .perms import IsEnrollmentOwner
 
 
-class EnrollmentViewSet(viewsets.ModelViewSet):
+class EnrollmentViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.RetrieveDestroyAPIView):
     def get_queryset(self):
         if getattr(self, 'swagger_fake_view', False):
             return Enrollment.objects.none()
@@ -25,7 +25,10 @@ class EnrollmentViewSet(viewsets.ModelViewSet):
         if self.action == 'destroy':
             return [IsEnrollmentOwner()]
         return [permissions.IsAuthenticated()]
-    
+
+    def perform_create(self, serializer):
+        serializer.save(student=self.request.user)
+
 class PaymentViewSet(viewsets.ViewSet, generics.ListAPIView):
     serializer_class = PaymentSerializer
     permission_classes = [permissions.IsAdminUser]
