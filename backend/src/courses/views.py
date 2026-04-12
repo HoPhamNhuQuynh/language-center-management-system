@@ -16,7 +16,7 @@ class CourseViewSet(viewsets.ModelViewSet):
         return [permissions.IsAdminUser()]   
 
       def get_serializer_class(self):
-        if self.action == 'retrieve':
+        if self.action in ['retrieve', 'partial_update']:
             return serializers.CourseDetailSerializer
         return serializers.CourseSerializer
       

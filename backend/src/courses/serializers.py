@@ -14,7 +14,6 @@ class TagSerializer(serializers.ModelSerializer):
 
 class CourseSerializer(ItemImageSerializer):
     level_name = serializers.ReadOnlyField(source='level.name')
-    tags = TagSerializer(many=True, read_only=True)
     class Meta:
         model = Course
         fields = ['id', 'name', 'image', 'total_sessions', 'level', 'level_name', 'tags']
@@ -28,11 +27,43 @@ class CourseSerializer(ItemImageSerializer):
         if value <= 0:
             raise serializers.ValidationError("Số buổi học phải lớn hơn 0.")
         return value
+    
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data['tags'] = TagSerializer(instance.tags, many=True).data
+
+        return data
+    
+    def validate_total_sessions(self, total_sessions):
+        if total_sessions < 10:
+            raise serializers.ValidationError("Giá trị nhập vào không hợp lệ, tổng số buổi học phải từ 10 buổi trở lên.")
+        if total_sessions > 30:
+            raise serializers.ValidationError("Giá trị nhập vào không hợp lệ, tổng số buổi học tối đa là 30 buổi.")
+        return total_sessions
 
 class CourseDetailSerializer(CourseSerializer):
     class Meta:
         model = CourseSerializer.Meta.model
         fields = CourseSerializer.Meta.fields + ['price', 'description', 'active', 'created_at']
+
+    def update(self, course, validated_data):
+        field_to_update = ['name', 'total_sessions', 'level', 'price', 'description', 'image']
+        tags = validated_data.pop('tags', [])
+
+        for attr, value in validated_data.items():
+            if attr in field_to_update:
+                setattr(course, attr, value)
+        course.save()
+
+        if tags:
+            course.tags.set(tags)
+
+        return course
+    
+    def validate_price(self, price):
+        if price < 2000000:
+            raise serializers.ValidationError("Học phí tối thiểu là 2.000.000 VND, vui lòng nhập học phí hợp lệ.")
+        return price
 
 
 class LevelSerializer(serializers.ModelSerializer):
