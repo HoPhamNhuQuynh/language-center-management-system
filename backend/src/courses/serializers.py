@@ -13,15 +13,15 @@ class TagSerializer(serializers.ModelSerializer):
         return value
 
 class CourseSerializer(ItemImageSerializer):
+    name = serializers.CharField(
+        required=True,
+        allow_blank=False,
+        trim_whitespace=True
+    )
     level_name = serializers.ReadOnlyField(source='level.name')
     class Meta:
         model = Course
         fields = ['id', 'name', 'image', 'total_sessions', 'level', 'level_name', 'tags']
-
-    def validate_name(self, value):
-        if not value.strip():
-            raise serializers.ValidationError("Tên khóa học không được để trống.")
-        return value
     
     def validate_total_sessions(self, value):
         if value <= 0:
@@ -67,26 +67,26 @@ class CourseDetailSerializer(CourseSerializer):
 
 
 class LevelSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(
+        required=True,
+        allow_blank=False,
+        trim_whitespace=True
+    )
     class Meta:
         model = Level
         fields = ['id', 'name', 'description']
-
-    def validate_name(self, value):
-        if not value.strip():
-            raise serializers.ValidationError("Tên cấp độ không được để trống.")
-        return value   
     
 class ScoreTypeSerializer(serializers.ModelSerializer):
     course_name = serializers.ReadOnlyField(source='course.name')
-
+    name = serializers.CharField(
+        required=True,
+        allow_blank=False,
+        trim_whitespace=True
+    )
+    
     class Meta:
         model = ScoreType
         fields = ['id', 'name', 'weight', 'course', 'course_name']
-
-    def validate_name(self, value):
-        if not value.strip():
-            raise serializers.ValidationError("Tên cột điểm không được để trống.")
-        return value
 
     def validate_weight(self, value):
         if value <= 0 or value > 3:
