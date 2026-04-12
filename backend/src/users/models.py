@@ -31,14 +31,18 @@ class User(AbstractUser):
     @property
     def is_student(self):
         return self.groups.filter(name='Student').exists()
+    
+    @property
+    def is_admin(self):
+        return self.is_staff or self.is_superuser
 
     def __str__(self):
-        return self.username
+        return f"{self.first_name} {self.last_name}"
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
     avatar = CloudinaryField(folder='language_center_testing/users/', default='language_center_testing/defaults/student_4297861_lyjelp')
-    phone_num = models.CharField(max_length=10, unique=True)
+    phone_num = models.CharField(max_length=10, unique=True, null=True, blank=True, default=None)
 
     def __str__(self):
         return self.user.username

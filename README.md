@@ -29,22 +29,39 @@
 ### Chạy Backend
 ```bash
 cd backend
+
+# Tạo môi trường ảo (virtual environment)
 python -m venv venv
-source venv/bin/activate  # Windows: venv\Scripts\activate
+
+# Kích hoạt môi trường
+source venv/bin/activate   # Windows: venv\Scripts\activate
+
+# Cài dependencies
 pip install -r requirements.txt
-python app.py
+
+# Tạo và cập nhật database
+cd src
+python manage.py makemigrations
+python manage.py migrate
+
+# Chạy server
+python manage.py runserver_plus --cert-file cert.crt
 ```
 
-### Chạy Frontend (nếu dùng React)
+### Chạy Frontend
 ```bash
 cd frontend
+
+# Cài dependencies
 npm install
-npm start
+
+# Chạy development server
+npm run dev
 ```
 
-### Truy cập
-- Frontend: http://localhost:3000
-- Backend API: http://localhost:5000
+### Truy cập hệ thống
+- Frontend: http://localhost:5173/
+- Backend API: https://localhost:8000/
 
 ## Demo
 [Link video demo hoặc screenshots]

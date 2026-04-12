@@ -25,7 +25,8 @@ SECRET_KEY = 'django-insecure-nzz0#i&5*1dsthoruhk5y=nalpa16$ui2sm7pl4#fcm=mk#zx=
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["localhost",
+                 "127.0.0.1"]
 
 AUTH_USER_MODEL = 'users.User'
 
@@ -33,7 +34,8 @@ import cloudinary
 cloudinary.config( 
   cloud_name = "desvczltb", 
   api_key = "823159465662566", 
-  api_secret = "IJlWI6FrtaaJMxey_SRXUx--LOM"
+  api_secret = "IJlWI6FrtaaJMxey_SRXUx--LOM",
+  secure=True
 )
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
@@ -60,10 +62,47 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
+    'allauth.socialaccount.providers.facebook',
+    'django_extensions',
+]
+SITE_ID = 1 
+
+LOGIN_REDIRECT_URL = '/accounts/logout/'
+
+SOCIALACCOUNT_ADAPTER = 'users.adapter.SocialAccountAdapter'
+
+ACCOUNT_LOGIN_METHODS = {'email'}
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
-CLIENT_ID = "EQph8dDGEKjsNdKPzfGtl9n0Pa8Uuq1yerJfyxQ3"
-CLIENT_SECRET = "HCDsfV5mFIDYqtRiKJV2OaBxZ6vUe8XNv3YEq9sU130Yfw6yhFxOOHDIGoEJMo63OfR8Yh7pjLTHO05alcWfNojjuJ9qIpDJrNThDpPDQfWw0XMv2fMTJPHYliJ6fe2k"
+OAUTH2_PROVIDER = {
+    'ACCESS_TOKEN_EXPIRE_SECONDS': 36000,
+    'REFRESH_TOKEN_EXPIRE_SECONDS': 86400 * 30, 
+}
+
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+            'prompt': 'select_account',
+        }
+    }
+}
+
+# ACCOUNT_EMAIL_REQUIRED = True
+SOCIALACCOUNT_QUERY_EMAIL = True
+ACCOUNT_EMAIL_VERIFICATION = "none"
+ACCOUNT_SIGNUP_FIELDS = ['email*', 'username*', 'password1*', 'password2*']
+
+ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'https'
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
@@ -71,21 +110,34 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'oauth2_provider.contrib.rest_framework.OAuth2Authentication',
-    )
+    ),
+    'ROTATE_REFRESH_TOKEN': True,
+    'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.AnonRateThrottle',
+        'rest_framework.throttling.UserRateThrottle'
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': '100/day',
+        'user': '1000/day',
+        'social_login': '5/minute', 
+    }
 }
 
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOWED_ORIGINS = ["http://localhost:5173",
+                        "http://127.0.0.1:5173"]
+
+CORS_ALLOW_CREDENTIALS = True
 
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'allauth.account.middleware.AccountMiddleware'
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -116,7 +168,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'language_center_db',
         'USER': 'root',
-        'PASSWORD': 'root',
+        'PASSWORD': 'Nhuquynh261105@',
         'HOST': '', # mặc định localhost
         'PORT': '3306',
     }
@@ -145,7 +197,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'vi'
 
 TIME_ZONE = 'Asia/Ho_Chi_Minh'
 
@@ -159,4 +211,3 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
-SITE_ID = 1

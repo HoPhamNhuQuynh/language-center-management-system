@@ -17,7 +17,7 @@ class ClassRoom(BaseActiveModel, TimeStampedModel):
     end_date = models.DateField()
     capacity = models.PositiveIntegerField(default=30)
     grade_deadline = models.DateTimeField(null=True)
-    grade_status = models.CharField(max_length=20, choices=Status, default=Status.DRAFT)
+    grade_status = models.CharField(max_length=20, choices=Status.choices, default=Status.DRAFT)
     course = models.ForeignKey('courses.Course', on_delete=models.PROTECT)
 
     def __str__(self):
@@ -39,6 +39,12 @@ class Schedule(BaseActiveModel, TimeStampedModel):
 
     def __str__(self):
         return f"class_{self.classroom_id}_day_{self.day_of_week}_duration: {self.start_time} - {self.end_time}"
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['classroom'], name='idx_schedule_class'),
+            models.Index(fields=['room'], name='idx_schedule_room'),
+        ]
     
 class Session(BaseActiveModel, TimeStampedModel):
     start_time = models.TimeField()
@@ -52,6 +58,13 @@ class Session(BaseActiveModel, TimeStampedModel):
 
     def __str__(self):
         return f"class_{self.schedule.classroom.id}_at:_{self.date}"
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['schedule'],name='idx_session_schedule'),
+            models.Index(fields=['room'],name='idx_session_room'),
+            models.Index(fields=['user'],name='idx_session_teacher')
+        ]
     
 class TeachingAssignment(models.Model):
     teacher = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
@@ -62,10 +75,14 @@ class TeachingAssignment(models.Model):
         unique_together = ['teacher', 'classroom']
         constraints = [
             models.UniqueConstraint(
-                fields=['classroom'], 
+                fields=['classroom'],
                 condition=models.Q(is_main=True),
                 name='unique_main_teacher_per_class'
-            )
+            ),
+            models.UniqueConstraint(
+                fields=['teacher', 'classroom'],
+                name='uk_teacher_class')
+
         ]
 
     def __str__(self):
