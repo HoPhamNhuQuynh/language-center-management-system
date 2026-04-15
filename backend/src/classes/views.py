@@ -61,6 +61,6 @@ class ClassRoomViewSet(viewsets.ModelViewSet):
 
     @action(methods=['get'], url_path='scores', detail=True)
     def get_scores(self, request, pk):
-        scores = Score.objects.select_related('score_type', 'enrollment').filter(active=True, enrollment__classroom_id=pk)
+        scores = Score.objects.select_related('score_type', 'enrollment__student').filter(active=True, enrollment__classroom_id=pk)
 
         return Response(ScoreSerializer(scores, many=True).data, status=status.HTTP_200_OK)

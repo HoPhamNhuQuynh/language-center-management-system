@@ -52,6 +52,7 @@ class EnrollmentSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
+        data['student'] = UserSerializer(instance.student)
         data['classroom'] = ClassRoomSerializer(instance.classroom).data
 
         return data
