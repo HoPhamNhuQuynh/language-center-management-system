@@ -5,6 +5,9 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from classes.serializers import ClassRoomSerializer
 from classes.models import ClassRoom
+from django.db.models import ProtectedError
+from rest_framework.serializers import ValidationError
+from core import core_perms
 
 class CourseViewSet(viewsets.ModelViewSet):
       queryset = Course.objects.filter(active=True).select_related('level').prefetch_related('tags').all()
@@ -13,12 +16,18 @@ class CourseViewSet(viewsets.ModelViewSet):
       def get_permissions(self):
         if self.action in ['list', 'retrieve', 'get_classes']:
             return [permissions.AllowAny()]
-        return [permissions.IsAdminUser()]   
+        return [core_perms.IsAdmin()]   
 
       def get_serializer_class(self):
-        if self.action == 'retrieve':
+        if self.action in ['retrieve', 'partial_update']:
             return serializers.CourseDetailSerializer
         return serializers.CourseSerializer
+      
+      def perform_destroy(self, instance):
+        try:
+            instance.delete()
+        except ProtectedError:
+            raise ValidationError("Không thể xóa khóa học này do ràng buộc dữ liệu.")
       
       @action(methods=['get'], url_path='classes', detail=True)
       def get_classes(self, request, pk):
@@ -32,7 +41,13 @@ class TagViewSet(viewsets.ModelViewSet):
     def get_permissions(self):
         if self.action == 'list':
             return [permissions.AllowAny()]
-        return [permissions.IsAdminUser()]
+        return [core_perms.IsAdmin()]
+
+    def perform_destroy(self, instance):
+        try:
+            instance.delete()
+        except ProtectedError:
+            raise ValidationError("Không thể xóa thẻ này do ràng buộc dữ liệu.")
     
 class LevelViewSet(viewsets.ModelViewSet):
     queryset = Level.objects.all()
@@ -41,7 +56,13 @@ class LevelViewSet(viewsets.ModelViewSet):
     def get_permissions(self):
         if self.action == 'list':
             return [permissions.AllowAny()]
-        return [permissions.IsAdminUser()]
+        return [core_perms.IsAdmin()]
+    
+    def perform_destroy(self, instance):
+        try:
+            instance.delete()
+        except ProtectedError:
+            raise ValidationError("Không thể xóa cấp độ này do ràng buộc dữ liệu.")
 
 class ScoreTypeViewSet(viewsets.ModelViewSet):
     queryset = ScoreType.objects.all()
@@ -50,5 +71,11 @@ class ScoreTypeViewSet(viewsets.ModelViewSet):
     def get_permissions(self):
         if self.action == 'list':
             return [permissions.AllowAny()]
-        return [permissions.IsAdminUser()]
+        return [core_perms.IsAdmin()]
+    
+    def perform_destroy(self, instance):
+        try:
+            instance.delete()
+        except ProtectedError:
+            raise ValidationError("Không thể xóa cột điểm này do ràng buộc dữ liệu.")
     
