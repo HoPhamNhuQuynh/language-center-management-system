@@ -20,6 +20,11 @@ class ClassRoom(BaseActiveModel, TimeStampedModel):
     grade_status = models.CharField(max_length=20, choices=Status.choices, default=Status.DRAFT)
     course = models.ForeignKey('courses.Course', on_delete=models.PROTECT)
 
+    @property
+    def is_auto_active(self):
+        student = self.enrollment_set.count()
+        return 10 <= student <= self.capacity
+
     def __str__(self):
         return self.name
     
@@ -87,7 +92,3 @@ class TeachingAssignment(models.Model):
 
     def __str__(self):
         return f"{self.teacher.username}-{self.classroom.name}"
-
-
-    
-
