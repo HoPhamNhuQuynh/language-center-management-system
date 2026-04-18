@@ -1,44 +1,35 @@
-* {
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-  background: #ffffff;
-}
-
 .schedule-layout {
   min-height: 100vh;
   display: flex;
-  background: #ffffff;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  color: #2b2b2b;
-}
-
-.schedule-layout button,
-.schedule-layout input,
-.schedule-layout select,
-.schedule-layout textarea {
-  font: inherit;
+  gap: 20px;
+  padding: 24px;
+  background: transparent;
+  color: var(--text-main);
 }
 
 /* Sidebar */
 .schedule-sidebar {
-  width: 220px;
-  min-width: 220px;
-  background: #bfbfbf;
-  padding: 22px 18px;
+  width: 240px;
+  min-width: 240px;
+  background: linear-gradient(180deg, var(--navy-800), var(--navy-900));
+  border-radius: 30px;
+  padding: 24px 18px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 28px;
+  gap: 22px;
+  box-shadow: var(--shadow-medium);
 }
 
 .schedule-sidebar__logo {
   width: 100%;
   display: flex;
   justify-content: center;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
+  padding: 14px;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(6px);
 }
 
 .schedule-sidebar__logo img {
@@ -49,113 +40,140 @@ body {
 
 .schedule-sidebar__btn {
   width: 170px;
-  min-height: 52px;
-  border: none;
-  background: #efefef;
-  font-size: 15px;
+  min-height: 54px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.14);
+  color: #f8fbff;
+  border-radius: 18px;
+  font-size: 16px;
   font-weight: 600;
   cursor: pointer;
   text-align: center;
-  padding: 12px 10px;
+  padding: 12px 14px;
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.18);
+  backdrop-filter: blur(6px);
 }
 
 .schedule-sidebar__btn.active {
-  background: #ffffff;
+  background: linear-gradient(135deg, #ffffff, var(--blue-100));
+  color: var(--navy-800);
+  border-color: transparent;
 }
 
+/* Main */
 .schedule-main {
   flex: 1;
   min-width: 0;
-  background: #ffffff;
-  padding: 16px 20px 32px;
+  background: rgba(255, 255, 255, 0.96);
+  border-radius: 30px;
+  padding: 24px;
+  box-shadow: var(--shadow-medium);
+  backdrop-filter: blur(6px);
 }
 
 .schedule-topbar {
-  background: #d9d9d9;
-  min-height: 74px;
+  min-height: 82px;
   display: flex;
   align-items: center;
-    justify-content: space-between;
-  padding: 14px 24px;
-  margin-bottom: 18px;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 16px 24px;
+  margin-bottom: 22px;
+  background: linear-gradient(135deg, var(--blue-100), #ffffff);
+  border: 1px solid var(--border-soft);
+  border-radius: 24px;
+  box-shadow: var(--shadow-soft);
 }
 
 .schedule-topbar__title {
   margin: 0;
-  font-size: 52px;
-  font-weight: 300;
+  font-size: 44px;
+  font-weight: 700;
   line-height: 1;
-  color: #2b2b2b;
+  color: var(--navy-900);
 }
 
 .schedule-userbox {
   display: flex;
   align-items: center;
-  gap: 22px;
+  gap: 20px;
 }
 
 .schedule-userbox p {
   margin: 3px 0;
   font-size: 14px;
   line-height: 1.5;
+  color: var(--text-main);
 }
 
 .schedule-logout-btn {
   border: none;
-  background: #353c3e;
+  background: linear-gradient(135deg, var(--navy-700), var(--navy-500));
   color: #fff;
-  border-radius: 18px;
+  border-radius: 999px;
   padding: 12px 22px;
   font-size: 13px;
   font-weight: 700;
   cursor: pointer;
+  box-shadow: 0 12px 24px rgba(30, 47, 91, 0.22);
 }
 
+/* Board */
 .schedule-board {
-  background: #ffffff;
   width: 100%;
+  max-width: 760px;
+  margin: 0 auto;
 }
 
 .schedule-week-row {
   display: grid;
-  grid-template-columns: 170px 1fr;
+  grid-template-columns: 110px 1fr;
   align-items: center;
-  border: 2px solid #666;
+  min-height: 32px;
+  width: 100%;
+  background: #ffffff;
+  border: 1px solid #d5e2f4;
   border-bottom: none;
-  min-height: 58px;
-  width: 100%
+  border-radius: 184px 14px 0 0;
+  box-shadow: 0 4px 12px rgba(39, 68, 114, 0.05);
 }
 
 .schedule-week-pill {
-  margin-left: 12px;
-  width: 130px;
-  height: 38px;
-  border-radius: 20px;
-  background: #2b2b2b;
-  color: white;
+  margin-left: 6px;
+  width: 82px;
+  height: 24px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--navy-700), var(--navy-500));
+  color: #fff;
   display: flex;
   align-items: center;
-  padding-left: 20px;
-  font-size: 15px;
+  padding-left: 10px;
+  font-size: 10px;
   font-weight: 700;
+  box-shadow: 0 6px 14px rgba(39, 68, 114, 0.12);
 }
 
 .schedule-week-text {
-  font-size: 16px;
+  font-size: 11px;
   color: #444;
   text-align: center;
+  font-weight: 500;
 }
 
 .schedule-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  border: 2px solid #666;
-  width: 100%
+  width: 100%;
+  background: #ffffff;
+  border: 1px solid #d5e2f4;
+  border-radius: 0 0 18px 18px;
+  overflow: hidden;
+  box-shadow: 0 8px 18px rgba(39, 68, 114, 0.06);
 }
 
 .schedule-column {
   min-width: 0;
-  border-right: 2px solid #666;
+  border-right: 1px solid #666;
 }
 
 .schedule-column:last-child {
@@ -163,61 +181,106 @@ body {
 }
 
 .schedule-column-header {
-  min-height: 84px;
-  border-bottom: 2px solid #666;
+  min-height: 58px;
+  border-bottom: 1px solid #d5e2f4;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 8px;
+  gap: 4px;
   text-align: center;
-  padding: 8px 6px;
-  font-size: 14px;
-  font-weight: 600;
-  color: #4a4a4a;
+  padding: 6px 4px;
+  font-size: 10px;
+  font-weight: 700;
+  color:var(--navy-700);
+  background: linear-gradient(180deg, #f8fbff, #eef5ff);
 }
 
 .schedule-date {
-  font-size: 13px;
+  font-size: 9px;
   font-weight: 500;
   color: #666;
 }
 
-.schedule-cell {
-  min-height: 280px;
-  padding: 12px;
+.schedule-day-body {
+  height: 220px;
+  display: grid;
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+  background: #ffffff;
+}
+
+.schedule-session-block {
+  min-height: 0;
+  overflow: hidden;
+  border-bottom: 1px solid #666;
+}
+
+.schedule-session-block:last-child {
+  border-bottom: none;
+}
+
+.schedule-session-block--bottom {
+  display: block;
+}
+
+.schedule-session-content {
+  width: 100%;
+  height: 100%;
+  padding: 6px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+.schedule-column-header,
+.schedule-day-body {
+  width: 100%;
 }
 
 .schedule-class-card {
-  background: #d9d9d9;
-  min-height: 220px;
-  padding: 10px 8px;
+   width: 76px;
+  min-height: 102px;
+  padding: 6px 6px;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   justify-content: flex-start;
   text-align: left;
+  background: linear-gradient(180deg, #f5f9ff, #dce9fb);
+  border: 1px solid #bfd3f2;
+  border-radius: 20px;
+  box-shadow: 0 8px 16px rgba(66, 99, 155, 0.12);
 }
-
 .schedule-class-card h3 {
-  margin: 0 0 5px;
-  font-size: 20px;
+  margin: 0 0 4px;
+  font-size: 11px;
   font-weight: 700;
-  color: #090909;
+  color: var(--navy-900);
+  line-height: 1.2;
 }
 
-.schedule-class-card p {
-  margin: 10px 0;
-  font-size: 12px;
-  line-height: 1.0;
-  color: #000000;
-}
-
-.schedule-column-header,
-.schedule-cell {
+.schedule-class-info {
+  margin: 3px 0;
   width: 100%;
 }
 
+.schedule-label {
+  margin: 0;
+  font-size: 8px;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--navy-700);
+}
+
+
+.schedule-value {
+  margin: 1px 0 0;
+  font-size: 8px;
+  line-height: 1.2;
+  color: #32435f;
+  white-space: normal;
+}
+/* Responsive */
 @media (max-width: 1200px) {
   .schedule-board {
     overflow-x: auto;
@@ -225,13 +288,14 @@ body {
 
   .schedule-week-row,
   .schedule-grid {
-    min-width: 1100px;
+    min-width: 760px;
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 900px) {
   .schedule-layout {
     flex-direction: column;
+    padding: 18px;
   }
 
   .schedule-sidebar {
@@ -243,11 +307,12 @@ body {
   }
 
   .schedule-main {
-    padding: 20px;
+    padding: 18px;
   }
 
   .schedule-topbar {
-    justify-content: flex-start;
+    flex-direction: column;
+    align-items: flex-start;
   }
 
   .schedule-userbox {
@@ -255,7 +320,7 @@ body {
     align-items: flex-start;
   }
 
-  .schedule-title h1 {
-    font-size: 40px;
+  .schedule-topbar__title {
+    font-size: 34px;
   }
 }

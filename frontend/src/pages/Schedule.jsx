@@ -10,32 +10,32 @@ function Schedule() {
     id: "123456789",
   };
 
-  const scheduleData = [
-    {
-      day: "MONDAY",
-      dateLabel: "17/03",
-      className: "TANC1",
-      time: "18:00 - 20:00",
-      room: "A101",
-      teacher: "GV: Thanh Lan",
-    },
-    {
-      day: "WEDNESDAY",
-      dateLabel: "19/03",
-      className: "TANC1",
-      time: "18:00 - 20:00",
-      room: "A101",
-      teacher: "GV: Thanh Lan",
-    },
-    {
-      day: "FRIDAY",
-      dateLabel: "21/03",
-      className: "TANC1",
-      time: "18:00 - 20:00",
-      room: "A101",
-      teacher: "GV: Thanh Lan",
-    },
-  ];
+ const scheduleData = [
+  {
+    day: "Thứ Hai",
+    dateLabel: "17/03",
+    className: "TANC1",
+    time: "18:00 - 20:00",
+    room: "A101",
+    teacher: "Thanh Lan",
+  },
+  {
+    day: "Thứ Tư",
+    dateLabel: "19/03",
+    className: "TANC1",
+    time: "18:00 - 20:00",
+    room: "A101",
+    teacher: "Thanh Lan",
+  },
+  {
+    day: "Thứ Sáu",
+    dateLabel: "21/03",
+    className: "TANC1",
+    time: "18:00 - 20:00",
+    room: "A101",
+    teacher: "Thanh Lan",
+  },
+];
 
   return (
     <ScheduleForm

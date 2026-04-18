@@ -1,44 +1,35 @@
-* {
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-  background: #ffffff;
-}
-
 .student-info-layout {
   min-height: 100vh;
   display: flex;
-  background: #ffffff;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  color: #2b2b2b;
-}
-
-.student-info-layout button,
-.student-info-layout input,
-.student-info-layout select,
-.student-info-layout textarea {
-  font: inherit;
+  gap: 20px;
+  padding: 24px;
+  background: transparent;
+  color: var(--text-main);
 }
 
 /* Sidebar */
 .student-info-sidebar {
-  width: 220px;
-  min-width: 220px;
-  background: #bfbfbf;
-  padding: 22px 18px;
+  width: 240px;
+  min-width: 240px;
+  background: linear-gradient(180deg, var(--navy-800), var(--navy-900));
+  border-radius: 30px;
+  padding: 24px 18px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 28px;
+  gap: 22px;
+  box-shadow: var(--shadow-medium);
 }
 
 .student-info-sidebar__logo {
   width: 100%;
   display: flex;
   justify-content: center;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
+  padding: 14px;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(6px);
 }
 
 .student-info-sidebar__logo img {
@@ -49,42 +40,58 @@ body {
 
 .student-info-sidebar__btn {
   width: 170px;
-  min-height: 52px;
-  border: none;
-  background: #efefef;
-  font-size: 10px;
+  min-height: 54px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.14);
+  color: #f8fbff;
+  border-radius: 18px;
+  font-size: 16px;
   font-weight: 600;
   cursor: pointer;
   text-align: center;
-  padding: 12px 10px;
+  padding: 12px 14px;
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.18);
+  backdrop-filter: blur(6px);
 }
 
 .student-info-sidebar__btn.active {
-  background: #ffffff;
+  background: linear-gradient(135deg, #ffffff, var(--blue-100));
+  color: var(--navy-800);
+  border-color: transparent;
 }
 
 /* Main */
 .student-info-main {
   flex: 1;
   min-width: 0;
-  background: #ffffff;
-  padding: 22px 26px 32px;
+  background: rgba(255, 255, 255, 0.96);
+  border-radius: 30px;
+  padding: 24px;
+  box-shadow: var(--shadow-medium);
+  backdrop-filter: blur(6px);
+  text-align: left;
 }
 
+/* Topbar */
 .student-info-topbar {
-  background: #d9d9d9;
-  min-height: 72px;
+  min-height: 82px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 24px;
-  margin-bottom: 18px;
+  gap: 20px;
+  padding: 16px 24px;
+  margin-bottom: 22px;
+  background: linear-gradient(135deg, var(--blue-100), #ffffff);
+  border: 1px solid var(--border-soft);
+  border-radius: 24px;
+  box-shadow: var(--shadow-soft);
 }
 
 .student-info-topbar__title {
   margin: 0;
   font-size: 22px;
-  font-weight: 700;
+  font-weight: 800;
+  color: var(--navy-900);
 }
 
 .student-info-userbox {
@@ -97,139 +104,198 @@ body {
   margin: 3px 0;
   font-size: 14px;
   line-height: 1.5;
+  color: var(--text-main);
 }
 
 .student-info-logout-btn {
   border: none;
-  background: #2b2b2b;
+  background: linear-gradient(135deg, var(--navy-700), var(--navy-500));
   color: #fff;
-  border-radius: 18px;
-  padding: 10px 18px;
-  font-size: 12px;
+  border-radius: 999px;
+  padding: 12px 22px;
+  font-size: 13px;
   font-weight: 700;
   cursor: pointer;
+  box-shadow: 0 12px 24px rgba(30, 47, 91, 0.22);
 }
 
-/* Profile */
+/* Profile card */
 .student-profile-card {
-  background: #d9d9d9;
-  border-radius: 24px;
-  min-height: 130px;
+  background: linear-gradient(145deg, #ffffff, var(--blue-100));
+  border: 1px solid var(--border-soft);
+  border-radius: 26px;
+  min-height: 180px;
+  padding: 24px 26px;
+  margin-bottom: 18px;
+  box-shadow: var(--shadow-soft);
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 18px 20px;
-  margin-bottom: 12px;
+  justify-content: space-between;
+  gap: 24px;
 }
-
+.student-profile-content {
+  flex: 1;
+  min-width: 0;
+}
 .student-profile-content p {
-  margin: 4px 0;
+  margin: 8px 0;
   font-size: 16px;
-  line-height: 1.5;
-  text-align: left;
+  line-height: 1.6;
+  color: var(--text-main);
+}
+.student-profile-avatar {
+  width: 130px;
+  min-width: 130px;
+  height: 130px;
+  border-radius: 22px;
+  border: 1px solid var(--border-soft);
+  background: rgba(255, 255, 255, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
+.student-profile-avatar-inner {
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  background: linear-gradient(180deg, #dfe7f5, #c9d8ee);
+  position: relative;
+}
+
+.student-profile-avatar-inner::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -16px;
+  transform: translateX(-50%);
+  width: 78px;
+  height: 42px;
+  border-radius: 42px 42px 18px 18px;
+  background: linear-gradient(180deg, #dfe7f5, #c9d8ee);
+}
 .student-profile-edit-btn {
   margin-top: 18px;
   padding: 0;
   border: none;
   background: transparent;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   font-size: 14px;
   text-decoration: underline;
   cursor: pointer;
-  color: #2b2b2b;
+  color: var(--navy-600);
+  font-weight: 600;
 }
 
-.student-profile-avatar {
-  width: 110px;
-  height: 110px;
-  border: 4px solid #efefef;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: transparent;
-}
-
-.student-profile-avatar__placeholder {
-  width: 64px;
-  height: 64px;
-  background: #9a9a9a;
-  border-radius: 50%;
-  position: relative;
-}
-
-.student-profile-avatar__placeholder::after {
-  content: "";
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  bottom: -26px;
-  width: 76px;
-  height: 42px;
-  background: #9a9a9a;
-  border-radius: 38px 38px 14px 14px;
+.student-profile-edit-icon {
+  font-size: 14px;
+  line-height: 1;
+  color: var(--navy-600);
 }
 
 /* Tuition */
 .student-tuition-section {
-  margin-top: 8px;
-  margin-bottom: 18px;
+  margin: 0 0 18px;
+  background: #ffffff;
+  border: 1px solid var(--border-soft);
+  border-radius: 24px;
+  padding: 20px 22px;
+  box-shadow: var(--shadow-soft);
 }
 
 .student-tuition-section h2,
 .student-course-section h2 {
-  margin: 0 0 10px;
+  margin: 0 0 14px;
   font-size: 18px;
-  font-weight: 700;
+  font-weight: 800;
+  color: var(--navy-900);
+}
+
+.student-tuition-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  align-items: center;
+  margin-bottom: 8px;
 }
 
 .student-tuition-section p {
-  margin: 4px 0;
+  margin: 0;
   font-size: 16px;
-  line-height: 1.5;
-  text-align: left;
+  line-height: 1.6;
+  color: var(--text-main);
 }
 
 .student-tuition-history {
-  margin-left: 14px;
   text-decoration: underline;
-  color: #9a9a9a;
+  color: var(--navy-600);
+  font-weight: 600;
   cursor: pointer;
 }
 
+/* Course section */
+.student-course-section {
+  background: #ffffff;
+  border: 1px solid var(--border-soft);
+  border-radius: 24px;
+  padding: 20px 22px;
+  box-shadow: var(--shadow-soft);
+}
+
 .student-course-table-wrapper {
-  max-width: 860px;
+  width: 100%;
+  overflow-x: auto;
 }
 
 .student-course-table {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
   background: #fff;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: var(--shadow-soft);
 }
 
 .student-course-table th,
 .student-course-table td {
-  border: 2px solid #444;
-  padding: 14px 10px;
+  padding: 16px 14px;
   text-align: center;
   vertical-align: middle;
   font-size: 14px;
 }
 
 .student-course-table th {
+  background: linear-gradient(135deg, var(--navy-800), var(--navy-600));
+  color: #fff;
   font-weight: 700;
+}
+
+.student-course-table td {
+  border: 1px solid var(--border-soft);
   background: #ffffff;
+  color: var(--text-main);
+}
+
+.student-course-table tbody tr:hover td {
+  background: #f8fbff;
 }
 
 .student-course-detail {
   text-decoration: underline;
   font-style: italic;
   cursor: pointer;
+  color: var(--navy-600);
+  font-weight: 600;
 }
 
+/* Responsive */
 @media (max-width: 900px) {
   .student-info-layout {
     flex-direction: column;
+    padding: 18px;
   }
 
   .student-info-sidebar {
@@ -240,24 +306,25 @@ body {
     justify-content: center;
   }
 
+  .student-info-main {
+    padding: 18px;
+  }
+
   .student-info-topbar {
     flex-direction: column;
     align-items: flex-start;
-    gap: 16px;
   }
 
   .student-info-userbox {
     flex-direction: column;
     align-items: flex-start;
   }
-
   .student-profile-card {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 20px;
-  }
+  flex-direction: column;
+  align-items: flex-start;
+}
 
-  .student-course-table-wrapper {
-    overflow-x: auto;
-  }
+.student-profile-avatar {
+  align-self: center;
+}
 }

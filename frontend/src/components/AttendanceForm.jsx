@@ -1,4 +1,4 @@
-function AttendanceForm({ logo, selectedClass, selectedDate, setSelectedClass, setSelectedDate, classes, dates, students, onStatusChange, onNoteChange, onSubmit, }){
+function AttendanceForm({logo, selectedClass, selectedDate, setSelectedClass, setSelectedDate, classes, dates, students, onStatusChange, onNoteChange, onSubmit,}) {
   return (
     <div className="attendance-layout">
       <aside className="attendance-sidebar">
@@ -32,30 +32,29 @@ function AttendanceForm({ logo, selectedClass, selectedDate, setSelectedClass, s
 
         <div className="attendance-filters">
           <div className="filter-item">
-            <label>Class</label>
+            <label>Lớp</label>
             <select
               value={selectedClass}
               onChange={(e) => setSelectedClass(e.target.value)}
             >
               <option value="">Chọn lớp học</option>
-              {classes.slice(1).map((item) => (
-                <option key={item.id} value={item.id}>
-                  {item.name}
+              {classes.map((item) => (
+                <option key={item} value={item}>
+                  {item}
                 </option>
               ))}
             </select>
           </div>
 
           <div className="filter-item">
-            <label>Date</label>
+            <label>Ngày</label>
             <select
               value={selectedDate}
               onChange={(e) => setSelectedDate(e.target.value)}
             >
-              <option value="">Hôm nay, 18/03/2026</option>
-              {dates.slice(1).map((item) => (
-                <option key={item.id} value={item.id}>
-                  {item.name}
+              {dates.map((item) => (
+                <option key={item} value={item}>
+                  {item}
                 </option>
               ))}
             </select>

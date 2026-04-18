@@ -1,15 +1,15 @@
 function ScheduleForm({ logo, user, weekLabel, scheduleData }) {
   const daysOfWeek = [
-    { day: "MONDAY", dateLabel: "17/03" },
-    { day: "TUESDAY", dateLabel: "18/03" },
-    { day: "WEDNESDAY", dateLabel: "19/03" },
-    { day: "THURSDAY", dateLabel: "20/03" },
-    { day: "FRIDAY", dateLabel: "21/03" },
-    { day: "SATURDAY", dateLabel: "22/03" },
-    { day: "SUNDAY", dateLabel: "23/03" },
+    { day: "Thứ Hai", dateLabel: "17/03" },
+    { day: "Thứ Ba", dateLabel: "18/03" },
+    { day: "Thứ Tư", dateLabel: "19/03" },
+    { day: "Thứ Năm", dateLabel: "20/03" },
+    { day: "Thứ Sáu", dateLabel: "21/03" },
+    { day: "Thứ Bảy", dateLabel: "22/03" },
+    { day: "Chủ Nhật", dateLabel: "23/03" },
   ];
 
-  const getScheduleByDay = (day) => {
+  const getLessonByDay = (day) => {
     return scheduleData.find((item) => item.day === day);
   };
 
@@ -27,6 +27,7 @@ function ScheduleForm({ logo, user, weekLabel, scheduleData }) {
       <main className="schedule-main">
         <div className="schedule-topbar">
           <h1 className="schedule-topbar__title">Lịch học</h1>
+
           <div className="schedule-userbox">
             <div>
               <p>
@@ -49,7 +50,7 @@ function ScheduleForm({ logo, user, weekLabel, scheduleData }) {
 
           <div className="schedule-grid">
             {daysOfWeek.map((item) => {
-              const lesson = getScheduleByDay(item.day);
+              const lesson = getLessonByDay(item.day);
 
               return (
                 <div className="schedule-column" key={item.day}>
@@ -58,15 +59,33 @@ function ScheduleForm({ logo, user, weekLabel, scheduleData }) {
                     <span className="schedule-date">{item.dateLabel}</span>
                   </div>
 
-                  <div className="schedule-cell">
-                    {lesson ? (
-                      <div className="schedule-class-card">
-                        <h3>{lesson.className}</h3>
-                        <p>Khung giờ: {lesson.time}</p>
-                        <p>Phòng: {lesson.room}</p>
-                        <p>{lesson.teacher}</p>
+                  <div className="schedule-day-body">
+                    <div className="schedule-session-block"></div>
+
+                    <div className="schedule-session-block schedule-session-block--bottom">
+                      <div className="schedule-session-content">
+                        {lesson ? (
+                          <div className="schedule-class-card">
+                            <h3>{lesson.className}</h3>
+
+                            <div className="schedule-class-info">
+                              <p className="schedule-label">Khung giờ:</p>
+                              <p className="schedule-value">{lesson.time}</p>
+                            </div>
+
+                            <div className="schedule-class-info">
+                              <p className="schedule-label">Phòng:</p>
+                              <p className="schedule-value">{lesson.room}</p>
+                            </div>
+
+                            <div className="schedule-class-info">
+                              <p className="schedule-label">GV:</p>
+                              <p className="schedule-value">{lesson.teacher}</p>
+                            </div>
+                          </div>
+                        ) : null}
                       </div>
-                    ) : null}
+                    </div>
                   </div>
                 </div>
               );

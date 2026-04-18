@@ -9,11 +9,10 @@ function Navbar() {
 </div>
 
         <nav className="navbar__menu">
-          <a href="/">Home</a>
-          <a href="/">Course</a>
-          <a href="/">Class</a>
-          <a href="/">About us</a>
-          <a href="/">Blog</a>
+          <a href="/">Trang chủ</a>
+          <a href="/">Khóa học</a>
+          <a href="/">Lớp học</a>
+          <a href="/">Thông tin</a>
         </nav>
 
         <div className="navbar__actions">

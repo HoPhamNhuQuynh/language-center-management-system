@@ -38,9 +38,17 @@ function StudentInfoForm({ logo, user, studentProfile, tuition, courses }) {
             <p>Email: {studentProfile.email}</p>
 
             <button className="student-profile-edit-btn">
-              Chỉnh sửa thông tin cá nhân
-            </button>
+              <span className="student-profile-edit-icon">✎</span>
+              <span>Chỉnh sửa thông tin cá nhân</span>
+              </button>
           </div>
+
+          <div className="student-profile-avatar">
+            <div className="student-profile-avatar-inner"></div>
+          </div>
+      
+
+
           
         </section>
 

@@ -5,7 +5,7 @@ import "./Attendance.css";
 
 function Attendance() {
   const [selectedClass, setSelectedClass] = useState("");
-  const [selectedDate, setSelectedDate] = useState("");
+  const [selectedDate, setSelectedDate] = useState("18/03/2026");
 
   const [students, setStudents] = useState([
     {
@@ -28,17 +28,9 @@ function Attendance() {
     },
   ]);
 
-  const classes = [
-    { id: "class1", name: "Chọn lớp học" },
-    { id: "class2", name: "English Giao tiếp 01" },
-    { id: "class3", name: "English Giao tiếp 02" },
-  ];
+  const classes = ["English Giao tiếp 01", "English Giao tiếp 02"];
 
-  const dates = [
-    { id: "date1", name: "Hôm nay, 18/03/2026" },
-    { id: "date2", name: "19/03/2026" },
-    { id: "date3", name: "20/03/2026" },
-  ];
+  const dates = ["18/03/2026", "19/03/2026", "20/03/2026"];
 
   const handleStatusChange = (studentId, newStatus) => {
     setStudents((prev) =>
@@ -57,9 +49,9 @@ function Attendance() {
   };
 
   const handleSubmit = () => {
-    console.log("Class:", selectedClass);
-    console.log("Date:", selectedDate);
-    console.log("Attendance data:", students);
+    console.log("Lớp:", selectedClass);
+    console.log("Ngày:", selectedDate);
+    console.log("Dữ liệu điểm danh:", students);
     alert("Hoàn tất điểm danh!");
   };
 

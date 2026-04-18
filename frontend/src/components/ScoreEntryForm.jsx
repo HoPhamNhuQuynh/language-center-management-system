@@ -1,58 +1,73 @@
-function ScoreEntryForm({ logo, selectedClassCode, selectedClassName, setSelectedClassCode, setSelectedClassName, classCodes, classNames, students, onScoreChange, onCommentChange, onSave,}){
+function ScoreEntryForm({
+  logo,
+  selectedClass,
+  setSelectedClass,
+  selectedCourse,
+  setSelectedCourse,
+  classes,
+  courses,
+  scoreRows,
+  onScoreChange,
+  onTemporarySave,
+  onSubmit,
+}) {
   return (
-    <div className="score-layout">
-      <aside className="score-sidebar">
-        <div className="score-logo">
+    <div className="score-entry-layout">
+      <aside className="score-entry-sidebar">
+        <div className="score-entry-logo">
           <img src={logo} alt="Logo" />
         </div>
 
-        <button className="score-sidebar-btn active">Nhập điểm</button>
-        <button className="score-sidebar-btn">Lịch giảng dạy</button>
-        <button className="score-sidebar-btn">Danh sách học viên</button>
-        <button className="score-sidebar-btn">Điểm danh</button>
+        <button className="score-entry-sidebar-btn active">Nhập điểm</button>
+        <button className="score-entry-sidebar-btn">Lịch giảng dạy</button>
+        <button className="score-entry-sidebar-btn">Danh sách học viên</button>
+        <button className="score-entry-sidebar-btn">Điểm danh</button>
       </aside>
 
-      <main className="score-main">
-        <div className="score-topbar">
+      <main className="score-entry-main">
+        <div className="score-entry-topbar">
           <h1>NHẬP ĐIỂM</h1>
 
-          <div className="score-userbox">
+          <div className="score-entry-userbox">
             <div>
-              <p><strong>NAME:</strong> Nguyen Ngoc Anh</p>
-              <p><strong>ID:</strong> 123456789</p>
+              <p>
+                <strong>NAME:</strong> Nguyen Ngoc Anh
+              </p>
+              <p>
+                <strong>ID:</strong> 123456789
+              </p>
             </div>
-            <button className="score-logout-btn">ĐĂNG XUẤT</button>
+
+            <button className="logout-btn">ĐĂNG XUẤT</button>
           </div>
         </div>
 
-        <div className="score-filters">
+        <div className="score-entry-filters">
           <select
-            value={selectedClassCode}
-            onChange={(e) => setSelectedClassCode(e.target.value)}
+            value={selectedClass}
+            onChange={(e) => setSelectedClass(e.target.value)}
           >
-            <option value="">Mã lớp: TQ01</option>
-            {classCodes.slice(1).map((item) => (
-              <option key={item.id} value={item.id}>
-                {item.name}
+            {classes.map((item) => (
+              <option key={item} value={item}>
+                Mã lớp: {item}
               </option>
             ))}
           </select>
 
           <select
-            value={selectedClassName}
-            onChange={(e) => setSelectedClassName(e.target.value)}
+            value={selectedCourse}
+            onChange={(e) => setSelectedCourse(e.target.value)}
           >
-            <option value="">Tiếng Trung giao tiếp, A103</option>
-            {classNames.slice(1).map((item) => (
-              <option key={item.id} value={item.id}>
-                {item.name}
+            {courses.map((item) => (
+              <option key={item} value={item}>
+                {item}
               </option>
             ))}
           </select>
         </div>
 
-        <div className="score-table-wrapper">
-          <table className="score-table">
+        <div className="score-entry-table-wrapper">
+          <table className="score-entry-table">
             <thead>
               <tr>
                 <th>STT</th>
@@ -65,7 +80,7 @@ function ScoreEntryForm({ logo, selectedClassCode, selectedClassName, setSelecte
             </thead>
 
             <tbody>
-              {students.map((student, index) => (
+              {(scoreRows || []).map((student, index) => (
                 <tr key={student.id}>
                   <td>{index + 1}</td>
                   <td>{student.fullName}</td>
@@ -75,6 +90,7 @@ function ScoreEntryForm({ logo, selectedClassCode, selectedClassName, setSelecte
                       type="number"
                       min="0"
                       max="10"
+                      step="0.1"
                       value={student.midterm}
                       onChange={(e) =>
                         onScoreChange(student.id, "midterm", e.target.value)
@@ -87,6 +103,7 @@ function ScoreEntryForm({ logo, selectedClassCode, selectedClassName, setSelecte
                       type="number"
                       min="0"
                       max="10"
+                      step="0.1"
                       value={student.final}
                       onChange={(e) =>
                         onScoreChange(student.id, "final", e.target.value)
@@ -95,17 +112,19 @@ function ScoreEntryForm({ logo, selectedClassCode, selectedClassName, setSelecte
                   </td>
 
                   <td>
-                    <input type="text" value={student.average} readOnly />
+                    <span className="score-entry-average">
+                      {student.average}
+                    </span>
                   </td>
 
                   <td>
-                    <input
-                      type="text"
-                      value={student.comment}
-                      onChange={(e) =>
-                        onCommentChange(student.id, e.target.value)
-                      }
-                    />
+                    {student.remark ? (
+                      <span className="score-entry-remark">
+                        {student.remark}
+                      </span>
+                    ) : (
+                      ""
+                    )}
                   </td>
                 </tr>
               ))}
@@ -113,8 +132,12 @@ function ScoreEntryForm({ logo, selectedClassCode, selectedClassName, setSelecte
           </table>
         </div>
 
-        <div className="score-submit">
-          <button className="score-save-btn" onClick={onSave}>
+        <div className="score-entry-actions">
+          <button className="draft-btn" onClick={onTemporarySave}>
+            LƯU TẠM
+          </button>
+
+          <button className="save-btn" onClick={onSubmit}>
             LƯU NHẬP ĐIỂM
           </button>
         </div>

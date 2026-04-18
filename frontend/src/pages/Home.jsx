@@ -12,17 +12,17 @@ import "./Home.css";
 
 function Home() {
   const languages = [
-    { id: 1, name: "English", description: "Learn global communication skills.", image: englandFlag},
-    { id: 2, name: "Japanese", description: "Improve business and daily Japanese.", image: japanFlag },
-    { id: 3, name: "Korean", description: "Explore Korean language and culture.", image: koreaFlag },
-    { id: 4, name: "Chinese", description: "Build strong speaking ability.", image: chinaFlag },
+    { id: 1, name: "English", description: "Học kỹ năng giao tiếp toàn cầu.", image: englandFlag},
+    { id: 2, name: "Japanese", description: "Cải thiện tiếng Nhật trong công việc và đời sống hàng ngày.", image: japanFlag },
+    { id: 3, name: "Korean", description: "Khám phá ngôn ngữ và văn hóa Hàn Quốc.", image: koreaFlag },
+    { id: 4, name: "Chinese", description: "Xây dựng khả năng giao tiếp mạnh mẽ.", image: chinaFlag },
   ];
 
   const courses = [
     {
       id: 1,
       title: "Conversational English",
-      subtitle: "Speak fluently with confidence",
+      subtitle: "Nói lưu loát và tự tin",
       level: "Beginner",
       price: "$99",
       tags: ["English", "Beginner"],
@@ -31,7 +31,7 @@ function Home() {
     {
       id: 2,
       title: "Japanese for Business",
-      subtitle: "Professional communication skills",
+      subtitle: "Kỹ năng giao tiếp chuyên nghiệp",
       level: "Intermediate",
       price: "$149",
       tags: ["Japanese", "Intermediate"],
@@ -40,7 +40,7 @@ function Home() {
     {
       id: 3,
       title: "Korean Culture and Language",
-      subtitle: "Language with real-life context",
+      subtitle: "Ngôn ngữ với bối cảnh thực tế",
       level: "Advanced",
       price: "$199",
       tags: ["Korean", "Advanced"],
@@ -49,14 +49,14 @@ function Home() {
   ];
 
   const reasons = [
-    { id: 1, title: "Experienced Teachers", description: "Learn with dedicated teachers." },
-    { id: 2, title: "Flexible Learning Path", description: "Choose courses that match your level." },
-    { id: 3, title: "Modern Learning Environment", description: "Enjoy updated materials and teaching methods." },
+    { id: 1, title: "Giáo viên có kinh nghiệm", description: "Học cùng với những giáo viên tận tâm." },
+    { id: 2, title: "Lộ trình học linh hoạt", description: "Chọn các khóa học phù hợp với trình độ của bạn." },
+    { id: 3, title: "Môi trường học tập hiện đại", description: "Sử dụng các tài liệu và phương pháp giảng dạy được cập nhật." },
   ];
 
   const testimonials = [
-    { id: 1, name: "John Doe", content: "I achieved my IELTS goal thanks to the supportive teachers here." },
-    { id: 2, name: "Ami Tanaka", content: "The Japanese course helped me feel much more confident at work." },
+    { id: 1, name: "John Doe", content: "Tôi đã đạt được mục tiêu IELTS của mình nhờ vào sự hỗ trợ của những giáo viên ở đây." },
+    { id: 2, name: "Ami Tanaka", content: "Khóa học tiếng Nhật đã giúp tôi cảm thấy tự tin hơn nhiều trong công việc." },
   ];
 
   return (

@@ -1,100 +1,143 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import logo from "../assets/hero.png";
 import ScoreEntryForm from "../components/ScoreEntryForm";
 import "./ScoreEntry.css";
 
 function ScoreEntry() {
-  const [selectedClassCode, setSelectedClassCode] = useState("");
-  const [selectedClassName, setSelectedClassName] = useState("");
+  const [selectedClass, setSelectedClass] = useState("TQ01");
+  const [selectedCourse, setSelectedCourse] = useState("Tiếng Trung giao tiếp, A103");
 
-  const [students, setStudents] = useState([
-    {
-      id: 1,
-      fullName: "Nguyễn Văn Đạt",
-      midterm: 8,
-      final: 9,
-      average: 8.5,
-      comment: "Học tốt",
-    },
-    {
-      id: 2,
-      fullName: "Trần Ngọc Lan",
-      midterm: 7,
-      final: 8,
-      average: 7.5,
-      comment: "Cần cố gắng thêm",
-    },
-    {
-      id: 3,
-      fullName: "Lê Minh Khôi",
-      midterm: "",
-      final: "",
-      average: "",
-      comment: "",
-    },
-  ]);
-
-  const classCodes = [
-    { id: "tq01", name: "Mã lớp: TQ01" },
-    { id: "tq02", name: "Mã lớp: TQ02" },
+  const classes = ["TQ01", "TQ02", "TANC1"];
+  const courses = [
+    "Tiếng Trung giao tiếp, A103",
+    "Tiếng Anh giao tiếp, A101",
+    "Tiếng Hàn sơ cấp, A105",
   ];
 
-  const classNames = [
-    { id: "lop1", name: "Tiếng Trung giao tiếp, A103" },
-    { id: "lop2", name: "Tiếng Trung cơ bản, A104" },
-  ];
+  const defaultRows = useMemo(
+    () => [
+      {
+        id: 1,
+        fullName: "Nguyễn Văn Đạt",
+        midterm: "8",
+        final: "9",
+        average: "8.5",
+        remark: "Học tốt",
+      },
+      {
+        id: 2,
+        fullName: "Trần Ngọc Lan",
+        midterm: "7",
+        final: "8",
+        average: "7.5",
+        remark: "Cần cố gắng thêm",
+      },
+      {
+        id: 3,
+        fullName: "Lê Minh Khôi",
+        midterm: "",
+        final: "",
+        average: "",
+        remark: "",
+      },
+    ],
+    []
+  );
+
+  const [scoreRows, setScoreRows] = useState(defaultRows);
+
+  const draftKey = `score_draft_${selectedClass}`;
 
   const calculateAverage = (midterm, final) => {
-    const m = parseFloat(midterm);
-    const f = parseFloat(final);
-    if (isNaN(m) || isNaN(f)) return "";
-    return ((m + f) / 2).toFixed(1);
+    const mid = Number(midterm);
+    const fin = Number(final);
+
+    if (Number.isNaN(mid) || Number.isNaN(fin) || midterm === "" || final === "") {
+      return "";
+    }
+
+    return ((mid + fin) / 2).toFixed(1);
   };
 
+  const generateRemark = (average) => {
+    const avg = Number(average);
+    if (Number.isNaN(avg)) return "";
+    if (avg >= 8) return "Học tốt";
+    if (avg >= 6.5) return "Khá";
+    if (avg >= 5) return "Đạt";
+    return "Cần cố gắng thêm";
+  };
+
+  useEffect(() => {
+    const savedDraft = localStorage.getItem(draftKey);
+
+    if (savedDraft) {
+      try {
+        setScoreRows(JSON.parse(savedDraft));
+      } catch {
+        setScoreRows(defaultRows);
+      }
+    } else {
+      setScoreRows(defaultRows);
+    }
+  }, [draftKey, defaultRows]);
+
+  useEffect(() => {
+    localStorage.setItem(draftKey, JSON.stringify(scoreRows));
+  }, [draftKey, scoreRows]);
+
   const handleScoreChange = (studentId, field, value) => {
-    setStudents((prev) =>
+    if (value !== "" && (Number(value) < 0 || Number(value) > 10)) return;
+
+    setScoreRows((prev) =>
       prev.map((student) => {
         if (student.id !== studentId) return student;
 
-        const updated = { ...student, [field]: value };
-        updated.average = calculateAverage(
-          field === "midterm" ? value : updated.midterm,
-          field === "final" ? value : updated.final
-        );
+        const updated = {
+          ...student,
+          [field]: value,
+        };
 
-        return updated;
+        const average = calculateAverage(updated.midterm, updated.final);
+
+        return {
+          ...updated,
+          average,
+          remark: average ? generateRemark(average) : "",
+        };
       })
     );
   };
 
-  const handleCommentChange = (studentId, value) => {
-    setStudents((prev) =>
-      prev.map((student) =>
-        student.id === studentId ? { ...student, comment: value } : student
-      )
-    );
+  const handleTemporarySave = () => {
+    localStorage.setItem(draftKey, JSON.stringify(scoreRows));
+    alert("Đã lưu tạm!");
   };
 
-  const handleSaveScores = () => {
-    console.log("Class code:", selectedClassCode);
-    console.log("Class name:", selectedClassName);
-    console.log("Students:", students);
-    alert("Lưu nhập điểm thành công!");
+  const handleSubmit = () => {
+    console.log({
+      selectedClass,
+      selectedCourse,
+      scoreRows,
+    });
+
+    alert("Đã lưu nhập điểm!");
+    localStorage.removeItem(draftKey);
   };
 
   return (
     <ScoreEntryForm
       logo={logo}
-      selectedClassCode={selectedClassCode}
-      selectedClassName={selectedClassName}
-      setSelectedClassCode={setSelectedClassCode}
-      setSelectedClassName={setSelectedClassName}
-      classCodes={classCodes}
-      classNames={classNames}
-      students={students}
+      selectedClass={selectedClass}
+      setSelectedClass={setSelectedClass}
+      selectedCourse={selectedCourse}
+      setSelectedCourse={setSelectedCourse}
+      classes={classes}
+      courses={courses}
+      scoreRows={scoreRows}
       onScoreChange={handleScoreChange}
-      onCommentChange={handleCommentChange}
-      onSave={handleSaveScores}
+      onTemporarySave={handleTemporarySave}
+      onSubmit={handleSubmit}
     />
   );
 }
