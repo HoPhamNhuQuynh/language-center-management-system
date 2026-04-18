@@ -14,7 +14,7 @@ class VNPayService:
             'vnp_Amount': int(payment.amount * 100), # do don vi vnpay tinh la xu
             'vnp_CreateDate': datetime.datetime.now().strftime('%Y%m%d%H%M%S'),
             'vnp_CurrCode': 'VND',
-            'vnp_IPAddr': ip_address,
+            'vnp_IpAddr': ip_address,
             'vnp_Locale': 'vn',
             'vnp_OrderInfo': f'Thanh toan don hang {payment.id}',
             'vnp_OrderType': 'billpayment',

@@ -26,7 +26,8 @@ SECRET_KEY = 'django-insecure-nzz0#i&5*1dsthoruhk5y=nalpa16$ui2sm7pl4#fcm=mk#zx=
 DEBUG = True
 
 ALLOWED_HOSTS = ["localhost",
-                 "127.0.0.1"]
+                 "127.0.0.1",
+                 'pseudopsychological-vasoconstrictive-ellison.ngrok-free.dev']
 
 AUTH_USER_MODEL = 'users.User'
 
@@ -168,7 +169,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'language_center_db',
         'USER': 'root',
-        'PASSWORD': 'root',
+        'PASSWORD': 'Nhuquynh261105@',
         'HOST': '', # mặc định localhost
         'PORT': '3306',
     }
@@ -215,3 +216,8 @@ STATIC_URL = 'static/'
 VNPAY_TMN_CODE = 'YCXQRNYD'
 VNPAY_RETURN_URL = '/'
 VNPAY_HASH_SECRET = 'SAR75YVR7QKTU9HLD3C4MXY77Y01E387'
+VNPAY_URL = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html"
+VNPAY_RETURN_URL = "https://pseudopsychological-vasoconstrictive-ellison.ngrok-free.dev/api/payments/vnpay-callback/"
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+SECURE_SSL_REDIRECT = False

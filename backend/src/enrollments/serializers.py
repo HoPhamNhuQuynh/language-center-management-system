@@ -76,7 +76,7 @@ class PaymentSerializer(serializers.ModelSerializer):
         enrollment = data.get('enrollment')
         amount = data.get('amount')
 
-        course_fee = enrollment.classroom.course_fee
+        course_fee = enrollment.classroom.course.price
 
         if course_fee < 5000000:
             if amount < course_fee:
@@ -86,12 +86,15 @@ class PaymentSerializer(serializers.ModelSerializer):
                 if amount < min_partial and enrollment.enrollment_status == "PENDING_PAYMENT":
                     raise serializers.ValidationError("Khóa học trên 5tr được phép đóng trước tối thiểu 50%.")
         return data
+    
+    def get_classroom(self, instance):
+        return instance.enrollment.classroom.name
 
     @transaction.atomic
     def create(self, validated_data):
         payment = super().create(validated_data)
         enrollment = payment.enrollment
-        course_fee = enrollment.classroom.course_fee
+        course_fee = enrollment.classroom.course.price
 
         total_paid = Payment.objects.filter(enrollment=enrollment).aggregate(models.Sum('amount'))['amount__sum'] or 0
 
