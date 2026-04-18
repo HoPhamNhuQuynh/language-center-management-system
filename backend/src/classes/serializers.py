@@ -4,7 +4,7 @@ from django.db import transaction
 from users.models import User
 from users.serializers import UserSerializer
 
-from src.classes.models import Schedule
+from classes.models import Schedule
 
 
 class TeachingAssignmentSerializer(serializers.ModelSerializer):

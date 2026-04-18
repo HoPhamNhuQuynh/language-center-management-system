@@ -21,11 +21,13 @@ class ClassRoomViewSet(viewsets.ModelViewSet):
     ordering_fields = ["-id"]
 
     def get_queryset(self):
-        user = self.request.user
         query = (ClassRoom.objects.filter(active=True).annotate(
             student=Count(
                 'enrollment',
-                filter=Q(enrollment__active=True, enrollment__enrollment__status__in=['SUCCESS', 'PARTIAL_PAYMENT'])
+                filter=Q(
+                    enrollment__active=True,
+                    enrollment__enrollment_status__in=['SUCCESS', 'PARTIAL_PAYMENT']
+                )
             )
         ).prefetch_related(
             Prefetch(
@@ -34,7 +36,7 @@ class ClassRoomViewSet(viewsets.ModelViewSet):
             )
         ).select_related('course'))
 
-        if user.is_student:
+        if self.request.user.is_authenticated and self.request.user.is_student:
             query = query.filter(student__lt=F('capacity'))
         return query
 

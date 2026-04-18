@@ -8,7 +8,7 @@ from .serializers import BulkSyncScoreSerializer, BulkSyncAttendanceSerializer
 from .service import ScoreService, AttendanceService
 from core import core_perms
 from django.db.models import OuterRef, Subquery
-from django.untils import timezone
+from django.utils import timezone
 from rest_framework.exceptions import PermissionDenied
 
 class AttendanceViewSet(viewsets.ViewSet, generics.ListAPIView):
