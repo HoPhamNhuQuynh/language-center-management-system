@@ -1,10 +1,10 @@
 from rest_framework import viewsets, generics, permissions, status
 from enrollments.models import Enrollment, Payment
-from enrollments.serializers import PaymentSerializer, EnrollmentSerializer, EnrollmentDetailSerializer
+from enrollments.serializers import PaymentSerializer, EnrollmentSerializer, EnrollmentDetailSerializer, PaymentCreateSerializer
 from core import core_perms
 from .perms import IsEnrollmentOwner
 from rest_framework.response import Response
-
+from .services import VNPayService
 
 
 class EnrollmentViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.RetrieveDestroyAPIView):
@@ -36,6 +36,7 @@ class EnrollmentViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.R
     def perform_create(self, serializer):
         serializer.save(student=self.request.user)
 
+
     def cancel_enrollment(self, request, pk):
         enrollment = self.get_object()
         if enrollment.enrollment_status != 'PENDING_PAYMENT':
@@ -44,18 +45,39 @@ class EnrollmentViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.R
         enrollment.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+
 class PaymentViewSet(viewsets.ViewSet, generics.ListAPIView):
     serializer_class = PaymentSerializer
-    permission_classes = [permissions.IsAdminUser]
+    permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
         user = self.request.user
 
         if user.is_staff:
-            return Payment.objects.select_related('enrollment__classroom', 'enrollment__student').all()
+            return Payment.objects.select_related(
+                'enrollment__classroom',
+                'enrollment__student'
+            ).all()
 
-        return Payment.objects.select_related('enrollment__classroom').filter(enrollment__student=user)
+        return Payment.objects.select_related(
+            'enrollment__classroom'
+        ).filter(enrollment__student=user)
 
+    def create(self, request):
+        s = PaymentCreateSerializer(data=request.data, context={'request': request})
+        s.is_valid(raise_exception=True)
+        payment = s.save()
 
+        if payment.payment_method == Payment.Method.VNPAY:
+            ip_address = request.META.get('REMOTE_ADDR', '127.0.0.1')
+            payment_url = VNPayService.create_payment_url(payment=payment, ip_address=ip_address)
+
+            return Response({"payemnt_url": payment_url})
+
+        # Mock MoMo
+        if payment.payment_method == Payment.Method.MOMO:
+            return Response({"payUrl": f"/mock-momo/{payment.id}"})
+
+        return Response({"error": "Invalid method"}, status=400)
 
 

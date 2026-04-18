@@ -2,10 +2,9 @@ from django.db import transaction, models
 from django.utils import timezone
 from enrollments.models import Enrollment, Payment
 from rest_framework import serializers
-from rest_framework.validators import UniqueTogetherValidator
+from django.utils import timezone
 from users.serializers import UserSerializer
 from classes.serializers import ClassRoomSerializer
-from decimal import Decimal
 
 class EnrollmentSerializer(serializers.ModelSerializer):
     class Meta:
@@ -67,14 +66,11 @@ class EnrollmentDetailSerializer(EnrollmentSerializer):
         fields = EnrollmentSerializer.Meta.fields + ['created_at','updated_at', 'active']
 
 class PaymentSerializer(serializers.ModelSerializer):
+    classroom = serializers.SerializerMethodField()
+
     class Meta:
         model = Payment
-        fields = ['id', 'enrollment', 'amount', 'payment_method', 'paid_at']
-
-    def to_representation(self, instance):
-        data = super().to_representation(instance)
-        data['classroom'] = instance.enrollment.classroom.name
-        return data
+        fields = ['id', 'enrollment', 'amount', 'payment_method', 'paid_at', 'classroom']
 
     def validate(self, data):
         enrollment = data.get('enrollment')
@@ -106,3 +102,4 @@ class PaymentSerializer(serializers.ModelSerializer):
 
         enrollment.save()
         return payment
+
