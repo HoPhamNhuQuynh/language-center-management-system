@@ -44,10 +44,9 @@ class TagViewSet(viewsets.ModelViewSet):
         return [core_perms.IsAdmin()]
 
     def perform_destroy(self, instance):
-        try:
-            instance.delete()
-        except ProtectedError:
+        if instance.course_set.exists():
             raise ValidationError("Không thể xóa thẻ này do ràng buộc dữ liệu.")
+        instance.delete()
     
 class LevelViewSet(viewsets.ModelViewSet):
     queryset = Level.objects.all()
