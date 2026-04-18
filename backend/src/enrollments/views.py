@@ -1,8 +1,9 @@
-from rest_framework import viewsets, generics, permissions
+from rest_framework import viewsets, generics, permissions, status
 from enrollments.models import Enrollment, Payment
 from enrollments.serializers import PaymentSerializer, EnrollmentSerializer, EnrollmentDetailSerializer, PaymentCreateSerializer
 from core import core_perms
 from .perms import IsEnrollmentOwner
+from rest_framework.response import Response
 from .services import VNPayService
 
 
@@ -13,6 +14,11 @@ class EnrollmentViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.R
     
         if self.request.user and (self.request.user.is_staff or self.request.user.is_superuser):
             return Enrollment.objects.select_related('student', 'classroom').all()
+        if self.request.user.is_admin:
+            return Enrollment.objects.select_related('student', 'classroom').filter(
+                classroom__teachingassignment__teacher=self.request.user,
+                active=True
+            ).distinct()
         return Enrollment.objects.select_related('student', 'classroom').filter(student=self.request.user, active=True)
     
     def get_serializer_class(self):
@@ -30,9 +36,15 @@ class EnrollmentViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.R
     def perform_create(self, serializer):
         serializer.save(student=self.request.user)
 
-from rest_framework import viewsets, permissions, status
-from rest_framework.response import Response
-from django.utils import timezone
+
+    def cancel_enrollment(self, request, pk):
+        enrollment = self.get_object()
+        if enrollment.enrollment_status != 'PENDING_PAYMENT':
+            return Response({"detail": "Không thể hủy khi đã thanh toán."},status=status.HTTP_400_BAD_REQUEST)
+        enrollment.active = False
+        enrollment.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
 
 class PaymentViewSet(viewsets.ViewSet, generics.ListAPIView):
     serializer_class = PaymentSerializer

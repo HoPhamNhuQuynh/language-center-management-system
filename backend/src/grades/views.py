@@ -8,6 +8,7 @@ from .serializers import BulkSyncScoreSerializer, BulkSyncAttendanceSerializer
 from .service import ScoreService, AttendanceService
 from core import core_perms
 from django.db.models import OuterRef, Subquery
+from django.utils import timezone
 from rest_framework.exceptions import PermissionDenied
 
 class AttendanceViewSet(viewsets.ViewSet, generics.ListAPIView):
@@ -57,6 +58,12 @@ class BulkSyncScoreView(APIView):
 
         if not is_main:
             raise PermissionDenied("Bạn không có quyền nhập điểm cho lớp học này.")
+
+        if classroom.grade_deadline and timezone.now() > classroom.grade_deadline:
+            raise PermissionDenied("Đã quá thời hạn nộp điểm.")
+
+        if classroom.grade_status == ClassRoom.Status.SUBMITTED:
+            raise PermissionDenied("Bảng điểm đã nộp, vui lòng liên hệ Admin để mở lại nếu cần chỉnh sửa.")
 
         result = ScoreService.bulk_sync_scores(
             classroom=classroom,

@@ -1,3 +1,5 @@
+from django.db import transaction, models
+from django.utils import timezone
 from enrollments.models import Enrollment, Payment
 from rest_framework import serializers
 from django.utils import timezone
@@ -52,7 +54,7 @@ class EnrollmentSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
-        data['student'] = UserSerializer(instance.student)
+        data['student'] = UserSerializer(instance.student).data
         data['classroom'] = ClassRoomSerializer(instance.classroom).data
 
         return data
@@ -70,47 +72,34 @@ class PaymentSerializer(serializers.ModelSerializer):
         model = Payment
         fields = ['id', 'enrollment', 'amount', 'payment_method', 'paid_at', 'classroom']
 
-    def get_classroom(self, obj):
-        return obj.enrollment.classroom.name
+    def validate(self, data):
+        enrollment = data.get('enrollment')
+        amount = data.get('amount')
 
-from django.utils import timezone
-from rest_framework import serializers
+        course_fee = enrollment.classroom.course_fee
 
-class PaymentCreateSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Payment
-        fields = ['enrollment', 'payment_method']
+        if course_fee < 5000000:
+            if amount < course_fee:
+                raise serializers.ValidationError(f"Khóa học dưới 5tr bắt buộc thanh toán toàn bộ ({course_fee} VNĐ).")
+            else:
+                min_partial = course_fee / 2
+                if amount < min_partial and enrollment.enrollment_status == "PENDING_PAYMENT":
+                    raise serializers.ValidationError("Khóa học trên 5tr được phép đóng trước tối thiểu 50%.")
+        return data
 
-    def validate(self, attrs):
-        request = self.context['request']
-        enrollment = attrs['enrollment']
-
-        if enrollment.student != request.user:
-            raise serializers.ValidationError("Không có quyền")
-
-        if enrollment.payment_deadline < timezone.now():
-            enrollment.delete()
-            raise serializers.ValidationError("Hết hạn giữ chỗ")
-
-        if enrollment.enrollment_status == Enrollment.Status.SUCCESS:
-            raise serializers.ValidationError("Đã thanh toán rồi")
-
-        return attrs
-
+    @transaction.atomic
     def create(self, validated_data):
-        enrollment = validated_data['enrollment']
-        course_price = enrollment.classroom.course.price
+        payment = super().create(validated_data)
+        enrollment = payment.enrollment
+        course_fee = enrollment.classroom.course_fee
 
-        if course_price > 5_000_000:
-            amount = course_price * 0.5
-        else:
-            amount = course_price
+        total_paid = Payment.objects.filter(enrollment=enrollment).aggregate(models.Sum('amount'))['amount__sum'] or 0
 
-        payment = Payment.objects.create(
-            enrollment=enrollment,
-            amount=amount,
-            payment_method=validated_data['payment_method'],
-            payment_status=Payment.Status.PENDING
-        )
+        if total_paid >= course_fee:
+            enrollment.enrollment_status = Enrollment.Status.SUCCESS
+        elif total_paid >= course_fee/2:
+            enrollment.enrollment_status = Enrollment.Status.PARTIAL_PAYMENT
 
+        enrollment.save()
         return payment
+
