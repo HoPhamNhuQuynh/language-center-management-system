@@ -1,6 +1,6 @@
 from enrollments.models import Enrollment, Payment
 from rest_framework import serializers
-from rest_framework.validators import UniqueTogetherValidator
+from django.utils import timezone
 from users.serializers import UserSerializer
 from classes.serializers import ClassRoomSerializer
 
@@ -64,11 +64,53 @@ class EnrollmentDetailSerializer(EnrollmentSerializer):
         fields = EnrollmentSerializer.Meta.fields + ['created_at','updated_at', 'active']
 
 class PaymentSerializer(serializers.ModelSerializer):
+    classroom = serializers.SerializerMethodField()
+
     class Meta:
         model = Payment
-        fields = ['id', 'enrollment', 'amount', 'payment_method', 'paid_at']
+        fields = ['id', 'enrollment', 'amount', 'payment_method', 'paid_at', 'classroom']
 
-    def to_representation(self, instance):
-        data = super().to_representation(instance)
-        data['classroom'] = instance.enrollment.classroom.name
-        return data 
+    def get_classroom(self, obj):
+        return obj.enrollment.classroom.name
+
+from django.utils import timezone
+from rest_framework import serializers
+
+class PaymentCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Payment
+        fields = ['enrollment', 'payment_method']
+
+    def validate(self, attrs):
+        request = self.context['request']
+        enrollment = attrs['enrollment']
+
+        if enrollment.student != request.user:
+            raise serializers.ValidationError("Không có quyền")
+
+        if enrollment.payment_deadline < timezone.now():
+            enrollment.delete()
+            raise serializers.ValidationError("Hết hạn giữ chỗ")
+
+        if enrollment.enrollment_status == Enrollment.Status.SUCCESS:
+            raise serializers.ValidationError("Đã thanh toán rồi")
+
+        return attrs
+
+    def create(self, validated_data):
+        enrollment = validated_data['enrollment']
+        course_price = enrollment.classroom.course.price
+
+        if course_price > 5_000_000:
+            amount = course_price * 0.5
+        else:
+            amount = course_price
+
+        payment = Payment.objects.create(
+            enrollment=enrollment,
+            amount=amount,
+            payment_method=validated_data['payment_method'],
+            payment_status=Payment.Status.PENDING
+        )
+
+        return payment
