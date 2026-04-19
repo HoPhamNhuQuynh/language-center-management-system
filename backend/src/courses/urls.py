@@ -5,11 +5,10 @@ from courses.views import CourseViewSet, LevelViewSet, ScoreTypeViewSet, TagView
 r = DefaultRouter()
 r.register('courses', CourseViewSet, basename='course')
 r.register('tags', TagViewSet, basename='tag')
+r.register('levels', LevelViewSet, basename='level')
+r.register('score-types', ScoreTypeViewSet, basename='score-type')
 
 
 urlpatterns = [
     path('', include(r.urls)),
-    path('levels', LevelViewSet.as_view({'get': 'list', 'post': 'create'}), name='level-list-create'),
-    path('score-types', ScoreTypeViewSet.as_view({'get': 'list', 'post': 'create'}), name='score-type-list-create'),
-    path('tags', TagViewSet.as_view({'get': 'list'}), name='tag-list'),
 ]

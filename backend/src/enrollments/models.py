@@ -25,7 +25,16 @@ class Enrollment(BaseActiveModel, TimeStampedModel):
     score_types = models.ManyToManyField('courses.ScoreType', through='grades.Score')
 
     class Meta:
-        unique_together = ['student', 'classroom']
+        indexes = [
+            models.Index(fields=['classroom'], name='idx_enrollment_class')
+        ]
+
+        constraints = [
+            models.UniqueConstraint(
+                fields=['student', 'classroom'],
+                name='uk_enrollment_user_class'
+            )
+        ]
 
     def save(self, *args, **kwargs):
         if not self.payment_deadline:
@@ -38,12 +47,31 @@ class Payment(TimeStampedModel):
         MOMO = "MOMO", "MoMo"
         VNPAY = "VNPAY", "VNPay"
 
+    class Status(models.TextChoices):
+        SUCCESS = "SUCCESS", "Giao dịch thành công"
+        FAILED = "FAILED", "Giao dịch thất bại"
+        PENDING = "PENDING", "Đang xử lý giao dịch"
+
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     payment_method = models.CharField(
                                     max_length=20, 
                                     choices=Method.choices, 
                                     default=Method.VNPAY
-                                    )
-    transaction_id = models.CharField(max_length=255, unique=True)
-    paid_at = models.DateTimeField()
+                                )
+    
+    payment_status = models.CharField(
+                                    max_length=20,
+                                    choices=Status.choices,
+                                    default=Status.PENDING 
+                                )
+
+    transaction_id = models.CharField(max_length=255, unique=True, null=True, blank=True)
+
+    paid_at = models.DateTimeField(null=True, blank=True)
+
     enrollment = models.ForeignKey(Enrollment, on_delete=models.CASCADE)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['enrollment'], name='idx_payment_enrollment')
+        ]

@@ -25,7 +25,9 @@ SECRET_KEY = 'django-insecure-nzz0#i&5*1dsthoruhk5y=nalpa16$ui2sm7pl4#fcm=mk#zx=
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["localhost",
+                 "127.0.0.1",
+                 'pseudopsychological-vasoconstrictive-ellison.ngrok-free.dev']
 
 AUTH_USER_MODEL = 'users.User'
 
@@ -33,7 +35,8 @@ import cloudinary
 cloudinary.config( 
   cloud_name = "desvczltb", 
   api_key = "823159465662566", 
-  api_secret = "IJlWI6FrtaaJMxey_SRXUx--LOM"
+  api_secret = "IJlWI6FrtaaJMxey_SRXUx--LOM",
+  secure=True
 )
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
@@ -78,7 +81,7 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 OAUTH2_PROVIDER = {
-    'ACCESS_TOKEN_EXPIRE_SECONDS': 900,
+    'ACCESS_TOKEN_EXPIRE_SECONDS': 36000,
     'REFRESH_TOKEN_EXPIRE_SECONDS': 86400 * 30, 
 }
 
@@ -100,8 +103,6 @@ SOCIALACCOUNT_QUERY_EMAIL = True
 ACCOUNT_EMAIL_VERIFICATION = "none"
 ACCOUNT_SIGNUP_FIELDS = ['email*', 'username*', 'password1*', 'password2*']
 
-# cho phép ngrok kết nối server
-ALLOWED_HOSTS = ['*', 'localhost', '127.0.0.1'] 
 ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'https'
 
 REST_FRAMEWORK = {
@@ -114,19 +115,21 @@ REST_FRAMEWORK = {
     'ROTATE_REFRESH_TOKEN': True,
 }
 
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOWED_ORIGINS = ["http://localhost:5173",
+                        "http://127.0.0.1:5173"]
+
+CORS_ALLOW_CREDENTIALS = True
 
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',
     'allauth.account.middleware.AccountMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'allauth.account.middleware.AccountMiddleware',
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -157,8 +160,8 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'language_center_db',
         'USER': 'root',
-        'PASSWORD': '',
-        'HOST': '127.0.0.1', # mặc định localhost
+        'PASSWORD': 'root',
+        'HOST': '', # mặc định localhost
         'PORT': '3306',
     }
 }
@@ -186,7 +189,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'vi'
 
 TIME_ZONE = 'Asia/Ho_Chi_Minh'
 
@@ -200,3 +203,12 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+# Setting payment service
+VNPAY_TMN_CODE = 'YCXQRNYD'
+VNPAY_RETURN_URL = '/'
+VNPAY_HASH_SECRET = 'SAR75YVR7QKTU9HLD3C4MXY77Y01E387'
+VNPAY_URL = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html"
+VNPAY_RETURN_URL = "https://pseudopsychological-vasoconstrictive-ellison.ngrok-free.dev/api/payments/vnpay-callback/"
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+SECURE_SSL_REDIRECT = False

@@ -1,114 +1,127 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
-from classes.models import ClassRoom
+from rest_framework import status, permissions, viewsets, generics, serializers
+from classes.models import ClassRoom, Session, TeachingAssignment
 from enrollments.models import Enrollment
-from grades.models import Score, AcademicResult
-from grades import serializers
+from grades.models import Attendance
+from .serializers import BulkSyncScoreSerializer, BulkSyncAttendanceSerializer
+from .service import ScoreService, AttendanceService
+from core import core_perms
+from django.db.models import OuterRef, Subquery
+from django.utils import timezone
+from rest_framework.exceptions import PermissionDenied
+
+class AttendanceViewSet(viewsets.ViewSet, generics.ListAPIView):
+    permission_classes = [permissions.IsAuthenticated, core_perms.IsTeacher]
+
+    def get_queryset(self):
+
+        session_id = self.request.query_params.get('session_id')
+
+        if not session_id:
+            raise serializers.ValidationError("session_id là bắt buộc")
+
+        session = Session.objects.select_related('schedule__classroom').get(pk=session_id)
+
+        if session.user != self.request.user:
+            raise PermissionDenied("Bạn không có quyền xem điểm danh cho buổi học này")
+
+        classroom = session.schedule.classroom
+
+        query = Enrollment.objects.filter(classroom=classroom)
+
+        attendance_sub = Attendance.objects.filter(
+            enrollment=OuterRef('pk'),
+            session=session
+        )
+
+        return query.annotate(
+            status=Subquery(attendance_sub.values('attendance_status')[:1]),
+            note=Subquery(attendance_sub.values('note')[:1]),
+        )
 
 
-class ClassScoreListAPIView(APIView):
-    def get(self, request, class_id):
+class BulkSyncScoreView(APIView):
+    permission_classes = [permissions.IsAuthenticated, core_perms.IsTeacher]
+
+    def post(self, request, class_id):
+        serializer = BulkSyncScoreSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        classroom = ClassRoom.objects.get(pk=class_id)
+
+        is_main = TeachingAssignment.objects.filter(
+            classroom=classroom,
+            teacher=request.user,
+            is_main=True
+        ).exists()
+
+        if not is_main:
+            raise PermissionDenied("Bạn không có quyền nhập điểm cho lớp học này.")
+
+        if classroom.grade_deadline and timezone.now() > classroom.grade_deadline:
+            raise PermissionDenied("Đã quá thời hạn nộp điểm.")
+
+        if classroom.grade_status == ClassRoom.Status.SUBMITTED:
+            raise PermissionDenied("Bảng điểm đã nộp, vui lòng liên hệ Admin để mở lại nếu cần chỉnh sửa.")
+
+        result = ScoreService.bulk_sync_scores(
+            classroom=classroom,
+            scores_date=serializer.validated_data["scores"]
+        )
+
+        return Response({
+            "message": "OK",
+            "data": result
+        })
+    
+class BulkSyncAttendanceView(APIView):
+    permission_classes = [permissions.IsAuthenticated, core_perms.IsTeacher]
+
+    def post(self, request, class_id):
+        serializer = BulkSyncAttendanceSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        session_id = serializer.validated_data["session_id"]
+        attendances_data = serializer.validated_data["attendances"]
+
         try:
-            classroom = ClassRoom.objects.get(pk=class_id, active=True)
+            classroom = ClassRoom.objects.get(pk=class_id)
         except ClassRoom.DoesNotExist:
             return Response(
-                {
-                    'status': 'error',
-                    'error': {
-                        'code': 'NOT_FOUND',
-                        'message': 'Class not found',
-                        'details': None
-                    }
-                },
+                {"message": "Lớp học không tồn tại."},
                 status=status.HTTP_404_NOT_FOUND
             )
 
-        if not request.user.is_authenticated:
+        try:
+            session = Session.objects.select_related('schedule__classroom').get(pk=session_id)
+        except Session.DoesNotExist:
             return Response(
-                {
-                    'status': 'error',
-                    'error': {
-                        'code': 'UNAUTHORIZED',
-                        'message': 'Authentication required',
-                        'details': None
-                    }
-                },
-                status=status.HTTP_401_UNAUTHORIZED
+                {"message": "Buổi học không tồn tại."},
+                status=status.HTTP_404_NOT_FOUND
             )
 
-        if not (request.user.is_staff or request.user.is_teacher):
-            return Response(
-                {
-                    'status': 'error',
-                    'error': {
-                        'code': 'FORBIDDEN',
-                        'message': 'You do not have permission to access this resource',
-                        'details': None
-                    }
-                },
-                status=status.HTTP_403_FORBIDDEN
-            )
+        if session.schedule.classroom_id != classroom.id:
+            raise PermissionDenied("Buổi học không thuộc lớp này")
 
-        if not request.user.is_staff:
-            is_assigned_teacher = classroom.teachingassignment_set.filter(
-                teacher=request.user
-            ).exists()
+        is_main = TeachingAssignment.objects.filter(
+            classroom=classroom,
+            teacher=request.user,
+            is_main=True
+        ).exists()
 
-            if not is_assigned_teacher:
-                return Response(
-                    {
-                        'status': 'error',
-                        'error': {
-                            'code': 'FORBIDDEN',
-                            'message': 'You are not assigned to this class',
-                            'details': None
-                        }
-                    },
-                    status=status.HTTP_403_FORBIDDEN
-                )
+        if not is_main:
+            raise PermissionDenied("Bạn không có quyền điểm danh cho buổi học này")
 
-        enrollments = Enrollment.objects.filter(
-            classroom_id=class_id,
-            active=True
-        ).select_related('user')
-
-        result = []
-
-        for enrollment in enrollments:
-            score_qs = Score.objects.filter(
-                enrollment=enrollment,
-                active=True
-            ).select_related('score_type')
-
-            academic_result = AcademicResult.objects.filter(
-                enrollment=enrollment,
-                active=True
-            ).first()
-
-            scores_data = []
-            for score in score_qs:
-                scores_data.append({
-                    'score_type': score.score_type.name,
-                    'score_value': score.score_value,
-                })
-
-            result.append({
-                'user_id': enrollment.user.id,
-                'first_name': enrollment.user.first_name,
-                'last_name': enrollment.user.last_name,
-                'scores': scores_data,
-                'average_score': academic_result.average_score if academic_result else None,
-                'comment': academic_result.comment if academic_result else None,
-            })
-
-        serializer = serializers.ClassStudentScoreSerializer(result, many=True)
+        result = AttendanceService.bulk_sync_attendances(
+            session=session,
+            attendances_data=attendances_data
+        )
 
         return Response(
             {
-                'status': 'success',
-                'data': serializer.data,
-                'message': 'Class scores retrieved successfully'
+                "message": "Lưu danh sách điểm danh thành công!",
+                "data": result
             },
             status=status.HTTP_200_OK
         )

@@ -31,6 +31,10 @@ class User(AbstractUser):
     @property
     def is_student(self):
         return self.groups.filter(name='Student').exists()
+    
+    @property
+    def is_admin(self):
+        return self.is_staff or self.is_superuser
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"

@@ -2,6 +2,7 @@ from django.contrib.auth.models import Group
 from users.models import User, Profile
 from rest_framework import serializers
 from django.db import transaction
+import re
 
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
@@ -13,9 +14,6 @@ class ProfileSerializer(serializers.ModelSerializer):
         }
 
     def to_representation(self, instance):
-        if not instance:
-            return None
-
         data = super().to_representation(instance)
 
         if instance.avatar:
@@ -36,6 +34,10 @@ class ProfileSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError('Phone number already exists')
 
         return phone
+    
+    def update(self, instance, validated_data):
+        validated_data.pop('phone_num', None)
+        return super().update(instance, validated_data)
 
 class UserSerializer(serializers.ModelSerializer):
 
@@ -50,6 +52,23 @@ class UserSerializer(serializers.ModelSerializer):
                 'write_only': True
             }
         }
+    
+    def validate_password(self, password):
+        if len(password) < 6:
+            raise serializers.ValidationError("Password phải có ít nhất 6 ký tự")
+
+        if not re.search(r"[A-Z]", password):
+            raise serializers.ValidationError("Password phải có ít nhất 1 chữ in hoa")
+
+        if not re.search(r"[a-z]", password):
+            raise serializers.ValidationError("Password phải có ít nhất 1 chữ thường")
+        
+        if not re.search(r"\d", password):
+            raise serializers.ValidationError("Password phải có ít nhất 1 chữ số")
+
+        if not re.search(r"[!@#$%^&*(),.?\":{}|<>_\-\\/]", password):
+            raise serializers.ValidationError("Password phải có ít nhất 1 ký tự đặc biệt")
+        return password
     
     def to_representation(self, instance):
         data = super().to_representation(instance)
@@ -69,35 +88,30 @@ class UserSerializer(serializers.ModelSerializer):
         user.set_password(user.password)
         user.save()
 
-        student_group, _ = Group.objects.get_or_create(name="Student")
-        user.groups.add(student_group)
+        user_group, _ = Group.objects.get_or_create(name='Student')
+        user.groups.add(user_group)
 
         return user
+    
+class PhoneUpdateSerializer(ProfileSerializer):
 
-    def update(self, instance, validated_data):
-        password = validated_data.pop('password', None)
-
-        for attr, value in validated_data.items():
-            setattr(instance, attr, value)
-
-        if password:
-            instance.set_password(password)
-
-        instance.save()
-        return instance
+    class Meta:
+        model = ProfileSerializer.Meta.model
+        fields = ['phone_num']   
 
 class UserDetailSerializer(UserSerializer):
     profile = ProfileSerializer(required=False, allow_null=True)
     class Meta:
         model = UserSerializer.Meta.model
         fields = UserSerializer.Meta.fields + ['date_joined', 'last_login', 'profile']
+        extra_kwargs = UserSerializer.Meta.extra_kwargs
         
     @transaction.atomic
     def create(self, validated_data):
         '''
         This's for admin create user
         '''
-        profile_data = validated_data.pop('profile', {})
+        profile_data = validated_data.pop('profile', None)
         password = validated_data.pop('password', None)
 
         user = User(**validated_data)
@@ -107,30 +121,47 @@ class UserDetailSerializer(UserSerializer):
 
         user.save()
 
-        teacher_group, _ = Group.objects.get_or_create(name='Teacher')
-        user.groups.add(teacher_group)
+        request = self.context.get('request')
+        if request and request.user and request.user.is_authenticated and request.user.is_admin:
+            user_group, _ = Group.objects.get_or_create(name='Teacher')
+        else:
+            user_group, _ = Group.objects.get_or_create(name='Student')
+        user.groups.add(user_group)
 
-        Profile.objects.create(user=user, **profile_data)
+        if profile_data:    
+            Profile.objects.create(user=user, **profile_data)
 
         return user
 
     def update(self, instance, validated_data):
         profile_data = validated_data.pop('profile', None)
-        password = validated_data.pop('password', None)
+        list_attrs_to_drop = ['password', 'avatar', 'date_joined', 'last_login', 'auth_provider']
+        for attr in list_attrs_to_drop:
+            validated_data.pop(attr, None)
 
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
 
-        if password:
-            instance.set_password(password)
-
         instance.save()
 
         if profile_data is not None:
-            profile, _ = Profile.objects.get_or_create(user=instance)
-            for attr, value in profile_data.items():
-                setattr(profile, attr, value)
-            profile.save()
+            s = PhoneUpdateSerializer(instance.profile, data=profile_data)
+            s.is_valid(raise_exception=True)
+            s.save()
 
         return instance
+    
+class PasswordUpdateSerializer(UserSerializer):
 
+    class Meta:
+        model = UserSerializer.Meta.model
+        fields = ['password']
+
+    def update(self, instance, validated_data):
+        password = validated_data.get('password')
+        if password:
+            instance.set_password(password)
+            instance.save()
+        return instance    
+
+    
