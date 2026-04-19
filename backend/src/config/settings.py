@@ -26,7 +26,8 @@ SECRET_KEY = 'django-insecure-nzz0#i&5*1dsthoruhk5y=nalpa16$ui2sm7pl4#fcm=mk#zx=
 DEBUG = True
 
 ALLOWED_HOSTS = ["localhost",
-                 "127.0.0.1"]
+                 "127.0.0.1",
+                 'pseudopsychological-vasoconstrictive-ellison.ngrok-free.dev']
 
 AUTH_USER_MODEL = 'users.User'
 
@@ -112,15 +113,6 @@ REST_FRAMEWORK = {
         'oauth2_provider.contrib.rest_framework.OAuth2Authentication',
     ),
     'ROTATE_REFRESH_TOKEN': True,
-    'DEFAULT_THROTTLE_CLASSES': [
-        'rest_framework.throttling.AnonRateThrottle',
-        'rest_framework.throttling.UserRateThrottle'
-    ],
-    'DEFAULT_THROTTLE_RATES': {
-        'anon': '100/day',
-        'user': '1000/day',
-        'social_login': '5/minute', 
-    }
 }
 
 CORS_ALLOWED_ORIGINS = ["http://localhost:5173",
@@ -168,7 +160,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'language_center_db',
         'USER': 'root',
-        'PASSWORD': 'Nhuquynh261105@',
+        'PASSWORD': 'root',
         'HOST': '', # mặc định localhost
         'PORT': '3306',
     }
@@ -211,3 +203,12 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+# Setting payment service
+VNPAY_TMN_CODE = 'YCXQRNYD'
+VNPAY_RETURN_URL = '/'
+VNPAY_HASH_SECRET = 'SAR75YVR7QKTU9HLD3C4MXY77Y01E387'
+VNPAY_URL = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html"
+VNPAY_RETURN_URL = "https://pseudopsychological-vasoconstrictive-ellison.ngrok-free.dev/api/payments/vnpay-callback/"
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+SECURE_SSL_REDIRECT = False

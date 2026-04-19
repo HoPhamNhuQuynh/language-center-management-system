@@ -1,6 +1,8 @@
+from django.db import transaction, models
+from django.utils import timezone
 from enrollments.models import Enrollment, Payment
 from rest_framework import serializers
-from rest_framework.validators import UniqueTogetherValidator
+from django.utils import timezone
 from users.serializers import UserSerializer
 from classes.serializers import ClassRoomSerializer
 
@@ -52,6 +54,7 @@ class EnrollmentSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
+        data['student'] = UserSerializer(instance.student).data
         data['classroom'] = ClassRoomSerializer(instance.classroom).data
 
         return data
@@ -63,11 +66,43 @@ class EnrollmentDetailSerializer(EnrollmentSerializer):
         fields = EnrollmentSerializer.Meta.fields + ['created_at','updated_at', 'active']
 
 class PaymentSerializer(serializers.ModelSerializer):
+    classroom = serializers.SerializerMethodField()
+
     class Meta:
         model = Payment
-        fields = ['id', 'enrollment', 'amount', 'payment_method', 'paid_at']
+        fields = ['id', 'enrollment', 'amount', 'payment_method', 'paid_at', 'classroom']
 
-    def to_representation(self, instance):
-        data = super().to_representation(instance)
-        data['classroom'] = instance.enrollment.classroom.name
-        return data 
+    def validate(self, data):
+        enrollment = data.get('enrollment')
+        amount = data.get('amount')
+
+        course_fee = enrollment.classroom.course.price
+
+        if course_fee < 5000000:
+            if amount < course_fee:
+                raise serializers.ValidationError(f"Khóa học dưới 5tr bắt buộc thanh toán toàn bộ ({course_fee} VNĐ).")
+            else:
+                min_partial = course_fee / 2
+                if amount < min_partial and enrollment.enrollment_status == "PENDING_PAYMENT":
+                    raise serializers.ValidationError("Khóa học trên 5tr được phép đóng trước tối thiểu 50%.")
+        return data
+    
+    def get_classroom(self, instance):
+        return instance.enrollment.classroom.name
+
+    @transaction.atomic
+    def create(self, validated_data):
+        payment = super().create(validated_data)
+        enrollment = payment.enrollment
+        course_fee = enrollment.classroom.course.price
+
+        total_paid = Payment.objects.filter(enrollment=enrollment).aggregate(models.Sum('amount'))['amount__sum'] or 0
+
+        if total_paid >= course_fee:
+            enrollment.enrollment_status = Enrollment.Status.SUCCESS
+        elif total_paid >= course_fee/2:
+            enrollment.enrollment_status = Enrollment.Status.PARTIAL_PAYMENT
+
+        enrollment.save()
+        return payment
+
