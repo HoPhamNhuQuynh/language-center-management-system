@@ -20,8 +20,14 @@ function Confirm() {
   };
 
   const handleCancel = () => {
-    navigate("/course-register");
-  };
+  navigate("/payment", {
+    state: {
+      data,
+      method,
+      percent,
+    },
+  });
+};
 
   return (
     <ConfirmForm

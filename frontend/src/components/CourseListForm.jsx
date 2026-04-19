@@ -1,73 +1,126 @@
-import { Input, Button, Card } from "antd";
+import { Input, Button, Card, Tag } from "antd";
 import { Link } from "react-router-dom";
 import { SearchOutlined } from "@ant-design/icons";
+import classImg from "../assets/class.jpg";
 
-function CourseListForm({ search, setSearch, selectedLang, setSelectedLang, courses, onSearch }) {
-  const languages = ["ANH", "NHẬT", "HÀN"];
-
+function CourseListForm({search,setSearch,selectedLang,setSelectedLang, courses, onSearch, onSelectCourse}) {
+  const tags = ["ANH","NHẬT","HÀN","TRUNG","PHÁP","ĐỨC","ESP","RUS","ITA","VIE","KOR","JPN"];
+  const filteredCourses = courses.filter((course) => {
+    const matchLang = selectedLang ? course.language === selectedLang : true;
+    const matchSearch = course.name
+      ?.toLowerCase()
+      .includes(search.toLowerCase());
+    return matchLang && matchSearch;
+  });
   return (
     <div style={{ display: "flex", justifyContent: "center" }}>
       <Card style={{ width: 1200, borderRadius: 20 }} bodyStyle={{ padding: 0 }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 30, padding: 20, borderBottom: "1px solid #eee", background: "#e0e0e0" }}>
-          <div style={{ fontSize: 28, fontWeight: "bold", color: "#1677ff" }}>
+        <div style={{
+          display:"flex",
+          justifyContent:"space-between",
+          alignItems:"center",
+          padding:15,
+          borderBottom:"1px solid #eee",
+          background: "#191970"
+        }}>
+          <div style={{ fontSize:28, fontWeight:"bold", color:"#1677ff" }}>
             LOGO
           </div>
-
-          <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
-            <div style={{ textAlign: "right" }}>
-              <div>Name:</div>
-              <div>ID:</div>
-            </div>
-            <Link to="/">
-              <Button style={{ borderRadius: 8, minWidth: 100 }}>
-                Đăng xuất
-              </Button>
-            </Link>
+          <div style={{ display:"flex", gap:10, alignItems:"center" }}>
+          <div style={{ textAlign:"right", lineHeight:1.2, marginRight:80, color:"#ffffff" }}>
+            <div>Tên:</div>
+            <div>ID:</div>
           </div>
+          <Link to="/">
+            <Button style={{ borderRadius:8, minWidth:100 }}>
+              Đăng xuất
+            </Button>
+          </Link>
         </div>
-
-        <div style={{ padding: 10 }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
-              <h1 style={{ margin: 0 }}>Khóa học</h1>
-
-              <div style={{ display: "flex", gap: 10 }}>
-                {languages.map((lang) => (
-                  <Button
-                    key={lang}
-                    onClick={() => setSelectedLang(lang)}
-                    style={{borderRadius: 20, width: 90, height: 40, fontWeight: "bold",
-                      background: selectedLang === lang ? "#ff4d4f" : "#d9d9d9",
-                      color: selectedLang === lang ? "white" : "black"
-                    }}
-                  >
-                    {lang}
-                  </Button>
-                ))}
-              </div>
+        </div>
+        <div style={{ padding:8 }}>
+          <div style={{
+            display:"flex",
+            justifyContent:"space-between",
+            alignItems:"center",
+            marginBottom:6
+          }}>
+            <div style={{ display:"flex", flexWrap:"wrap", gap:8, width:650 }}>
+              {tags.map(tag => (
+                <Tag
+                  key={tag}
+                  onClick={() =>
+                    setSelectedLang(tag === selectedLang ? "" : tag)
+                  }
+                  style={{
+                    padding:"6px 12px",
+                    borderRadius:20,
+                    cursor:"pointer",
+                    background: selectedLang === tag ? "#1677ff" : "#f5f5f5",
+                    color: selectedLang === tag ? "#fff" : "#000",
+                    border:"1px solid #d9d9d9"
+                  }}
+                >
+                  {tag}
+                </Tag>
+              ))}
             </div>
-
             <Input
               prefix={<SearchOutlined />}
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e)=>setSearch(e.target.value)}
               onPressEnter={onSearch}
-              style={{ width: 350, height: 45, borderRadius: 25 }}
+              style={{ width:320, height:40, borderRadius:20 }}
             />
           </div>
+          <div style={{ display:"grid", gap:12 }}>
 
-          <div style={{ display: "grid", gap: 20 }}>
-            {courses.length > 0 ? (
-              courses.map((course, index) => (
-                <Card key={index} style={{ borderRadius: 15 }}>
-                  <h3 style={{ marginBottom: 8 }}>{course.name}</h3>
-                  <p style={{ margin: 0 }}>Ngôn ngữ: {course.language}</p>
-                  <p style={{ margin: "8px 0 0 0" }}>Học phí: {course.price}</p>
+            {filteredCourses.length > 0 ? (
+              filteredCourses.map((course) => (
+                <Card
+                  key={course.id}
+                  onClick={() => onSelectCourse(course)}
+                  hoverable
+                  style={{ borderRadius:12, overflow: "hidden" }}
+                  bodyStyle={{ padding: 0 }}
+                >
+                  <div style={{ display: "flex", alignItems: "center", background:"#191970", color:"#ffffff" }}>
+                    <img
+                      src={course.image || classImg}
+                      alt="logo"
+                      style={{width: 200,height: 140,objectFit: "cover"}}
+                    />
+                    <div style={{ padding: 10, flex: 1, textAlign:"left" }}>
+                      <h2 style={{ fontWeight: "bold", marginBottom: 0, textAlign:"left",color:"#ffffff" }}>
+                        {course.name}
+                      </h2>
+
+                      <div style={{ marginBottom: 4 }}>
+                        Ngôn ngữ: {course.language}
+                      </div>
+
+                      {course.level && (
+                        <div style={{ marginBottom: 4 }}>
+                          Cấp độ: {course.level}
+                        </div>
+                      )}
+
+                      {course.description && (
+                        <div style={{ marginBottom: 4 }}>
+                          Mô tả: {course.description}
+                        </div>
+                      )}
+
+                      <div style={{ fontWeight: "bold" }}>
+                        Học phí: {course.price}
+                      </div>
+                    </div>
+                  </div>
                 </Card>
               ))
             ) : (
-              <Card style={{ textAlign: "center", borderRadius: 15 }}>
-                Chưa có khóa học
+              <Card style={{ textAlign:"center", borderRadius:12 }}>
+                Không có khóa học phù hợp
               </Card>
             )}
           </div>
