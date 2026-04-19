@@ -68,7 +68,7 @@ class UserViewSet(viewsets.ViewSet, generics.DestroyAPIView, generics.ListCreate
         s.save()
         return Response(s.data, status=status.HTTP_200_OK)
     
-    @action(methods=['patch'], url_path="me/password", detail=False)
+    @action(methods=['patch'], url_path="me/set-password", detail=False)
     def update_password(self, request):
         u = request.user
         s = serializers.PasswordUpdateSerializer(u, data=request.data, partial=True)
