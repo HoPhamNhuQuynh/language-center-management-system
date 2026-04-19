@@ -1,27 +1,32 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import LoginForm from "../components/LoginForm";
 
 
 function Login(){
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const navigate = useNavigate();
 
     const handleLogin = async () => {
-        try {
-            const result = await loginApi(username, password);
-            console.log("Login success", result);
-            alert("login OK!")
-        }
-        catch (e) {
-            console.log("Login failed", e.response?.data);
-            alert("Login fail.")
+        const fakeUser = {
+            username: "admin",
+            password: "123456"
+        };
+
+        if (username === fakeUser.username && password === fakeUser.password) {
+            console.log("Đăng nhập thành công");
+
+            navigate("/about-us");
+        } else {
+            console.log("Đăng nhập thất bại");
+            alert("Sai tên người dùng hoặc mật khẩu!");
         }
 
     };
 
     return (
         <div>
-            <h2 style={{ marginTop: 100 }}>Login Page</h2>
             <LoginForm 
                 username={username}
                 password={password}
