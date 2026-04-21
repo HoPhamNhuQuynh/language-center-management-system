@@ -1,7 +1,7 @@
 import { useState } from "react";
 import logo from "../../assets/hero.png";
-import AttendanceForm from "../../components/forms/AttendanceForm";
-import "./Attendance.css";
+import AttendanceForm from "../../pages/Attendance/AttendanceForm";
+import "../../styles/Attendance.css";
 
 function Attendance() {
   const [selectedClass, setSelectedClass] = useState("");

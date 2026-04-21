@@ -1,12 +1,12 @@
-import HomeContent from "../../components/forms/HomeContent";
+import HomeContent from "../../pages/Home/HomeContent";
 import chinaFlag from "../../assets/china-flag.png";
 import englandFlag from "../../assets/england-flag.png";
 import japanFlag from "../../assets/japan-flag.png";
 import koreaFlag from "../../assets/korea-flag.png";
 import englishCourse from "../../assets/conversational-English.jpg"
 import japanCourse from "../../assets/Japanese-for-Bussiness.jpg"
-import koreaCourse from "../../assets/Korean-Culture-and-Language.png"
-import "./Home.css";
+// import koreaCourse from "../../assets/Korean-Culture-and-Language.png"
+import "../../styles/Home.css";
 
 function Home() {
   const languages = [

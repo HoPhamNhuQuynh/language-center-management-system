@@ -1,6 +1,6 @@
 import logo from "../../assets/hero.png";
-import ScheduleForm from "../../components/forms/ScheduleForm";
-import "./Schedule.css";
+import ScheduleForm from "../../pages/Schedule/ScheduleForm";
+import "../../styles/Schedule.css";
 
 function Schedule() {
   const weekLabel = "";

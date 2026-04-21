@@ -1,5 +1,4 @@
 import { Card, Divider, Radio, Button } from "antd";
-import { Link } from "react-router-dom";
 import { CloseOutlined } from "@ant-design/icons";
 
 function PaymentForm({ data, method, setMethod, percent, setPercent, onSubmit, onClose }) {

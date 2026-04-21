@@ -1,4 +1,4 @@
-import BillViewForm from "../../components/forms/BillViewForm";
+import BillViewForm from "../../pages/Payment/BillViewForm";
 
 function BillView() {
   return <BillViewForm />;

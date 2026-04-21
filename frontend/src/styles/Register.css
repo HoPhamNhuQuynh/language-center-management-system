@@ -1,0 +1,101 @@
+.auth-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #191970;
+    padding: 20px;
+}
+
+.auth-card {
+    width: 1000px;
+    border-radius: 15px;
+    overflow: hidden;
+    border: none;
+}
+
+.auth-wrapper {
+    display: flex;
+    min-height: 600px;
+}
+
+/* Cột bên trái: Hình ảnh */
+.auth-image-side {
+    flex: 1;
+    background-size: cover;
+    background-position: center;
+}
+
+/* Cột bên phải: Form nội dung */
+.auth-form-side {
+    flex: 1;
+    padding: 40px 50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #ffffff;
+}
+
+.auth-title {
+    margin-bottom: 30px;
+    width: 100%;
+    text-align: left;
+    font-weight: bold;
+}
+
+.auth-input-group {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+    margin-bottom: 15px;
+}
+
+.auth-input {
+    width: 100%;
+    border-radius: 20px !important;
+    height: 45px;
+    margin-bottom: 15px;
+}
+
+.auth-checkbox-wrapper {
+    width: 100%;
+    text-align: left;
+    margin-bottom: 20px;
+}
+
+.auth-submit-btn {
+    width: 100%;
+    height: 50px;
+    border-radius: 25px !important;
+    font-weight: bold;
+    background-color: #484895 !important;
+    font-size: 16px;
+    border: none;
+}
+
+.auth-social-group {
+    display: flex;
+    gap: 15px;
+    width: 100%;
+}
+
+.auth-social-btn {
+    flex: 1;
+    height: 45px;
+    border-radius: 25px !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 500;
+}
+
+.auth-social-btn img {
+    height: 20px;
+    margin-right: 8px;
+}
+
+.auth-footer {
+    text-align: center;
+    margin-top: 25px;
+}

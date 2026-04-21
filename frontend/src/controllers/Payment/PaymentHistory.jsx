@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
-import PaymentHistoryForm from "../../components/forms/PaymentHistoryForm.jsx";
-import "./PaymentHistory.css";
+import PaymentHistoryForm from "../../pages/Payment/PaymentHistoryForm";
+import "../../styles/PaymentHistory.css";
 
 function PaymentHistory() {
   const user = {

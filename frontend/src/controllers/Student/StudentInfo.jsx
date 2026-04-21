@@ -1,6 +1,6 @@
 import logo from "../../assets/hero.png";
-import StudentInfoForm from "../../components/forms/StudentInfoForm";
-import "./StudentInfo.css";
+import StudentInfoForm from "../../pages/User/StudentInfoForm";
+import "../../styles/StudentInfo.css";
 
 function StudentInfo() {
   const user = {

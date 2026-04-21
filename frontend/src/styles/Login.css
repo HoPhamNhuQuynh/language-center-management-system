@@ -1,0 +1,106 @@
+/* CourseRegister.css */
+.course-register-container {
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+}
+
+.main-card {
+    width: 1200px;
+    border-radius: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.content-wrapper {
+    padding: 20px;
+}
+
+.header-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.course-title-box {
+    flex: 1;
+}
+
+.course-title-box h1 {
+    font-size: 35px;
+    margin: 0;
+    color: #191970;
+    font-weight: bold;
+}
+
+.info-box {
+    flex: 1;
+    text-align: left;
+    line-height: 1.8;
+    color: #555;
+}
+
+.info-box p {
+    margin: 0;
+}
+
+.search-box {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.search-input {
+    width: 320px;
+    height: 45px;
+    border-radius: 25px;
+}
+
+.table-card,
+.footer-card {
+    border-radius: 15px;
+    margin-bottom: 20px;
+}
+
+.footer-section {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 20px;
+}
+
+.price-text {
+    margin: 0;
+    color: #d4380d;
+    /* Màu nhấn cho học phí */
+}
+
+.btn-register {
+    width: 180px;
+    height: 45px;
+    border-radius: 25px;
+    font-weight: bold;
+    color: #fff;
+    background-color: #191970;
+    border: none;
+}
+
+.btn-register:hover {
+    background-color: #2a2a8a !important;
+    color: #fff !important;
+}
+
+/* Modal Overlay */
+.payment-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
