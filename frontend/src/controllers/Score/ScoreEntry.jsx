@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import logo from "../../assets/hero.png";
-import ScoreEntryForm from "../../components/forms/ScoreEntryForm";
-import "./ScoreEntry.css";
+import ScoreEntryForm from "../../pages/Score/ScoreEntryForm";
+import "../../styles/ScoreEntry.css";
 
 function ScoreEntry() {
   const [selectedClass, setSelectedClass] = useState("TQ01");

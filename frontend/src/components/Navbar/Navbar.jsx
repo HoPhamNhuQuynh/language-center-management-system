@@ -1,6 +1,7 @@
-import "./Navbar.css";
-import logo from "../../../assets/hero.png";
+import "../Navbar/Navbar.css";
+import logo from "../../assets/hero.png";
 import { Link } from "react-router-dom";
+
 function Navbar() {
   return (
     <header className="navbar">

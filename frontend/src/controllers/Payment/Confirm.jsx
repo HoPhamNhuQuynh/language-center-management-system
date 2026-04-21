@@ -1,5 +1,5 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import ConfirmForm from "../../components/forms/ConfirmForm";
+import ConfirmForm from "../../pages/Payment/ConfirmForm";
 
 function Confirm() {
   const navigate = useNavigate();

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import CourseRegisterForm from "../../components/forms/CourseRegisterForm";
+import CourseRegisterForm from "../../pages/Payment/CourseRegisterForm"
 
 function CourseRegister() {
   const location = useLocation();

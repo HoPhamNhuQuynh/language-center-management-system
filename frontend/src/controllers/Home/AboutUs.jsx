@@ -1,4 +1,4 @@
-import AboutUsForm from "../../components/forms/AboutUsForm";
+import AboutUsForm from "../../pages/Home/AboutUsForm";
 
 function AboutUs() {
   return <AboutUsForm />;

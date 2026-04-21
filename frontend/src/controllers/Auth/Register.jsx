@@ -1,5 +1,5 @@
 import { useState } from "react";
-import RegisterForm from "../../components/forms/RegisterForm";
+import RegisterForm from "../../pages/Auth/RegisterForm";
 
 
 function Register(){

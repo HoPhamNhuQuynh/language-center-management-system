@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import PaymentForm from "../../components/forms/PaymentForm";
+import PaymentForm from "../../pages/Payment/PaymentForm";
 
 function Payment() {
     const navigate = useNavigate();

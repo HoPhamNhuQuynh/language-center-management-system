@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import CourseListForm from "../../components/forms/CourseListForm";
+import CourseListForm from "../../pages/Course/CourseListForm";
 
 function CourseList() {
   const navigate = useNavigate();

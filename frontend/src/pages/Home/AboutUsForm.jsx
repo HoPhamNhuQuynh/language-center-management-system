@@ -1,5 +1,4 @@
 import { Card, Typography, Row, Col, Button } from "antd";
-import { Link } from "react-router-dom";
 import classImg from "../../assets/class.jpg";
 import logoImg from "../../assets/hero.png";
 import OUImg from "../../assets/OU.jpg";

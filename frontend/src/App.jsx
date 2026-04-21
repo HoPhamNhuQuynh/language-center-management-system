@@ -1,22 +1,20 @@
 import { Routes, Route } from "react-router-dom";
-import Navbar from "./components/common/Navbar/Navbar";
-import Footer from "./components/common/Footer/Footer";
-import Login from "./pages/Auth/Login";
-import Register from "./pages/Auth/Register";
-import AboutUs from "./pages/Home/AboutUs"
-import CourseList from "./pages/Course/CourseList"
-import CourseRegister from "./pages/Course/CourseRegister"
-import Payment from "./pages/Payment/Payment";
-import Confirm from "./pages/Payment/Confirm";
-import BillView from "./pages/Payment/BillView";
-import Home from "./pages/Home/Home";
-import Attendance from "./pages/Attendance/Attendance";
-import ScoreEntry from "./pages/Score/ScoreEntry";
-import Schedule from "./pages/Schedule/Schedule";
-import StudentInfo from "./pages/Student/StudentInfo";
-import PaymentHistory from "./pages/Payment/PaymentHistory";
+import Login from "./controllers/Auth/Login";
+import Register from "./controllers/Auth/Register";
+import AboutUs from "./controllers/Home/AboutUs";
+import CourseList from "./controllers/Course/CourseList";
+import CourseRegister from "./controllers/Course/CourseRegister";
+import Payment from "./controllers/Payment/Payment";
+import Confirm from "./controllers/Payment/Confirm";
+import BillView from "./controllers/Payment/BillView";
+import Home from "./controllers/Home/Home";
+import Attendance from "./controllers/Attendance/Attendance";
+import ScoreEntry from "./controllers/Score/ScoreEntry";
+import Schedule from "./controllers/Schedule/Schedule";
+import StudentInfo from "./controllers/Student/StudentInfo";
+import PaymentHistory from "./controllers/Payment/PaymentHistory";
 import './App.css'
-import MainLayout from "./components/common/Base/MainLayout";
+import MainLayout from "./components/Base/MainLayout";
 
 function App() {
   return (

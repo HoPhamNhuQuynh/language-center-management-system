@@ -1,5 +1,4 @@
 import { Input, Button, Card, Tag } from "antd";
-import { Link } from "react-router-dom";
 import { SearchOutlined } from "@ant-design/icons";
 import classImg from "../../assets/class.jpg";
 
