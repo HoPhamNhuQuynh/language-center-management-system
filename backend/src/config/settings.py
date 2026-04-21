@@ -160,7 +160,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'language_center_db',
         'USER': 'root',
-        'PASSWORD': 'root',
+        'PASSWORD': 'Nhuquynh261105@',
         'HOST': '', # mặc định localhost
         'PORT': '3306',
     }

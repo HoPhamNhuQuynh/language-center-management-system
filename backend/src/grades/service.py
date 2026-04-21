@@ -104,7 +104,7 @@ class AttendanceService:
         to_update = []
         
         for item in attendances_data:
-            enrollment_id = item['enrollment'].id
+            enrollment_id = item['enrollment_id']
             status = item['attendance_status']
             note = item.get('note')
 
