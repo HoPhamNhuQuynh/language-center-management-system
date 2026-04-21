@@ -1,12 +1,13 @@
 import "./Navbar.css";
 import logo from "../../../assets/hero.png";
+import { Link } from "react-router-dom";
 function Navbar() {
   return (
     <header className="navbar">
       <div className="container navbar__inner">
         <div className="navbar__logo">
-  <img src={logo} alt="Logo" />
-</div>
+          <img src={logo} alt="Logo" />
+        </div>
 
         <nav className="navbar__menu">
           <a href="/">Trang chủ</a>
@@ -16,8 +17,12 @@ function Navbar() {
         </nav>
 
         <div className="navbar__actions">
-          <button className="btn btn--outline">Đăng ký</button>
-          <button className="btn btn--primary">Đăng nhập</button>
+          <Link to="/register">
+            <button className="btn btn--outline">Đăng ký</button>
+          </Link>
+          <Link to="/login">
+            <button className="btn btn--primary">Đăng nhập</button>
+          </Link>
         </div>
       </div>
     </header>
