@@ -6,7 +6,7 @@ import "../../styles/Register.css";
 import { Link } from "react-router-dom";
 import { validatePassword } from "../../utils/validation";
 
-function RegisterForm({ onRegister, onGoogleLogin}) {
+function RegisterForm({ onRegister, onGoogleLogin, onFacebookLogin }) {
   return (
     <div className="auth-container">
       <Card className="auth-card" styles={{ body: { padding: 0 } }}>
@@ -144,7 +144,7 @@ function RegisterForm({ onRegister, onGoogleLogin}) {
                 Google
               </Button>
 
-              <Button className="auth-social-btn">
+              <Button className="auth-social-btn" onClick={onFacebookLogin}>
                 <img src={facebookImg} alt="facebook" />
                 Facebook
               </Button>
