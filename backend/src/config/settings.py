@@ -115,16 +115,25 @@ REST_FRAMEWORK = {
     'ROTATE_REFRESH_TOKEN': True,
 }
 
-CORS_ALLOWED_ORIGINS = ["http://localhost:5173",
-                        "http://127.0.0.1:5173"]
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+    "https://localhost:5173",
+]
 
-CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_ALL_ORIGINS = True
+SECURE_CROSS_ORIGIN_OPENER_POLICY = None
+SECURE_CROSS_ORIGIN_EMBEDDER_POLICY = None
+CSRF_TRUSTED_ORIGINS = [
+    "https://localhost:5173",
+]
+
+# CORS_ALLOW_CREDENTIALS = True
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'allauth.account.middleware.AccountMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -160,7 +169,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'language_center_db',
         'USER': 'root',
-        'PASSWORD': 'root',
+        'PASSWORD': 'Nhuquynh261105@',
         'HOST': '', # mặc định localhost
         'PORT': '3306',
     }
@@ -212,3 +221,8 @@ VNPAY_RETURN_URL = "https://pseudopsychological-vasoconstrictive-ellison.ngrok-f
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 SECURE_SSL_REDIRECT = False
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+CLIENT_ID = 'aJ7nxWPdKdjy8isgOPQsGKPzR9E2Keehq8A7D4gr'
+CLIENT_SECRET = 'fCxz6BFuPTTmgtFHf8vCxJDlNzYTGvrfwXaVpDO3WQI9ZFIitOZYUj4csqHHPwoSANhlSPTdQMNUCYpW35EdGBQ7EpDEdrovmLxuaO9eqawgGj2CHFRHZK7Ftnui1kUV'

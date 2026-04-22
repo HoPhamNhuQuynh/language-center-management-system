@@ -13,13 +13,14 @@ from rest_framework.exceptions import PermissionDenied
 
 class AttendanceViewSet(viewsets.ViewSet, generics.ListAPIView):
     permission_classes = [permissions.IsAuthenticated, core_perms.IsTeacher]
+    serializer_class = Attendance.objects.all()
 
     def get_queryset(self):
 
         session_id = self.request.query_params.get('session_id')
 
         if not session_id:
-            raise serializers.ValidationError("session_id là bắt buộc")
+            raise serializers.ValidationError("Mã buổi học là bắt buộc")
 
         session = Session.objects.select_related('schedule__classroom').get(pk=session_id)
 
@@ -28,17 +29,25 @@ class AttendanceViewSet(viewsets.ViewSet, generics.ListAPIView):
 
         classroom = session.schedule.classroom
 
-        query = Enrollment.objects.filter(classroom=classroom)
+        attendances = Attendance.objects.filter(session=session).select_related('enrollment__student')
 
-        attendance_sub = Attendance.objects.filter(
-            enrollment=OuterRef('pk'),
-            session=session
-        )
+        if not attendances.exists():
+            enrollments = Enrollment.objects.filter(classroom=classroom).select_related('student')
 
-        return query.annotate(
-            status=Subquery(attendance_sub.values('attendance_status')[:1]),
-            note=Subquery(attendance_sub.values('note')[:1]),
-        )
+            attendances = [
+                Attendance(
+                    session=session,
+                    student=e.student
+                )
+
+                for e in enrollments
+            ]
+
+            Attendance.objects.bulk_create(attendances)
+
+            attendances = Attendance.objects.filter(session=session).select_related('enrollment__student')
+
+        return attendances
 
 
 class BulkSyncScoreView(APIView):
