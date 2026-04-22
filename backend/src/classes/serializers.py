@@ -20,10 +20,16 @@ class ClassRoomSerializer(serializers.ModelSerializer):
         write_only=True,
         required=False
     )
+    remaining_slots = serializers.SerializerMethodField()
 
     class Meta:
         model = ClassRoom
-        fields = ['id', 'name', 'course', 'start_date', 'end_date', 'main_teacher_id', 'active']
+        fields = ['id', 'name', 'course', 'start_date', 'end_date', 'main_teacher_id', 'active','remaining_slots']
+
+    def get_remaining_slots(self, classroom):
+        enrolled = classroom.enrollment_set.count()
+        return classroom.capacity - enrolled
+
 
     def to_representation(self, classroom):
         data = super().to_representation(classroom)
@@ -82,7 +88,6 @@ class ClassRoomDetailSerializer(ClassRoomSerializer):
     class Meta:
         model = ClassRoomSerializer.Meta.model
         fields = ClassRoomSerializer.Meta.fields + ['created_at', 'grade_deadline', 'grade_status']
-
 
 class RoomSerializer(serializers.ModelSerializer):
     class Meta:

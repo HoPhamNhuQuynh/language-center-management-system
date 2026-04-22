@@ -8,14 +8,15 @@ function CourseRegisterForm({search,course,selected_class,payment,method,percent
   setPercent,setMethod,setSearch,setPayment,onSearch,onSelectClass}) {
   const navigate = useNavigate();
   const columns = [
-    { title: "Mã lớp", dataIndex: "id" },
-    { title: "Tên lớp", dataIndex: "name" },
-    { title: "Sĩ số", dataIndex: "capacity" },
-    { title: "Thời gian", dataIndex: "time" },
+    { title: "Mã lớp", dataIndex: "id", key: "id" },
+    { title: "Tên lớp", dataIndex: "name", key: "name" },
+    { title: "Chỗ trống", dataIndex: "remaining_slots", key: "remaining_slots" },
+    { title: "Ngày bắt đầu", dataIndex: "start_date", key: "start_date" },
+    { title: "Ngày kết thúc", dataIndex: "end_date", key: "end_date" },
   ];
   return (
     <div style={{ display: "flex", justifyContent: "center" }}>
-      <Card style={{ width: 1200, borderRadius: 20 }} bodyStyle={{ padding: 0 }}>
+      <Card style={{ width: 1200, borderRadius: 20 }} bodyStyle={{ padding: 10 }}>
         <div style={{ padding: 10 }}>
           <div style={{
             display: "flex",
@@ -29,9 +30,8 @@ function CourseRegisterForm({search,course,selected_class,payment,method,percent
               </h1>
             </div>
             <div style={{ flex: 1, textAlign: "left", lineHeight: 1.8 }}>
-              <p style={{ margin: 0 }}>Level: {course?.level || ""}</p>
-              <p style={{ margin: 0 }}>Số buổi: {course?.sessions || ""}</p>
-              <p style={{ margin: 0 }}>Sĩ số: {course?.capacity || ""}</p>
+              <p style={{ margin: 0 }}>Level: {course?.level_name || ""}</p>
+              <p style={{ margin: 0 }}>Số buổi: {course?.total_sessions || ""}</p>
               <p style={{ margin: 0 }}>Mô tả: {course?.description || ""}</p>
             </div>
             <div style={{ flex: 1, display: "flex", justifyContent: "flex-end" }}>
@@ -70,7 +70,7 @@ function CourseRegisterForm({search,course,selected_class,payment,method,percent
               gap: 20
             }}>
               <h3 style={{ margin: 0 }}>
-                Học phí: {selected_class ? selected_class.price?.toLocaleString() : "0"} VND
+                Học phí: {course?.price ? Number(course.price).toLocaleString('vi-VN') : "0"} VND
               </h3>
               <Button
                 style={{

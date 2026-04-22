@@ -5,16 +5,17 @@ import classImg from "../../assets/class.jpg";
 
 function CourseListForm({search,setSearch,selectedLang,setSelectedLang, courses, onSearch, onSelectCourse}) {
   const tags = ["ANH","NHẬT","HÀN","TRUNG","PHÁP","ĐỨC","ESP","RUS","ITA","VIE","KOR","JPN"];
-  const filteredCourses = courses.filter((course) => {
-    const matchLang = selectedLang ? course.language === selectedLang : true;
-    const matchSearch = course.name
+  const courseArray = Array.isArray(courses) ? courses : (courses?.results || []);
+  const filteredCourses = courseArray.filter((item) => {
+    const matchLang = selectedLang ? item.language === selectedLang : true;
+    const matchSearch = item.name
       ?.toLowerCase()
       .includes(search.toLowerCase());
     return matchLang && matchSearch;
   });
   return (
     <div style={{ display: "flex", justifyContent: "center" }}>
-      <Card style={{ width: 1200, borderRadius: 20 }} bodyStyle={{ padding: 0 }}>
+      <Card style={{ width: 1200, borderRadius: 20 }} styles={{ body: { padding: 0 } }}>
         <div style={{ padding:8 }}>
           <div style={{
             display:"flex",

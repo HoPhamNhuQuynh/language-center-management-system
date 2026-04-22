@@ -2,6 +2,9 @@ from courses.models import Course, Level, ScoreType, Tag
 from rest_framework import serializers
 from core.serializers import ItemImageSerializer
 
+from classes.serializers import ClassRoomSerializer
+
+
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag
@@ -42,9 +45,10 @@ class CourseSerializer(ItemImageSerializer):
         return total_sessions
 
 class CourseDetailSerializer(CourseSerializer):
+    classes = ClassRoomSerializer(source='classroom_set', many=True, read_only=True)
     class Meta:
         model = CourseSerializer.Meta.model
-        fields = CourseSerializer.Meta.fields + ['price', 'description', 'active', 'created_at']
+        fields = CourseSerializer.Meta.fields + ['price', 'description', 'active', 'created_at','classes']
 
     def update(self, course, validated_data):
         field_to_update = ['name', 'total_sessions', 'level', 'price', 'description', 'image']

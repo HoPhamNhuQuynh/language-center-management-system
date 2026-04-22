@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import CourseRegisterForm from "../../components/forms/CourseRegisterForm";
+import Apis, { endpoints } from "../../services/Apis";
 
 function CourseRegister() {
   const location = useLocation();
@@ -13,86 +14,78 @@ function CourseRegister() {
   const [payment, setPayment] = useState(false);
   const [method, setMethod] = useState("momo");
   const [percent, setPercent] = useState(100);
-
-  const fakeCourses = [
-    {
-      id: 1,
-      name: "Khóa học tiếng Anh cơ bản",
-      level: "A1",
-      sessions: 20,
-      capacity: 30,
-      description: "Khóa học tiếng Anh cho người mới bắt đầu",
-      price: 2000000,
-      classes: [
-        {
-          id: "A01",
-          name: "Lớp Anh sáng T2-T4",
-          capacity: 25,
-          time: "08:00 - 10:00",
-        },
-        {
-          id: "A02",
-          name: "Lớp Anh tối T3-T5",
-          capacity: 30,
-          time: "18:00 - 20:00",
-        },
-      ],
-    },
-    {
-      id: 2,
-      name: "Khóa học tiếng Anh nâng cao",
-      level: "B1",
-      sessions: 25,
-      capacity: 25,
-      description: "Khóa học nâng cao kỹ năng tiếng Anh",
-      price: 3000000,
-      classes: [
-        {
-          id: "A03",
-          name: "Lớp Anh nâng cao",
-          capacity: 20,
-          time: "19:00 - 21:00",
-        },
-      ],
-    },
-    {
-      id: 3,
-      name: "Khóa học tiếng Nhật N5",
-      level: "N5",
-      sessions: 24,
-      capacity: 20,
-      description: "Khóa học tiếng Nhật cơ bản",
-      price: 2500000,
-      classes: [
-        {
-          id: "J01",
-          name: "Lớp Nhật N5",
-          capacity: 20,
-          time: "18:00 - 20:00",
-        },
-      ],
-    },
-  ];
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-      const found = selectedCourse
-        ? fakeCourses.find((c) => c.id === selectedCourse.id)
-        : fakeCourses[0];
-      setCourse(found);
-    }, [selectedCourse]);
+    const loadCourseDetail = async () => {
+      if (selectedCourse) {
+        setLoading(true);
+        try {
+          const res = await Apis.get(`${endpoints['course']}${selectedCourse.id}/`);
+          setCourse(res.data);
+        } catch (ex) {
+          console.error("Lỗi lấy chi tiết khóa học:", ex);
+        } finally {
+          setLoading(false);
+        }
+      }
+    };
 
+    loadCourseDetail();
+  }, [selectedCourse]);
 
-  const handleSearch = async () => {
-    const found = fakeCourses.find((c) =>
-      c.name.toLowerCase().includes(search.toLowerCase())
-    );
+  const handleSubmit = async () => {
+    if (!selected_class || !course) {
+      alert("Vui lòng chọn lớp học trước khi đăng ký!");
+      return;
+    }
 
-    setCourse(found || null);
-    setSelectedClass(null);
+    setLoading(true);
+    try {
+      const payload = {
+        class_id: selected_class.id,
+        payment_method: method,
+        discount_percent: percent
+      };
+      
+      const res = await Apis.post(`${endpoints['course']}${selectedCourse.id}/register/`, payload);
+
+      if (res.status === 201 || res.status === 200) {
+        alert("Đăng ký thành công!");
+        setPayment(false);
+        navigate("/bill-view", {
+          state: {
+            course,
+            selected_class,
+            method,
+            percent,
+            bill: res.data
+          }
+        });
+      }
+    } catch (ex) {
+      console.error("Lỗi đăng ký:", ex);
+      alert("Đăng ký thất bại. Vui lòng thử lại.");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleSelectClass = (cls) => {
-    setSelectedClass(cls);
+  const handleSearch = async () => {
+    try {
+      setLoading(true);
+      let res = await Apis.get(`${endpoints["course"]}?q=${search}`);
+      const data = res.data.results || res.data;
+      if (data.length > 0) {
+        const detail = await Apis.get(`${endpoints['course']}${data[0].id}/`);
+        setCourse(detail.data);
+        setSelectedClass(null);
+      } 
+    } catch (ex) {
+      console.error("Lỗi khi tìm kiếm khóa học:", ex);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handlePayment = () => {
@@ -100,32 +93,18 @@ function CourseRegister() {
       alert("Vui lòng chọn lớp!");
       return;
     }
-
-    navigate("/payment", {
-    state: {
-      course,
-      selected_class
-    }
-  });
+    setPayment(true);
   };
 
-  const handleSubmit = () => {
-    setPayment(false);
-
-    navigate("/bill-view", {
-      state: {
-        course,
-        selected_class,
-        method,
-        percent
-      }
-    });
+  const handleSelectClass = (cls) => {
+  setSelectedClass(cls);
   };
-  
 
-  return (
+  console.log("Dữ liệu course hiện tại:", course);
+  console.log("Danh sách lớp tìm thấy:", course?.classroom_set);  return (
     <div>
       <CourseRegisterForm
+        course={course}
         search={search}
         setSearch={setSearch}
         onSearch={handleSearch}
@@ -133,12 +112,14 @@ function CourseRegister() {
         selected_class={selected_class}
         onSelectClass={handleSelectClass}
         onPayment={handlePayment}
+        onSubmit={handleSubmit}
         method={method}
         setMethod={setMethod} 
         payment={payment}
         setPayment={setPayment}
         percent={percent}   
         setPercent={setPercent}
+        loading={loading}
       />
     </div>
   );

@@ -1,23 +1,41 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import CourseListForm from "../../components/forms/CourseListForm";
+import Apis, { endpoints } from "../../services/Apis";
 
 function CourseList() {
   const navigate = useNavigate();
 
-  // fake data đúng field mà component đang dùng
-  const fakeCourses = [
-    { id: 1, name: "Khóa học tiếng Anh cơ bản", language: "ANH", level:"beggin", description:" Học vỡ lòng",price: "2.000.000đ" },
-    { id: 2, name: "Khóa học tiếng Nhật N5", language: "NHẬT", price: "3.000.000đ" },
-    { id: 3, name: "Khóa học tiếng Hàn sơ cấp", language: "HÀN", price: "2.500.000đ" },
-  ];
-
   const [search, setSearch] = useState("");
   const [selectedLang, setSelectedLang] = useState("");
-  const [courses, setCourses] = useState(fakeCourses);
+  const [courses, setCourses] = useState([]);
+  const [AllCourses, setAllCourses] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+
+  const loadCourses = async () => {
+    try {
+        setLoading(true);
+        let res = await Apis.get(endpoints['course']);
+
+        console.log("Data từ Backend nè:", res.data);
+        
+        const data = res.data.results || (Array.isArray(res.data) ? res.data : []); 
+        setCourses(data);
+        setAllCourses(data);
+    } catch (ex) {
+      console.error("Lỗi lấy danh sách:", ex);
+    } finally {
+        setLoading(false);
+    }
+  }
+    useEffect(() => {
+        loadCourses();
+    }, []);
+
 
   const handleSearch = () => {
-    let result = fakeCourses;
+    let result = AllCourses;
 
     if (search) {
       result = result.filter((c) =>
@@ -32,11 +50,18 @@ function CourseList() {
     setCourses(result);
   };
 
-  const handleSelectCourse = (course) => {
-    navigate("/course-register", {
-      state: { course },
-    });
-  };
+  const handleSelectCourse = async (course) => {
+    try {
+      const res = await Apis.get(`${endpoints['course']}${course.id}/`);
+      console.log("Dữ liệu Detail đầy đủ nè:", res.data);
+      navigate("/course-register", {
+        state: { course: res.data },
+    }); 
+  } catch (ex) {
+    console.error("Lỗi lấy chi tiết khóa học rồi má ơi:", ex);
+    navigate("/course-register", { state: { course } });
+  }
+};
 
   return (
     <CourseListForm
@@ -47,6 +72,7 @@ function CourseList() {
       courses={courses}
       onSearch={handleSearch}
       onSelectCourse={handleSelectCourse}
+      loading={loading}
     />
   );
 }
