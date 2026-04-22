@@ -13,6 +13,7 @@ from rest_framework.exceptions import PermissionDenied
 
 class AttendanceViewSet(viewsets.ViewSet, generics.ListAPIView):
     permission_classes = [permissions.IsAuthenticated, core_perms.IsTeacher]
+    serializer_class = Attendance.objects.all()
 
     def get_queryset(self):
 

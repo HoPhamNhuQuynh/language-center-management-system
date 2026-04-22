@@ -1,77 +1,153 @@
-import { Input, Button, Card, Divider, Checkbox } from "antd";
-import { Link } from "react-router-dom";
+import { Form, Input, Button, Card, Divider, Checkbox } from "antd";
 import classImg from "../../assets/class.jpg";
 import googleImg from "../../assets/google.png";
 import facebookImg from "../../assets/facebook.png";
-import "../../styles/Register.css"; 
+import "../../styles/Register.css";
+import { Link } from "react-router-dom";
+import { validatePassword } from "../../utils/validation";
 
-function RegisterForm() {
+function RegisterForm({ onRegister, onGoogleLogin, onFacebookLogin }) {
   return (
     <div className="auth-container">
-      <Card className="auth-card" bodyStyle={{ padding: 0 }}>
+      <Card className="auth-card" styles={{ body: { padding: 0 } }}>
         <div className="auth-wrapper">
-          {/* Cột bên trái: Hình ảnh */}
+          {/* LEFT IMAGE */}
           <div
             className="auth-image-side"
             style={{ backgroundImage: `url(${classImg})` }}
           />
 
-          {/* Cột bên phải: Form đăng ký */}
+          {/* RIGHT FORM */}
           <div className="auth-form-side">
-            <h2 className="auth-title">ĐĂNG KÝ TÀI KHOẢN</h2>
+            <h2 className="auth-title">Đăng ký tài khoản</h2>
 
-            {/* Group Họ và Tên */}
-            <div className="auth-input-group">
-              <Input
-                placeholder="HỌ*"
-                className="auth-input"
-                style={{ marginBottom: 0 }}
-              />
-              <Input
-                placeholder="TÊN*"
-                className="auth-input"
-                style={{ marginBottom: 0 }}
-              />
-            </div>
+            <Form
+              onFinish={onRegister}
+              layout="vertical"
+              validateTrigger="onSubmit"
+            >
+              <div className="auth-input-group">
+                <Form.Item
+                  name="last_name"
+                  rules={[{ required: true, message: "Nhập họ!" }]}
+                >
+                  <Input placeholder="HỌ*" />
+                </Form.Item>
 
-            <Input placeholder="SỐ ĐIỆN THOẠI*" className="auth-input" />
-            <Input placeholder="TÊN NGƯỜI DÙNG*" className="auth-input" />
-            <Input placeholder="EMAIL*" className="auth-input" />
+                <Form.Item
+                  name="first_name"
+                  rules={[{ required: true, message: "Nhập tên!" }]}
+                >
+                  <Input placeholder="TÊN*" />
+                </Form.Item>
+              </div>
 
-            <Input.Password placeholder="MẬT KHẨU*" className="auth-input" />
-            <Input.Password
-              placeholder="XÁC NHẬN MẬT KHẨU*"
-              className="auth-input"
-            />
+              <Form.Item
+                name="phone_num"
+                rules={[
+                  { required: true, message: "Nhập SĐT!" },
+                  {
+                    pattern: /^(0|\+84)[0-9]{9}$/,
+                    message: "SĐT không hợp lệ",
+                  },
+                ]}
+              >
+                <Input placeholder="SỐ ĐIỆN THOẠI*" />
+              </Form.Item>
 
-            <div className="auth-checkbox-wrapper">
-              <Checkbox>Tôi đồng ý với Điều khoản và Chính sách</Checkbox>
-            </div>
+              <Form.Item
+                name="username"
+                rules={[{ required: true, message: "Nhập username!" }]}
+              >
+                <Input placeholder="TÊN NGƯỜI DÙNG*" />
+              </Form.Item>
 
-            <Button type="primary" className="auth-submit-btn">
-              ĐĂNG KÝ
-            </Button>
+              <Form.Item
+                name="email"
+                rules={[
+                  { required: true, message: "Nhập email!" },
+                  { type: "email", message: "Email không hợp lệ!" },
+                ]}
+              >
+                <Input placeholder="EMAIL*" />
+              </Form.Item>
 
-            <Divider plain style={{ margin: "20px 0" }}>
-              Hoặc đăng ký bằng
-            </Divider>
+              <Form.Item
+                name="password"
+                rules={[
+                  { required: true, message: "Nhập mật khẩu!" },
+                  {
+                    validator: (_, value) => {
+                      const error = validatePassword(value || "");
+                      if (error) return Promise.reject(error);
+                      return Promise.resolve();
+                    },
+                  },
+                ]}
+              >
+                <Input.Password placeholder="MẬT KHẨU" />
+              </Form.Item>
+
+              <Form.Item
+                name="confirm_password"
+                dependencies={["password"]}
+                rules={[
+                  { required: true, message: "Xác nhận mật khẩu!" },
+                  ({ getFieldValue }) => ({
+                    validator(_, value) {
+                      if (!value || getFieldValue("password") === value) {
+                        return Promise.resolve();
+                      }
+                      return Promise.reject("Mật khẩu không khớp!");
+                    },
+                  }),
+                ]}
+              >
+                <Input.Password placeholder="XÁC NHẬN MẬT KHẨU*" />
+              </Form.Item>
+
+              <Form.Item
+                name="agree"
+                valuePropName="checked"
+                rules={[
+                  {
+                    validator: (_, value) =>
+                      value
+                        ? Promise.resolve()
+                        : Promise.reject("Đồng ý điều khoản là bắt buộc"),
+                  },
+                ]}
+              >
+                <Checkbox>Tôi đồng ý với Điều khoản và Chính sách</Checkbox>
+              </Form.Item>
+
+              <Button
+                type="primary"
+                htmlType="submit"
+                className="auth-submit-btn"
+              >
+                ĐĂNG KÝ
+              </Button>
+              <div className="auth-footer">
+                Đã có tài khoản?{" "}
+                <Link to="/login" style={{ fontWeight: 700 }}>
+                  Đăng nhập
+                </Link>
+              </div>
+            </Form>
+
+            <Divider plain>Hoặc đăng ký bằng</Divider>
 
             <div className="auth-social-group">
-              <Button className="auth-social-btn">
+              <Button className="auth-social-btn" onClick={onGoogleLogin}>
                 <img src={googleImg} alt="google" />
-                Tiếp tục với Google
+                Google
               </Button>
-              <Button className="auth-social-btn">
-                <img src={facebookImg} alt="facebook" />
-                Tiếp tục với Facebook
-              </Button>
-            </div>
 
-            <div className="auth-footer">
-              Đã có tài khoản?{" "}
-              <Link to="/login" style={{ fontWeight: "bold", color: "#333" }}>
-                Đăng nhập
-              </Link>
+              <Button className="auth-social-btn" onClick={onFacebookLogin}>
+                <img src={facebookImg} alt="facebook" />
+                Facebook
+              </Button>
             </div>
           </div>
         </div>

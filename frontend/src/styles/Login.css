@@ -1,106 +1,121 @@
-/* CourseRegister.css */
-.course-register-container {
+.login-container {
     display: flex;
     justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: #191970;
     padding: 20px;
 }
 
-.main-card {
-    width: 1200px;
+.login-card {
+    width: 1000px;
     border-radius: 20px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    border: none;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
 }
 
-.content-wrapper {
-    padding: 20px;
-}
-
-.header-section {
+.login-wrapper {
     display: flex;
-    justify-content: space-between;
+    height: 600px;
+}
+
+.login-form-box .ant-input-affix-wrapper {
+    height: 45px;
+    border-radius: 25px;
+    display: flex;
     align-items: center;
-    margin-bottom: 25px;
 }
 
-.course-title-box {
+.login-left {
     flex: 1;
+    background-size: cover;
+    background-position: center;
 }
 
-.course-title-box h1 {
-    font-size: 35px;
-    margin: 0;
-    color: #191970;
-    font-weight: bold;
-}
-
-.info-box {
+.login-right {
     flex: 1;
+    background: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 60px 40px;
+}
+
+.login-form-box {
+    width: 100%;
+    max-width: 360px;
+}
+
+.login-title {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 30px;
     text-align: left;
-    line-height: 1.8;
-    color: #555;
 }
 
-.info-box p {
-    margin: 0;
-}
-
-.search-box {
-    flex: 1;
-    display: flex;
-    justify-content: flex-end;
-}
-
-.search-input {
-    width: 320px;
+.login-form-box .ant-input,
+.login-form-box .ant-input-password {
     height: 45px;
     border-radius: 25px;
+    padding-left: 16px;
 }
 
-.table-card,
-.footer-card {
-    border-radius: 15px;
-    margin-bottom: 20px;
-}
-
-.footer-section {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    gap: 20px;
-}
-
-.price-text {
-    margin: 0;
-    color: #d4380d;
-    /* Màu nhấn cho học phí */
-}
-
-.btn-register {
-    width: 180px;
+.login-form-box .ant-btn-primary {
     height: 45px;
     border-radius: 25px;
-    font-weight: bold;
-    color: #fff;
-    background-color: #191970;
+    font-weight: 600;
+    background: linear-gradient(90deg, #1f2b6c, #2b3a8a);
     border: none;
 }
 
-.btn-register:hover {
-    background-color: #2a2a8a !important;
-    color: #fff !important;
+.login-form-box .ant-btn-primary:hover {
+    background: linear-gradient(90deg, #162055, #243377);
 }
 
-/* Modal Overlay */
-.payment-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(4px);
+.login-forgot {
+    text-align: center;
+    margin: 10px 0 20px;
+}
+
+.login-forgot a {
+    font-size: 13px;
+    color: #333;
+}
+
+.login-form-box .ant-divider {
+    font-size: 12px;
+    color: #888;
+}
+
+.login-social {
     display: flex;
-    justify-content: center;
+    gap: 12px;
+}
+
+.login-social button {
+    flex: 1;
+    height: 45px;
+    border-radius: 25px;
+    display: flex;
     align-items: center;
-    z-index: 1000;
+    justify-content: center;
+    font-weight: 500;
+    border: 1px solid #ddd;
+    background: #fff;
+}
+
+.login-social button:hover {
+    border-color: #aaa;
+}
+
+.login-footer {
+    text-align: center;
+    margin-top: 25px;
+    font-size: 14px;
+}
+
+.login-footer a {
+    font-weight: 600;
+    color: #1f2b6c;
 }

@@ -1,148 +1,76 @@
-import { Input, Button, Card, Divider } from "antd";
+import { Input, Button, Card, Divider, Form } from "antd";
 import { Link } from "react-router-dom";
 import classImg from "../../assets/class.jpg";
 import googleImg from "../../assets/google.png";
 import facebookImg from "../../assets/facebook.png";
+import "../../styles/Login.css";
 
-function LoginForm({ username, password, setUsername, setPassword, onLogin }) {
+function LoginForm({ onLogin, onGoogleLogin, onFacebookLogin }) {
+  const [form] = Form.useForm();
+
+  const handleSubmit = (values) => {
+    onLogin(values.username, values.password);
+  };
+
   return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        minHeight: "100vh", // Sử dụng minHeight để linh hoạt hơn
-        background: "#191970",
-        padding: "20px",
-      }}
-    >
-      <Card
-        style={{
-          width: 1000,
-          borderRadius: 15,
-          overflow: "hidden",
-          border: "none",
-        }}
-        body={{ padding: 0 }}
-      >
-        <div style={{ display: "flex", minHeight: "550px" }}>
-          {/* Cột Trái: Hình ảnh */}
+    <div className="login-container">
+      <Card className="login-card" styles={{ body: { padding: 0 } }}>
+        <div className="login-wrapper">
           <div
-            style={{
-              flex: 1,
-              backgroundImage: `url(${classImg})`,
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-            }}
+            className="login-left"
+            style={{ backgroundImage: `url(${classImg})` }}
           />
 
-          {/* Cột Phải: Form Đăng Nhập */}
-          <div
-            style={{
-              flex: 1,
-              padding: "50px",
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              alignItems: "center", // Căn giữa tất cả các phần tử con
-              background: "#fff",
-            }}
-          >
-            <div style={{ width: "100%", maxWidth: "350px" }}>
-              {" "}
-              {/* Box giới hạn độ rộng form */}
-              <h2
-                style={{
-                  marginBottom: 30,
-                  fontWeight: "bold",
-                  textAlign: "left",
-                }}
-              >
-                Chào mừng bạn đã quay trở lại!
-              </h2>
-              <Input
-                style={{
-                  width: "100%",
-                  height: 45,
-                  borderRadius: 25,
-                  marginBottom: 15,
-                }}
-                placeholder="TÊN NGƯỜI DÙNG*"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-              />
-              <Input.Password
-                style={{
-                  width: "100%",
-                  height: 45,
-                  borderRadius: 25,
-                  marginBottom: 10,
-                }}
-                placeholder="MẬT KHẨU*"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-              <div style={{ textAlign: "center", marginBottom: 20 }}>
-                <a href="/forgot-password" style={{ color: "#666" }}>
-                  Quên mật khẩu?
-                </a>
-              </div>
-              <Button
-                type="primary"
-                style={{
-                  width: "100%",
-                  height: 45,
-                  borderRadius: 25,
-                  fontWeight: "bold",
-                  background: "#484895",
-                  border: "none",
-                }}
-                onClick={onLogin}
-              >
-                ĐĂNG NHẬP
-              </Button>
-              <Divider plain style={{ margin: "25px 0" }}>
-                Hoặc đăng nhập bằng
-              </Divider>
-              <div style={{ display: "flex", gap: 10 }}>
-                <Button
-                  style={{
-                    flex: 1,
-                    height: 45,
-                    borderRadius: 25,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
+          <div className="login-right">
+            <div className="login-form-box">
+              <h2 className="login-title">Chào mừng bạn đã quay trở lại!</h2>
+
+              <Form form={form} layout="vertical" onFinish={handleSubmit}>
+                <Form.Item
+                  name="username"
+                  rules={[{ required: true, message: "Nhập tên đăng nhập!" }]}
                 >
-                  <img
-                    src={googleImg}
-                    alt="google"
-                    style={{ height: 20, marginRight: 8 }}
-                  />
-                  Tiếp tục với Google
+                  <Input placeholder="TÊN NGƯỜI DÙNG*" />
+                </Form.Item>
+
+                <Form.Item
+                  name="password"
+                  rules={[{ required: true, message: "Nhập mật khẩu!" }]}
+                >
+                  <Input.Password placeholder="MẬT KHẨU*" />
+                </Form.Item>
+
+                <div className="login-forgot">
+                  <a href="/forgot-password">Quên mật khẩu?</a>
+                </div>
+
+                <Form.Item>
+                  <Button type="primary" htmlType="submit" block>
+                    ĐĂNG NHẬP
+                  </Button>
+                </Form.Item>
+              </Form>
+
+              <Divider plain>Hoặc đăng nhập bằng</Divider>
+
+              <div className="login-social">
+                <Button onClick={onGoogleLogin} block>
+                  <img src={googleImg} style={{ height: 20, marginRight: 8 }} />
+                  Google
                 </Button>
-                <Button
-                  style={{
-                    flex: 1,
-                    height: 45,
-                    borderRadius: 25,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
+
+                <Button onClick={onFacebookLogin} block>
                   <img
                     src={facebookImg}
-                    alt="facebook"
                     style={{ height: 20, marginRight: 8 }}
                   />
-                  Tiếp tục với Facebook
+                  Facebook
                 </Button>
               </div>
-              <div style={{ textAlign: "center", marginTop: 30 }}>
+
+              <div className="login-footer">
                 Chưa có tài khoản?{" "}
-                <Link to="/register" style={{ fontWeight: "bold" }}>
+                <Link to="/register" style={{ fontWeight: 700 }}>
                   Đăng ký
                 </Link>
               </div>
