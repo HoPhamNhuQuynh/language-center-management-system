@@ -5,12 +5,12 @@
 
 ## Thành viên nhóm
 
-| MSSV       | Họ tên                 | Vai trò                               |
-|------------|------------------------|----------------------------------------|
-| 2351050149 | Hồ Phạm Như Quỳnh      | Project Manager - Developer Backend   |
-| 2351050009 | Trần Mỹ Ân             | Developer Backend                     |
-| 2354050033 | Hồ Phạm Ngọc Hân       | Developer Frontend                    |
-| 2354050145 | Nguyễn Thị Ngọc Trâm   | QA/Tester                             |
+| MSSV       | Họ tên               | Vai trò                             |
+|------------|----------------------|-------------------------------------|
+| 2351050149 | Hồ Phạm Như Quỳnh    | Project Manager - Developer Backend |
+| 2351050009 | Trần Mỹ Ân           | Developer Backend                   |
+| 2354050033 | Hồ Phạm Ngọc Hân     | Developer Frontend                  |
+| 2354050145 | Nguyễn Thị Ngọc Trâm | QA/Tester                           |
 
 ## Công nghệ sử dụng
 - Backend: Python (Django, RESTful API)
@@ -45,7 +45,7 @@ python manage.py makemigrations
 python manage.py migrate
 
 # Chạy server
-python manage.py runserver_plus --cert-file cert.crt
+python manage.py runserver_plus --cert-file cert.crt --key-file cert.key
 ```
 
 ### Chạy Frontend

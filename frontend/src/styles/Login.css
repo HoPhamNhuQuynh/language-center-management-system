@@ -1,0 +1,121 @@
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: #191970;
+    padding: 20px;
+}
+
+.login-card {
+    width: 1000px;
+    border-radius: 20px;
+    overflow: hidden;
+    border: none;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
+}
+
+.login-wrapper {
+    display: flex;
+    height: 600px;
+}
+
+.login-form-box .ant-input-affix-wrapper {
+    height: 45px;
+    border-radius: 25px;
+    display: flex;
+    align-items: center;
+}
+
+.login-left {
+    flex: 1;
+    background-size: cover;
+    background-position: center;
+}
+
+.login-right {
+    flex: 1;
+    background: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 60px 40px;
+}
+
+.login-form-box {
+    width: 100%;
+    max-width: 360px;
+}
+
+.login-title {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 30px;
+    text-align: left;
+}
+
+.login-form-box .ant-input,
+.login-form-box .ant-input-password {
+    height: 45px;
+    border-radius: 25px;
+    padding-left: 16px;
+}
+
+.login-form-box .ant-btn-primary {
+    height: 45px;
+    border-radius: 25px;
+    font-weight: 600;
+    background: linear-gradient(90deg, #1f2b6c, #2b3a8a);
+    border: none;
+}
+
+.login-form-box .ant-btn-primary:hover {
+    background: linear-gradient(90deg, #162055, #243377);
+}
+
+.login-forgot {
+    text-align: center;
+    margin: 10px 0 20px;
+}
+
+.login-forgot a {
+    font-size: 13px;
+    color: #333;
+}
+
+.login-form-box .ant-divider {
+    font-size: 12px;
+    color: #888;
+}
+
+.login-social {
+    display: flex;
+    gap: 12px;
+}
+
+.login-social button {
+    flex: 1;
+    height: 45px;
+    border-radius: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 500;
+    border: 1px solid #ddd;
+    background: #fff;
+}
+
+.login-social button:hover {
+    border-color: #aaa;
+}
+
+.login-footer {
+    text-align: center;
+    margin-top: 25px;
+    font-size: 14px;
+}
+
+.login-footer a {
+    font-weight: 600;
+    color: #1f2b6c;
+}

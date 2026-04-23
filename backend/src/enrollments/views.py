@@ -7,6 +7,7 @@ from .perms import IsEnrollmentOwner
 from rest_framework.response import Response
 from .services import VNPayService
 from django.utils import timezone
+from django.db import transaction
 
 
 class EnrollmentViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.RetrieveDestroyAPIView):
@@ -98,16 +99,25 @@ class PaymentViewSet(viewsets.ViewSet, generics.ListAPIView):
         vnp_response_code = data.get('vnp_ResponseCode')
 
         try:
-            payment = Payment.objects.get(id=vnp_txn_ref)
+            payment = Payment.objects.select_related('enrollment').get(id=vnp_txn_ref)
             
-            if vnp_response_code == "00":
-                payment.payment_status = "SUCCESS" 
-                payment.paid_at = timezone.now()
-                payment.save()
-                return Response({"RspCode": "00", "Message": "Confirm success"})
-            else:
-                payment.payment_status = "FAILED"
-                payment.save()
-                return Response({"RspCode": "00", "Message": "Confirm success"}) 
+            if payment.payment_status == Payment.Status.SUCCESS:
+                return Response({"RspCode": "00", "Message": "Already confirmed"})
+    
+            with transaction.atomic():
+                if vnp_response_code == "00":
+                    payment.payment_status = Payment.Status.SUCCESS
+                    payment.paid_at = timezone.now()
+                    payment.save()
+
+                    enrollment = payment.enrollment
+                    enrollment.enrollment_status = Enrollment.Status.SUCCESS
+                    enrollment.save()
+
+                else:
+                    payment.payment_status = Payment.Status.FAILED
+                    payment.save()
+
+            return Response({"RspCode": "00", "Message": "Confirm success"}) 
         except Payment.DoesNotExist:
-            return Response({"RspCode": "01", "Message": "Order not found"})
+            return Response({"RspCode": "01", "Message": "Enrollment not found"})
