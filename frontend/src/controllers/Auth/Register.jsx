@@ -1,5 +1,5 @@
 import RegisterForm from "../../pages/Auth/RegisterForm";
-import { registerApi, googleLoginApi, facebookLoginApi } from "../../services/AuthService";
+import { registerApi, googleLoginApi, facebookLoginApi } from "../../services/authService";
 import { setTokens } from "../../utils/token";
 import { useGoogleLogin } from "@react-oauth/google";
 import { useNavigate } from "react-router-dom";

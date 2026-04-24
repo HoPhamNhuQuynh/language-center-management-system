@@ -6,7 +6,9 @@ class ScoreService:
     @staticmethod
     @transaction.atomic
     def bulk_sync_scores(classroom, scores_date):
-
+        valid_enrollment_ids = set(
+            Enrollment.objects.filter(classroom=classroom).values_list('id', flat=True)
+        )
         existings = {
             (s.enrollment_id, s.score_type_id): s
             for s in Score.objects.filter(enrollment__classroom=classroom)
@@ -21,30 +23,17 @@ class ScoreService:
             score_type_id = item["score_type_id"]
             value = item["score_value"]
 
-            if not Enrollment.objects.filter(
-                id=enrollment_id,
-                classroom=classroom
-            ).exists():
+            if enrollment_id not in valid_enrollment_ids:
                 continue
 
             key = (enrollment_id, score_type_id)
-            incoming_keys.add(key)
-
             if key in existings:
                 obj = existings[key]
-
                 if obj.score_value != value:
                     obj.score_value = value
                     to_update.append(obj)
-
             else:
-                to_create.append(
-                    Score(
-                        enrollment_id=enrollment_id,
-                        score_type_id=score_type_id,
-                        score_value=value
-                    )
-                )
+                to_create.append(Score(enrollment_id=enrollment_id, score_type_id=score_type_id, score_value=value))
 
         if to_update:
             Score.objects.bulk_update(to_update, ["score_value"])

@@ -4,7 +4,7 @@ from rest_framework import status, permissions, viewsets, generics, serializers
 from classes.models import ClassRoom, Session, TeachingAssignment
 from enrollments.models import Enrollment
 from grades.models import Attendance
-from .serializers import BulkSyncScoreSerializer, BulkSyncAttendanceSerializer
+from .serializers import BulkSyncScoreSerializer, BulkSyncAttendanceSerializer, AttendanceSerializer
 from .service import ScoreService, AttendanceService
 from core import core_perms
 from django.db.models import OuterRef, Subquery
@@ -13,7 +13,7 @@ from rest_framework.exceptions import PermissionDenied
 
 class AttendanceViewSet(viewsets.ViewSet, generics.ListAPIView):
     permission_classes = [permissions.IsAuthenticated, core_perms.IsTeacher]
-    serializer_class = Attendance.objects.all()
+    serializer_class = AttendanceSerializer
 
     def get_queryset(self):
 
@@ -37,7 +37,7 @@ class AttendanceViewSet(viewsets.ViewSet, generics.ListAPIView):
             attendances = [
                 Attendance(
                     session=session,
-                    student=e.student
+                    enrollment=e
                 )
 
                 for e in enrollments

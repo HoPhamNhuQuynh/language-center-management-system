@@ -40,10 +40,10 @@ class ClassRoomSerializer(serializers.ModelSerializer):
     def validate(self, data):
         start_date = data.get('start_date')
         end_date = data.get('end_date')
-        if start_date and end_date and end_date < start_date:
-            raise serializers.ValidationError({
-                "end_time": "Giờ kết thúc phải lớn hơn giờ bắt đầu."
-            })
+        if start_date and end_date and end_date <= start_date:
+            raise serializers.ValidationError(
+                "Ngày kết thúc phải lớn hơn ngày bắt đầu."
+            )
         return data
 
     def create(self, validated_data):

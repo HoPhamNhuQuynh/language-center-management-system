@@ -41,6 +41,14 @@ class BulkSyncScoreSerializer(serializers.Serializer):
             seen.add(key)
 
         return data
+    
+class AttendanceSerializer(serializers.ModelSerializer):
+    student_name = serializers.CharField(source='enrollment.student.get_full_name', read_only=True)
+    student_code = serializers.CharField(source='enrollment.student.username', read_only=True)
+
+    class Meta:
+        model = Attendance
+        fields = ['enrollment_id', 'student_name', 'student_code', 'attendance_status', 'note']  
 
 class AttendanceItemSerializer(serializers.Serializer):
     enrollment_id = serializers.IntegerField()

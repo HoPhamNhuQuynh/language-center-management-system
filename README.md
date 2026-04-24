@@ -59,6 +59,15 @@ npm install
 npm run dev
 ```
 
+### Chạy test report 
+```bash
+# Cài dependencies
+pip install -r requirements.txt
+
+# Chạy test report
+pytest -q --cov=src --cov-report=term-missing
+```
+
 ### Truy cập hệ thống
 - Frontend: http://localhost:5173/
 - Backend API: https://localhost:8000/
