@@ -1,3 +1,4 @@
+import { useNavigate, useLocation } from "react-router-dom";
 function ScheduleForm({ logo, user, weekLabel, scheduleData }) {
   const daysOfWeek = [
     { day: "Thứ Hai", dateLabel: "17/03" },
@@ -13,11 +14,27 @@ function ScheduleForm({ logo, user, weekLabel, scheduleData }) {
     return scheduleData.find((item) => item.day === day);
   };
 
+  const navigate = useNavigate();
+  const location = useLocation();
+
   return (
     <div className="schedule-layout">
       <aside className="schedule-sidebar">
-        <button className="schedule-sidebar__btn">Thông tin học viên</button>
-        <button className="schedule-sidebar__btn active">Lịch học</button>
+        <div className="student-info-sidebar__logo">
+          <img src={logo} alt="Logo" />
+        </div>
+        <button
+          className={`student-info-sidebar__btn ${location.pathname === '/student-info' ? 'active' : ''}`}
+          onClick={() => navigate('/student-info')}
+        >
+          Thông tin học viên
+        </button>
+        <button
+          className={`student-info-sidebar__btn ${location.pathname === '/schedule' ? 'active' : ''}`}
+          onClick={() => navigate('/schedule')}
+        >
+          Lịch học
+        </button>
       </aside>
 
       <main className="schedule-main">

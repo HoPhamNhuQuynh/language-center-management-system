@@ -9,7 +9,7 @@ from classes.serializers import ClassRoomSerializer
 class EnrollmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Enrollment
-        fields = ['id', 'student', 'classroom', 'enrollment_status', 'payment_deadline']
+        fields = ['id', 'student', 'classroom', 'enrollment_status', 'payment_deadline', 'created_at']
         extra_kwargs = {
             'student': {
                 'read_only': True

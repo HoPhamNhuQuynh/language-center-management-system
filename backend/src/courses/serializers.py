@@ -22,9 +22,10 @@ class CourseSerializer(ItemImageSerializer):
         trim_whitespace=True
     )
     level_name = serializers.ReadOnlyField(source='level.name')
+    tags = TagSerializer(many=True, read_only=True)
     class Meta:
         model = Course
-        fields = ['id', 'name', 'image', 'total_sessions', 'level', 'level_name', 'tags']
+        fields = ['id', 'name', 'image', 'total_sessions', 'level', 'level_name', 'tags', 'price']
     
     def validate_total_sessions(self, value):
         if value <= 0:

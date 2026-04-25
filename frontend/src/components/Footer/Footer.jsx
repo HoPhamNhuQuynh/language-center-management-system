@@ -4,7 +4,7 @@ function Footer() {
     <footer className="footer">
       <div className="container footer__top">
         <div className="footer__left">
-          <h2>LOGO</h2>
+          <h2>QATH</h2>
           <p>20 XYZ Road, London</p>
           <p>AB1 2CD</p>
           <div className="footer__socials">
@@ -24,7 +24,7 @@ function Footer() {
             <a href="/">Label</a>
             <a href="/">Label</a>
           </div>
-          <p className="footer__copyright">Product Name © 2023</p>
+          <p className="footer__copyright">Trung tâm ngoại ngữ QATH © 2026</p>
         </div>
       </div>
 

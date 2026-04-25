@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
-function PaymentHistoryForm({ user, payments, totalPaid, statusFilter, monthFilter, setStatusFilter, setMonthFilter, formatCurrency,}) {
+function PaymentHistoryForm({ user, payments, totalPaid, statusFilter, monthFilter, setStatusFilter, setMonthFilter, formatCurrency, }) {
+  const uniqueMonths = [...new Set(payments.map(p => p.month))].filter(m => m);
   return (
     <div className="payment-history-page">
       <div className="payment-history-header-row">
@@ -13,17 +14,8 @@ function PaymentHistoryForm({ user, payments, totalPaid, statusFilter, monthFilt
             onChange={(e) => setStatusFilter(e.target.value)}
           >
             <option value="">Trạng thái</option>
-            <option value="Đã thanh toán">Đã thanh toán</option>
-            <option value="Chưa thanh toán">Chưa thanh toán</option>
-          </select>
-
-          <select
-            value={monthFilter}
-            onChange={(e) => setMonthFilter(e.target.value)}
-          >
-            <option value="">Tháng/Năm</option>
-            <option value="02/2026">02/2026</option>
-            <option value="03/2026">03/2026</option>
+            <option value="SUCCESS">Đã thanh toán</option>
+            <option value="PENDING_PAYMENT">Chưa thanh toán</option>
           </select>
         </div>
       </div>
@@ -46,7 +38,13 @@ function PaymentHistoryForm({ user, payments, totalPaid, statusFilter, monthFilt
                 <td>{item.paymentCode}</td>
                 <td>{item.date}</td>
                 <td>{item.content}</td>
-                <td>{item.status}</td>
+                <td>
+                  {
+                    item.status === "SUCCESS" ? "Đã thanh toán" :
+                    item.status === "PENDING_PAYMENT" ? "Chờ thanh toán" :
+                    item.status
+                  }
+                </td>
                 <td>{formatCurrency(item.amount)}</td>
               </tr>
             ))}

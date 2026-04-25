@@ -4,6 +4,8 @@ import { getAccessToken } from "../utils/token"
 export const endpoints = {
     'course': '/courses/',
     'enrollment': '/enrollments/',
+    'profile': '/users/me/',
+    'tag': '/tags/',
 }
 
 const Apis = axios.create({
@@ -15,8 +17,10 @@ Apis.interceptors.request.use((config) => {
     const token = localStorage.getItem("access_token");
     if (token) {
         config.headers.Authorization = `Bearer ${token}`;
+        console.log("Token added to request:", token);
     }
 
     return config;
-});
+}
+);
 export default Apis;

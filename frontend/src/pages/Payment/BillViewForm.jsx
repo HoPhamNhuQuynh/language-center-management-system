@@ -7,20 +7,35 @@ function BillViewForm({ data = {}, onClose }) {
   const getValue = (v) => v || "---";
 
   return (
-    <div style={{  minHeight: "100vh", display: "flex", justifyContent: "center", alignItems: "center" }}>
+    <div style={{ minHeight: "100vh", display: "flex", justifyContent: "center", alignItems: "center" }}>
       <div style={{ display: "flex", justifyContent: "center" }}>
-        <Card style={{ width: 750, borderRadius: 8, textAlign: "center", position: "relative",  overflow:"hidden" }}>
+        <Card style={{ width: 750, borderRadius: 8, textAlign: "center", position: "relative", overflow: "hidden" }}>
+
+          <style>
+            {`
+              @media print {
+                .no-print { 
+                display: none !important; 
+                }
+                html, body {
+                  height: 100%;
+                  overflow: hidden;
+                }
+              }
+            `}
+          </style>
 
           <CloseOutlined
             onClick={onClose}
+            className="no-print"
             style={{ position: "absolute", right: 20, top: 20, fontSize: 16, cursor: "pointer" }}
           />
 
           <h2 style={{ marginBottom: 5, fontWeight: "bold" }}>BIÊN LAI THU PHÍ</h2>
           <div>Số chứng từ: {getValue(data.receiptId)}</div>
-          <div>Ngày: {getValue(data.start_date)}</div>
+          <div>Ngày: {getValue(data.created_at.split("T")[0])}</div>
 
-          <div style={{ display: "flex", justifyContent: "space-between", marginTop: 30, fontWeight: 500, paddingRight:50 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", marginTop: 30, fontWeight: 500, paddingRight: 50 }}>
             <div>HỌ VÀ TÊN: {getValue(data.studentname)}</div>
             <div>MÃ SỐ HỌC VIÊN: {getValue(data.studentId)}</div>
           </div>
@@ -32,7 +47,7 @@ function BillViewForm({ data = {}, onClose }) {
               <b>PHƯƠNG THỨC THANH TOÁN:</b> {getValue(data.paymentMethod)}
             </div>
             <div>
-              <b>TRẠNG THÁI THANH TOÁN:</b> {getValue(data.paymentPercent)}<b>%</b>
+              <b>TRẠNG THÁI THANH TOÁN:</b> {getValue(data.enrollmentStatus)}
             </div>
           </div>
 
@@ -50,14 +65,17 @@ function BillViewForm({ data = {}, onClose }) {
               <div>{getValue(data.classId)}</div>
               <div>{getValue(data.total_sessions)}</div>
               <div style={{ color: "red", fontWeight: "bold" }}>
-                {(data.price || 0).toLocaleString()} VND
+                {(data.total || data.price).toLocaleString()} VND
               </div>
             </div>
 
           </div>
 
           <div style={{ marginTop: 30 }}>
-            <Button style={{ background: "#1a1059", color: "#fff", borderRadius: 20, padding: "6px 25px", fontWeight: "bold" }}>
+            <Button
+              onClick={() => window.print()}
+              className="no-print"
+              style={{ background: "#1a1059", color: "#fff", borderRadius: 20, padding: "6px 25px", fontWeight: "bold" }}>
               XUẤT BIÊN LAI
             </Button>
           </div>

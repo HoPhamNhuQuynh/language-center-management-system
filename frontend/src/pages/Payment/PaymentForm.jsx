@@ -52,7 +52,7 @@ function PaymentForm({ data, method, setMethod, percent, setPercent, onSubmit, o
           </div>
         </div>
         <h2 style={{ textAlign: "center", marginTop: 25 }}>
-          Tổng học phí: {(data?.total || 0).toLocaleString()} VND
+          Tổng học phí: {data?.total ? Number(data.total).toLocaleString('vi-VN') : "0"} VND
         </h2>
         <div style={{ textAlign: "center", marginTop: 25 }}>
           {!isPaid ? (

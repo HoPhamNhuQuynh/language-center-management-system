@@ -100,11 +100,17 @@ class PhoneUpdateSerializer(ProfileSerializer):
         fields = ['phone_num']   
 
 class UserDetailSerializer(UserSerializer):
+    enrollments = serializers.SerializerMethodField()
     profile = ProfileSerializer(required=False, allow_null=True)
     class Meta:
         model = UserSerializer.Meta.model
-        fields = UserSerializer.Meta.fields + ['date_joined', 'last_login', 'profile']
+        fields = UserSerializer.Meta.fields + ['date_joined', 'last_login', 'profile', 'enrollments']
         extra_kwargs = UserSerializer.Meta.extra_kwargs
+
+    def get_enrollments(self, instance):
+        from enrollments.serializers import EnrollmentSerializer
+        enrollments = instance.enrollment_set.all()
+        return EnrollmentSerializer(enrollments, many=True).data
         
     @transaction.atomic
     def create(self, validated_data):

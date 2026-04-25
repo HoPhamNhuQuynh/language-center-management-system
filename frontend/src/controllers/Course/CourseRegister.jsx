@@ -18,6 +18,7 @@ function CourseRegister() {
   const [method, setMethod] = useState("momo");
   const [percent, setPercent] = useState(100);
   const [loading, setLoading] = useState(false);
+  const [enrollmentStatus, setEnrollmentStatus] = useState(null);
 
   useEffect(() => {
     const loadCourseDetail = async () => {
@@ -46,7 +47,7 @@ function CourseRegister() {
     setLoading(true);
     try {
       const payload = {
-        class_id: selected_class.id,
+        classroom: selected_class.id,
         payment_method: method.toUpperCase(),
         discount_percent: percent
       };
@@ -54,6 +55,7 @@ function CourseRegister() {
       const res = await Apis.post(endpoints['enrollment'], payload);
 
       if (res.status === 201 || res.status === 200) {
+        setEnrollmentStatus(res.data);
         setPayment(false);
         setConfirm(false);
         alert("Đăng ký thành công!");
@@ -152,6 +154,7 @@ function CourseRegister() {
         openBill={openBill}
         openConfirm={openConfirm}
         backToCourse={backToCourse}
+        enrollmentStatus={enrollmentStatus}
       />
     </div>
   );

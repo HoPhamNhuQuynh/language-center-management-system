@@ -12,9 +12,9 @@ function Navbar() {
     try {
       const refreshToken = localStorage.getItem("refresh_token");
       console.info(refreshToken)
-      
+
       await revokeTokenApi(refreshToken);
-      
+
       clearTokens();
       navigate("/login");
     } catch (error) {
@@ -31,9 +31,10 @@ function Navbar() {
 
         <nav className="navbar__menu">
           <a href="/">Trang chủ</a>
-          <a href="/">Khóa học</a>
-          <a href="/">Lớp học</a>
-          <a href="/">Thông tin</a>
+          <a href="/course-list">Khóa học</a>
+          <a href="/about-us">Giới thiệu</a>
+          <a href="/student-info">Thông tin cá nhân</a>
+
         </nav>
 
         <div className="navbar__actions">

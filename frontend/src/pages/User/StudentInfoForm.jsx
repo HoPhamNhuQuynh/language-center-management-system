@@ -1,5 +1,9 @@
 import { Link } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+
 function StudentInfoForm({ logo, user, studentProfile, tuition, courses }) {
+  const navigate = useNavigate();
+  const location = useLocation();
   return (
     <div className="student-info-layout">
       <aside className="student-info-sidebar">
@@ -7,10 +11,18 @@ function StudentInfoForm({ logo, user, studentProfile, tuition, courses }) {
           <img src={logo} alt="Logo" />
         </div>
 
-        <button className="student-info-sidebar__btn active">
+        <button 
+          className={`student-info-sidebar__btn ${location.pathname === '/student-info' ? 'active' : ''}`}
+          onClick={() => navigate('/student-info')}
+        >
           Thông tin học viên
         </button>
-        <button className="student-info-sidebar__btn">Lịch học</button>
+        <button 
+          className={`student-info-sidebar__btn ${location.pathname === '/schedule' ? 'active' : ''}`}
+          onClick={() => navigate('/schedule')}
+        >
+          Lịch học
+        </button>
       </aside>
 
       <main className="student-info-main">
@@ -26,27 +38,27 @@ function StudentInfoForm({ logo, user, studentProfile, tuition, courses }) {
             <button className="student-profile-edit-btn">
               <span className="student-profile-edit-icon">✎</span>
               <span>Chỉnh sửa thông tin cá nhân</span>
-              </button>
+            </button>
           </div>
 
           <div className="student-profile-avatar">
             <div className="student-profile-avatar-inner"></div>
           </div>
-      
 
 
-          
+
+
         </section>
 
         <section className="student-tuition-section">
           <h2>HỌC PHÍ</h2>
-          <p>
-            Học phí đã đóng: {tuition.paid}
-        <Link to="/payment-history" className="student-tuition-history">
-  Xem lịch sử thanh toán
-</Link>
-          </p>
+          <p>Học phí đã đóng: {tuition.paid}</p>
           <p>Học phí còn nợ: {tuition.remaining}</p>
+          <p>
+            <Link to="/payment-history" className="student-tuition-history">
+              Xem lịch sử thanh toán
+            </Link>
+          </p>
         </section>
 
         <section className="student-course-section">
@@ -60,19 +72,21 @@ function StudentInfoForm({ logo, user, studentProfile, tuition, courses }) {
                   <th>TÊN LỚP</th>
                   <th>LỊCH HỌC</th>
                   <th>GIÁO VIÊN</th>
+                  <th>HỌC PHÍ</th>
                   <th>TRẠNG THÁI</th>
                   <th></th>
                 </tr>
               </thead>
 
               <tbody>
-                {courses.map((course) => (
-                  <tr key={course.id}>
-                    <td>{course.classCode}</td>
-                    <td>{course.className}</td>
-                    <td>{course.schedule}</td>
-                    <td>{course.teacher}</td>
-                    <td>{course.status}</td>
+                {courses.map((course, index) => (
+                  <tr key={course.id || index}>
+                    <td>{course.classId || "---"}</td>
+                    <td>{course.className || "---"}</td>
+                    <td>{course.schedule || "---"}</td>
+                    <td>{course.teacher || "---"}</td>
+                    <td>{course.price ? Number(course.price).toLocaleString('vi-VN') : "---"} VND</td>
+                    <td>{course.status || "---"}</td>
                     <td>
                       <span className="student-course-detail">Xem chi tiết</span>
                     </td>

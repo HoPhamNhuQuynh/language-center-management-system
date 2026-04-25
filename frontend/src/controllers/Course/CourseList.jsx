@@ -10,12 +10,14 @@ function CourseList() {
   const [selectedLang, setSelectedLang] = useState("");
   const [courses, setCourses] = useState([]);
   const [AllCourses, setAllCourses] = useState([]);
+  const [tags, setTags] = useState([]);
   const [loading, setLoading] = useState(true);
 
 
   const loadCourses = async () => {
     try {
-        setLoading(true);
+      setLoading(true);
+      try {
         let res = await Apis.get(endpoints['course']);
 
         console.log("Data từ Backend nè:", res.data);
@@ -23,15 +25,27 @@ function CourseList() {
         const data = res.data.results || (Array.isArray(res.data) ? res.data : []);
         setCourses(data);
         setAllCourses(data);
+      } catch (ex) {
+        console.error("Lỗi lấy danh sách khóa học:", ex);
+      }
+      try {
+        const tagRes = await Apis.get(endpoints['tag']);
+        const tagData = tagRes.data.results || (Array.isArray(tagRes.data) ? tagRes.data : []);
+        console.log("Danh sách tag:", tagRes.data);
+        setTags(tagData);
+      } catch (ex) {
+        console.error("Lỗi lấy danh sách tag:", ex);
+      }
+
     } catch (ex) {
       console.error("Lỗi lấy danh sách:", ex);
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
   }
-    useEffect(() => {
-        loadCourses();
-    }, []);
+  useEffect(() => {
+    loadCourses();
+  }, []);
 
 
   const handleSearch = () => {
@@ -53,15 +67,15 @@ function CourseList() {
   const handleSelectCourse = async (course) => {
     try {
       const res = await Apis.get(`${endpoints['course']}${course.id}/`);
-      console.log("Dữ liệu Detail đầy đủ nè:", res.data);
+      console.log("Dữ liệu Detail đầy đủ:", res.data);
       navigate("/course-register", {
         state: { course: res.data },
-    });
-  } catch (ex) {
-    console.error("Lỗi lấy chi tiết khóa học rồi má ơi:", ex);
-    navigate("/course-register", { state: { course } });
-  }
-};
+      });
+    } catch (ex) {
+      console.error("Lỗi lấy chi tiết khóa học:", ex);
+      navigate("/course-register", { state: { course } });
+    }
+  };
 
   return (
     <CourseListForm
@@ -73,6 +87,7 @@ function CourseList() {
       onSearch={handleSearch}
       onSelectCourse={handleSelectCourse}
       loading={loading}
+      tags={tags}
     />
   );
 }

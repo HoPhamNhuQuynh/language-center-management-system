@@ -41,7 +41,7 @@ function ConfirmForm({ data = {}, method, percent, onSubmit, onCancel, onClose }
 
 
         <h2 style={{ textAlign: "center", marginTop: 25 }}>
-          Tổng học phí: {(data?.total || 0).toLocaleString()} VND
+          Tổng học phí: {data?.total ? Number(data.total).toLocaleString('vi-VN') : "0"} VND
         </h2>
 
         <div style={{ display: "flex", justifyContent: "right",gap: 15, marginTop: 25 }}>

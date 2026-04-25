@@ -1,4 +1,6 @@
 import { Input, Button, Card, Table } from "antd";
+import { useState, useEffect } from "react";
+import Apis, { endpoints } from "../../services/Apis";
 import { useNavigate } from "react-router-dom";
 import { SearchOutlined } from "@ant-design/icons";
 import PaymentForm from "./PaymentForm";
@@ -6,9 +8,23 @@ import ConfirmForm from "./ConfirmForm";
 import BillViewForm from "./BillViewForm";
 
 function CourseRegisterForm({ search, course, selected_class, payment, method, percent, confirm, bill, paid,
-  setPercent, setMethod, setSearch, setPayment, setConfirm, setBill, setPaid, onSearch, onSelectClass, onSubmit }) {
-  const user = localStorage.getItem("user");
-  const currentUser = user ? JSON.parse(user) : null;
+  setPercent, setMethod, setSearch, setPayment, setConfirm, setBill, setPaid, onSearch, onSelectClass, onSubmit,
+  enrollmentStatus }) {
+  const [currentUser, setCurrentUser] = useState(null);
+
+  useEffect(() => {
+    const loadUserProfile = async () => {
+      try {
+        const res = await Apis.get(endpoints["profile"]);
+        setCurrentUser(res.data);
+      } catch (ex) {
+        console.error("Error fetching user profile:", ex);
+      }
+    };
+
+    loadUserProfile();
+  }, []);
+
   const navigate = useNavigate();
   const isPaid = paid;
   const columns = [
@@ -23,16 +39,18 @@ function CourseRegisterForm({ search, course, selected_class, payment, method, p
     classId: selected_class?.id,
     className: selected_class?.name,
     courseName: course?.name,
-    total: course?.price,
+    total: percent === 50 ? (course?.price / 2) : course?.price,
     studentId: currentUser?.id,
     studentname: `${currentUser?.last_name || ""} ${currentUser?.first_name || ""}`.trim(),
     email: currentUser?.email,
     phone: currentUser?.profile?.phone_num || "",
   }
+
+
   return (
     <div style={{ padding: "20px", minHeight: "100vh", position: "relative" }}>
       <div style={{ display: "flex", justifyContent: "center" }}>
-        <Card style={{ width: 1200, borderRadius: 20, boxShadow: "0 4px 12px rgba(0,0,0,0.1)" }} styles={{ body: { padding: 20 } }}>
+        <Card style={{ width: "100%", maxWidth: "1400px", borderRadius: 20, boxShadow: "0 4px 12px rgba(0,0,0,0.1)" }} styles={{ body: { padding: 20 } }}>
           <div style={{ padding: 10 }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "start", marginBottom: 20 }}>
               <div style={{ flex: 1 }}>
@@ -110,7 +128,7 @@ function CourseRegisterForm({ search, course, selected_class, payment, method, p
                   setConfirm(true);
                 }}
                 setPayment={setPayment}
-                setBill={setBill} 
+                setBill={setBill}
                 isPaid={paid}
                 onClose={() => {
                   setPayment(false);
@@ -121,11 +139,12 @@ function CourseRegisterForm({ search, course, selected_class, payment, method, p
             {confirm && (
               <ConfirmForm
                 data={sharedData}
-                onSubmit={() => { 
-                  onSubmit(); }}
+                onSubmit={() => {
+                  onSubmit();
+                }}
                 setBill={setBill} isPaid={paid}
-                onCancel={() => { 
-                  setConfirm(false); 
+                onCancel={() => {
+                  setConfirm(false);
                 }}
                 onClose={() => { setConfirm(false); setPayment(true); }}
               />
@@ -133,15 +152,16 @@ function CourseRegisterForm({ search, course, selected_class, payment, method, p
 
             {bill && (
               <BillViewForm
-                data={{ 
-                  ...sharedData, 
-                  total: selected_class?.price,
-                  paymentMethod: method,
-                  paymentStatus: status,
+                data={{
+                  ...sharedData,
+                  total: percent === 50 ? (course?.price * 0.5) : course?.price,
+                  paymentMethod: method.toUpperCase(),
+                  enrollmentStatus: enrollmentStatus?.status || "SUCCESS",
+                  receiptId: enrollmentStatus?.id,
                 }}
                 onClose={() => {
                   setBill(false);
-                  navigate("/course-list");
+                  navigate("/course-register");
                 }}
               />
             )}
