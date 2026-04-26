@@ -19,6 +19,35 @@ Hệ thống bao gồm các chức năng phục vụ cho ba nhóm người dùng
 |   Admin  |  Quản trị viên             |
 | Username |  Tên người dùng hệ thống   |
 | Fullname |  Tên đầy đủ của người dùng |
+|   API    |  Giao diện lập trình ứng dụng, dùng để kết nối hệ thống|
+|   BR     |  Quy tắc nghiệp vụ bắt buộc trong hệ thống   |
+|   FR     |  Yêu cầu chức năng của hệ thống |
+|   DR     |  Yêu cầu dữ liệu của hệ thống   |
+|   NFR    |  Yêu cầu phi chức năng     |
+|   DB     |  Cơ sở dữ liệu             |
+| External Interface Requirements | Yêu cầu giao diện bên ngoài của hệ thống |
+|  MySQL   |  Hệ quản trị cơ sở dữ liệu dùng để lưu trữ dữ liệu |
+|   UI     |  Giao diện người dùng      |
+|  Entity  |  Thực thể dữ liệu trong hệ thống   |
+|   PK     |  Khóa chính định danh duy nhất     |
+|   FK     |  Khóa ngoại liên kết giữa các bảng |
+|  HTTP    |  Giao thức truyền tải dữ liệu web  |
+|  HTTPS   |  HTTP có mã hóa bảo mật   |
+| OAuth 2.0 | Giao thức xác thực dùng cho đăng nhập bên thứ ba |
+| Django   |  Framework Python dùng để xây dựng web application |
+|  Enum    |  Kiểu dữ liệu chỉ nhận giá trị cố định |
+| Assumptions | Giả định               |
+| Constraints | Ràng buộc              |
+| Hardware Interface | Giao diện phần cứng      |
+| Software Interface | Giao diện phần mềm       |
+| Use Case | Mô tả cách người dùng tương tác với hệ thống |
+| Client–Server | Kiến trúc hệ thống gồm client gửi request và server xử lý |
+|Wireframe | Bản phác thảo giao diện người dùng |
+|   Token  | Chuỗi xác thực đăng nhập |
+| Transaction ID | Mã giao dịch thanh toán      |
+|  Status  | Trạng thái dữ liệu       |
+| Dashboard | Trang tổng quan hệ thống          |
+|  Report  |Báo cáo thống kê dữ liệu  |
 ---
 
 # 2. Overall Description
