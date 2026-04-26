@@ -15,13 +15,36 @@ from core import core_perms
 from oauth2_provider.models import AccessToken
 from rest_framework.throttling import AnonRateThrottle
 from core import core_perms
-from oauth2_provider.views import TokenView
+from oauth2_provider.views import TokenView, RevokeTokenView
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import Group
 
 class SocialLoginThrottle(AnonRateThrottle):
     scope = 'social_login'
 
 User = get_user_model()
+
+@method_decorator(csrf_exempt, name='dispatch')
+class LoginView(TokenView):
+    def post(self, request, *args, **kwargs):
+        post_data = request.POST.copy()
+        post_data['client_id'] = settings.CLIENT_ID
+        post_data['client_secret'] = settings.CLIENT_SECRET
+        post_data['grant_type'] = "password"
+
+        request.POST = post_data
+        return super().post(request, *args, **kwargs)
+        
+@method_decorator(csrf_exempt, name='dispatch')        
+class LogoutView(RevokeTokenView):
+    def dispatch(self, request, *args, **kwargs):
+        if request.method == 'POST':
+            post_data = request.POST.copy()
+            post_data['client_id'] = settings.CLIENT_ID
+            post_data['client_secret'] = settings.CLIENT_SECRET
+            request.POST = post_data
+        return super().dispatch(request, *args, **kwargs) 
 
 class UserViewSet(viewsets.ViewSet, generics.DestroyAPIView, generics.ListCreateAPIView):
     queryset = User.objects.all()
@@ -68,7 +91,7 @@ class UserViewSet(viewsets.ViewSet, generics.DestroyAPIView, generics.ListCreate
         s.save()
         return Response(s.data, status=status.HTTP_200_OK)
     
-    @action(methods=['patch'], url_path="me/password", detail=False)
+    @action(methods=['patch'], url_path="me/set-password", detail=False)
     def update_password(self, request):
         u = request.user
         s = serializers.PasswordUpdateSerializer(u, data=request.data, partial=True)
@@ -113,7 +136,7 @@ class RegisterView(APIView):
     
 
 class SocialTokenExchangeViewSet(APIView):
-    throttle_classes = [SocialLoginThrottle]
+    # throttle_classes = [SocialLoginThrottle]
     def post(self, request):
         provider = request.data.get('provider', '').upper()
         social_access_token = request.data.get('access_token')
@@ -130,7 +153,8 @@ class SocialTokenExchangeViewSet(APIView):
         if provider == User.AuthProvider.GOOGLE:
             google_response = requests.get(
                 'https://www.googleapis.com/oauth2/v3/userinfo',
-                params={'access_token': social_access_token}
+                params={'access_token': social_access_token},
+                verify=False
             )
             if google_response.status_code != 200:
                 return Response({'error': 'Invalid Google Token'}, status=status.HTTP_400_BAD_REQUEST)

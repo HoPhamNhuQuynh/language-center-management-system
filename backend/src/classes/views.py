@@ -1,6 +1,6 @@
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework import viewsets, filters, permissions, status
+from rest_framework import viewsets, filters, permissions, status, generics
 from . import serializers
 from .models import ClassRoom, Session, TeachingAssignment
 from core import paginators
@@ -81,3 +81,20 @@ class ClassRoomViewSet(viewsets.ModelViewSet):
                                                                                           enrollment__classroom_id=pk)
 
         return Response(ScoreSerializer(scores, many=True).data, status=status.HTTP_200_OK)
+
+class SessionViewSet(viewsets.ViewSet, generics.ListAPIView):
+    serializer_class = serializers.SessionSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+
+        query = Session.objects.select_related('schedule__classroom', 'user')
+
+        if user.is_teacher:
+            return query.filter(user=user)
+        
+        if user.is_student:
+            return query.filter(attendance__enrollment__student=user)
+        
+        return query
