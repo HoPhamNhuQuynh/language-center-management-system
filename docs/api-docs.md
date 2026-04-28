@@ -695,6 +695,7 @@ Sử dụng `application/json`
 - Endpoint: GET courses/{course_id}/score-types/
 - Mô tả: trả về danh sách các cột điểm để hiển thị điểm.
 - Path params
+
 | Tham số   | Kiểu dữ liệu | Bắt buộc | Mô tả                         |
 |-----------|--------------|----------|-------------------------------|
 | course_id | int          | có       | ID định danh khóa học cụ thể. |
