@@ -48,18 +48,12 @@ class LogoutView(RevokeTokenView):
 
 class UserViewSet(viewsets.ViewSet, generics.DestroyAPIView, generics.ListCreateAPIView):
     queryset = User.objects.all()
+    serializer_class = serializers.UserDetailSerializer
 
     def get_permissions(self):
-        if self.action == 'create':
-            return [permissions.IsAdminUser()]
         if self.action in ['current_user', 'update_avatar', 'update_password', 'get_payments', 'get_enrollments']:
             return [permissions.IsAuthenticated()]
         return [core_perms.IsAdmin()]
-
-    def get_serializer_class(self):
-        if self.action in ['current_user'] or (self.request.user.is_authenticated and self.request.user.is_admin):
-            return serializers.UserDetailSerializer
-        return serializers.UserSerializer
 
     def perform_destroy(self, instance):
         instance.is_active = False
@@ -70,7 +64,7 @@ class UserViewSet(viewsets.ViewSet, generics.DestroyAPIView, generics.ListCreate
     def current_user(self, request):
         u = request.user
         if request.method.__eq__("PATCH"):
-            s = self.get_serializer(u, data= request.data, partial=True)
+            s = serializers.UserSerializer(u, data=request.data, partial=True)
             s.is_valid(raise_exception=True)
             s.save()
             return Response(s.data, status=status.HTTP_200_OK)
@@ -80,18 +74,18 @@ class UserViewSet(viewsets.ViewSet, generics.DestroyAPIView, generics.ListCreate
             AccessToken.objects.filter(user=u).delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
 
-        return Response(self.get_serializer(u).data, status=status.HTTP_200_OK)
+        return Response(serializers.UserDetailSerializer(u).data, status=status.HTTP_200_OK)
 
     @action(methods=['patch'], url_path="me/avatar", detail=False)
     def update_avatar(self, request):
         profile = request.user.profile
 
-        s = serializers.ProfileSerializer(profile, data= request.data, partial=True)
+        s = serializers.AvatarUpdateSerializer(profile, data= request.data, partial=True)
         s.is_valid(raise_exception=True)
         s.save()
         return Response(s.data, status=status.HTTP_200_OK)
     
-    @action(methods=['patch'], url_path="me/set-password", detail=False)
+    @action(methods=['patch'], url_path="me/reset-password", detail=False)
     def update_password(self, request):
         u = request.user
         s = serializers.PasswordUpdateSerializer(u, data=request.data, partial=True)
@@ -121,14 +115,14 @@ class RegisterView(APIView):
     def post(self, request):
         s = serializers.UserSerializer(data=request.data)
         s.is_valid(raise_exception=True)
-        u = s.save()
+        s.save()
 
         data = {
             "grant_type": "password",
             "username": request.data["username"],
             "password": request.data["password"],
-            "client_id": "aJ7nxWPdKdjy8isgOPQsGKPzR9E2Keehq8A7D4gr",
-            "client_secret": "fCxz6BFuPTTmgtFHf8vCxJDlNzYTGvrfwXaVpDO3WQI9ZFIitOZYUj4csqHHPwoSANhlSPTdQMNUCYpW35EdGBQ7EpDEdrovmLxuaO9eqawgGj2CHFRHZK7Ftnui1kUV"
+            "client_id": settings.CLIENT_ID,
+            "client_secret": settings.CLIENT_SECRET
         }
 
         request._request.POST = data

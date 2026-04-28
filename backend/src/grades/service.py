@@ -1,4 +1,5 @@
 from django.db import transaction
+from django.forms import ValidationError
 from .models import Score, Attendance
 from enrollments.models import Enrollment
 
@@ -7,14 +8,16 @@ class ScoreService:
     @transaction.atomic
     def bulk_sync_scores(classroom, scores_date):
         valid_enrollment_ids = set(
-            Enrollment.objects.filter(classroom=classroom).values_list('id', flat=True)
-        )
+                                    Enrollment.objects.filter(
+                                        classroom=classroom,
+                                        enrollment_status=Enrollment.Status.SUCCESS
+                                    ).values_list('id', flat=True)
+                                )
         existings = {
             (s.enrollment_id, s.score_type_id): s
             for s in Score.objects.filter(enrollment__classroom=classroom)
         }
 
-        incoming_keys = set()
         to_update = []
         to_create = []
 
@@ -56,7 +59,10 @@ class AttendanceService:
             classroom=classroom
         ).select_related('student')
 
-        attendances = Attendance.objects.filter(session=session)
+        attendances = Attendance.objects.filter(
+            session=session,
+            enrollment__enrollment_status=Enrollment.Status.SUCCESS
+        )
 
         attendance_map = {
             a.enrollment_id: a
@@ -84,6 +90,15 @@ class AttendanceService:
     @transaction.atomic
     def bulk_sync_attendances(session, attendances_data):
 
+        classroom = session.schedule.classroom
+
+        valid_enrollment_ids = set(
+            Enrollment.objects.filter(
+                classroom=classroom,
+                enrollment_status=Enrollment.Status.SUCCESS
+            ).values_list('id', flat=True)
+        )
+
         existings = {
             a.enrollment_id: a
             for a in Attendance.objects.filter(session=session)
@@ -94,14 +109,23 @@ class AttendanceService:
         
         for item in attendances_data:
             enrollment_id = item['enrollment_id']
+            if enrollment_id not in valid_enrollment_ids:
+                raise ValidationError(
+                    f"Enrollment {enrollment_id} không thuộc lớp này hoặc không tồn tại"
+                )
+            
             status = item['attendance_status']
-            note = item.get('note')
+            if status not in Attendance.Status.values:
+                raise ValidationError(f"Trạng thái '{status}' không hợp lệ")
+            
+            note = item.get('note', "")
 
             if enrollment_id in existings:
                 obj = existings[enrollment_id]
-                obj.attendance_status = status
-                obj.note = note
-                to_update.append(obj)
+                if obj.attendance_status != status or obj.note != note:
+                    obj.attendance_status = status
+                    obj.note = note
+                    to_update.append(obj)
             else:
                 to_create.append(
                     Attendance(
