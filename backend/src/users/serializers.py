@@ -27,10 +27,20 @@ class UserSerializer(serializers.ModelSerializer):
     Dùng cho api đăng ký tài khoản, chỉnh sửa thông tin cá nhân
     """
     phone_num = serializers.CharField(write_only=True)
+    role = serializers.SerializerMethodField()
+
+    def get_role(self, obj):
+        if obj.is_admin:
+            return "Admin"
+        if obj.is_teacher:
+            return "Teacher"
+        if obj.is_student:
+            return "Student"
+        return None
 
     class Meta:
         model = User
-        fields = ['id', 'first_name', 'last_name', 'email', 'username', 'password', 'phone_num']
+        fields = ['id', 'first_name', 'last_name', 'email', 'username', 'password', 'phone_num', 'role']
         extra_kwargs = {
             'password': {
                 'write_only': True
@@ -130,6 +140,7 @@ class UserDetailSerializer(UserSerializer):
     Thông tin chi tiết của user
     """
     avatar = serializers.CharField(source='profile.avatar', read_only=True)
+
     class Meta:
         model = UserSerializer.Meta.model
         fields = UserSerializer.Meta.fields + ['date_joined', 'last_login', 'auth_provider', 'avatar']

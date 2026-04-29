@@ -1,6 +1,7 @@
-export const setTokens = (access_token, refresh_token) => {
+export const setTokens = (access_token, refresh_token, user) => {
   localStorage.setItem("access_token", access_token);
   localStorage.setItem("refresh_token", refresh_token);
+  localStorage.setItem("user", JSON.stringify(user));
 };
 
 export const getAccessToken = () => {
@@ -15,3 +16,10 @@ export const clearTokens = () => {
   localStorage.removeItem("access_token");
   localStorage.removeItem("refresh_token");
 };
+
+export const getUser = () => {
+  const data = localStorage.getItem("user");
+  return data ? JSON.parse(data) : null;
+}
+
+export const getRole = () => getUser()?.role;

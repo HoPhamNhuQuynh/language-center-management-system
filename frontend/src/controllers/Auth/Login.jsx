@@ -5,6 +5,7 @@ import { setTokens } from "../../utils/token";
 import { useGoogleLogin } from "@react-oauth/google";
 import { FacebookLoginClient } from "@greatsumini/react-facebook-login";
 import { useEffect } from "react";
+import Apis from "../../services/Apis";
 
 
 function Login(){
@@ -27,9 +28,15 @@ function Login(){
       try {
         const res = await loginApi(username, password);
 
-        setTokens(res.access_token, res.refresh_token);
-
-        console.info(res);
+        setTokens(res.access_token, res.refresh_token, res.user);
+        if (res.user.role === "Admin") {
+          navigate("/admin/dashboard")
+        } else if (res.user.role === "Teacher") {
+          navigate("/teacher/schedule")
+        } else {
+          navigate("/");
+        }
+        console.info(res)
         navigate("/");
       } catch (error) {
         alert("Sai tài khoản hoặc mật khẩu.");

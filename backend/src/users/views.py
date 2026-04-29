@@ -1,3 +1,5 @@
+import json
+from django.http import JsonResponse
 from rest_framework import viewsets, status, permissions, generics
 from rest_framework.views import APIView
 from rest_framework.decorators import action
@@ -8,7 +10,7 @@ from users.models import User
 from users import serializers
 from enrollments.serializers import EnrollmentSerializer, PaymentSerializer
 from enrollments.models import Payment, Enrollment
-from .utils import generate_auth_token
+from .utils import generate_auth_token, parse_token_response
 import requests
 from config import settings
 from core import core_perms
@@ -27,14 +29,28 @@ User = get_user_model()
 
 @method_decorator(csrf_exempt, name='dispatch')
 class LoginView(TokenView):
-    def post(self, request, *args, **kwargs):
+     def post(self, request, *args, **kwargs):
         post_data = request.POST.copy()
         post_data['client_id'] = settings.CLIENT_ID
         post_data['client_secret'] = settings.CLIENT_SECRET
         post_data['grant_type'] = "password"
-
         request.POST = post_data
-        return super().post(request, *args, **kwargs)
+
+        response = super().post(request, *args, **kwargs)
+
+        if response.status_code != 200:
+            return response  
+
+        token_data = parse_token_response(response)
+
+        username = request.POST.get("username")
+        user = User.objects.filter(username=username).first()
+        user_data = serializers.UserSerializer(user).data if user else None
+
+        return JsonResponse(
+            {**token_data, "user": user_data},
+            status=status.HTTP_200_OK
+        )
         
 @method_decorator(csrf_exempt, name='dispatch')        
 class LogoutView(RevokeTokenView):
@@ -45,65 +61,6 @@ class LogoutView(RevokeTokenView):
             post_data['client_secret'] = settings.CLIENT_SECRET
             request.POST = post_data
         return super().dispatch(request, *args, **kwargs) 
-
-class UserViewSet(viewsets.ViewSet, generics.DestroyAPIView, generics.ListCreateAPIView):
-    queryset = User.objects.all()
-    serializer_class = serializers.UserDetailSerializer
-
-    def get_permissions(self):
-        if self.action in ['current_user', 'update_avatar', 'update_password', 'get_payments', 'get_enrollments']:
-            return [permissions.IsAuthenticated()]
-        return [core_perms.IsAdmin()]
-
-    def perform_destroy(self, instance):
-        instance.is_active = False
-        instance.save()
-        AccessToken.objects.filter(user=instance).delete()
-
-    @action(methods=['get', 'patch', 'delete'], url_path="me", detail=False)
-    def current_user(self, request):
-        u = request.user
-        if request.method.__eq__("PATCH"):
-            s = serializers.UserSerializer(u, data=request.data, partial=True)
-            s.is_valid(raise_exception=True)
-            s.save()
-            return Response(s.data, status=status.HTTP_200_OK)
-        elif request.method.__eq__("DELETE"):
-            u.is_active = False
-            u.save()
-            AccessToken.objects.filter(user=u).delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
-
-        return Response(serializers.UserDetailSerializer(u).data, status=status.HTTP_200_OK)
-
-    @action(methods=['patch'], url_path="me/avatar", detail=False)
-    def update_avatar(self, request):
-        profile = request.user.profile
-
-        s = serializers.AvatarUpdateSerializer(profile, data= request.data, partial=True)
-        s.is_valid(raise_exception=True)
-        s.save()
-        return Response(s.data, status=status.HTTP_200_OK)
-    
-    @action(methods=['patch'], url_path="me/reset-password", detail=False)
-    def update_password(self, request):
-        u = request.user
-        s = serializers.PasswordUpdateSerializer(u, data=request.data, partial=True)
-        s.is_valid(raise_exception=True)
-        u = s.save()
-        return Response(serializers.UserSerializer(u).data, status=status.HTTP_200_OK)
-
-    @action(methods=['get'], url_path="me/enrollments", detail=False)
-    def get_enrollments(self, request):
-        user = request.user
-        enrollments = Enrollment.objects.filter(student=user).select_related('classroom')
-        return Response(EnrollmentSerializer(enrollments, many=True).data, status=status.HTTP_200_OK)
-    
-    @action(methods=['get'], url_path="me/payments", detail=False)
-    def get_payments(self, request):
-        payments = Payment.objects.filter(enrollment__student=request.user).select_related('enrollment__classroom')
-
-        return Response(PaymentSerializer(payments, many=True).data, status=status.HTTP_200_OK)
     
 class RefreshTokenView(APIView):
     def post(self, request):
@@ -115,22 +72,36 @@ class RegisterView(APIView):
     def post(self, request):
         s = serializers.UserSerializer(data=request.data)
         s.is_valid(raise_exception=True)
-        s.save()
+        u = s.save()
 
         data = {
             "grant_type": "password",
             "username": request.data["username"],
             "password": request.data["password"],
             "client_id": settings.CLIENT_ID,
-            "client_secret": settings.CLIENT_SECRET
+            "client_secret": settings.CLIENT_SECRET,
         }
 
         request._request.POST = data
-        return TokenView.as_view()(request._request)
+        response = TokenView.as_view()(request._request)
+
+        if response.status_code != 200:
+            u.delete()
+            return Response(
+                {"detail": "Tạo tài khoản thành công nhưng không thể đăng nhập tự động."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+        # Parse token từ content, KHÔNG dùng response.data
+        token_data = parse_token_response(response)
+
+        return Response(
+            {**token_data, "user": serializers.UserSerializer(u).data},
+            status=status.HTTP_201_CREATED
+        )
     
 
 class SocialTokenExchangeViewSet(APIView):
-    # throttle_classes = [SocialLoginThrottle]
     def post(self, request):
         provider = request.data.get('provider', '').upper()
         social_access_token = request.data.get('access_token')
@@ -211,3 +182,64 @@ class SocialTokenExchangeViewSet(APIView):
                 'provider': user.auth_provider
             }
         })
+
+
+class UserViewSet(viewsets.ViewSet, generics.DestroyAPIView, generics.ListCreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = serializers.UserDetailSerializer
+
+    def get_permissions(self):
+        if self.action in ['current_user', 'update_avatar', 'update_password', 'get_payments', 'get_enrollments']:
+            return [permissions.IsAuthenticated()]
+        return [core_perms.IsAdmin()]
+
+    def perform_destroy(self, instance):
+        instance.is_active = False
+        instance.save()
+        AccessToken.objects.filter(user=instance).delete()
+
+    @action(methods=['get', 'patch', 'delete'], url_path="me", detail=False)
+    def current_user(self, request):
+        u = request.user
+        if request.method.__eq__("PATCH"):
+            s = serializers.UserSerializer(u, data=request.data, partial=True)
+            s.is_valid(raise_exception=True)
+            s.save()
+            return Response(s.data, status=status.HTTP_200_OK)
+        elif request.method.__eq__("DELETE"):
+            u.is_active = False
+            u.save()
+            AccessToken.objects.filter(user=u).delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+
+        return Response(serializers.UserDetailSerializer(u).data, status=status.HTTP_200_OK)
+
+    @action(methods=['patch'], url_path="me/avatar", detail=False)
+    def update_avatar(self, request):
+        profile = request.user.profile
+
+        s = serializers.AvatarUpdateSerializer(profile, data= request.data, partial=True)
+        s.is_valid(raise_exception=True)
+        s.save()
+        return Response(s.data, status=status.HTTP_200_OK)
+    
+    @action(methods=['patch'], url_path="me/reset-password", detail=False)
+    def update_password(self, request):
+        u = request.user
+        s = serializers.PasswordUpdateSerializer(u, data=request.data, partial=True)
+        s.is_valid(raise_exception=True)
+        u = s.save()
+        return Response(serializers.UserSerializer(u).data, status=status.HTTP_200_OK)
+
+    @action(methods=['get'], url_path="me/enrollments", detail=False)
+    def get_enrollments(self, request):
+        user = request.user
+        enrollments = Enrollment.objects.filter(student=user).select_related('classroom')
+        return Response(EnrollmentSerializer(enrollments, many=True).data, status=status.HTTP_200_OK)
+    
+    @action(methods=['get'], url_path="me/payments", detail=False)
+    def get_payments(self, request):
+        payments = Payment.objects.filter(enrollment__student=request.user).select_related('enrollment__classroom')
+
+        return Response(PaymentSerializer(payments, many=True).data, status=status.HTTP_200_OK)
+    

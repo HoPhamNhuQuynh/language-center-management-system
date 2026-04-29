@@ -1,12 +1,13 @@
 import "../Navbar/Navbar.css";
 import logo from "../../assets/hero.png";
 import { Link, useNavigate } from "react-router-dom";
-import { getAccessToken, clearTokens } from "../../utils/token";
-import { revokeTokenApi } from "../../services/AuthService"
+import { getAccessToken, clearTokens, getRole } from "../../utils/token";
+import { revokeTokenApi } from "../../services/authService";
 
 function Navbar() {
   const navigate = useNavigate();
   const isLoggedIn = !!getAccessToken();
+  const role = getRole();
 
   const handleLogout = async () => {
     try {
@@ -30,10 +31,29 @@ function Navbar() {
         </div>
 
         <nav className="navbar__menu">
-          <a href="/">Trang chủ</a>
-          <a href="/">Khóa học</a>
-          <a href="/">Lớp học</a>
-          <a href="/">Thông tin</a>
+          {(role === "Student" || !isLoggedIn) && (
+            <>
+              <Link to="/">Trang chủ</Link>
+              <Link to="/about-us">Về chúng tôi</Link>
+              <Link to="/course-list">Khóa học</Link>
+              <Link to="/student-info">Thông tin cá nhân</Link>
+            </>
+          )}
+
+          {role === "Teacher" && (
+            <>
+              <Link to="/attendance">Điểm danh</Link>
+              <Link to="/score-entry">Nhập điểm</Link>
+              <Link to="/schedule">Lịch dạy</Link>
+            </>
+          )}
+
+          {role === "Admin" && (
+            <>
+              <Link to="/">Trang chủ</Link>
+              <Link to="/admin/dashboard">Quản trị hệ thống</Link>
+            </>
+          )}
         </nav>
 
         <div className="navbar__actions">

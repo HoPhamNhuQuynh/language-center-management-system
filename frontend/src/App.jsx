@@ -16,30 +16,44 @@ import PaymentHistory from "./controllers/Payment/PaymentHistory";
 import './App.css'
 import MainLayout from "./components/Base/MainLayout";
 import { GoogleOAuthProvider } from "@react-oauth/google";
+import AdminView from "./controllers/Admin/AdminView";
+import ProtectedRoute from "./components/Base/ProtectedRoute";
 
 const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 function App() {
   return (
     <GoogleOAuthProvider clientId={googleClientId}>
-        <Routes>
-          <Route element={<MainLayout />}>
-            <Route path="/" element={<Home />} />
-            <Route path="/about-us" element={<AboutUs />} />
-            <Route path="/course-list" element={<CourseList />} />
+      <Routes>
+        <Route element={<MainLayout />}>
+          {/* AI CŨNG XEM ĐƯỢC */}
+          <Route path="/" element={<Home />} />
+          <Route path="/about-us" element={<AboutUs />} />
+          <Route path="/course-list" element={<CourseList />} />
+
+          {/* CHỈ HỌC VIÊN (STUDENT) MỚI VÀO ĐƯỢC */}
+          <Route element={<ProtectedRoute allowedRoles={["Student"]} />}>
             <Route path="/course-register" element={<CourseRegister />} />
             <Route path="/payment" element={<Payment />} />
-            <Route path="/confirm" element={<Confirm />} />
-            <Route path="/bill-view" element={<BillView />} />
-            <Route path="/attendance" element={<Attendance />} />
-            <Route path="/score-entry" element={<ScoreEntry />} />
-            <Route path="/schedule" element={<Schedule />} />
-            <Route path="/student-info" element={<StudentInfo />} />
+            <Route path="/student-info" element={<StudentInfo/>} />
             <Route path="/payment-history" element={<PaymentHistory />} />
           </Route>
 
-          <Route path="/register" element={<Register />} />
-          <Route path="/login" element={<Login />} />
-        </Routes>
+          {/* CHỈ GIẢNG VIÊN (TEACHER) MỚI VÀO ĐƯỢC */}
+          <Route element={<ProtectedRoute allowedRoles={["Teacher"]} />}>
+            <Route path="/attendance" element={<Attendance />} />
+            <Route path="/score-entry" element={<ScoreEntry />} />
+            <Route path="/schedule" element={<Schedule />} />
+          </Route>
+
+          {/* CHỈ ADMIN MỚI VÀO ĐƯỢC */}
+          <Route element={<ProtectedRoute allowedRoles={["Admin"]} />}>
+            <Route path="/admin" element={<AdminView />} />
+          </Route>
+        </Route>
+
+        <Route path="/register" element={<Register />} />
+        <Route path="/login" element={<Login />} />
+      </Routes>
     </GoogleOAuthProvider>
   );
 }

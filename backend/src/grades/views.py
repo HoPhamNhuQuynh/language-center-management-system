@@ -2,12 +2,13 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, permissions, viewsets, generics, serializers
 from classes.models import ClassRoom, Session, TeachingAssignment
+from courses.models import ScoreType
 from enrollments.models import Enrollment
-from grades.models import Attendance
+from grades.models import Attendance, Score
 from .serializers import BulkSyncScoreSerializer, BulkSyncAttendanceSerializer, AttendanceSerializer
 from .service import ScoreService, AttendanceService
 from core import core_perms
-from django.db.models import OuterRef, Subquery
+from rest_framework.exceptions import PermissionDenied, ValidationError
 from django.utils import timezone
 from rest_framework.exceptions import PermissionDenied
 
@@ -83,6 +84,47 @@ class BulkSyncScoreView(APIView):
             "message": "OK",
             "data": result
         })
+    
+class SubmitScoreView(APIView):
+    permission_classes = [permissions.IsAuthenticated, core_perms.IsTeacher]
+
+    def post(self, request, class_id):
+        classroom = generics.get_object_or_404(ClassRoom, pk=class_id)
+        
+        is_main = TeachingAssignment.objects.filter(
+            classroom=classroom, teacher=request.user, is_main=True
+        ).exists()
+        if not is_main:
+            raise PermissionDenied("Hệ thống yêu cầu quyền nộp điểm.")
+        
+        required_score_types = ScoreType.objects.filter(course=classroom.course)
+        required_count = required_score_types.count()
+
+        if required_count == 0:
+            raise ValidationError("Chưa cấu hình các loại điểm cho khóa học này.")
+
+        enrollments = Enrollment.objects.filter(classroom=classroom)
+        
+        if not enrollments.exists():
+            raise ValidationError("Lớp học hiện không có học viên nào.")
+
+        for enrollment in enrollments:
+            scored_count = Score.objects.filter(
+                enrollment=enrollment,
+                score_type__in=required_score_types
+            ).count()
+
+            if scored_count < required_count:
+                raise ValidationError(
+                    f"Học viên {enrollment.student.get_full_name()} chưa nhập đủ điểm ({scored_count}/{required_count})."
+                )
+
+        classroom.grade_status = ClassRoom.Status.SUBMITTED
+        classroom.save()
+
+        return Response({
+            "message": "Bảng điểm đã được nộp và khóa thành công."
+        }, status=status.HTTP_200_OK)
     
 class BulkSyncAttendanceView(APIView):
     permission_classes = [permissions.IsAuthenticated, core_perms.IsTeacher]

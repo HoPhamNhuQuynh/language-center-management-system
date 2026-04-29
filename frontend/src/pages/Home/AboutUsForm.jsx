@@ -8,7 +8,7 @@ const { Title, Paragraph } = Typography;
 function AboutUsForm() {
   return (
     <div style={{ width: "100%", background: "#fff" }}>
-      <Card style={{ borderRadius: 20 }} bodyStyle={{ padding: 0 }}>
+      <Card style={{ borderRadius: 20 }} styles={{ body: { padding: 0 }}}>
         <Title level={1} style={{ textAlign: "center" }}>
           ABOUT US
         </Title>
