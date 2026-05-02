@@ -1,4 +1,4 @@
-import { LockFilled } from "@ant-design/icons";
+import { LockFilled, WarningFilled } from "@ant-design/icons";
 import { Tag } from "antd";
 
 function ScoreEntryForm({
@@ -147,7 +147,13 @@ function ScoreEntryForm({
                 </>
               ) : (
                 <div className="locked-notification">
-                  Bảng điểm đã được nộp và khóa.
+                  <Tag
+                    icon={<WarningFilled />}
+                    color="warning"
+                    className="ant-tag-warning"
+                  >
+                    Bảng điểm đã được nộp và khóa.
+                  </Tag>
                 </div>
               )}
             </div>

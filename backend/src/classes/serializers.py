@@ -23,12 +23,13 @@ class ClassRoomSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ClassRoom
-        fields = ['id', 'name', 'course', 'start_date', 'end_date', 'main_teacher_id', 'active']
+        fields = ['id', 'name', 'course', 'start_date', 'end_date', 'main_teacher_id', 'active', 'capacity']
 
     def to_representation(self, classroom):
         data = super().to_representation(classroom)
 
-        data['course'] = classroom.course.name
+        data['course_id'] = classroom.course.id
+        data['course_name'] = classroom.course.name
 
         assignment = next(
             (a for a in classroom.teachingassignment_set.all() if a.is_main),
@@ -36,6 +37,11 @@ class ClassRoomSerializer(serializers.ModelSerializer):
         )
         data['main_teacher'] = UserSerializer(assignment.teacher).data if assignment else None
         return data
+    
+    def validate_capacity(self, capacity):
+        if capacity < 10 or capacity > 50:
+            raise serializers.ValidationError("Sĩ số lớp học không hợp lệ.")
+        return capacity
 
     def validate(self, data):
         start_date = data.get('start_date')
@@ -108,6 +114,17 @@ class SessionSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({
                 "end_time": "Giờ kết thúc phải lớn hơn giờ bắt đầu."
             })
+        # Kiểm tra số buổi học đã tạo so với kế hoạch
+        classroom = data.get('classroom')
+        course = classroom.course
+        
+        actual = course.actual_total_sessions
+        planned = course.total_sessions
+        
+        if actual >= planned:
+            raise serializers.ValidationError(
+                f"Đã đủ {planned} buổi theo kế hoạch, không thể thêm buổi mới."
+            )
         return data
 
     def to_representation(self, session):

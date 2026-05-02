@@ -5,8 +5,18 @@ import { setTokens } from "../../utils/token";
 import { useGoogleLogin } from "@react-oauth/google";
 import { FacebookLoginClient } from "@greatsumini/react-facebook-login";
 import { useEffect } from "react";
-import Apis from "../../services/Apis";
+import { message } from "antd";
 
+const translateError = (errorMsg) => {
+  if (!errorMsg) return "Đã có lỗi xảy ra. Vui lòng thử lại.";
+
+  if (errorMsg.includes("FACEBOOK"))
+    return "Email này đã được đăng ký qua Facebook. Vui lòng đăng nhập bằng Facebook.";
+  if (errorMsg.includes("GOOGLE"))
+    return "Email này đã được đăng ký qua Google. Vui lòng đăng nhập bằng Google.";
+
+  return errorMsg; 
+};
 
 function Login(){
     const navigate = useNavigate();
@@ -37,9 +47,9 @@ function Login(){
           navigate("/");
         }
         console.info(res)
-        navigate("/");
       } catch (error) {
-        alert("Sai tài khoản hoặc mật khẩu.");
+        const errorMsg = error.response?.data?.error;
+        message.error(translateError(errorMsg) || "Sai tài khoản hoặc mật khẩu.");
       }
     };
 
@@ -50,12 +60,12 @@ function Login(){
         try {
           const res = await googleLoginApi(tokenResponse.access_token);
 
-          setTokens(res.access_token, res.refresh_token);
+          setTokens(res.access_token, res.refresh_token, res.user);
           console.log("Google trả về:", tokenResponse);
           navigate("/");
         } catch (err) {
-          console.log(err.response?.data);
-          alert("Google login thất bại");
+          const errorMsg = err.response?.data?.error;
+          message.error(translateError(errorMsg) || "Đăng nhập Google thất bại.")
         }
       },
       onError: () => {
@@ -70,10 +80,13 @@ function Login(){
             facebookLoginApi(response.authResponse.accessToken)
               .then((res) => {
                 console.info(res)
-                setTokens(res.access_token, res.refresh_token);
+                setTokens(res.access_token, res.refresh_token, res.user);
                 navigate("/");
               })
-              .catch(() => alert("Facebook login thất bại"));
+              .catch((err) => {
+                const errorMsg = err.response?.data?.error;
+                message.error(translateError(errorMsg) || "Đăng nhập Facebook thất bại.");
+              });
           } else {
             alert("Facebook login bị huỷ");
           }

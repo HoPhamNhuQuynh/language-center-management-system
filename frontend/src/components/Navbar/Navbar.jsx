@@ -50,8 +50,17 @@ function Navbar() {
 
           {role === "Admin" && (
             <>
-              <Link to="/">Trang chủ</Link>
-              <Link to="/admin/dashboard">Quản trị hệ thống</Link>
+              <Link to="/dashboard">Dashboard</Link>
+              <Link to="/setting">Quản trị hệ thống</Link>
+              <a
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault();
+                  window.open("https://localhost:8000/admin", "django_admin");
+                }}
+              >
+                Django Admin
+              </a>
             </>
           )}
         </nav>

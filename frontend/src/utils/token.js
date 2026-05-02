@@ -19,6 +19,8 @@ export const clearTokens = () => {
 
 export const getUser = () => {
   const data = localStorage.getItem("user");
+  if (!data || data === "undefined") 
+    return null;
   return data ? JSON.parse(data) : null;
 }
 

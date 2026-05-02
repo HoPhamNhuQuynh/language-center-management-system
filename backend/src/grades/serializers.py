@@ -4,6 +4,13 @@ from classes.models import Session
 from enrollments.models import Enrollment
 from users.serializers import UserSerializer
 
+class RemarkItemSerializer(serializers.Serializer):
+    enrollment_id = serializers.IntegerField()
+    comment = serializers.CharField(allow_blank=True)
+
+class SubmitScoreSerializer(serializers.Serializer):
+    remarks = RemarkItemSerializer(many=True, required=False, default=list)
+    
 class ScoreSerializer(serializers.ModelSerializer):
 
     class Meta:

@@ -16,6 +16,10 @@ class Course(BaseActiveModel, TimeStampedModel):
     level = models.ForeignKey('Level', on_delete=models.PROTECT)
     tags = models.ManyToManyField('Tag', blank=True)
 
+    @property
+    def actual_total_sessions(self):
+        return self.session_set.count()
+
     def __str__(self):
         return self.name
 

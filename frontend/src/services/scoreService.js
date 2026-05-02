@@ -16,8 +16,8 @@ export const bulkSyncScoresApi = async (classId, scores) => {
   return res.data;
 };
 
-export const submitScoresApi = async (classId) => {
-  const res = await Apis.post(`classes/${classId}/submit-scores/`,);
+export const submitScoresApi = async (classId, payload) => {
+  const res = await Apis.post(`classes/${classId}/submit-scores/`, payload);
   return res.data;
 };
 

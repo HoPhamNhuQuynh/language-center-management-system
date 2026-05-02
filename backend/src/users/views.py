@@ -1,11 +1,10 @@
-import json
 from django.http import JsonResponse
 from rest_framework import viewsets, status, permissions, generics
 from rest_framework.views import APIView
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from django.contrib.auth import get_user_model
 from oauth2_provider.models import Application
+import core
 from users.models import User
 from users import serializers
 from enrollments.serializers import EnrollmentSerializer, PaymentSerializer
@@ -16,7 +15,6 @@ from config import settings
 from core import core_perms
 from oauth2_provider.models import AccessToken
 from rest_framework.throttling import AnonRateThrottle
-from core import core_perms
 from oauth2_provider.views import TokenView, RevokeTokenView
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
@@ -24,8 +22,6 @@ from django.contrib.auth.models import Group
 
 class SocialLoginThrottle(AnonRateThrottle):
     scope = 'social_login'
-
-User = get_user_model()
 
 @method_decorator(csrf_exempt, name='dispatch')
 class LoginView(TokenView):
@@ -92,13 +88,19 @@ class RegisterView(APIView):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
-        # Parse token từ content, KHÔNG dùng response.data
         token_data = parse_token_response(response)
 
         return Response(
             {**token_data, "user": serializers.UserSerializer(u).data},
             status=status.HTTP_201_CREATED
         )
+    
+class ListTeachersView(APIView):
+    permission_classes = [core_perms.IsAdmin]
+
+    def get(self, request):
+        teachers = User.objects.filter(groups__name='Teacher').all()
+        return Response(serializers.UserSerializer(teachers, many=True).data, status=status.HTTP_200_OK)
     
 
 class SocialTokenExchangeViewSet(APIView):
@@ -177,11 +179,8 @@ class SocialTokenExchangeViewSet(APIView):
             'refresh_token': refresh_token.token,
             'expires_in': expires_in,
             'token_type': 'Bearer',
-            'user': {
-                'email': user.email,
-                'provider': user.auth_provider
-            }
-        })
+            'user': serializers.UserSerializer(user).data
+        }, status=status.HTTP_200_OK)
 
 
 class UserViewSet(viewsets.ViewSet, generics.DestroyAPIView, generics.ListCreateAPIView):

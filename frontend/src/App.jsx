@@ -18,6 +18,11 @@ import MainLayout from "./components/Base/MainLayout";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import AdminView from "./controllers/Admin/AdminView";
 import ProtectedRoute from "./components/Base/ProtectedRoute";
+import Dashboard from "./controllers/Admin/Dashboard";
+import CourseManagement from "./controllers/Admin/CourseManagement";
+import ClassManagement from "./controllers/Admin/ClassManagement";
+import FeeConfiguration from "./controllers/Admin/FeeConfig";
+import AccountManagement from "./controllers/Admin/AccountManagement";
 
 const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 function App() {
@@ -34,7 +39,7 @@ function App() {
           <Route element={<ProtectedRoute allowedRoles={["Student"]} />}>
             <Route path="/course-register" element={<CourseRegister />} />
             <Route path="/payment" element={<Payment />} />
-            <Route path="/student-info" element={<StudentInfo/>} />
+            <Route path="/student-info" element={<StudentInfo />} />
             <Route path="/payment-history" element={<PaymentHistory />} />
           </Route>
 
@@ -47,7 +52,12 @@ function App() {
 
           {/* CHỈ ADMIN MỚI VÀO ĐƯỢC */}
           <Route element={<ProtectedRoute allowedRoles={["Admin"]} />}>
-            <Route path="/admin" element={<AdminView />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/course-config" element={<CourseManagement />} />
+            <Route path="/class-config" element={<ClassManagement />} />
+            <Route path="/fee-config" element={<FeeConfiguration />} />
+            <Route path="/account-config" element={<AccountManagement />} />
+            <Route path="/setting" element={<AdminView />} />
           </Route>
         </Route>
 

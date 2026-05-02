@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     'enrollments.apps.EnrollmentsConfig',
     'grades.apps.GradesConfig',
     'core.apps.CoreConfig',
+    'analytics.apps.AnalyticsConfig',
     'drf_yasg',
     'oauth2_provider',
     'corsheaders',

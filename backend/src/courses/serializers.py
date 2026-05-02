@@ -23,11 +23,6 @@ class CourseSerializer(ItemImageSerializer):
         model = Course
         fields = ['id', 'name', 'image', 'total_sessions', 'level', 'level_name', 'tags']
     
-    def validate_total_sessions(self, value):
-        if value <= 0:
-            raise serializers.ValidationError("Số buổi học phải lớn hơn 0.")
-        return value
-    
     def to_representation(self, instance):
         data = super().to_representation(instance)
         data['tags'] = TagSerializer(instance.tags, many=True).data
@@ -42,12 +37,14 @@ class CourseSerializer(ItemImageSerializer):
         return total_sessions
 
 class CourseDetailSerializer(CourseSerializer):
+    actual_total_sessions = serializers.ReadOnlyField()
+
     class Meta:
         model = CourseSerializer.Meta.model
-        fields = CourseSerializer.Meta.fields + ['price', 'description', 'active', 'created_at']
+        fields = CourseSerializer.Meta.fields + ['price', 'description', 'active', 'created_at', 'actual_total_sessions']
 
     def update(self, course, validated_data):
-        field_to_update = ['name', 'total_sessions', 'level', 'price', 'description', 'image']
+        field_to_update = ['name', 'total_sessions', 'level', 'price', 'description', 'image', 'active']
         tags = validated_data.pop('tags', [])
 
         for attr, value in validated_data.items():

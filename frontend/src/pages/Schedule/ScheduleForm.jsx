@@ -1,4 +1,4 @@
-function ScheduleForm({ logo, user, weekLabel, scheduleData }) {
+function ScheduleForm({ weekLabel, scheduleData }) {
   const daysOfWeek = [
     { day: "Thứ Hai", dateLabel: "17/03" },
     { day: "Thứ Ba", dateLabel: "18/03" },

@@ -76,7 +76,11 @@ function ScoreEntry() {
 
         setScoreTypes(types);
 
-        const serverRows = transformScores(scores);
+        const serverRows = transformScores(scores).map((row) => ({
+          ...row,
+          average: calcAverage(row.scores, types),
+        }));
+
         const saved = localStorage.getItem(STORAGE_KEY);
 
         if (saved) {
@@ -235,22 +239,26 @@ function ScoreEntry() {
   const handleSubmit = async () => {
     if (!window.confirm("Xác nhận nộp? Bảng điểm sẽ bị khóa.")) return;
     try {
-      const res = await submitScoresApi(selectedClass);
+      const remarks = scoreRows
+        .filter((row) => row.remark && row.remark.trim() !== "")
+        .map((row) => ({
+          enrollment_id: row.enrollmentId,
+          comment: row.remark.trim(),
+        }));
+
+      const res = await submitScoresApi(selectedClass, { remarks });
       localStorage.removeItem(`temp_scores_class_${selectedClass}`);
       setIsSubmitted(true);
-      console.info(res);
       alert(res?.message || "Đã nộp thành công!");
     } catch (err) {
       const errorMsg =
         err.response?.data?.detail ||
         err.response?.data?.[0] ||
         "Nộp thất bại, vui lòng kiểm tra lại dữ liệu.";
-
-      console.error("Submit Error:", err.response?.data);
-      alert(errorMsg); 
+      alert(errorMsg);
     }
   };
-
+  
   return (
     <ScoreEntryForm
       classes={classes}
