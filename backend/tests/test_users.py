@@ -8,6 +8,7 @@ from users.utils import generate_auth_token
 from enrollments.models import Enrollment, Payment
 from oauth2_provider.models import Application
 
+
 @pytest.mark.django_db
 class TestUserModule:
 
@@ -61,9 +62,13 @@ class TestUserModule:
         """ Hàm này test API cập nhật mật khẩu bởi user có chứng thực """
         api_client.force_authenticate(user=active_user)
         url = reverse('user-update-password')
-        data = {"password": "NewValidPassword123!"}
+        data = {
+            "old_password": "Password123!",
+            "password": "NewValidPassword123!"
+            }
         
-        response = api_client.patch(url, data)
+        response = api_client.patch(url, data, format="json")
+        
         assert response.status_code == status.HTTP_200_OK
         active_user.refresh_from_db()
         assert active_user.check_password("NewValidPassword123!") # kiểm tra so khớp mật khẩu với dữ liệu dưới db 
@@ -110,12 +115,13 @@ class TestUserModule:
         """ Hàm này test người dùng cập nhật ảnh đại diện """
         api_client.force_authenticate(user=active_user)
         url = reverse('user-update-avatar')
-        data = {"avatar": "new_avatar_public_id"} 
-        
+        data = {"avatar": "new_avatar_public_id"}
+
         response = api_client.patch(url, data)
         assert response.status_code == status.HTTP_200_OK
         active_user.profile.refresh_from_db()
         assert str(active_user.profile.avatar) == "new_avatar_public_id"
+       
 
     def test_get_enrollments_returns_only_user_enrollments(self, api_client, active_user, classroom):
         """ Hàm này test người dùng lấy ds đăng ký của chính mình """
@@ -241,7 +247,8 @@ class TestUserModule:
         assert user2.id in returned_ids
             
         assert 'date_joined' in user_list[0]
-        assert 'profile' in user_list[0]
+        assert 'auth_provider' in user_list[0]
+        assert 'email' in user_list[0]
 
     def test_user_list_when_not_admin_returns_403(self, api_client, active_user):
         api_client.force_authenticate(user=active_user)
@@ -253,4 +260,51 @@ class TestUserModule:
         response = api_client.get(reverse('user-list'))
 
         assert response.status_code == 401
-    
+
+    # bổ sung
+    @pytest.mark.parametrize("missing_field", ["username", "email", "password"])
+    def test_create_user_returns_400_when_required_field_missing(self, api_client, missing_field):
+        """Hàm này test đăng ký thiếu dữ liệu"""
+        url = reverse("register")
+        data = {
+        "username": "missing_test",
+        "email": "missing_test@gmail.com",
+        "password": "Password123!",
+        "phone_num": "0912345678"
+        }
+
+        data.pop(missing_field)
+
+        response = api_client.post(url, data, format="json")
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST   
+
+    def test_create_user_returns_400_when_username_already_exists(self, api_client):
+        """Hàm này test username bị trùng"""
+        baker.make(User, username="duplicated_user", email="old@gmail.com")
+
+        url = reverse("register")
+        data = {
+        "username": "duplicated_user",
+        "email": "new@gmail.com",
+        "password": "Password123!"
+        }
+
+        response = api_client.post(url, data, format="json")
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+    def test_create_user_returns_400_when_email_already_exists(self, api_client):
+        """Hàm này test email bị trùng"""
+        baker.make(User, username="old_user", email="duplicated@gmail.com")
+
+        url = reverse("register")
+        data = {
+        "username": "new_user",
+        "email": "duplicated@gmail.com",
+        "password": "Password123!"
+        }
+
+        response = api_client.post(url, data, format="json")
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
