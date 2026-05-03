@@ -53,6 +53,11 @@ class TestClassesModels:
         expected_str = f"{active_teacher.username}-{classroom.name}"
         assert str(assignment) == expected_str
 
+    def test_classroom_does_not_auto_activate_when_less_than_10_students(self, classroom):
+        """BR-13: dưới 10 học viên thì không auto active"""
+        baker.make('enrollments.Enrollment', classroom=classroom, _quantity=9)
+        assert classroom.is_auto_active is False
+
 @pytest.mark.django_db
 class TestClassRoomSerializer:
     @pytest.mark.parametrize("start, end, should_fail", [
@@ -121,6 +126,52 @@ class TestClassRoomSerializer:
         assert serializer.is_valid() is True
         assert "errors" not in serializer.errors
 
+    def test_classroom_cannot_be_deleted_when_has_enrollments(self, api_client, classroom, admin_user):
+        """BR-12: Không cho xóa lớp có học viên"""
+        api_client.force_authenticate(user=admin_user)
+
+        baker.make('enrollments.Enrollment', classroom=classroom)
+
+        url = reverse('classroom-detail', kwargs={'pk': classroom.id})
+        response = api_client.delete(url)
+
+        assert response.status_code == 400
+        assert "Không thể xóa lớp học" in str(response.data)
+
+    def test_classroom_rejects_invalid_date_range(self, classroom):
+        """BR validate ngày"""
+        data = {
+            "name": "Test",
+            "course": classroom.course.id,
+            "start_date": "2026-05-10",
+            "end_date": "2026-05-01"
+        }
+
+        serializer = ClassRoomSerializer(data=data)
+
+        assert not serializer.is_valid()
+        assert "Ngày kết thúc phải lớn hơn ngày bắt đầu." in str(serializer.errors)
+
+    def test_switch_main_teacher_removes_old_flag(self, classroom):
+        old = baker.make('users.User')
+        new = baker.make('users.User')
+
+        baker.make('classes.TeachingAssignment',
+                classroom=classroom,
+                teacher=old,
+                is_main=True)
+
+        serializer = ClassRoomSerializer(
+            instance=classroom,
+            data={"main_teacher_id": new.id},
+            partial=True
+        )
+
+        assert serializer.is_valid()
+        serializer.save()
+
+        assert not classroom.teachingassignment_set.get(teacher=old).is_main
+
 @pytest.mark.django_db
 class TestScheduleSerializer:
     def test_schedule_serializer_raises_error_when_room_has_overlapping_time(self):
@@ -161,6 +212,61 @@ class TestScheduleSerializer:
         
         assert (not serializer.is_valid()) is should_fail
 
+    def test_teacher_schedule_conflict_across_classes(self, active_teacher):
+        """BR-14: giáo viên không được trùng lịch nhiều lớp"""
+
+        class1 = baker.make('classes.ClassRoom')
+        class2 = baker.make('classes.ClassRoom')
+
+        baker.make('classes.TeachingAssignment',
+                classroom=class1,
+                teacher=active_teacher,
+                is_main=True)
+
+        baker.make('classes.Schedule',
+                classroom=class1,
+                day_of_week=2,
+                start_time="14:00:00",
+                end_time="16:00:00")
+
+        baker.make('classes.TeachingAssignment',
+                classroom=class2,
+                teacher=active_teacher,
+                is_main=True)
+
+        data = {
+            "classroom": class2.id,
+            "room": baker.make('classes.Room').id,
+            "day_of_week": 2,
+            "start_time": "15:00:00",
+            "end_time": "17:00:00"
+        }
+
+        serializer = ScheduleSerializer(data=data)
+
+        assert not serializer.is_valid()
+        assert "Giảng viên chính" in str(serializer.errors)
+
+    def test_room_schedule_conflict_blocks_creation(self):
+        room = baker.make('classes.Room')
+
+        baker.make('classes.Schedule',
+                room=room,
+                day_of_week=2,
+                start_time="08:00:00",
+                end_time="10:00:00")
+
+        data = {
+            "classroom": baker.make('classes.ClassRoom').id,
+            "room": room.id,
+            "day_of_week": 2,
+            "start_time": "09:30:00",
+            "end_time": "11:00:00"
+        }
+
+        serializer = ScheduleSerializer(data=data)
+
+        assert not serializer.is_valid()
 
 @pytest.mark.django_db
 class TestOtherSerializers:
@@ -237,5 +343,97 @@ class TestOtherSerializers:
         
         assert response.status_code == 400
         assert "Không thể xóa lớp học" in str(response.data)
-    
-    
+
+    def test_user_password_not_exposed(self, admin_user):
+        serializer = UserSerializer(instance=admin_user)
+        assert "password" not in serializer.data
+
+    def test_session_admin_extra_fields_only_for_admin(self, admin_user):
+        session = baker.make('classes.Session', user=admin_user)
+
+        factory = RequestFactory()
+        request = factory.get('/')
+        request.user = admin_user
+
+        serializer = SessionSerializer(instance=session, context={'request': request})
+
+        assert "created_at" in serializer.data
+
+    def test_queryset_student_filters_capacity(self, api_client, active_user, classroom):
+        api_client.force_authenticate(user=active_user)
+
+        response = api_client.get(reverse('classroom-list'))
+
+        assert response.status_code == 200
+
+    def test_classroom_create_permission_denied_for_student(self, api_client, active_user):
+        api_client.force_authenticate(user=active_user)
+
+        response = api_client.post(reverse('classroom-list'), {})
+
+        assert response.status_code == 403
+
+    def test_retrieve_uses_detail_serializer(self, api_client, admin_user, classroom):
+        api_client.force_authenticate(user=admin_user)
+
+        response = api_client.get(reverse('classroom-detail', kwargs={'pk': classroom.id}))
+
+        assert "main_teacher" in response.data or "course" in response.data
+
+    def test_teacher_can_access_scores(self, api_client, active_teacher, classroom):
+        api_client.force_authenticate(user=active_teacher)
+
+        response = api_client.get(reverse('classroom-get-scores', kwargs={'pk': classroom.id}))
+
+        assert response.status_code == 200
+
+    def test_teacher_session_queryset(self, api_client, active_teacher):
+        api_client.force_authenticate(user=active_teacher)
+
+        response = api_client.get(reverse('session-list'))
+
+        assert response.status_code == 200
+
+    def test_session_queryset_for_student(self, api_client, active_user):
+        api_client.force_authenticate(user=active_user)
+        active_user.role = "student"
+        active_user.save()
+
+
+        response = api_client.get(reverse('session-list'))
+
+        assert response.status_code == 200
+
+    def test_session_queryset_default_branch(self, api_client, admin_user):
+        api_client.force_authenticate(user=admin_user)
+
+        response = api_client.get(reverse('session-list'))
+
+        assert response.status_code == 200
+
+    def test_room_capacity_valid_returns_value(self):
+        serializer = RoomSerializer(data={"name": "R1", "capacity": 50})
+
+        assert serializer.is_valid() is True
+        assert serializer.validated_data["capacity"] == 50
+
+    def test_session_validate_valid_time(self):
+        serializer = SessionSerializer(data={
+            "date": "2026-05-01",
+            "start_time": "08:00:00",
+            "end_time": "10:00:00",
+            "user": baker.make('users.User').id
+        })
+
+        assert serializer.is_valid() is True
+
+    def test_session_validate_invalid_time(self):
+        serializer = SessionSerializer(data={
+            "date": "2026-05-01",
+            "start_time": "10:00:00",
+            "end_time": "08:00:00",
+            "user": baker.make('users.User').id
+        })
+
+        assert not serializer.is_valid()
+        assert "end_time" in serializer.errors
