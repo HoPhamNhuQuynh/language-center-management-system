@@ -6,6 +6,7 @@ from courses.models import ScoreType
 from enrollments.models import Enrollment
 from grades.models import Attendance, AcademicResult, Score
 from .serializers import BulkSyncScoreSerializer, BulkSyncAttendanceSerializer, AttendanceSerializer, SubmitScoreSerializer
+
 from .service import ScoreService, AttendanceService
 from core import core_perms
 from rest_framework.exceptions import PermissionDenied, ValidationError

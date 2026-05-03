@@ -2,6 +2,7 @@ from courses.models import Course, Level, ScoreType, Tag
 from rest_framework import serializers
 from core.serializers import ItemImageSerializer
 
+
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag
@@ -19,9 +20,10 @@ class CourseSerializer(ItemImageSerializer):
         trim_whitespace=True
     )
     level_name = serializers.ReadOnlyField(source='level.name')
+    tags = TagSerializer(many=True, read_only=True)
     class Meta:
         model = Course
-        fields = ['id', 'name', 'image', 'total_sessions', 'level', 'level_name', 'tags']
+        fields = ['id', 'name', 'image', 'total_sessions', 'level', 'level_name', 'tags', 'price']
     
     def to_representation(self, instance):
         data = super().to_representation(instance)

@@ -1,7 +1,5 @@
 from rest_framework import serializers
 from .models import Score, Attendance
-from classes.models import Session
-from enrollments.models import Enrollment
 from users.serializers import UserSerializer
 
 class RemarkItemSerializer(serializers.Serializer):

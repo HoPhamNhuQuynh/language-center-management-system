@@ -40,6 +40,7 @@ function App() {
             <Route path="/payment" element={<Payment />} />
             <Route path="/student-info" element={<StudentInfo />} />
             <Route path="/payment-history" element={<PaymentHistory />} />
+            {/* <Route path="/schedule" element={<Schedule />} /> */}
           </Route>
 
           {/* CHỈ GIẢNG VIÊN (TEACHER) MỚI VÀO ĐƯỢC */}
