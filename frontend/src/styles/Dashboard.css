@@ -1,0 +1,80 @@
+.dashboard-filters {
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+  width: fit-content; 
+}
+
+.dashboard-filters .filter-item select {
+  width: 240px;
+}
+
+/* Content */
+.dashboard-content {
+  padding: 40px;
+  background: #eff3f7;
+}
+
+.content-header {
+  display: flex;
+  justify-content: space-between;  
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+/* Cards */
+.stat-card {
+  border: none;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.stat-footer {
+  margin-top: 10px;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 12px;
+}
+
+.chart-card {
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.dark-card {
+  background: #1a2d42 !important;
+  color: white !important;
+  border-radius: 12px;
+}
+
+.dark-card .ant-card-head-title {
+  color: white !important;
+}
+
+.revenue-value {
+  font-size: 32px;
+  font-weight: bold;
+  color: #fff;
+  margin-top: 10px;
+}
+
+/* Buttons */
+.action-buttons {
+  margin-top: 30px;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.ant-btn-primary {
+  background: #1a2d42;
+  border-color: #1a2d42;
+}
+
+/* Responsive Customization */
+@media (max-width: 768px) {
+  .content-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+}

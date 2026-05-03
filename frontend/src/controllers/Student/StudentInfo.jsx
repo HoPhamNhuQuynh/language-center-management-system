@@ -43,7 +43,7 @@ function StudentInfo() {
   const studentProfile = {
     fullName: userInfo.first_name + " " + userInfo.last_name,
     email: userInfo.email,
-    phone: userInfo.profile?.phone_num,
+    phone: userInfo.phone_num,
   };
 
   const totalAmount = enrollments.reduce((sum, e) => sum + (Number(e.classroom?.course_price) || 0), 0);
@@ -85,7 +85,7 @@ function StudentInfo() {
     setEditData({
       first_name: userInfo.first_name || "",
       last_name: userInfo.last_name || "",
-      phone_num: userInfo.profile?.phone_num || "",
+      phone_num: userInfo.phone_num || "", 
       email: userInfo.email || "",
     });
     setIsModalOpen(true);
@@ -110,9 +110,7 @@ function StudentInfo() {
       first_name: editData.first_name,
       last_name: editData.last_name,
       email: editData.email,
-      profile: {
-        phone_num: editData.phone_num
-      }
+      phone_num: editData.phone_num
     };
 
     console.log("2. Payload gửi đi (Check cấu trúc profile):", JSON.stringify(payload, null, 2));

@@ -10,8 +10,13 @@ from rest_framework.serializers import ValidationError
 from core import core_perms
 
 class CourseViewSet(viewsets.ModelViewSet):
-      queryset = Course.objects.filter(active=True).select_related('level').prefetch_related('tags').all()
+      queryset = Course.objects.select_related('level').prefetch_related('tags').all()
       parser_classes = [parsers.MultiPartParser]
+
+      def get_queryset(self):
+          if self.request.user.is_authenticated and self.request.user.is_admin:
+              return self.queryset.all()
+          return self.queryset.filter(active=True)
 
       def get_permissions(self):
         if self.action in ['list', 'retrieve', 'get_classes']:
@@ -19,7 +24,7 @@ class CourseViewSet(viewsets.ModelViewSet):
         return [core_perms.IsAdmin()]   
 
       def get_serializer_class(self):
-        if self.action in ['retrieve', 'partial_update']:
+        if self.action in ['retrieve'] or self.request.user.is_authenticated and self.request.user.is_admin:
             return serializers.CourseDetailSerializer
         return serializers.CourseSerializer
       

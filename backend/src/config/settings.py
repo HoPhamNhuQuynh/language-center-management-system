@@ -27,7 +27,9 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["localhost",
                  "127.0.0.1",
-                 'juggling-widen-prewar.ngrok-free.dev']
+                 'juggling-widen-prewar.ngrok-free.dev',
+                 "pseudopsychological-vasoconstrictive-ellison.ngrok-free.dev",
+                 "*"]
 
 AUTH_USER_MODEL = 'users.User'
 
@@ -55,6 +57,7 @@ INSTALLED_APPS = [
     'enrollments.apps.EnrollmentsConfig',
     'grades.apps.GradesConfig',
     'core.apps.CoreConfig',
+    'analytics.apps.AnalyticsConfig',
     'drf_yasg',
     'oauth2_provider',
     'corsheaders',
@@ -125,6 +128,7 @@ SECURE_CROSS_ORIGIN_EMBEDDER_POLICY = None
 CSRF_TRUSTED_ORIGINS = [
     "https://localhost:5173",
     "https://juggling-widen-prewar.ngrok-free.dev",
+    "https://pseudopsychological-vasoconstrictive-ellison.ngrok-free.dev",
 ]
 
 # CORS_ALLOW_CREDENTIALS = True
@@ -169,7 +173,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'language_center_db',
         'USER': 'root',
-        'PASSWORD': 'root',
+        'PASSWORD': 'Nhuquynh261105@',
         'HOST': '', # mặc định localhost
         'PORT': '3306',
     }
@@ -216,8 +220,9 @@ STATIC_URL = 'static/'
 VNPAY_TMN_CODE = 'YCXQRNYD'
 VNPAY_HASH_SECRET = 'SAR75YVR7QKTU9HLD3C4MXY77Y01E387'
 VNPAY_URL = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html"
-VNPAY_RETURN_URL = 'https://localhost:5174/course-register'
-VNPAY_IPN_URL = "https://juggling-widen-prewar.ngrok-free.dev/api/payments/vnpay-callback/"
+VNPAY_RETURN_URL = 'https://pseudopsychological-vasoconstrictive-ellison.ngrok-free.dev/course-register'
+# VNPAY_RETURN_URL = 'https://pseudopsychological-vasoconstrictive-ellison.ngrok-free.dev/course-register'
+VNPAY_IPN_URL = "https://pseudopsychological-vasoconstrictive-ellison.ngrok-free.dev/api/payments/vnpay-callback/"
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 SECURE_SSL_REDIRECT = False

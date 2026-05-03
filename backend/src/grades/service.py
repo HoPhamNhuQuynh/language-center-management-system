@@ -51,40 +51,32 @@ class ScoreService:
     
 
 class AttendanceService:
-    @staticmethod
-    def get_attendances_list(session):
-        classroom = session.schedule.classroom
 
+    @staticmethod
+    def get_or_initialize_attendances(session):
+        classroom = session.schedule.classroom
+        
         enrollments = Enrollment.objects.filter(
             classroom=classroom
         ).select_related('student')
 
-        attendances = Attendance.objects.filter(
-            session=session,
-            enrollment__enrollment_status=Enrollment.Status.SUCCESS
+        existing_attendance_enrollment_ids = set(
+            Attendance.objects.filter(session=session)
+            .values_list('enrollment_id', flat=True)
         )
 
-        attendance_map = {
-            a.enrollment_id: a
-            for a in attendances
-        }
+        missing = [
+            Attendance(session=session, enrollment=e)
+            for e in enrollments
+            if e.id not in existing_attendance_enrollment_ids
+        ]
 
-        result = []
+        if missing:
+            with transaction.atomic():
+                Attendance.objects.bulk_create(missing)
 
-        DEFAULT_STATUS = Attendance.Status.ABSENT
-
-        for e in enrollments:
-            att = attendance_map.get(e.id)
-
-            result.append({
-                'enrollment_id': e.id,
-                'student_name': f'{e.student.first_name} {e.student.last_name}',
-                'attendance_status': (att.attendance_status if att else DEFAULT_STATUS),
-                'note': att.note if att else ""
-            })
-
-        return result
-    
+        return Attendance.objects.filter(session=session)\
+            .select_related('enrollment__student')
 
     @staticmethod
     @transaction.atomic

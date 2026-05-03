@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { useRef } from "react";
 
-function StudentInfoForm({ logo, user, studentProfile, tuition, courses, isModalOpen, editData, setEditData, onOpenModal, onSave, setIsOpen, onAvatarChange }) {
+function StudentInfoForm({ user, studentProfile, tuition, courses, isModalOpen, editData, setEditData, onOpenModal, onSave, setIsOpen, onAvatarChange }) {
   const fileInputRef = useRef(null);
 
   return (
@@ -51,8 +51,8 @@ function StudentInfoForm({ logo, user, studentProfile, tuition, courses, isModal
           </div>
 
           <div className="student-profile-avatar" onClick={() => fileInputRef.current?.click()}>
-            {user?.profile?.avatar ? (
-              <img src={user.profile.avatar} alt="avatar"
+            {user?.avatar ? (
+              <img src={user?.avatar} alt="avatar"
                 style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "22px" }} />
             ) : (
               <div className="student-profile-avatar-inner"></div>

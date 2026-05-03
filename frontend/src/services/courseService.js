@@ -11,7 +11,7 @@ export const courseDetailApi = async (data) => {
 }
 
 export const searchCourseApi = async (query) => {
-    return await Apis.get(`${endpoints['courses']}?q=${query}`);
+    return await Apis.get(`courses?q=${query}`);
 };
 
 export const tagApi = async () => {

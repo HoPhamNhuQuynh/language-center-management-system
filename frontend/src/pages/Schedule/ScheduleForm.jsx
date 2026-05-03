@@ -18,7 +18,7 @@ function ScheduleForm({ weekLabel, weekNumber, weekDates, totalWeeks, onWeekChan
   return (
     <div className="schedule-layout">
       <main className="schedule-main">
-        <h1 style={{ textAlign: "center" }}>LỊCH HỌC</h1>
+        <h1 style={{ textAlign: "center" }}>THỜI KHÓA BIỂU</h1>
 
         <div className="schedule-board">
           <div className="schedule-week-row">
@@ -57,7 +57,6 @@ function ScheduleForm({ weekLabel, weekNumber, weekDates, totalWeeks, onWeekChan
                 <div className="schedule-day-body">
                   {getLessonsByDay(item.day).map((lesson, i) => {
                     const top = timeToY(lesson.start_time);
-                    const height = timeToY(lesson.end_time) - top;
                     return (
                       <div
                         className="schedule-class-card"

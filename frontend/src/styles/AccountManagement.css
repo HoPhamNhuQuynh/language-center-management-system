@@ -1,0 +1,71 @@
+.account-container {
+    padding: 25px;
+    background: #f4f7fe;
+    min-height: 100vh;
+}
+
+.account-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    color: #1a335d;
+}
+
+.btn-add-red {
+    background: #ff4d4f;
+    color: white;
+    border: none;
+    padding: 10px 25px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.account-table-card {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+}
+
+.account-table-card table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.account-table-card th {
+    background: #1a335d;
+    color: white;
+    padding: 15px;
+    text-align: left;
+}
+
+.account-table-card td {
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.role-badge {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.role-badge.teacher {
+    background: #e3f2fd;
+    color: #1976d2;
+}
+
+.status-active {
+    color: #2ecc71;
+    font-size: 14px;
+}
+
+.btn-icon {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    margin-right: 10px;
+}
