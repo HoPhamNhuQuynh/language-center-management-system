@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import LoginForm from "../../pages/Auth/LoginForm";
-import { loginApi, googleLoginApi, facebookLoginApi } from "../../services/AuthService"
+import { loginApi, googleLoginApi, facebookLoginApi } from "../../services/authService"
 import { setTokens } from "../../utils/token";
 import { useGoogleLogin } from "@react-oauth/google";
 import { FacebookLoginClient } from "@greatsumini/react-facebook-login";

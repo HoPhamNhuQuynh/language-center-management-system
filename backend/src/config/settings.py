@@ -27,7 +27,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["localhost",
                  "127.0.0.1",
-                 'pseudopsychological-vasoconstrictive-ellison.ngrok-free.dev']
+                 'juggling-widen-prewar.ngrok-free.dev']
 
 AUTH_USER_MODEL = 'users.User'
 
@@ -124,13 +124,13 @@ SECURE_CROSS_ORIGIN_OPENER_POLICY = None
 SECURE_CROSS_ORIGIN_EMBEDDER_POLICY = None
 CSRF_TRUSTED_ORIGINS = [
     "https://localhost:5173",
+    "https://juggling-widen-prewar.ngrok-free.dev",
 ]
 
 # CORS_ALLOW_CREDENTIALS = True
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
-    'allauth.account.middleware.AccountMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -138,6 +138,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -168,7 +169,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'language_center_db',
         'USER': 'root',
-        'PASSWORD': 'Nhuquynh261105@',
+        'PASSWORD': 'root',
         'HOST': '', # mặc định localhost
         'PORT': '3306',
     }
@@ -213,10 +214,10 @@ STATIC_URL = 'static/'
 
 # Setting payment service
 VNPAY_TMN_CODE = 'YCXQRNYD'
-VNPAY_RETURN_URL = '/'
 VNPAY_HASH_SECRET = 'SAR75YVR7QKTU9HLD3C4MXY77Y01E387'
 VNPAY_URL = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html"
-VNPAY_RETURN_URL = "https://pseudopsychological-vasoconstrictive-ellison.ngrok-free.dev/api/payments/vnpay-callback/"
+VNPAY_RETURN_URL = 'https://localhost:5174/course-register'
+VNPAY_IPN_URL = "https://juggling-widen-prewar.ngrok-free.dev/api/payments/vnpay-callback/"
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 SECURE_SSL_REDIRECT = False

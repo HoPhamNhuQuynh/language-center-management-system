@@ -15,7 +15,7 @@ Tài liệu API nhằm mô tả cách thức tương tác với hệ thống, ba
 ## 1.2 Base URL
 
 ```
-http://localhost:5000
+https://localhost:8000/api/
 ```
 
 ---
@@ -24,7 +24,7 @@ http://localhost:5000
 
 ### Cơ chế (Mechanism)
 
-Hệ thống sử dụng kết hợp OAuth 2.0 cho xác thực bên thứ ba và xác thực bằng username/password cho tài khoản nội bộ. Sau khi xác thực thành công, hệ thống cấp JWT (Bearer Token) để sử dụng cho các request tiếp theo, đảm bảo tính nhất quán và khả năng mở rộng.
+Hệ thống sử dụng kết hợp OAuth 2.0 cho xác thực bên thứ ba và xác thực bằng username/password cho tài khoản nội bộ. Sau khi xác thực thành công, hệ thống cấp Access Token (Bearer Token) dạng opaque để sử dụng cho các request tiếp theo, đảm bảo tính nhất quán và khả năng mở rộng.
 
 ### Header
 
@@ -124,9 +124,7 @@ Sử dụng `application/json`
 #### 2. Cấu trúc success response
 ```
 {
-  "status": "success",
-  "data": {},
-  "message": "string"
+  "data": {}
 }
 ```
 
@@ -153,10 +151,7 @@ Sử dụng `application/json`
 
 ```
 {
-  "status": "error",
   "error": {
-    "code": "ERROR_CODE",
-    "message": "Short error message",
     "details": "Optional detailed info"
   }
 }
@@ -167,13 +162,13 @@ Sử dụng `application/json`
 ## 2.1. Quản lý Định danh và Truy cập (IAM - Identity and Access Management)
 
 ### 2.1.1. Đăng nhập hệ thống bằng tài khoản LOCAL
-- Endpoint: POST /auth/login
+- Endpoint: POST auth/login/
 - Mô tả: dùng khi user đăng nhập vào hệ thống
 - Request response
 ```
 {
-  "username": "abc",
-  "password": "123456"
+  "username": "nva",
+  "password": "Abc123@"
 }
 ```
 
@@ -181,59 +176,50 @@ Sử dụng `application/json`
   * HTTP Status Code: 200 OK
 ```
 {
-  "status": "success",
-  "data": {
-    "access_token": "...",
-    "refresh_token": "...",
-    "user": {
-      "id": 1,
-      "username": "nhuquynh",
-      "email": "quynh@gmail.com",
-      "provider_auth": "local"
-    }
-  }
+    "access_token": "5pKTtaSgbbhPIdPB7X8EAex8CyfAH1",
+    "expires_in": 36000,
+    "token_type": "Bearer",
+    "scope": "read write",
+    "refresh_token": "Px3H8h93vJkpicYi38cYzfDQIbQKE1"
 }
 ```
 
 ### 2.1.2. Đăng ký tài khoản LOCAL
-- Endpoint: POST /auth/register
+- Endpoint: POST auth/register/
 - Mô tả: dùng khi user đăng ký tài khoản để sử dụng hệ thống.
 - Request response
 ```
 {
-  "username": "nhuquynh",
-  "email": "quynh@gmail.com",
-  "password": "123456",
-  "phone_num": "0123456789",
-  "first_name": "quynh",
-  "last_name": "nhu"
+    "first_name": "Hv1",
+    "last_name": "Test",
+    "username": "Hv1",
+    "password": "Testhv@123",
+    "email": "test1@gmail.com",
+    "phone_num": "0123445789"
+
 }
 ```
 
 - Success response
-  * HTTP Status Code: 200 OK
+  * HTTP Status Code: 201 OK
 ```
 {
-  "status": "success",
-  "data": {
-    "access_token": "...",
-    "refresh_token": "...",
-    "user": {
-      "id": 1,
-      "username": "nhuquynh",
-      "email": "quynh@gmail.com"
-    }
-  }
+    "access_token": "vX9OyRm7Xr7M9RBZQkn72xkZOSVkVj",
+    "expires_in": 36000,
+    "token_type": "Bearer",
+    "scope": "read write",
+    "refresh_token": "4JY1VPkVVneJTDxr9eCpLNb9pSBdKf"
 }
 ```
 
 ### 2.1.3. Xác thực tài khoản người dùng bằng Google
-- Endpoint: POST /auth/social/google
+- Endpoint: POST auth/social-login/
 - Mô tả: dùng khi user đăng nhập vào hệ thống bằng tài khoản Google
 - Request response
 ```
 {
-  "code": "google_auth_code"
+  "provider": "GOOGLE",
+  "access_token": "..."
 }
 ```
 
@@ -241,27 +227,25 @@ Sử dụng `application/json`
   * HTTP Status Code: 200 OK
 ```
 {
-  "status": "success",
-  "data": {
-    "access_token": "...",
-    "refresh_token": "...",
-    "user": {
-      "id": 1,
-      "username": "nhuquynh",
-      "email": "quynh@gmail.com",
-      "provider_auth": "google"
-    }
+  "access_token": "...",
+  "refresh_token": "...",
+  "user": {
+    "id": ...,
+    "username": "...",
+    "email": "...",
+    "provider_auth": "google"
   }
 }
 ```
 
 ### 2.1.4. Xác thực người dùng bằng tài khoản Facebook
-- Endpoint: POST /auth/social/facebook
+- Endpoint: POST POST auth/social-login/
 - Mô tả: dùng khi user đăng nhập vào hệ thống bằng tài khoản Facebook
 - Request response
 ```
 {
-  "access_token": "facebook_token"
+  "provider": "FACEBOOK",
+  "access_token": "..."
 }
 ```
 
@@ -269,27 +253,24 @@ Sử dụng `application/json`
   * HTTP Status Code: 200 OK
 ```
 {
-  "status": "success",
-  "data": {
     "access_token": "...",
     "refresh_token": "...",
     "user": {
-      "id": 1,
-      "username": "nhuquynh",
-      "email": "quynh@gmail.com",
-      "provider": "facebook"
+      "id": ...,
+      "username": "...",
+      "email": "...",
+      "provider_auth": "facebook"
     }
   }
-}
 ```
 
 ### 2.1.5. Refresh Token
-- Endpoint: POST /auth/refresh
-- Mô tả: dùng khi user đăng nhập vào hệ thống
+- Endpoint: POST auth/refresh/
+- Mô tả: dùng khi user cần gia hạn access_token
 - Request response
 ```
 {
-  "refresh_token": "..."
+  "refresh_token": "4JY1VPkVVneJTDxr9eCpLNb9pSBdKf"
 }
 ```
 
@@ -297,21 +278,37 @@ Sử dụng `application/json`
   * HTTP Status Code: 200 OK
 ```
 {
-  "status": "success",
-  "data": {
-    "access_token": "new_access_token"
-  }
+    "access_token": "vX9OyRm7Xr7M9RBZQkn72xkZOSVkVj",
+    "expires_in": 36000,
+    "token_type": "Bearer",
+    "scope": "read write",
+    "refresh_token": "4JY1VPkVVneJTDxr9eCpLNb9pSBdKf"
 }
 ```
 
 ### 2.1.6. Đăng xuất tài khoản
-- Endpoint: POST /auth/logout
-- Mô tả: dùng khi user đăng nhập vào hệ thống
+- Endpoint: POST auth/logout/
+- Mô tả: dùng khi user đăng xuất khỏi hệ thống
 - Authorization: Bearer <access_token>
 - Request response
 ```
 {
-  "refresh_token": "..."
+  "token": "4JY1VPkVVneJTDxr9eCpLNb9pSBdKf"
+}
+```
+
+- Success response
+  * HTTP Status Code: 200 OK
+
+### 2.1.7. Đổi mật khẩu 
+- Endpoint: POST users/me/reset-password/
+- Mô tả: dùng khi user đổi mật khẩu mới
+- Authorization: Bearer <access_token>
+- Request response
+```
+{
+  "old_password": "Old@123",
+  "password": "New@123"
 }
 ```
 
@@ -319,44 +316,36 @@ Sử dụng `application/json`
   * HTTP Status Code: 200 OK
 ```
 {
-  "status": "success",
-  "message": "Logged out successfully"
+    "id": 4,
+    "first_name": "Minh",
+    "last_name": "Trần",
+    "email": "minhtran@gmail.com",
+    "username": "student_minh"
 }
 ```
 
 ## 2.2. Quản lý Tài nguyên người dùng (User Resource Management)
 ### 2.2.1. Lấy thông tin chi tiết người dùng
-- Endpoint: GET /users/me 
+- Endpoint: GET users/me/
 - Mô tả: dùng để phục vụ hiển thị hồ sơ người dùng
 - Authorization: Bearer <access_token>
 - Success Response
   * HTTP Status Code: 200 OK
 ```
 {
-  "status": "success",
-  "data":
-    {
-      "id": "1",
-      "email": "a@gmail.com",
-      "username": "abc",
-      "auth_provider": "LOCAL",
-      "role_id": 1,
-      "created_at": "2026-03-18T08:30:00Z",
-      "first_name": "a",
-      "last_name": "bc",
-      "phone_num": "0123456789",
-      "avatar": "/images/default-avatar.png"
-    },
-  "message": ""
+    "id": 1,
+    "first_name": "Hv1",
+    "last_name": "Test",
+    "email": "test1@gmail.com",
+    "username": "Hv1",
+    "date_joined": "2026-04-29T01:32:44.331870+07:00",
+    "last_login": null,
+    "profile": {
+        "phone_num": "0123445789",
+        "avatar": "https://res.cloudinary.com/desvczltb/image/upload/v1/language_center_testing/defaults/student_4297861_lyjelp"
+    }
 }
-```
-
-- Possible errors:
-  - 400: tham số request không hợp lệ
-  - 401: chứng thực không thành công
-  - 403: user không có quyền truy cập tài nguyên
-  - 404: không tìm thấy user
-                
+```               
            
 ### 2.2.2. Cập nhật thông tin cơ bản của người dùng
 - Endpoint: PATCH /users/me
@@ -365,10 +354,10 @@ Sử dụng `application/json`
 - Request Body
 ```
 {
-  "email": "quynh@gmail.com",
-  "phone_num": "0987654321",
-  "first_name": "quynh",
-  "last_name": "nhuuuu",
+  "email": "ab@gmail.com",
+  "phone_num": "0123456489",
+  "first_name": "Minh",
+  "last_name": "Trong"
 }
 ```
 
@@ -376,86 +365,80 @@ Sử dụng `application/json`
   * HTTP Status Code: 200 OK
 ```
 {
-  "status": "success",
-  "data": {
-    "id": 1,
-    "email": "quynh@gmail.com",
-    "first_name": "quynh",
-    "last_name": "nhuuu",
-    "phone_num": "0987654321",
-    "avatar": "/images/avatar.png"
-  },
-  "message": "User updated successfully"
+    "id": 29,
+    "first_name": "Minh",
+    "last_name": "Trana",
+    "email": "ab@gmail.com",
+    "username": "Hv18",
+    "phone_num": "0123456989"
 }
 ```
 
-- Error Response
-
-| HTTP Status               | Mô tả                                        |
-|---------------------------|----------------------------------------------|
-| 400 Bad Request           | Dữ liệu gửi lên không hợp lệ                 |
-| 401 Unauthorized          | Token thiếu, hết hạn hoặc sai                |
-| 403 Forbidden             | Cố gắng cập nhật user khác mà không có quyền |
-| 500 Internal Server Error | Lỗi server                                   |
 
 ### 2.2.3. Cập nhật ảnh đại diện người dùng
-- Endpoint: PATCH /users/me/avatar
+- Endpoint: PATCH /users/me/avatar/
 - Mô tả: dùng khi người dùng muốn cập nhật ảnh đại diện
 - Authorization: Bearer <access_token>
 - Content-Type: multipart/form-data
 - Request Body (form-data)
 ```
-  avatar: <file ảnh>
+ {
+  "avatar": <file image>
+ }
 ```
 
 - Success Response
   * HTTP Status Code: 200 OK
 ```
 {
-  "status": "success",
-  "data": {
-      "avatar_url": "https://res.cloudinary.com/demo/image/upload/v123456/avatar.jpg"
-  },
-  "message": "User updated successfully"
+  {
+    "avatar": "https://res.cloudinary.com/desvczltb/image/upload/v1777403527/language_center_testing/users/hzblstjnslexfnrfkqnk.png"
+}
 }
 ```
 
 ### 2.2.4. Lấy danh sách các lớp học đã đăng ký của 1 người dùng
-- Endpoint: GET /users/me/enrollments
+- Endpoint: GET users/me/enrollments/
 - Mô tả: dùng khi người dùng muốn xem các lớp học đã đăng ký
 - Authorization: Bearer <access_token>
 - Success Response
   * HTTP Status Code: 200 OK
 ```
-{
-  "status": "success",
-  "data": {
-    "enrollments": [
-      {
-        "id": 101,
-        "class_id": 20,
-        "class_name": "EN_I5F1",
-        "course_name": "IELTS 5.0 Foundation"
-      },
-      {
-        "id": 102,
-        "class_id": 25,
-        "class_name": "EN_I6F2",
-        "course_name": "IELTS 6.0 Foundation"
-      }
-    ],
-    "pagination": {
-      "page": 1,
-      "limit": 10,
-      "total": 2
-    }
+[
+  {
+    "id": 1,
+    "student": {
+        "id": 4,
+        "first_name": "Minh",
+        "last_name": "Trần",
+        "email": "minhtran@gmail.com",
+        "username": "student_minh",
+        "full_name": "Trần Minh"
+    },
+    "classroom": {
+        "id": 1,
+        "name": "Lớp Giao Tiếp Căn Bản - K23 (Ca Tối)",
+        "course": "Khóa Học Giao Tiếp Toàn Diện 360",
+        "start_date": "2024-05-01",
+        "end_date": "2024-07-31",
+        "active": false,
+        "main_teacher": {
+            "id": 2,
+            "first_name": "John",
+            "last_name": "Doe",
+            "email": "johndoe@ttngoaingu.edu.vn",
+            "username": "teacher_john",
+            "full_name": "Doe John"
+        }
+    },
+    "enrollment_status": "SUCCESS",
+    "payment_deadline": "2024-04-21T06:59:59+07:00"
   },
-  "message": "Enrollments retrieved successfully"
-}
+]
 ```
 
 ### 2.2.5. Lấy thông tin chi tiết của lớp học đã đăng ký
-- Endpoint: GET /users/me/enrollments/{enroll_id}
+- Endpoint: GET enrollments/{enroll_id}/
 - Mô tả: dùng khi người dùng muốn xem chi tiết lớp học đã đăng ký
 - Authorization: Bearer <access_token>
 - Path Params
@@ -468,68 +451,41 @@ Sử dụng `application/json`
   * HTTP Status Code: 200 OK
 ```
 {
-  "status": "success",
-  "data": {
-    "enrollment_id": 101,
-    "class": {
-      "id": 20,
-      "name": "IELTS Intensive",
-      "start_date": "2026-03-01",
-      "end_date": "2026-05-30",
-
-      "course": {
-        "id": 5,
-        "name": "IELTS 6.5+ Target",
-        "level": "Intermediate",
-        "tags": ["English"]
-      },
-
-      "main_teacher": {
-        "user_id": 3,
-        "name": "Nguyễn Văn A"
-      }
+    "id": 1,
+    "student": {
+        "id": 4,
+        "first_name": "Minh",
+        "last_name": "Trần",
+        "email": "minhtran@gmail.com",
+        "username": "student_minh",
+        "full_name": "Trần Minh"
     },
-
-    "grade_report": {
-      "items": [
-        {
-          "score_type_id": 1,
-          "name": "Listening",
-          "score": 7.5,
-          "weight": 0.25
-        },
-        {
-          "score_type_id": 2,
-          "name": "Reading",
-          "score": 8.0,
-          "weight": 0.25
-        },
-        {
-          "score_type_id": 3,
-          "name": "Writing",
-          "score": 6.5,
-          "weight": 0.25
-        },
-        {
-          "score_type_id": 4,
-          "name": "Speaking",
-          "score": 7.0,
-          "weight": 0.25
+    "classroom": {
+        "id": 1,
+        "name": "Lớp Giao Tiếp Căn Bản - K23 (Ca Tối)",
+        "course": "Khóa Học Giao Tiếp Toàn Diện 360",
+        "start_date": "2024-05-01",
+        "end_date": "2024-07-31",
+        "active": false,
+        "main_teacher": {
+            "id": 2,
+            "first_name": "John",
+            "last_name": "Doe",
+            "email": "johndoe@ttngoaingu.edu.vn",
+            "username": "teacher_john",
+            "full_name": "Doe John"
         }
-      ],
-      "average_score": 7.5
     },
-
-    "evaluation": {
-      "comment": "Kỹ năng đọc rất tốt, cần luyện tập thêm phần Writing Task 2 để cải thiện tốc độ."
-    }
-  },
-  "message": "Enrollment details retrieved successfully"
+    "enrollment_status": "SUCCESS",
+    "payment_deadline": "2024-04-21T06:59:59+07:00",
+    "created_at": "2026-04-19T22:09:21+07:00",
+    "updated_at": "2026-04-19T22:09:21+07:00",
+    "active": true
 }
 ```
 
 ### 2.2.6. Lấy dữ liệu thời khóa biểu - PHỨC TẠP CHECK LẠI SAU
-- Endpoint: GET /users/me/timetable
+- Endpoint: GET users/me/timetable/
 - Mô tả: dùng khi người dùng muốn xem thời khóa biểu 
 - Authorization: Bearer <access_token>
 - Query Params
@@ -543,157 +499,80 @@ Sử dụng `application/json`
   * HTTP Status Code: 200 OK
 ```
 {
-  "status": "success",
-  "data": {
-    "week": {
-      "start_date": "2026-03-01",
-      "end_date": "2026-03-07"
-    },
-    "timetable": {
-      "monday": [
-        {
-          "session_id": 1000,
-          "class_name": "Grammar Foundation",
-          "time_range": "18:00 - 20:00",
-          "room": "Room A1",
-          "teacher": "Trần Thị B"
-        }
-      ],
-      "tuesday": [],
-      "wednesday": [
-        {
-          "session_id": 1001,
-          "class_name": "TANC1",
-          "time_range": "08:00 - 11:00",
-          "room": "Lab 01",
-          "teacher": "Nguyễn Văn A"
-        }
-      ],
-      "thursday": [],
-      "friday": [],
-      "saturday": [
-        {
-          "session_id": 1002,
-          "class_name": "Speaking Booster",
-          "time_range": "14:00 - 16:00",
-          "room": "Room B2",
-          "teacher": "Lê Văn C"
-        }
-      ],
-      "sunday": []
-    }
-  },
-  "message": "Timetable retrieved successfully"
+  
 }
 ```
 
 ### 2.2.7. Lấy lịch sử thanh toán của người dùng
-- Endpoint: GET /users/me/payments
+- Endpoint: GET users/me/payments/
 - Mô tả: dùng khi người dùng muốn xem lịch sử thanh toán
 - Authorization: Bearer <access_token>
 - Success Response
   * HTTP Status Code: 200 OK
 ```
-{
-  "status": "success",
-  "data": {
-    "summary": {
-      "total_paid": 10000000
-    },
-    "payments": [
-      {
-        "course_name": "English Communication A",
-        "class_code": "ENG-COM-A1",
-        "enrollment_date": "2026-03-01",
-        "payment_date": "2026-03-02",
-        "amount": 5000000
-      },
-      {
-        "course_name": "English Communication A",
-        "class_code": "ENG-COM-A1",
-        "enrollment_date": "2026-03-01",
-        "payment_date": "2026-04-02",
-        "amount": 5000000
-      }
-    ]
-  }
-}
+[
+  {
+      "id": 1,
+      "enrollment": 1,
+      "amount": "3500000.00",
+      "payment_method": "VNPAY",
+      "paid_at": "2026-04-19T22:09:21+07:00",
+      "classroom": "Lớp Giao Tiếp Căn Bản - K23 (Ca Tối)"
+  },
+]
 ```
 
 ## 2.3. Quản lý Tài nguyên đào tạo (Training Resources)
 
 ### 2.3.1. Lấy danh sách khóa học
-- Endpoint: GET /courses
+- Endpoint: GET courses/
 - Mô tả: trả về danh sách các khóa học để hiển thị cho người dùng
 - Query Params
 
 | Trường   | Kiểu dữ liệu | Bắt buộc | Mô tả                    |
 |----------|--------------|----------|--------------------------|
 | page     | int          | không    | số trang                 |
-| limit    | int          | không    | số bản ghi trên 1 trang  |
 | tag_id   | int          | không    | lọc dữ liệu theo thẻ     |
 | level_id | int          | không    | lọc khóa học theo llevel |
 - Success Response
   * HTTP Status Code: 200 OK
 
 ```
-{
-  "status": "success",
-  "data": [
+[
     {
-      "id": 1,
-      "name": "English Communication A1",
-      "image": "/images/courses/english-communication-a1.png",
-      "total_sessions": 24,
-      "level_id": 1,
-      "created_at": "2026-03-18T08:30:00Z"
+        "id": 1
+        "name": "Khóa Học Giao Tiếp Toàn Diện 360",
+        "image": "https://res.cloudinary.com/desvczltb/image/upload/v1/language_center_testing/courses/giaotiep360",
+        "total_sessions": 36,
+        "level": 1,
+        "level_name": "Cơ bản (Beginner)",
+        "tags": [
+            {
+                "id": 1,
+                "name": "Giao Tiếp Thực Chiến"
+            }
+        ]
     },
     {
-      "id": 2,
-      "name": "English Communication A2",
-      "image": "/images/courses/english-communication-a2.png",
-      "total_sessions": 24,
-      "level_id": 2,
-      "created_at": "2026-03-18T09:00:00Z"
+        "id": 2,
+        "name": "IELTS Master 6.5+ (Đảm Bảo Đầu Ra)",
+        "image": "https://res.cloudinary.com/desvczltb/image/upload/v1/language_center_testing/courses/ielts_master",
+        "total_sessions": 48,
+        "level": 3,
+        "level_name": "Nâng cao (Advanced/IELTS)",
+        "tags": [
+            {
+                "id": 2,
+                "name": "Luyện Thi IELTS"
+            }
+        ]
     },
-    {
-      "id": 3,
-      "name": "IELTS Foundation",
-      "image": "/images/courses/ielts-foundation.png",
-      "total_sessions": 30,
-      "level_id": 3,
-      "created_at": "2026-03-17T14:20:00Z"
-    },
-    {
-      "id": 4,
-      "name": "IELTS Intensive 6.5+",
-      "image": "/images/courses/ielts-intensive.png",
-      "total_sessions": 36,
-      "level_id": 4,
-      "created_at": "2026-03-16T10:15:00Z"
-    },
-    {
-      "id": 5,
-      "name": "TOEIC Preparation",
-      "image": "/images/courses/toeic-prep.png",
-      "total_sessions": 28,
-      "level_id": 3,
-      "created_at": "2026-03-15T11:45:00Z"
-    }
-  ],
-  "meta": {
-    "page": 1,
-    "limit": 20,
-    "total": 124,
-    "total_pages": 7
-  },
-  "message": "Courses retrieved successfully"
-}
+]
 ```
 
 
 ### 2.3.2. Lấy thông tin chi tiết khóa học
-- Endpoint: GET courses/{course_id}
+- Endpoint: GET courses/{course_id}/
 - Mô tả: trả về thông tin chi tiết của khóa học để hiển thị nội dung và thông tin liên quan
 - Path params
 
@@ -706,56 +585,50 @@ Sử dụng `application/json`
 
 ```
 {
-  "status": "success",
-  "data": {
-    "id": 1,
-    "name": "English Communication A1",
-    "image": "/images/courses/english-communication-a1.png",
-    "total_sessions": 24,
-    "level_id": 1,
-    "created_at": "2026-03-18T08:30:00Z",
-    "price": 2000000,
-    "description": "This course is designed for beginners to build a strong foundation in English communication, including listening, speaking, and basic grammar.",
-    "tags": [
+  "id": 2,
+  "name": "IELTS Master 6.5+ (Đảm Bảo Đầu Ra)",
+  "image": "https://res.cloudinary.com/desvczltb/image/upload/v1/language_center_testing/courses/ielts_master",
+  "total_sessions": 48,
+  "level": 3,
+  "level_name": "Nâng cao (Advanced/IELTS)",
+  "tags": [
       {
-        "id": 1,
-        "name": "Beginner"
-      },
-      {
-        "id": 2,
-        "name": "Communication"
-      },
-      {
-        "id": 3,
-        "name": "Basic Grammar"
+          "id": 2,
+          "name": "Luyện Thi IELTS"
       }
-    ]
-  },
-  "message": "Course retrieved successfully"
+  ],
+  "price": "8000000.00",
+  "description": "Chiến lược làm bài thực chiến 4 kỹ năng nghe, nói, đọc, viết theo chuẩn IELTS.",
+  "active": true,
+  "created_at": "2026-04-19T22:09:21+07:00"
 }
 ```
 
 ### 2.3.3. Lấy danh sách thẻ
-- Endpoint: GET /tags
+- Endpoint: GET tags/
 - Mô tả: trả về danh sách các thẻ để phục vụ phân loại hoặc lọc khóa học.
 - Success Response
   * HTTP Status Code: 200 OK
 
 ```
-{
-  "status": "success",
-  "data": [
+[
     {
-      "id": 1, 
-      "name": "English"
+        "id": 1,
+        "name": "Giao Tiếp Thực Chiến"
     },
     {
-      "id": 2, 
-      "name": "Chinese"
+        "id": 2,
+        "name": "Luyện Thi IELTS"
+    },
+    {
+        "id": 3,
+        "name": "Luyện Thi TOEIC"
+    },
+    {
+        "id": 4,
+        "name": "Tiếng Anh Doanh Nghiệp"
     }
-  ],
-  "message": ""
-}
+]
 ```
 
 
@@ -772,109 +645,66 @@ Sử dụng `application/json`
   * HTTP Status Code: 200 OK
 
 ```
-{
-  "status": "success",
-  "data": [
+[
     {
-      "id": 1,
-      "class_name": "Morning Class - Batch 01",
-      "start_date": "2026-06-02",
-      "end_date": "2026-09-15",
-      "capacity": 30,
-      "current_enrollments": 18,
-      "course_name": "English Communication A1",
-      "schedules": [
-        {
-          "id": 1,
-          "class_id": 1,
-          "start_time": "08:00:00",
-          "end_time": "10:00:00",
-          "day_of_week": 2
-        },
-        {
-          "id": 2,
-          "class_id": 1,
-          "start_time": "08:00:00",
-          "end_time": "10:00:00",
-          "day_of_week": 4
+        "id": 1,
+        "name": "Lớp Giao Tiếp Căn Bản - K23 (Ca Tối)",
+        "course": "Khóa Học Giao Tiếp Toàn Diện 360",
+        "start_date": "2024-05-01",
+        "end_date": "2024-07-31",
+        "active": false,
+        "main_teacher": {
+            "id": 2,
+            "first_name": "John",
+            "last_name": "Doe",
+            "email": "johndoe@ttngoaingu.edu.vn",
+            "username": "teacher_john",
+            "full_name": "Doe John"
         }
-      ]
-    },
-    {
-      "id": 2,
-      "class_name": "Evening Class - Batch 02",
-      "start_date": "2026-07-01",
-      "end_date": "2026-10-01",
-      "capacity": 25,
-      "current_enrollments": 25,
-      "course_name": "English Communication A1",
-      "schedules": [
-        {
-          "id": 3,
-          "class_id": 2,
-          "start_time": "18:00:00",
-          "end_time": "20:00:00",
-          "day_of_week": 3
-        },
-        {
-          "id": 4,
-          "class_id": 2,
-          "start_time": "18:00:00",
-          "end_time": "20:00:00",
-          "day_of_week": 5
-        }
-      ]
     }
-  ],
-  "meta": {
-    "page": 1,
-    "limit": 20,
-    "total": 55,
-    "total_pages": 3
-  },
-  "message": "Classes retrieved successfully"
-}
+]
 ```
 
 ### 2.3.5. Lấy danh sách cấp độ 
-- Endpoint: GET /levels
+- Endpoint: GET levels/
 - Mô tả: trả về danh sách các cấp độ để phục vụ phân loại hoặc lọc khóa học.
 - Success Response
   * HTTP Status Code: 200 OK
 
 ```
-{
-  "status": "success",
-  "data": [
+[
     {
-      "id": 1, 
-      "name": "Intermediate"
+        "id": 1,
+        "name": "Cơ bản (Beginner)",
+        "description": "Dành cho học viên mất gốc, bắt đầu làm quen tiếng Anh."
     },
     {
-      "id": 2, 
-      "name": "Advanced"
+        "id": 2,
+        "name": "Trung cấp (Intermediate)",
+        "description": "Có nền tảng, tập trung phát triển tư duy tiếng Anh và phản xạ."
+    },
+    {
+        "id": 3,
+        "name": "Nâng cao (Advanced/IELTS)",
+        "description": "Sử dụng tiếng Anh chuyên sâu, luyện thi chứng chỉ quốc tế."
     }
-  ],
-  "message": ""
-}
+]
 ```
 
-### 2.3.6. Lấy danh sách cột điểm 
-- Endpoint: GET /score-types
+### 2.3.6. Lấy danh sách cột điểm ---- Cần fix 
+- Endpoint: GET courses/{course_id}/score-types/
 - Mô tả: trả về danh sách các cột điểm để hiển thị điểm.
+- Path params
+
+| Tham số   | Kiểu dữ liệu | Bắt buộc | Mô tả                         |
+|-----------|--------------|----------|-------------------------------|
+| course_id | int          | có       | ID định danh khóa học cụ thể. |
+
 - Success Response
   * HTTP Status Code: 200 OK
 
 ```
-{
-  "status": "success",
-  "data": [
-    { "id": 1, "name": "Chuyên cần" },
-    { "id": 2, "name": "Giữa kỳ" },
-    { "id": 3, "name": "Cuối kỳ" }
-  ],
-  "message": "Score types retrieved successfully"
-}
+
 ```
 
 ### 2.3.7. Lấy danh sách buổi học của lớp
@@ -883,14 +713,34 @@ Sử dụng `application/json`
 - Success Response
   * HTTP Status Code: 200 OK
 ```
+[
+  {
+    "id": 1,
+    "date": "2024-05-06",
+    "start_time": "18:00:00",
+    "end_time": "20:00:00",
+    "user": 2,
+    "teacher_fullname": "Doe John",
+    "room": {
+        "id": 1,
+        "name": "Phòng Lab 01 (Cơ Sở 1)",
+        "capacity": 30
+    }
+},
 {
-  "status": "success",
-  "data": [
-    { "session_id": 401, "date": "2026-03-20" },
-    { "session_id": 402, "date": "2026-03-22" }
-  ],
-  "message": "Sessions retrieved successfully"
-}
+    "id": 2,
+    "date": "2024-05-08",
+    "start_time": "18:00:00",
+    "end_time": "20:00:00",
+    "user": 2,
+    "teacher_fullname": "Doe John",
+    "room": {
+        "id": 1,
+        "name": "Phòng Lab 01 (Cơ Sở 1)",
+        "capacity": 30
+    }
+  }
+]
 ```
 
 
@@ -903,83 +753,25 @@ Sử dụng `application/json`
 - Success Response
   * HTTP Status Code: 200 OK
 ```
-{
-  "status": "success",
-  "data": {
-    "id": 301,
-    "user_id": 101,
-    "class_id": 201,
-    "enrollment_status": "PENDING_PAYMENT",
-    "payment_deadline": "2026-03-27T17:00:00",
-    "created_at": "2026-03-20T10:15:00"
-  },
-  "message": "Enrollment created successfully"
-}
-```
 
-### 2.4.2. Cập nhật trạng thái đăng ký - hệ thống tự động
-- Endpoint: PATCH /enrollments/{enroll_id}
-- Mô tả: khi người dùng thanh toán thành công
-- Authorization: Bearer <access_token>
-- Success Response
-  * HTTP Status Code: 200 OK
-```
-{
-  "status": "success",
-  "data": {
-    "id": 301,
-    "user_id": 101,
-    "class_id": 201,
-    "enrollment_status": "SUCCESS",
-    "payment_deadline": "2026-03-27T17:00:00",
-    "created_at": "2026-03-20T10:15:00"
-  },
-  "message": "Enrollment updated successfully"
-}
-```
-
-### 2.4.3. Lấy thông tin chi tiết của 1 lần đăng ký
-- Endpoint: GET /enrollments/{enroll_id}
-- Mô tả: dùng khi cần hiển thị thông tin đăng ký cho người dùng xác nhận
-- Authorization: Bearer <access_token>
-- Success Response
-  * HTTP Status Code: 200 OK
-```
-{
-  "status": "success",
-  "data": {
-    "user_id": 101,
-    "first_name": "Nguyen",
-    "last_name": "An",
-    "phone_num": "0912345678",
-    "email": "nguyen.an@example.com",
-    "class_id": 201,
-    "class_name": "English Communication A1"
-  },
-  "message": "Enrollment details retrieved successfully"
-}
 ```
 
 ### 2.4.4. Thanh toán học phí
 - Endpoint: POST /payments
 - Mô tả: dùng khi người dùng thực hiện thanh toán
 - Authorization: Bearer <access_token>
+- Request Body
+```
+{
+    "enrollment": 1,
+    "amount": 4000000
+}
+```
 - Success Response
   * HTTP Status Code: 200 OK
 ```
 {
-  "status": "success",
-  "data": {
-    "id": 501,
-    "enrollment_id": 301,
-    "amount": 2000000,
-    "payment_method": "BANKING",
-    "payment_status": "SUCCESS",
-    "transaction_id": "TXN202603201015",
-    "paid_at": "2026-03-20T10:45:00",
-    "created_at": "2026-03-20T10:45:00"
-  },
-  "message": "Payment completed successfully"
+    "payment_url": "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html?vnp_Amount=500000000&vnp_Command=pay&vnp_CreateDate=20260429030319&vnp_CurrCode=VND&vnp_IpAddr=127.0.0.1&vnp_Locale=vn&vnp_OrderInfo=Thanh+toan+don+hang+3&vnp_OrderType=billpayment&vnp_ReturnUrl=https%3A%2F%2Fpseudopsychological-vasoconstrictive-ellison.ngrok-free.dev%2Fapi%2Fpayments%2Fvnpay-callback%2F&vnp_TmnCode=YCXQRNYD&vnp_TxnRef=3&vnp_Version=2.1.0&vnp_SecureHash=e25c42373f0b72cd3667094c32c9551baf5217d856568cb6c6638dc32dc831e458163aae6e051989b627837b843d6f64548ef1d047dda99b4332e78bf323fead"
 }
 ```
 
@@ -992,17 +784,22 @@ Sử dụng `application/json`
 {
   "scores": [
     {
-      "enrollment_id": 301,
+      "enrollment_id": 1,
       "score_type_id": 1,
-      "score_value": 8.5
+      "score_value": 8.0
     },
     {
-      "enrollment_id": 302,
+      "enrollment_id": 1,
       "score_type_id": 2,
       "score_value": 7.0
     },
     {
-      "enrollment_id": 303,
+      "enrollment_id": 2,
+      "score_type_id": 1,
+      "score_value": 6.5
+    },
+    {
+      "enrollment_id": 2,
       "score_type_id": 3,
       "score_value": 9.0
     }
@@ -1013,31 +810,11 @@ Sử dụng `application/json`
   * HTTP Status Code: 200 OK
 ```
 {
-  "status": "success",
-  "data": [
-    {
-      "id": 701,
-      "enrollment_id": 301,
-      "score_type_id": 1,
-      "score_value": 8.5,
-      "created_at": "2026-03-20T11:00:00"
-    },
-    {
-      "id": 702,
-      "enrollment_id": 302,
-      "score_type_id": 1,
-      "score_value": 7.0,
-      "created_at": "2026-03-20T11:00:00"
-    },
-    {
-      "id": 703,
-      "enrollment_id": 303,
-      "score_type_id": 1,
-      "score_value": 9.0,
-      "created_at": "2026-03-20T11:00:00"
+    "message": "OK",
+    "data": {
+        "updated": 1,
+        "created": 0
     }
-  ],
-  "message": "Scores synced successfully"
 }
 ```
 
@@ -1048,60 +825,52 @@ Sử dụng `application/json`
 - Success Response
   * HTTP Status Code: 200 OK
 ```
-{
-  "status": "success",
-  "data": [
+[
     {
-      "user_id": 101,
-      "first_name": "Nguyen",
-      "last_name": "An",
-      "scores": [
-        { "score_type": "Bài tập", "score_value": 8.0 },
-        { "score_type": "Kiểm tra giữa kỳ", "score_value": 8.5 },
-        { "score_type": "Thi cuối khóa", "score_value": 8.1 }
-      ],
-      "average_score": 8.2,
-      "comment": "Hoàn thành tốt các bài tập"
+        "id": 1,
+        "score_value": 8.5,
+        "score_type": "Điểm Chuyên Cần (Attendance)",
+        "student": {
+            "id": 4,
+            "first_name": "Minh",
+            "last_name": "Trần",
+            "email": "minhtran@gmail.com",
+            "username": "student_minh"
+        }
     },
     {
-      "user_id": 102,
-      "first_name": "Tran",
-      "last_name": "Binh",
-      "scores": [
-        { "score_type": "Bài tập", "score_value": 7.0 },
-        { "score_type": "Kiểm tra giữa kỳ", "score_value": 7.5 },
-        { "score_type": "Thi cuối khóa", "score_value": 6.8 }
-      ],
-      "average_score": 7.1,
-      "comment": "Cần cải thiện kỹ năng nghe"
+        "id": 2,
+        "score_value": 7.0,
+        "score_type": "Bài Thi Giữa Kỳ (Midterm)",
+        "student": {
+            "id": 4,
+            "first_name": "Minh",
+            "last_name": "Trần",
+            "email": "minhtran@gmail.com",
+            "username": "student_minh"
+        }
     }
-  ],
-  "message": "Class scores retrieved successfully"
-}
+]
 ```
 
-### 2.4.7. Điểm danh
+### 2.4.7. Điểm danh cho buổi học cụ thể 
 - Endpoint: POST /classes/{class_id}/bulk-sync-attendances
 - Mô tả: dùng khi người dùng muốn điểm danh cho một buổi học
 - Authorization: Bearer <access_token>
 - Request Body
 ```
 {
+  "session_id": 1,
   "attendances": [
     {
-      "enrollment_id": 301,
+      "enrollment_id": 1,
       "attendance_status": "PRESENT",
-      "note": "Có mặt đầy đủ"
+      "note": ""
     },
     {
-      "enrollment_id": 302,
+      "enrollment_id": 2,
       "attendance_status": "ABSENT",
-      "note": null
-    },
-    {
-      "enrollment_id": 303,
-      "attendance_status": "LATE",
-      "note": "Đến muộn 10 phút"
+      "note": "Nghỉ ốm"
     }
   ]
 }
@@ -1110,72 +879,37 @@ Sử dụng `application/json`
   * HTTP Status Code: 200 OK
 ```
 {
-  "status": "success",
-  "data": [
-    {
-      "enrollment_id": 301,
-      "attendance_status": "PRESENT",
-      "note": "Có mặt đầy đủ",
-      "updated_at": "2026-03-20T09:00:00"
-    },
-    {
-      "enrollment_id": 302,
-      "attendance_status": "ABSENT",
-      "note": null,
-      "updated_at": "2026-03-20T09:00:00"
-    },
-    {
-      "enrollment_id": 303,
-      "attendance_status": "LATE",
-      "note": "Đến muộn 10 phút",
-      "updated_at": "2026-03-20T09:00:00"
+    "message": "Lưu danh sách điểm danh thành công!",
+    "data": {
+        "created": 1,
+        "updated": 1
     }
-  ],
-  "message": "Attendances synced successfully"
 }
 ```
 
-### 2.4.8. Lấy kết quả điểm danh của lớp
-- Endpoint: GET /classes/{class_id}/attendances?date=2026-03-20
+### 2.4.8. Lấy kết quả điểm danh của buổi học 
+- Endpoint: GET /attendances/?session_id=1
 - Mô tả: dùng khi người dùng muốn xem kết quả điểm danh của lớp
 - Authorization: Bearer <access_token>
 - Success Response
   * HTTP Status Code: 200 OK
 ```
-{
-  "status": "success",
-  "data": [
+[
     {
-      "user_id": 101,
-      "first_name": "Nguyen",
-      "last_name": "An",
-      "attendance_status": "PRESENT",
-      "note": "Có mặt đầy đủ"
+        "enrollment_id": 1,
+        "student_name": "Minh Trần",
+        "student_code": "student_minh",
+        "attendance_status": "PRESENT",
+        "note": ""
     },
     {
-      "user_id": 102,
-      "first_name": "Tran",
-      "last_name": "Binh",
-      "attendance_status": "ABSENT",
-      "note": null
-    },
-    {
-      "user_id": 103,
-      "first_name": "Le",
-      "last_name": "Chi",
-      "attendance_status": "LATE",
-      "note": "Đến muộn 10 phút"
-    },
-    {
-      "user_id": 104,
-      "first_name": "Pham",
-      "last_name": "Dung",
-      "attendance_status": "ABSENT",
-      "note": null
+        "enrollment_id": 2,
+        "student_name": "Hoa Lê",
+        "student_code": "student_hoa",
+        "attendance_status": "ABSENT",
+        "note": "Nghỉ ốm"
     }
-  ],
-  "message": "Attendances retrieved successfully for 2026-03-20"
-}
+]
 ```
 
 ### 2.4.9. Lấy danh sách học viên của lớp
@@ -1185,38 +919,62 @@ Sử dụng `application/json`
 - Success Response
   * HTTP Status Code: 200 OK
 ```
-{
-  "status": "success",
-  "data": [
+[
     {
-      "user_id": 101,
-      "first_name": "Nguyen",
-      "last_name": "An"
+        "id": 1,
+        "student": {
+            "id": 4,
+            "first_name": "Minh",
+            "last_name": "Trần",
+            "email": "minhtran@gmail.com",
+            "username": "student_minh"
+        },
+        "classroom": {
+            "id": 1,
+            "name": "Lớp Giao Tiếp Căn Bản - K23 (Ca Tối)",
+            "course": "Khóa Học Giao Tiếp Toàn Diện 360",
+            "start_date": "2024-05-01",
+            "end_date": "2024-07-31",
+            "active": false,
+            "main_teacher": {
+                "id": 2,
+                "first_name": "John",
+                "last_name": "Doe",
+                "email": "johndoe@ttngoaingu.edu.vn",
+                "username": "teacher_john"
+            }
+        },
+        "enrollment_status": "SUCCESS",
+        "payment_deadline": "2024-04-21T06:59:59+07:00"
     },
     {
-      "user_id": 102,
-      "first_name": "Tran",
-      "last_name": "Binh"
-    },
-    {
-      "user_id": 103,
-      "first_name": "Le",
-      "last_name": "Chi"
-    },
-    {
-      "user_id": 104,
-      "first_name": "Pham",
-      "last_name": "Dung"
+        "id": 2,
+        "student": {
+            "id": 5,
+            "first_name": "Hoa",
+            "last_name": "Lê",
+            "email": "hoale@gmail.com",
+            "username": "student_hoa"
+        },
+        "classroom": {
+            "id": 1,
+            "name": "Lớp Giao Tiếp Căn Bản - K23 (Ca Tối)",
+            "course": "Khóa Học Giao Tiếp Toàn Diện 360",
+            "start_date": "2024-05-01",
+            "end_date": "2024-07-31",
+            "active": false,
+            "main_teacher": {
+                "id": 2,
+                "first_name": "John",
+                "last_name": "Doe",
+                "email": "johndoe@ttngoaingu.edu.vn",
+                "username": "teacher_john"
+            }
+        },
+        "enrollment_status": "SUCCESS",
+        "payment_deadline": "2024-06-11T06:59:59+07:00"
     }
-  ],
-  "meta": {
-    "page": 1,
-    "limit": 20,
-    "total": 55,
-    "total_pages": 3
-  },
-  "message": "Class users retrieved successfully"
-}
+]
 ```
 
 ### 2.4.10. Hủy đăng ký khóa học 
@@ -1241,7 +999,6 @@ Sử dụng `application/json`
 # 3. APPENDIX
 
 ## 3.1 Example Request
-
 ```
 GET /classes/{class_id}/enrollments?page=1&limit=10
 Host: api.example.com

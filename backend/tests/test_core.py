@@ -13,6 +13,7 @@ class TestCoreModule:
         # --- Quyền Teacher ---
         ("active_teacher", IsTeacher, True),  
         ("active_teacher", IsStudent, False), 
+        ("active_teacher", IsAdmin, False), 
         
         # --- Quyền Student ---
         ("active_user", IsStudent, True),     
