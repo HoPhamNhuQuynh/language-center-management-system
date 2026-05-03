@@ -1,71 +1,170 @@
-.account-container {
-    padding: 25px;
-    background: #f4f7fe;
+.course-page {
+    padding: 20px;
+    background-color: #f4f7fe;
     min-height: 100vh;
+    font-family: Arial, sans-serif;
 }
 
-.account-header {
+.course-header {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     margin-bottom: 20px;
-    color: #1a335d;
 }
 
-.btn-add-red {
-    background: #ff4d4f;
+.course-header h1 {
+    color: #1a335d;
+    font-size: 24px;
+}
+
+.add-button {
+    background-color: #1d50a1;
     color: white;
     border: none;
     padding: 10px 25px;
-    border-radius: 6px;
+    border-radius: 5px;
     cursor: pointer;
     font-weight: bold;
 }
 
-.account-table-card {
+.icon-edit {
+    margin-right: 10px;
+    cursor: pointer;
+}
+
+.icon-delete {
+    cursor: pointer;
+}
+
+.course-table-wrapper {
     background: white;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     overflow: hidden;
 }
 
-.account-table-card table {
+.course-table {
     width: 100%;
     border-collapse: collapse;
 }
 
-.account-table-card th {
-    background: #1a335d;
+.course-table th {
+    background-color: #1a335d;
     color: white;
-    padding: 15px;
+    padding: 12px;
     text-align: left;
 }
 
-.account-table-card td {
-    padding: 15px;
+.course-table td {
+    padding: 12px;
     border-bottom: 1px solid #eee;
 }
 
-.role-badge {
-    padding: 4px 10px;
-    border-radius: 20px;
+.course-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+}
+
+.modal-body {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    width: 800px;
+    position: relative;
+}
+
+.form-row {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.input-error {
+    margin-top: 4px;
     font-size: 12px;
+    color: #dc2626;
+    background-color: #fef2f2;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.input-group {
+    margin-bottom: 15px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 5px;
     font-weight: bold;
 }
 
-.role-badge.teacher {
-    background: #e3f2fd;
-    color: #1976d2;
+.input-group input,
+.input-group select,
+.input-group textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
 }
 
-.status-active {
-    color: #2ecc71;
-    font-size: 14px;
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
 }
 
-.btn-icon {
-    background: none;
+.btn-save {
+    background-color: #5b86e5;
+    /* Xanh Navy Blue */
+    color: white;
     border: none;
+    padding: 8px 25px;
+    border-radius: 4px;
     cursor: pointer;
-    font-size: 18px;
-    margin-right: 10px;
+}
+
+.btn-cancel {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    padding: 8px 25px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.status-badge {
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.status-badge.active {
+    background-color: #d1fae5;
+    color: #065f46;
+}
+
+.status-badge.inactive {
+    background-color: #fee2e2;
+    color: #991b1b;
 }

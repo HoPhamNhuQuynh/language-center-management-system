@@ -21,7 +21,6 @@ import ProtectedRoute from "./components/Base/ProtectedRoute";
 import Dashboard from "./controllers/Admin/Dashboard";
 import CourseManagement from "./controllers/Admin/CourseManagement";
 import ClassManagement from "./controllers/Admin/ClassManagement";
-import FeeConfiguration from "./controllers/Admin/FeeConfig";
 import AccountManagement from "./controllers/Admin/AccountManagement";
 
 const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
@@ -55,7 +54,6 @@ function App() {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/course-config" element={<CourseManagement />} />
             <Route path="/class-config" element={<ClassManagement />} />
-            <Route path="/fee-config" element={<FeeConfiguration />} />
             <Route path="/account-config" element={<AccountManagement />} />
             <Route path="/setting" element={<AdminView />} />
           </Route>

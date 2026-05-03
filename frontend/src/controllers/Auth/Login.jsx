@@ -40,9 +40,9 @@ function Login(){
 
         setTokens(res.access_token, res.refresh_token, res.user);
         if (res.user.role === "Admin") {
-          navigate("/admin/dashboard")
+          navigate("/dashboard")
         } else if (res.user.role === "Teacher") {
-          navigate("/teacher/schedule")
+          navigate("/schedule")
         } else {
           navigate("/");
         }

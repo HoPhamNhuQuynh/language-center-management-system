@@ -3,9 +3,28 @@ import logo from "../../assets/hero.png";
 import { Link, useNavigate } from "react-router-dom";
 import { getAccessToken, clearTokens, getRole } from "../../utils/token";
 import { revokeTokenApi } from "../../services/authService";
+import { Dropdown, Space } from "antd";
+import { AppstoreOutlined, ControlOutlined, CreditCardOutlined, DownOutlined, SolutionOutlined, TeamOutlined } from "@ant-design/icons";
 
 function Navbar() {
   const navigate = useNavigate();
+
+  const menuItems = [
+    { key: 'classes', label: 'Quản lý lớp học', icon: <AppstoreOutlined />, path: '/class-config' },
+    { key: 'courses', label: 'Quản lý khóa học', icon: <SolutionOutlined />, path: 'course-config' },
+    { key: 'assignments', label: 'Sắp xếp lịch dạy', icon: <TeamOutlined />, path: '/assignment-config' },
+    { key: 'payments', label: 'Quản lý học phí', icon: <CreditCardOutlined />, path: '/payment-config' },
+    { key: 'accounts', label: 'Cấu hình hệ thống', icon: <ControlOutlined />, path: '/account-config' },
+  ];
+
+  const dropdownMenu = {
+    items: menuItems,
+    onClick: ({ key }) => {
+      const item = menuItems.find(i => i.key === key);
+      if (item) navigate(item.path);
+    },
+  };
+
   const isLoggedIn = !!getAccessToken();
   const role = getRole();
 
@@ -51,7 +70,14 @@ function Navbar() {
           {role === "Admin" && (
             <>
               <Link to="/dashboard">Dashboard</Link>
-              <Link to="/setting">Quản trị hệ thống</Link>
+              <Dropdown menu={dropdownMenu} trigger={['hover']} popupClassName="custom-dropdown-menu">
+                <span className="nav-item active">
+                  <Space>
+                    Quản trị hệ thống
+                    <DownOutlined style={{ fontSize: '11px', transition: 'transform 0.2s' }} />
+                  </Space>
+                </span>
+              </Dropdown>
               <a
                 href="#"
                 onClick={(e) => {
