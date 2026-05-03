@@ -15,9 +15,9 @@ class EnrollmentViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.R
         if getattr(self, 'swagger_fake_view', False):
             return Enrollment.objects.none()
     
-        if self.request.user and (self.request.user.is_staff or self.request.user.is_superuser):
+        if self.request.user and self.request.user.is_admin:
             return Enrollment.objects.select_related('student', 'classroom').all()
-        if self.request.user.is_admin:
+        if self.request.user.is_teacher:
             return Enrollment.objects.select_related('student', 'classroom').filter(
                 classroom__teachingassignment__teacher=self.request.user,
                 active=True
@@ -39,13 +39,16 @@ class EnrollmentViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.R
     def perform_create(self, serializer):
         serializer.save(student=self.request.user)
 
-
-    def cancel_enrollment(self, request, pk):
-        enrollment = self.get_object()
-        if enrollment.enrollment_status != 'PENDING_PAYMENT':
-            return Response({"detail": "Không thể hủy khi đã thanh toán."},status=status.HTTP_400_BAD_REQUEST)
-        enrollment.active = False
-        enrollment.save()
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        
+        if instance.enrollment_status != Enrollment.Status.PENDING_PAYMENT:
+            return Response(
+                {"detail": "Không thể xóa đơn đăng ký đã phát sinh giao dịch thanh toán."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        instance.delete() 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -77,8 +80,7 @@ class PaymentViewSet(viewsets.ViewSet, generics.ListAPIView):
             ip_address = request.META.get('REMOTE_ADDR', '127.0.0.1')
             payment_url = VNPayService.create_payment_url(payment=payment, ip_address=ip_address)
 
-            response_data['payment_url'] = payment_url
-            return Response(response_data)
+            return Response({"payment_url": payment_url})
 
         # Mock MoMo
         if payment.payment_method == Payment.Method.MOMO:

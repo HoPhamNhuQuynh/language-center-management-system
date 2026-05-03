@@ -14,7 +14,7 @@ urlpatterns = [
     path(
         "classes/<int:class_id>/bulk-sync-attendances/",
         BulkSyncAttendanceView.as_view(),
-        name="bulk-sync-scores"
+        name="bulk-sync-attendances"
     ),
     path('', include(r.urls))
 ]

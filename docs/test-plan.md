@@ -1,8 +1,10 @@
 # TEST PLAN  
 ## Language Center Management System 
-Version:  
-Date:  
-Prepared by:  
+Version: 1.0 
+
+Date: 17/03/2026  
+
+Prepared by:  Trần Mỹ Ân, Hồ Phạm Ngọc Hân, Hồ Phạm Như Quỳnh, Nguyễn Thị Ngọc Trâm.
 
 ---
 
@@ -67,10 +69,33 @@ Ngoài mục tiêu chính, kiểm thử cũng hướng đến các mục tiêu p
 * Kiểm tra tính nhất quán và chính xác của thông tin hiển thị trên hệ thống.
 
 ## 4. TEST APPROACH  
-(Mô tả cách tiếp cận test: manual/automation, black-box/white-box...)
+-Dự án kết hợp nhiều phương pháp kiểm thử nhằm đảm bảo hệ thống hoạt động đúng theo yêu cầu. Nhóm thực hiện kiểm thử thủ công đối với giao diện người dùng và các luồng nghiệp vụ chính, kiểm thử API bằng Postman và kiểm thử tự động ở tầng backend bằng pytest.
 
-### 4.1 Test Automation  
-(Nêu có dùng automation không, dùng tool gì, phạm vi automation.)
+-Các test case được thiết kế dựa trên tài liệu yêu cầu phần mềm, giao diện hệ thống, API đã xây dựng và các quy tắc nghiệp vụ. Kết quả kiểm thử được đánh giá bằng cách so sánh kết quả thực tế với kết quả mong đợi. Nếu kết quả thực tế khớp với kết quả mong đợi, testcase được đánh giá là Pass; ngược lại, testcase được đánh giá là Fail và cần ghi nhận lỗi để xử lý.
+
+-Phạm vi kiểm thử tập trung vào các module chính của hệ thống như Users, Courses, Classes, Enrollments, Grades và Payments.
+
+### 4.1 Manual Testing  
+-Thực hiện kiểm thử thủ công đối với các chức năng liên quan đến giao diện người dùng và luồng thao tác của người dùng. Tester sẽ thực hiện từng bước theo testcase đã thiết kế, nhập dữ liệu hợp lệ và không hợp lệ, sau đó ghi nhận kết quả thực tế.
+
+-Manual testing được áp dụng cho các chức năng như đăng ký, đăng nhập, xem danh sách khóa học, đăng ký khóa học, xem lịch học, nhập điểm, điểm danh và thanh toán học phí. Phương pháp này giúp kiểm tra giao diện, thông báo lỗi, luồng xử lý và trải nghiệm sử dụng của hệ thống.
+
+### 4.2 API Testing
+-Sử dụng Postman để kiểm thử các API của hệ thống. Tester gửi request đến server, kiểm tra status code, response body và dữ liệu trả về có đúng với kết quả mong đợi hay không.
+
+-API testing được áp dụng cho các chức năng backend như xác thực người dùng, lấy thông tin người dùng, quản lý khóa học, quản lý lớp học, đăng ký khóa học, điểm số và thanh toán. Các trường hợp kiểm thử bao gồm request hợp lệ, request thiếu dữ liệu, dữ liệu sai định dạng, không có token hoặc token không hợp lệ.
+
+### 4.3 Automation Testing
+-Áp dụng kiểm thử tự động ở tầng backend bằng công cụ pytest. Các file test tự động được tổ chức trong thư mục backend/tests/, bao gồm các test theo từng module như users, courses, classes, enrollments, grades và payments.
+
+-Automation testing được sử dụng để kiểm tra các hàm, service class và một số logic xử lý chính của backend. File conftest.py được dùng để cấu hình fixture, dữ liệu mẫu hoặc các thiết lập cần thiết trước khi chạy test.
+
+-Tuy nhiên, automation chưa bao phủ toàn bộ hệ thống. Các chức năng liên quan đến giao diện người dùng và luồng thao tác thực tế vẫn được kiểm thử thủ công.
+
+### 4.4 Test Techniques
+-Sử dụng kỹ thuật black-box testing là chính. Tester tập trung vào dữ liệu đầu vào, kết quả đầu ra và hành vi của hệ thống mà không cần quan tâm đến mã nguồn bên trong. Kỹ thuật này được áp dụng cho manual testing và API testing.
+
+-Bên cạnh đó, nhóm có áp dụng một phần white-box testing đối với backend thông qua pytest. Các test này kiểm tra trực tiếp logic bên trong các hàm, service class và các xử lý nghiệp vụ quan trọng của hệ thống.
 
 ## 5. ROLES AND RESPONSIBILITIES  
 

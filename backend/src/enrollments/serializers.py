@@ -91,16 +91,20 @@ class PaymentSerializer(serializers.ModelSerializer):
     def validate(self, data):
         enrollment = data.get('enrollment')
         amount = data.get('amount')
-
         course_fee = enrollment.classroom.course.price
 
         if course_fee < 5000000:
             if amount < course_fee:
-                raise serializers.ValidationError(f"Khóa học dưới 5tr bắt buộc thanh toán toàn bộ ({course_fee} VNĐ).")
-            else:
-                min_partial = course_fee / 2
-                if amount < min_partial and enrollment.enrollment_status == "PENDING_PAYMENT":
-                    raise serializers.ValidationError("Khóa học trên 5tr được phép đóng trước tối thiểu 50%.")
+                raise serializers.ValidationError(
+                    f"Khóa học dưới 5tr bắt buộc thanh toán toàn bộ ({course_fee} VNĐ)."
+                )
+        else:
+            min_partial = course_fee / 2
+            if amount < min_partial and enrollment.enrollment_status == "PENDING_PAYMENT":
+                raise serializers.ValidationError(
+                    f"Khóa học trên 5tr được phép đóng trước tối thiểu 50% ({min_partial} VNĐ)."
+                )
+                
         return data
     
     def get_classroom(self, instance):

@@ -38,7 +38,6 @@ cloudinary.config(
   api_secret = "IJlWI6FrtaaJMxey_SRXUx--LOM",
   secure=True
 )
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 # Application definition
 
@@ -227,3 +226,16 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CLIENT_ID = 'aJ7nxWPdKdjy8isgOPQsGKPzR9E2Keehq8A7D4gr'
 CLIENT_SECRET = 'fCxz6BFuPTTmgtFHf8vCxJDlNzYTGvrfwXaVpDO3WQI9ZFIitOZYUj4csqHHPwoSANhlSPTdQMNUCYpW35EdGBQ7EpDEdrovmLxuaO9eqawgGj2CHFRHZK7Ftnui1kUV'
+
+STORAGES = {
+    "default": {
+        "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+    },
+}
+
+SWAGGER_SETTINGS = {
+    'SWAGGER_USE_COMPAT_RENDERERS': False,
+}

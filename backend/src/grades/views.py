@@ -13,7 +13,7 @@ from rest_framework.exceptions import PermissionDenied
 
 class AttendanceViewSet(viewsets.ViewSet, generics.ListAPIView):
     permission_classes = [permissions.IsAuthenticated, core_perms.IsTeacher]
-    serializer_class = Attendance.objects.all()
+    serializer_class = AttendanceSerializer
 
     def get_queryset(self):
 
@@ -37,7 +37,7 @@ class AttendanceViewSet(viewsets.ViewSet, generics.ListAPIView):
             attendances = [
                 Attendance(
                     session=session,
-                    student=e.student
+                    enrollment=e
                 )
 
                 for e in enrollments

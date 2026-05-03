@@ -26,7 +26,7 @@ class ClassRoomViewSet(viewsets.ModelViewSet):
                 'enrollment',
                 filter=Q(
                     enrollment__active=True,
-                    enrollment__enrollment_status__in=['SUCCESS', 'PARTIAL_PAYMENT']
+                    enrollment__enrollment_status__in=['SUCCESS']
                 )
             )
         ).prefetch_related(

@@ -1,0 +1,15 @@
+[run]
+source = src
+omit =
+    */migrations/*
+    */__init__.py
+    */config/asgi.py
+    */config/wsgi.py
+    src/manage.py
+    src/config/settings.py
+    src/__init__.py
+
+[report]
+fail_under = 80
+show_missing = True
+
