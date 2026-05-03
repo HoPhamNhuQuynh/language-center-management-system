@@ -8,6 +8,10 @@ def validate_password_common(password):
         if len(password) < 6:
             raise serializers.ValidationError("Mật khẩu phải có ít nhất 6 ký tự")
 
+        instance = self.instance or self.context.get('profile_instance')
+
+        if instance:
+            qs = qs.exclude(pk=instance.pk)
         if not re.search(r"[A-Z]", password):
             raise serializers.ValidationError("Mật khẩu phải có ít nhất 1 chữ in hoa")
 
@@ -17,6 +21,10 @@ def validate_password_common(password):
         if not re.search(r"\d", password):
             raise serializers.ValidationError("Mật khẩu phải có ít nhất 1 chữ số")
 
+        return phone
+    
+    def update(self, instance, validated_data):
+        return super().update(instance, validated_data)
         if not re.search(r"[!@#$%^&*(),.?\":{}|<>_\-\\/]", password):
             raise serializers.ValidationError("Mật khẩu phải có ít nhất 1 ký tự đặc biệt")
         return password
@@ -134,7 +142,18 @@ class UserDetailSerializer(UserSerializer):
         model = UserSerializer.Meta.model
         fields = UserSerializer.Meta.fields + ['date_joined', 'last_login', 'auth_provider', 'avatar']
         extra_kwargs = UserSerializer.Meta.extra_kwargs
-        
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.partial:
+            self.fields['profile'].partial = True
+        if self.instance:
+            try:
+                profile = self.instance.profile
+                self.fields['profile'].instance = profile
+            except Exception:
+                pass
+
     @transaction.atomic
     def create(self, validated_data):
         password = validated_data.pop('password', None)
@@ -151,13 +170,24 @@ class UserDetailSerializer(UserSerializer):
         return user
 
     def update(self, instance, validated_data):
-        list_attrs_to_drop = ['password', 'avatar', 'date_joined', 'last_login', 'auth_provider']
-        for attr in list_attrs_to_drop:
-            validated_data.pop(attr, None)
+        profile_data = validated_data.pop('profile', None)
 
-        for attr, value in validated_data.items():
-            setattr(instance, attr, value)
+        instance.first_name = validated_data.get('first_name', instance.first_name)
+        instance.last_name = validated_data.get('last_name', instance.last_name)
+        instance.email = validated_data.get('email', instance.email)
         instance.save()
+
+        if profile_data is not None:
+            profile = instance.profile
+            profile_serializer = ProfileSerializer(
+                profile,
+                data=profile_data,
+                partial=True,
+                context={'profile_instance': profile}
+            )
+            if profile_serializer.is_valid(raise_exception=True):
+                profile_serializer.save()
+
         return instance
 
     
