@@ -1,15 +1,11 @@
 import axios from "axios";
 import { getAccessToken } from "../utils/token"
 
-export const endpoints = {
-    'course': '/courses/',
-    'enrollment': '/enrollments/',
-    'profile': '/users/me/',
-    'tag': '/tags/',
-}
-
 const Apis = axios.create({
     baseURL: '/api/',
+    headers: {
+        'ngrok-skip-browser-warning': 'true' 
+    }
 });
 
 Apis.interceptors.request.use((config) => {

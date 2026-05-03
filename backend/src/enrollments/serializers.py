@@ -1,8 +1,8 @@
 from django.db import transaction, models
 from django.utils import timezone
 from enrollments.models import Enrollment, Payment
+from classes.models import Session
 from rest_framework import serializers
-from django.utils import timezone
 from users.serializers import UserSerializer
 from classes.serializers import ClassRoomSerializer
 
@@ -50,6 +50,20 @@ class EnrollmentSerializer(serializers.ModelSerializer):
                                 f" vào thứ {s.day_of_week} ({s.start_time} - {s.end_time})"
                             )
 
+        enrolled_classroom_ids = enrollments.values_list('classroom_id', flat=True)
+        existing_sessions = Session.objects.filter(
+            schedule__classroom_id__in=enrolled_classroom_ids
+        ).select_related('schedule__classroom')
+
+        for s in new_schedule:
+            for es in existing_sessions:
+                if s.day_of_week == es.schedule.day_of_week:
+                    if s.start_time < es.end_time and s.end_time > es.start_time:
+                        raise serializers.ValidationError(
+                            f"Lịch học bị trùng với lớp {es.schedule.classroom.name}"
+                            f" vào thứ {s.day_of_week} ({es.start_time} - {es.end_time})"
+                        )
+
         return attrs
 
     def to_representation(self, instance):
@@ -67,10 +81,12 @@ class EnrollmentDetailSerializer(EnrollmentSerializer):
 
 class PaymentSerializer(serializers.ModelSerializer):
     classroom = serializers.SerializerMethodField()
+    payment_url = serializers.CharField(read_only=True, required=False)
+    total_sessions = serializers.SerializerMethodField()
 
     class Meta:
         model = Payment
-        fields = ['id', 'enrollment', 'amount', 'payment_method', 'paid_at', 'classroom']
+        fields = ['id', 'enrollment', 'amount', 'payment_method', 'paid_at', 'classroom', 'payment_url', 'payment_status', 'total_sessions', 'transaction_id']
 
     def validate(self, data):
         enrollment = data.get('enrollment')
@@ -90,6 +106,9 @@ class PaymentSerializer(serializers.ModelSerializer):
     def get_classroom(self, instance):
         return instance.enrollment.classroom.name
 
+    def get_total_sessions(self, instance):
+        return instance.enrollment.classroom.course.total_sessions
+
     @transaction.atomic
     def create(self, validated_data):
         payment = super().create(validated_data)
@@ -99,8 +118,8 @@ class PaymentSerializer(serializers.ModelSerializer):
         total_paid = Payment.objects.filter(enrollment=enrollment).aggregate(models.Sum('amount'))['amount__sum'] or 0
 
         if total_paid >= course_fee:
-            enrollment.enrollment_status = Enrollment.Status.SUCCESS
-        elif total_paid >= course_fee/2:
+            enrollment.enrollment_status = Enrollment.Status.PENDING_PAYMENT
+        elif total_paid >= course_fee / 2:
             enrollment.enrollment_status = Enrollment.Status.PARTIAL_PAYMENT
 
         enrollment.save()

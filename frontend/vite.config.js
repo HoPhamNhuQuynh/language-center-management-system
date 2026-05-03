@@ -22,5 +22,24 @@ export default defineConfig({
         secure: false, 
       }
     }
+  },
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    setupFiles: './src/setupTests.js',
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'json', 'html'],
+      reportsDirectory: '../docs/automation/frontend_coverage', 
+      thresholds: {
+        lines: 80, 
+      },
+      exclude: [
+        'node_modules/',
+        'src/main.jsx', 
+        'src/App.jsx', 
+        '**/*.d.ts',
+      ],
+    },
   }
 })

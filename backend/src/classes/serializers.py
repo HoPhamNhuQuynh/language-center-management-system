@@ -158,6 +158,10 @@ class SessionSerializer(serializers.ModelSerializer):
         data = super().to_representation(session)
         data['teacher_fullname'] = f'{session.user.last_name} {session.user.first_name}'
         data['room'] = RoomSerializer(session.room).data
+        data['classroom_name'] = session.schedule.classroom.name
+        data['day_of_week'] = session.schedule.day_of_week
+        data['classroom_start_date'] = session.schedule.classroom.start_date
+        data['classroom_end_date'] = session.schedule.classroom.end_date
 
         request = self.context.get('request')
         if request and request.user and request.user.is_authenticated and request.user.is_admin:

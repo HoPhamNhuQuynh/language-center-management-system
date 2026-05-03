@@ -95,6 +95,10 @@ class SessionViewSet(viewsets.ViewSet, generics.ListAPIView):
             return query.filter(user=user)
         
         if user.is_student:
-            return query.filter(attendance__enrollment__student=user)
-        
+            return query.filter(
+                schedule__classroom__enrollment__student=user,
+                schedule__classroom__enrollment__active=True,
+                # schedule__classroom__enrollment__enrollment_status__in=['SUCCESS', 'PARTIAL_PAYMENT']
+            ).distinct()
+
         return query

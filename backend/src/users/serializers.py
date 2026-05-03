@@ -27,8 +27,10 @@ class ProfileSerializer(serializers.ModelSerializer):
     def validate_phone_num(self, phone):
         qs = Profile.objects.filter(phone_num=phone)
 
-        if self.instance:
-            qs = qs.exclude(user=self.instance.user)
+        instance = self.instance or self.context.get('profile_instance')
+
+        if instance:
+            qs = qs.exclude(pk=instance.pk)
 
         if qs.exists():
             raise serializers.ValidationError('Phone number already exists')
@@ -36,7 +38,6 @@ class ProfileSerializer(serializers.ModelSerializer):
         return phone
     
     def update(self, instance, validated_data):
-        validated_data.pop('phone_num', None)
         return super().update(instance, validated_data)
 
 class UserSerializer(serializers.ModelSerializer):
@@ -100,18 +101,23 @@ class PhoneUpdateSerializer(ProfileSerializer):
         fields = ['phone_num']   
 
 class UserDetailSerializer(UserSerializer):
-    enrollments = serializers.SerializerMethodField()
     profile = ProfileSerializer(required=False, allow_null=True)
     class Meta:
         model = UserSerializer.Meta.model
-        fields = UserSerializer.Meta.fields + ['date_joined', 'last_login', 'profile', 'enrollments']
+        fields = UserSerializer.Meta.fields + ['date_joined', 'last_login', 'profile']
         extra_kwargs = UserSerializer.Meta.extra_kwargs
 
-    def get_enrollments(self, instance):
-        from enrollments.serializers import EnrollmentSerializer
-        enrollments = instance.enrollment_set.all()
-        return EnrollmentSerializer(enrollments, many=True).data
-        
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.partial:
+            self.fields['profile'].partial = True
+        if self.instance:
+            try:
+                profile = self.instance.profile
+                self.fields['profile'].instance = profile
+            except Exception:
+                pass
+
     @transaction.atomic
     def create(self, validated_data):
         '''
@@ -141,19 +147,22 @@ class UserDetailSerializer(UserSerializer):
 
     def update(self, instance, validated_data):
         profile_data = validated_data.pop('profile', None)
-        list_attrs_to_drop = ['password', 'avatar', 'date_joined', 'last_login', 'auth_provider']
-        for attr in list_attrs_to_drop:
-            validated_data.pop(attr, None)
 
-        for attr, value in validated_data.items():
-            setattr(instance, attr, value)
-
+        instance.first_name = validated_data.get('first_name', instance.first_name)
+        instance.last_name = validated_data.get('last_name', instance.last_name)
+        instance.email = validated_data.get('email', instance.email)
         instance.save()
 
         if profile_data is not None:
-            s = PhoneUpdateSerializer(instance.profile, data=profile_data)
-            s.is_valid(raise_exception=True)
-            s.save()
+            profile = instance.profile
+            profile_serializer = ProfileSerializer(
+                profile,
+                data=profile_data,
+                partial=True,
+                context={'profile_instance': profile}
+            )
+            if profile_serializer.is_valid(raise_exception=True):
+                profile_serializer.save()
 
         return instance
     

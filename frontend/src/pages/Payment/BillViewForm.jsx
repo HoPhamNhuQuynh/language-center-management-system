@@ -33,7 +33,7 @@ function BillViewForm({ data = {}, onClose }) {
 
           <h2 style={{ marginBottom: 5, fontWeight: "bold" }}>BIÊN LAI THU PHÍ</h2>
           <div>Số chứng từ: {getValue(data.receiptId)}</div>
-          <div>Ngày: {getValue(data.created_at.split("T")[0])}</div>
+          <div>Ngày: {getValue(data.created_at?.split("T")[0])}</div>
 
           <div style={{ display: "flex", justifyContent: "space-between", marginTop: 30, fontWeight: 500, paddingRight: 50 }}>
             <div>HỌ VÀ TÊN: {getValue(data.studentname)}</div>
@@ -65,7 +65,7 @@ function BillViewForm({ data = {}, onClose }) {
               <div>{getValue(data.classId)}</div>
               <div>{getValue(data.total_sessions)}</div>
               <div style={{ color: "red", fontWeight: "bold" }}>
-                {(data.total || data.price).toLocaleString()} VND
+                {((data.total ?? data.price) || 0).toLocaleString()} VND
               </div>
             </div>
 

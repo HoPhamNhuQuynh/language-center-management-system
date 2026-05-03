@@ -71,15 +71,19 @@ class PaymentViewSet(viewsets.ViewSet, generics.ListAPIView):
         s.is_valid(raise_exception=True)
         payment = s.save()
 
+        response_data = s.data
+
         if payment.payment_method == Payment.Method.VNPAY:
             ip_address = request.META.get('REMOTE_ADDR', '127.0.0.1')
             payment_url = VNPayService.create_payment_url(payment=payment, ip_address=ip_address)
 
-            return Response({"payemnt_url": payment_url})
+            response_data['payment_url'] = payment_url
+            return Response(response_data)
 
         # Mock MoMo
         if payment.payment_method == Payment.Method.MOMO:
-            return Response({"payUrl": f"/mock-momo/{payment.id}"})
+            response_data['payUrl'] = f"/mock-momo/{payment.id}"
+            return Response(response_data)
 
         return Response({"error": "Invalid method"}, status=400)
 

@@ -15,6 +15,8 @@ function CourseListForm({ search, setSearch, selectedLang, setSelectedLang, cour
     return matchLang && matchSearch;
   });
   return (
+    
+    
     <div style={{ display: "flex", justifyContent: "center" }}>
       <Card style={{ width: "100%", maxWidth: "1400px", borderRadius: 20 }} styles={{ body: { padding: 0 } }}>
         <div style={{ padding: 8 }}>
@@ -112,7 +114,7 @@ function CourseListForm({ search, setSearch, selectedLang, setSelectedLang, cour
                         </div>
                       )}
 
-                      {console.log(`Đang render khóa ${course.name} với giá:`, course.price)}
+                      {/* {console.log(`Đang render khóa ${course.name} với giá:`, course.price)} */}
 
                       <div style={{ fontWeight: "bold"}}>
                         Học phí: {course.price ? `${Number(course.price).toLocaleString()} VNĐ` : "Đang cập nhật"}

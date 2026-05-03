@@ -1,22 +1,62 @@
 import { Input, Button, Card, Table } from "antd";
 import { useState, useEffect } from "react";
-import Apis, { endpoints } from "../../services/Apis";
 import { useNavigate } from "react-router-dom";
 import { SearchOutlined } from "@ant-design/icons";
 import PaymentForm from "./PaymentForm";
 import ConfirmForm from "./ConfirmForm";
 import BillViewForm from "./BillViewForm";
+import { studentApi } from "../../services/studentService";
+import { myPaymentApi } from "../../services/studentService";
 
 function CourseRegisterForm({ search, course, selected_class, payment, method, percent, confirm, bill, paid,
   setPercent, setMethod, setSearch, setPayment, setConfirm, setBill, setPaid, onSearch, onSelectClass, onSubmit,
-  enrollmentStatus }) {
+  enrollmentStatus, myEnrollments = [] }) {
   const [currentUser, setCurrentUser] = useState(null);
+  const [billData, setBillData] = useState(null);
+
+  const handleViewBill = async () => {
+    if (!selected_class) return alert("Vui lòng chọn lớp!");
+
+    try {
+      const payments = await myPaymentApi();
+      const found = payments.find(p => {
+        const enrolled = myEnrollments.find(e => {
+          const cId = e.classroom?.id || e.classroom;
+          return String(cId) === String(selected_class.id);
+        });
+        return enrolled && String(p.enrollment) === String(enrolled.id);
+      });
+
+      if (found) {
+        setBillData({
+          receiptId: found.transaction_id || found.id,
+          created_at: found.paid_at || new Date().toISOString(),
+          enrollmentStatus: found.payment_status,
+          paymentMethod: found.payment_method,
+          total: found.amount,
+          className: found.classroom,
+          classId: selected_class?.id,
+          total_sessions: found.total_sessions,
+          studentId: currentUser?.id,
+          studentname: `${currentUser?.last_name || ""} ${currentUser?.first_name || ""}`.trim(),
+        });
+        setBill(true);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  useEffect(() => {
+    setBillData(null);
+  }, [selected_class]);
 
   useEffect(() => {
     const loadUserProfile = async () => {
       try {
-        const res = await Apis.get(endpoints["profile"]);
-        setCurrentUser(res.data);
+        const res = await studentApi();
+        const userData = res.data || res;
+        setCurrentUser(userData);
       } catch (ex) {
         console.error("Error fetching user profile:", ex);
       }
@@ -33,6 +73,22 @@ function CourseRegisterForm({ search, course, selected_class, payment, method, p
     { title: "Chỗ trống", dataIndex: "remaining_slots", key: "remaining_slots" },
     { title: "Ngày bắt đầu", dataIndex: "start_date", key: "start_date" },
     { title: "Ngày kết thúc", dataIndex: "end_date", key: "end_date" },
+    {
+      title: "Trạng thái",
+      key: "status",
+      render: (_, record) => {
+        const enrolled = myEnrollments.find(e => {
+          const cId = e.classroom?.id || e.classroom;
+          return String(cId) === String(record.id);
+        });
+        if (enrolled) {
+          return (
+            <span style={{ color: "green", fontWeight: "bold" }}>✓ Đã đăng ký</span>
+          );
+        }
+        return null;
+      }
+    }
   ];
   const sharedData = {
     ...(course || {}),
@@ -44,8 +100,20 @@ function CourseRegisterForm({ search, course, selected_class, payment, method, p
     studentname: `${currentUser?.last_name || ""} ${currentUser?.first_name || ""}`.trim(),
     email: currentUser?.email,
     phone: currentUser?.profile?.phone_num || "",
+    total_sessions: course?.total_sessions || "",
   }
 
+  const isEnrolled = (classId) => {
+    return myEnrollments.some(e => {
+      const cId = e.classroom?.id || e.classroom;
+      return String(cId) === String(classId);
+    });
+  };
+
+  const enrolledAlready = selected_class && isEnrolled(selected_class.id);
+
+  console.log("course:", course);
+  console.log("sharedData total_sessions:", course?.total_sessions);
 
   return (
     <div style={{ padding: "20px", minHeight: "100vh", position: "relative" }}>
@@ -83,6 +151,12 @@ function CourseRegisterForm({ search, course, selected_class, payment, method, p
                   type: "radio",
                   selectedRowKeys: selected_class ? [selected_class.id] : [],
                   onChange: (_, selectedRows) => onSelectClass(selectedRows[0]),
+                  getCheckboxProps: (record) => ({
+                    disabled: myEnrollments.some(e => {
+                      const cId = e.classroom?.id || e.classroom;
+                      return String(cId) === String(record.id);
+                    }),
+                  }),
                 }}
                 onRow={(record) => ({
                   onClick: () => onSelectClass(record),
@@ -97,13 +171,21 @@ function CourseRegisterForm({ search, course, selected_class, payment, method, p
                 </h3>
                 <Button
                   type="primary"
-                  style={{ width: 200, height: 50, borderRadius: 25, fontWeight: "bold", background: "#191970", border: "none" }}
+                  style={{
+                    width: 200, height: 50, borderRadius: 25, fontWeight: "bold",
+                    background: "#191970",
+                    border: "none"
+                  }}
                   onClick={() => {
+                    if (enrolledAlready) {
+                      handleViewBill();
+                      return;
+                    }
                     if (!selected_class) return alert("Vui lòng chọn lớp!");
                     setPayment(true);
                   }}
                 >
-                  ĐĂNG KÝ NGAY
+                  {enrolledAlready ? "XEM BIÊN LAI" : "ĐĂNG KÝ NGAY"}
                 </Button>
               </div>
             </Card>
@@ -146,7 +228,7 @@ function CourseRegisterForm({ search, course, selected_class, payment, method, p
                 onCancel={() => {
                   setConfirm(false);
                 }}
-                onClose={() => { setConfirm(false); setPayment(true); }}
+                onClose={() => { setConfirm(false); }}
               />
             )}
 
@@ -154,14 +236,16 @@ function CourseRegisterForm({ search, course, selected_class, payment, method, p
               <BillViewForm
                 data={{
                   ...sharedData,
-                  total: percent === 50 ? (course?.price * 0.5) : course?.price,
-                  paymentMethod: method.toUpperCase(),
-                  enrollmentStatus: enrollmentStatus?.status || "SUCCESS",
-                  receiptId: enrollmentStatus?.id,
+                  ...(billData || {}),
+                  total: billData?.total || (percent === 50 ? course?.price * 0.5 : course?.price),
+                  paymentMethod: billData?.paymentMethod || method.toUpperCase(),
+                  enrollmentStatus: billData?.enrollmentStatus || enrollmentStatus?.status || "SUCCESS",
+                  receiptId: billData?.receiptId || enrollmentStatus?.id,
+                  created_at: billData?.created_at || enrollmentStatus?.created_at,
                 }}
                 onClose={() => {
                   setBill(false);
-                  navigate("/course-register");
+                  setBillData(null);
                 }}
               />
             )}

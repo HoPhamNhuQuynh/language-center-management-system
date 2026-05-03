@@ -45,9 +45,18 @@ function PaymentForm({ data, method, setMethod, percent, setPercent, onSubmit, o
             <div style={{ width: 280, textAlign: "left" }}>
               <b>Mức thanh toán:</b>
             </div>
-            <Radio.Group disabled={isPaid} value={percent} onChange={(e) => setPercent(e.target.value)} disabled={isPaid}>
+            <Radio.Group
+              disabled={isPaid}
+              value={percent}
+              onChange={(e) => setPercent(e.target.value)}
+            >
               <Radio value={100} style={{ marginRight: 60 }}>100%</Radio>
-              <Radio value={50}>50%</Radio>
+              <Radio
+                value={50}
+                disabled={data?.price < 5000000}
+              >
+                50% {data?.price < 5000000}
+              </Radio>
             </Radio.Group>
           </div>
         </div>

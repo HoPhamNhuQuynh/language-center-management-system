@@ -1,50 +1,43 @@
 import { useMemo, useState, useEffect } from "react";
 import PaymentHistoryForm from "../../pages/Payment/PaymentHistoryForm";
 import "../../styles/PaymentHistory.css";
-import Apis, { endpoints } from "../../services/Apis";
+import { myPaymentApi } from "../../services/studentService";
 
 function PaymentHistory() {
-  const [user, setUser] = useState(null);
+  const [payments, setPayments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [status, setStatus] = useState("");
-  const [month, setMonth] = useState("");
 
   useEffect(() => {
-    const loadUser = async () => {
+    const loadPayments = async () => {
       try {
-        const res = await Apis.get(endpoints['profile']);
-        setUser(res.data);
+        const res = await myPaymentApi();
+        setPayments(res);
       } catch (ex) {
         console.error("Failed to load payment history:", ex);
       } finally {
         setLoading(false);
       }
     };
-    loadUser();
+    loadPayments();
   }, []);
 
-  const payments = useMemo(() => {
-    if (!user?.enrollments) return [];
-    return user.enrollments.map(enrollment => {
-      const displayAmount = Number(enrollment.amount) > 0
-        ? Number(enrollment.amount)
-        : (Number(enrollment.classroom?.course_price) || 0); return {
-          id: enrollment.id,
-          paymentCode: `PAY${enrollment.id.toString().padStart(3, '0')}`,
-          date: enrollment.created_at ? new Date(enrollment.created_at).toLocaleDateString() : "---",
-          amount: displayAmount,
-          month: enrollment.created_at ? new Date(enrollment.created_at).toLocaleDateString('vi-VN', { month: '2-digit', year: 'numeric' }) : "",
-          content: `Học phí lớp ${enrollment.classroom?.name || "---"}`,
-          status: enrollment.enrollment_status,
-        };
-    });
-  }, [user]);
+  const mappedPayments = useMemo(() => {
+    return payments.map(payment => ({
+      id: payment.id,
+      paymentCode: `PAY${payment.id.toString().padStart(3, '0')}`,
+      date: payment.paid_at
+        ? new Date(payment.paid_at).toLocaleDateString('vi-VN')
+        : "---",
+      amount: Number(payment.amount) || 0,
+      content: `Học phí lớp ${payment.classroom || "---"}`, 
+      status: payment.payment_status,
+    }));
+  }, [payments]);
 
-  const filteredPayments = payments.filter((item) => {
-    const matchStatus = status ? item.status === status : true;
-    const matchMonth = month ? item.month === month : true;
-    return matchStatus && matchMonth;
-  });
+  const filteredPayments = mappedPayments.filter(item =>
+    status ? item.status === status : true
+  );
 
   const totalPaid = useMemo(() => {
     return filteredPayments
@@ -52,25 +45,16 @@ function PaymentHistory() {
       .reduce((sum, item) => sum + item.amount, 0);
   }, [filteredPayments]);
 
-  const formatCurrency = (value) => {
-    return `${value.toLocaleString('vi-VN')} VND`;
-  };
+  const formatCurrency = (value) => `${value.toLocaleString('vi-VN')} VND`;
 
-  const totalPaidFormatted = formatCurrency(totalPaid);
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  if (loading) return <div>Loading...</div>;
 
   return (
     <PaymentHistoryForm
-      user={user}
       payments={filteredPayments}
       totalPaid={formatCurrency(totalPaid)}
       statusFilter={status}
-      monthFilter={month}
       setStatusFilter={setStatus}
-      setMonthFilter={setMonth}
       formatCurrency={formatCurrency}
     />
   );
