@@ -1,9 +1,14 @@
 from rest_framework import serializers
 from .models import Score, Attendance
-from classes.models import Session
-from enrollments.models import Enrollment
 from users.serializers import UserSerializer
 
+class RemarkItemSerializer(serializers.Serializer):
+    enrollment_id = serializers.IntegerField()
+    comment = serializers.CharField(allow_blank=True)
+
+class SubmitScoreSerializer(serializers.Serializer):
+    remarks = RemarkItemSerializer(many=True, required=False, default=list)
+    
 class ScoreSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -12,7 +17,9 @@ class ScoreSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
+        data['score_type_id'] = instance.score_type.id
         data['score_type'] = instance.score_type.name
+        data['enrollment_id'] = instance.enrollment_id 
         data['student'] = UserSerializer(instance.enrollment.student).data
         return data
     

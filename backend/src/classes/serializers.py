@@ -12,6 +12,43 @@ class TeachingAssignmentSerializer(serializers.ModelSerializer):
         model = TeachingAssignment
         fields = '__all__'
 
+class ScheduleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Schedule
+        fields = '__all__'
+
+    def validate(self, data):
+        classroom = data.get('classroom')
+        day_of_week = data.get('day_of_week')
+        start_time = data.get('start_time')
+        end_time = data.get('end_time')
+        room = data.get('room')
+
+        same_room = Schedule.objects.filter(
+            room=room,
+            day_of_week=day_of_week,
+            start_time__lt=end_time,
+            end_time__gt=start_time
+        ).exclude(id=self.instance.id if self.instance else None)
+
+        if same_room.exists():
+            raise serializers.ValidationError("Phòng học này đã bị trùng lịch với lớp khác.")
+
+        main_teacher = TeachingAssignment.objects.filter(classroom=classroom, is_main=True).first()
+        if main_teacher:
+            teacher = main_teacher.teacher
+            same_teacher = Schedule.objects.filter(
+                classroom__teachingassignment__teacher=teacher,
+                day_of_week=day_of_week,
+                start_time__lt=end_time,
+                end_time__gt=start_time
+            ).exclude(classroom=classroom)
+
+            if same_teacher.exists():
+                raise serializers.ValidationError("Giảng viên chính của lớp này đã có lịch dạy vào thời gian này.")
+
+        return data
+
 
 class ClassRoomSerializer(serializers.ModelSerializer):
     active = serializers.ReadOnlyField(source='is_auto_active')
@@ -20,15 +57,23 @@ class ClassRoomSerializer(serializers.ModelSerializer):
         write_only=True,
         required=False
     )
+    remaining_slots = serializers.SerializerMethodField()
+    schedules = ScheduleSerializer(many=True, read_only=True, source='schedule_set')
+    course_price = serializers.ReadOnlyField(source='course.price')
 
     class Meta:
         model = ClassRoom
-        fields = ['id', 'name', 'course', 'start_date', 'end_date', 'main_teacher_id', 'active']
+        fields = ['id', 'name', 'course', 'start_date', 'end_date', 'main_teacher_id', 'active','remaining_slots', 'schedules', 'course_price', 'capacity']
+
+    def get_remaining_slots(self, classroom):
+        enrolled = classroom.enrollment_set.count()
+        return classroom.capacity - enrolled
 
     def to_representation(self, classroom):
         data = super().to_representation(classroom)
 
-        data['course'] = classroom.course.name
+        data['course_id'] = classroom.course.id
+        data['course_name'] = classroom.course.name
 
         assignment = next(
             (a for a in classroom.teachingassignment_set.all() if a.is_main),
@@ -36,6 +81,11 @@ class ClassRoomSerializer(serializers.ModelSerializer):
         )
         data['main_teacher'] = UserSerializer(assignment.teacher).data if assignment else None
         return data
+    
+    def validate_capacity(self, capacity):
+        if capacity < 10 or capacity > 50:
+            raise serializers.ValidationError("Sĩ số lớp học không hợp lệ.")
+        return capacity
 
     def validate(self, data):
         start_date = data.get('start_date')
@@ -83,7 +133,6 @@ class ClassRoomDetailSerializer(ClassRoomSerializer):
         model = ClassRoomSerializer.Meta.model
         fields = ClassRoomSerializer.Meta.fields + ['created_at', 'grade_deadline', 'grade_status']
 
-
 class RoomSerializer(serializers.ModelSerializer):
     class Meta:
         model = Room
@@ -108,12 +157,27 @@ class SessionSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({
                 "end_time": "Giờ kết thúc phải lớn hơn giờ bắt đầu."
             })
+        # Kiểm tra số buổi học đã tạo so với kế hoạch
+        classroom = data.get('classroom')
+        course = classroom.course
+        
+        actual = course.actual_total_sessions
+        planned = course.total_sessions
+        
+        if actual >= planned:
+            raise serializers.ValidationError(
+                f"Đã đủ {planned} buổi theo kế hoạch, không thể thêm buổi mới."
+            )
         return data
 
     def to_representation(self, session):
         data = super().to_representation(session)
         data['teacher_fullname'] = f'{session.user.last_name} {session.user.first_name}'
         data['room'] = RoomSerializer(session.room).data
+        data['classroom_name'] = session.schedule.classroom.name
+        data['day_of_week'] = session.schedule.day_of_week
+        data['classroom_start_date'] = session.schedule.classroom.start_date
+        data['classroom_end_date'] = session.schedule.classroom.end_date
 
         request = self.context.get('request')
         if request and request.user and request.user.is_authenticated and request.user.is_admin:
@@ -123,39 +187,3 @@ class SessionSerializer(serializers.ModelSerializer):
         return data
 
 
-class ScheduleSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Schedule
-        fields = '__all__'
-
-    def validate(self, data):
-        classroom = data.get('classroom')
-        day_of_week = data.get('day_of_week')
-        start_time = data.get('start_time')
-        end_time = data.get('end_time')
-        room = data.get('room')
-
-        same_room = Schedule.objects.filter(
-            room=room,
-            day_of_week=day_of_week,
-            start_time__lt=end_time,
-            end_time__gt=start_time
-        ).exclude(id=self.instance.id if self.instance else None)
-
-        if same_room.exists():
-            raise serializers.ValidationError("Phòng học này đã bị trùng lịch với lớp khác.")
-
-        main_teacher = TeachingAssignment.objects.filter(classroom=classroom, is_main=True).first()
-        if main_teacher:
-            teacher = main_teacher.teacher
-            same_teacher = Schedule.objects.filter(
-                classroom__teachingassignment__teacher=teacher,
-                day_of_week=day_of_week,
-                start_time__lt=end_time,
-                end_time__gt=start_time
-            ).exclude(classroom=classroom)
-
-            if same_teacher.exists():
-                raise serializers.ValidationError("Giảng viên chính của lớp này đã có lịch dạy vào thời gian này.")
-
-        return data

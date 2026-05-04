@@ -15,7 +15,7 @@ from core import core_perms
 
 class ClassRoomViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.ClassRoomSerializer
-    pagination_class = paginators.ClassRoomPaginator
+    # pagination_class = paginators.ClassRoomPaginator
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ["name"]
     ordering_fields = ["-id"]
@@ -38,6 +38,11 @@ class ClassRoomViewSet(viewsets.ModelViewSet):
 
         if self.request.user.is_authenticated and self.request.user.is_student:
             query = query.filter(student__lt=F('capacity'))
+        if self.request.user.is_authenticated and self.request.user.is_teacher:
+            query = query.filter(
+                teachingassignment__teacher=self.request.user,
+                teachingassignment__is_main=True
+            )
         return query
 
     def get_permissions(self):
@@ -69,18 +74,52 @@ class ClassRoomViewSet(viewsets.ModelViewSet):
 
     @action(methods=['get'], url_path='students', detail=True)
     def get_students(self, request, pk):
-        enrollments = self.get_object().enrollment_set.filter(active=True, enrollment_status__in=['SUCCESS',
-                                                                                                  'PARTIAL_PAYMENT']).select_related(
+        enrollments = self.get_object().enrollment_set.filter(active=True, enrollment_status__in=['SUCCESS']).select_related(
             'student')
         return Response(EnrollmentSerializer(enrollments, many=True, context={"request": request}).data,
                         status=status.HTTP_200_OK)
 
     @action(methods=['get'], url_path='scores', detail=True)
     def get_scores(self, request, pk):
-        scores = Score.objects.select_related('score_type', 'enrollment__student').filter(active=True,
-                                                                                          enrollment__classroom_id=pk)
+        enrollments = self.get_object().enrollment_set.filter(
+            active=True, 
+            enrollment_status__in=['SUCCESS']
+        ).select_related('student').prefetch_related('score_set')
 
-        return Response(ScoreSerializer(scores, many=True).data, status=status.HTTP_200_OK)
+        results = []
+        for en in enrollments:
+            existing_scores = en.score_set.filter(active=True)
+            if existing_scores.exists():
+                for s in existing_scores:
+                    results.append({
+                        "enrollment_id": en.id,
+                        "score_type_id": s.score_type_id,
+                        "score_value": s.score_value,
+                        "student": {
+                            "id": en.student.id,
+                            "first_name": en.student.first_name,
+                            "last_name": en.student.last_name,
+                        }
+                    })
+            else:
+                results.append({
+                    "enrollment_id": en.id,
+                    "score_type_id": None,
+                    "score_value": None,
+                    "student": {
+                        "id": en.student.id,
+                        "first_name": en.student.first_name,
+                        "last_name": en.student.last_name,
+                    }
+                })    
+        return Response(results, status=status.HTTP_200_OK)
+
+    @action(methods=['get'], url_path='score-types', detail=True)
+    def get_score_types(self, request, pk):
+        classroom = self.get_object()
+        from courses.serializers import ScoreTypeSerializer
+        score_types = classroom.course.scoretype_set.filter(active=True)
+        return Response(ScoreTypeSerializer(score_types, many=True).data, status=status.HTTP_200_OK)
 
 class SessionViewSet(viewsets.ViewSet, generics.ListAPIView):
     serializer_class = serializers.SessionSerializer
@@ -95,6 +134,10 @@ class SessionViewSet(viewsets.ViewSet, generics.ListAPIView):
             return query.filter(user=user)
         
         if user.is_student:
-            return query.filter(attendance__enrollment__student=user)
-        
+            return query.filter(
+                schedule__classroom__enrollment__student=user,
+                schedule__classroom__enrollment__active=True,
+                # schedule__classroom__enrollment__enrollment_status__in=['SUCCESS', 'PARTIAL_PAYMENT']
+            ).distinct()
+
         return query

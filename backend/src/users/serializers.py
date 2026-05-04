@@ -27,10 +27,20 @@ class UserSerializer(serializers.ModelSerializer):
     Dùng cho api đăng ký tài khoản, chỉnh sửa thông tin cá nhân
     """
     phone_num = serializers.CharField(write_only=True)
+    role = serializers.SerializerMethodField()
+
+    def get_role(self, obj):
+        if obj.is_admin:
+            return "Admin"
+        if obj.is_teacher:
+            return "Teacher"
+        if obj.is_student:
+            return "Student"
+        return None
 
     class Meta:
         model = User
-        fields = ['id', 'first_name', 'last_name', 'email', 'username', 'password', 'phone_num']
+        fields = ['id', 'first_name', 'last_name', 'email', 'username', 'password', 'phone_num', 'role']
         extra_kwargs = {
             'password': {
                 'write_only': True
@@ -68,8 +78,17 @@ class UserSerializer(serializers.ModelSerializer):
         Profile.objects.create(user=user, phone_num=phone)
         return user
     
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data['phone_num'] = instance.profile.phone_num if hasattr(instance, 'profile') else None
+        return data
+    
     def update(self, instance, validated_data):
         validated_data.pop("password", None)
+        phone = validated_data.pop("phone_num", None)
+        if phone:
+            instance.profile.phone_num = phone
+            instance.profile.save()
         return super().update(instance, validated_data)
     
 class PasswordUpdateSerializer(serializers.Serializer):
@@ -129,12 +148,21 @@ class UserDetailSerializer(UserSerializer):
     Docstring for UserDetailSerializer
     Thông tin chi tiết của user
     """
-    avatar = serializers.CharField(source='profile.avatar', read_only=True)
+    avatar = serializers.SerializerMethodField()
+
+    def get_avatar(self, obj):
+        try:
+            if obj.profile.avatar:
+                return obj.profile.avatar.url
+        except:
+            pass
+        return None
+
     class Meta:
         model = UserSerializer.Meta.model
         fields = UserSerializer.Meta.fields + ['date_joined', 'last_login', 'auth_provider', 'avatar']
         extra_kwargs = UserSerializer.Meta.extra_kwargs
-        
+
     @transaction.atomic
     def create(self, validated_data):
         password = validated_data.pop('password', None)
@@ -159,5 +187,6 @@ class UserDetailSerializer(UserSerializer):
             setattr(instance, attr, value)
         instance.save()
         return instance
+
 
     
