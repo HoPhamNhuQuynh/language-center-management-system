@@ -14,8 +14,8 @@ from datetime import timedelta
 class TestScoreService:
     def test_bulk_sync_scores_creates_updates_and_skips_invalid_enrollments(self, classroom):
         """ Hàm này kiểm tra bulk nhập điểm cho lớp học trong các trường hợp điểm đã có, chưa có và user không tồn tại trong lớp """
-        e1 = baker.make('enrollments.Enrollment', classroom=classroom)
-        e2 = baker.make('enrollments.Enrollment', classroom=classroom)
+        e1 = baker.make('enrollments.Enrollment', classroom=classroom, enrollment_status=Enrollment.Status.SUCCESS)
+        e2 = baker.make('enrollments.Enrollment', classroom=classroom, enrollment_status=Enrollment.Status.SUCCESS)
         score_type = baker.make('courses.ScoreType')
         
         existing_score = baker.make('grades.Score', enrollment=e1, 
@@ -39,21 +39,23 @@ class TestScoreService:
 class TestAttendanceService:
     def test_get_attendances_list_returns_attendances_for_session(self, classroom):
         """ Hàm này unit test service lấy ds điểm danh của buổi học cụ thể """
-        session = baker.make('classes.Session', schedule__classroom=classroom)
-        enrollment = baker.make('enrollments.Enrollment', classroom=classroom)
+        session = baker.make('classes.Session', schedule__classroom=classroom,)
+        enrollment = baker.make('enrollments.Enrollment', classroom=classroom, enrollment_status=Enrollment.Status.SUCCESS)
         baker.make('grades.Attendance', enrollment=enrollment, session=session, 
                    attendance_status="PRESENT")
         
-        result = AttendanceService.get_attendances_list(session)
+        result = AttendanceService.get_or_initialize_attendances(session)
 
-        assert result[0]['enrollment_id'] == enrollment.id
-        assert result[0]['attendance_status'] == "PRESENT"
+        attendance = result.first()
+
+        assert attendance.enrollment_id == enrollment.id
+        assert attendance.attendance_status == "PRESENT"
 
     def test_bulk_sync_attendances_creates_attendances_and_returns_created_count(self, classroom):
         session = baker.make('classes.Session', schedule__classroom=classroom)
         
-        e1 = baker.make('enrollments.Enrollment', classroom=classroom)
-        e2 = baker.make('enrollments.Enrollment', classroom=classroom)
+        e1 = baker.make('enrollments.Enrollment', classroom=classroom, enrollment_status=Enrollment.Status.SUCCESS)
+        e2 = baker.make('enrollments.Enrollment', classroom=classroom, enrollment_status=Enrollment.Status.SUCCESS)
 
         attendances_data = [
             {
@@ -73,6 +75,12 @@ class TestAttendanceService:
         assert result["created"] == 2
         assert Attendance.objects.filter(enrollment=e1, attendance_status="LATE").exists()
         assert Attendance.objects.filter(enrollment=e2, attendance_status="PRESENT").exists()
+       
+        attendance_e1 = Attendance.objects.get(enrollment=e1, session=session)
+        attendance_e2 = Attendance.objects.get(enrollment=e2, session=session)
+
+        assert attendance_e1.note == "Đi muộn 15p"
+        assert attendance_e2.note == "Có mặt"
 
 @pytest.mark.django_db
 class TestGradesAPI:
@@ -136,17 +144,27 @@ class TestGradesAPI:
 
         assert response.status_code == status.HTTP_403_FORBIDDEN
 
-    def test_score_item_serializer_invalid_when_score_out_of_range(self):
-        """Score ngoài khoảng [0, 10]"""
+
+    @pytest.mark.parametrize("score_value, expected_valid", [
+        (-0.1, False),
+        (0, True),
+        (0.1, True),
+        (9.9, True),
+        (10, True),
+        (10.1, False),
+        ("abc", False),
+    ]) # Bổ sung
+    def test_score_item_serializer_validates_score_boundary_values(self, score_value, expected_valid):
+        """Score phải nằm trong khoảng [0, 10] và phải là số hợp lệ"""
         from grades.serializers import ScoreItemSerializer
 
         s = ScoreItemSerializer(data={
             "enrollment_id": 1,
             "score_type_id": 1,
-            "score_value": -1
+            "score_value": score_value
         })
 
-        assert not s.is_valid()
+        assert s.is_valid() is expected_valid
 
     def test_bulk_sync_score_serializer_invalid_when_duplicate_items(self):
         """ Test mỗi cột điểm thì học viên chỉ có 1 số điểm """
@@ -163,3 +181,5 @@ class TestGradesAPI:
 
         assert not s.is_valid()
         assert "Trùng điểm" in str(s.errors)
+    
+    

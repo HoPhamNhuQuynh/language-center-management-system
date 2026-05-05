@@ -16,12 +16,11 @@ class TestCourseModule:
     ])
     def test_create_course_sessions_bva(self, api_client, admin_user, setup_course_data, sessions, expected_status, expected_msg):
         """Kiểm tra giá trị biên cho tổng số buổi học (10-30)"""
-        level, _ = setup_course_data
+        level, tag = setup_course_data
         api_client.force_authenticate(user=admin_user)
-        
-        data = {"name": f"Course {sessions}", "total_sessions": sessions, "level": level.id}
-        response = api_client.post(reverse('course-list'), data)
-        
+        data = {"name": f"Course {sessions}", "total_sessions": sessions, "level": level.id, "description": "Khóa học nâng cao", "price": 3000000, "tags": [tag.id],}
+        response = api_client.post(reverse('course-list'), data, format='multipart')
+        print("COURSE DATA:", repr(response.data))
         assert response.status_code == expected_status
         if expected_msg:
             assert expected_msg in str(response.data)
