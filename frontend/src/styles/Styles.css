@@ -1,0 +1,247 @@
+:root {
+    --primary-navy: #1a335d;
+    --secondary-blue: #1d50a1;
+    --light-blue-bg: #f4f7fe;
+    --accent-blue: #5b86e5;
+    --success-green: #2ecc71;
+    --error-red: #dc2626;
+    --border-color: #eee;
+    --white: #ffffff;
+    --shadow-main: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.page-layout {
+    padding: 20px;
+    background-color: var(--light-blue-bg);
+    min-height: 100vh;
+    font-family: Arial, sans-serif;
+}
+
+.title-form {
+    color: var(--primary-navy);
+    font-size: 24px;
+    text-align: center;
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.page-header h1 {
+    color: var(--primary-navy);
+    font-size: 20px;
+}
+
+.add-btn {
+    background-color: var(--secondary-blue);
+    color: var(--white);
+    border: none;
+    padding: 10px 25px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+/* Css dùng chung cho bảng */
+
+.table-wrapper {
+    background: var(--white);
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow-x: auto;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.data-table th {
+    background: var(--primary-navy);
+    color: var(--white);
+    padding: 12px 15px;
+    text-align: left;
+    font-size: 14px;
+}
+
+.data-table td {
+    font-size: 13px;
+    padding: 12px 15px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+}
+
+.modal-body {
+    background: var(--white);
+    padding: 30px;
+    border-radius: 12px;
+    width: 800px;
+    position: relative;
+}
+
+.modal-close-btn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 24px;
+    cursor: pointer;
+    background: none;
+    border: none;
+}
+
+.form-row {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.input-group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.input-group input,
+.input-group select,
+.input-group textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.input-error {
+    margin-top: 4px;
+    font-size: 12px;
+    color: var(--error-red);
+    background-color: #fef2f2;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.toast-badge {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background-color: #16a34a;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-size: 14px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    z-index: 9999;
+}
+
+.btn-save {
+    background-color: var(--accent-blue);
+    color: var(--white);
+    border: none;
+    padding: 8px 25px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.btn-cancel {
+    background-color: var(--white);
+    border: 1px solid #ccc;
+    padding: 8px 25px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.btn-delete {
+    padding: 9px 24px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    background: #ef4444;
+    color: #fff;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.badge-warning {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background-color: #fff7ed;
+    border: 1px solid #fed7aa;
+    color: #c2410c;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.status-badge {
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.status-badge.active {
+    background-color: #d1fae5;
+    color: #065f46;
+}
+
+.status-badge.inactive {
+    background-color: #fee2e2;
+    color: #991b1b;
+}
+
+.icon-edit {
+    margin-right: 10px;
+    cursor: pointer;
+}
+
+.icon-delete {
+    cursor: pointer;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

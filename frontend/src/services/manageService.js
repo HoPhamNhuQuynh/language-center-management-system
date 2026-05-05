@@ -59,3 +59,55 @@ export const getTeachers = async () => {
   const res = await Apis.get("teachers/");
   return res.data;
 };
+
+export const getRooms = async () => {
+  const res = await Apis.get("rooms/");
+  return res.data;
+};
+
+// Session
+export const getSessionsByClass = async (classId) => {
+  const res = await Apis.get(`classes/${classId}/sessions/`);
+  return res.data;
+};
+
+export const createSession = async (data) => {
+  const res = await Apis.post("sessions/", data);
+  return res.data;
+};
+
+export const updateSession = async (sessionId, data) => {
+  const res = await Apis.patch(`sessions/${sessionId}/`, data);
+  return res.data;
+};
+
+export const deleteSession = async (sessionId) => {
+  const res = await Apis.delete(`sessions/${sessionId}/`);
+  return res.data;
+};
+
+// User
+export const getUsers = async (page = 1, signal) => {
+  const res = await Apis.get(`users/?page=${page}`, { signal });
+  return res.data;
+};
+
+export const updateUser = async (userId, data) => {
+  const res = await Apis.patch(`users/${userId}/`, data);
+  return res.data;
+};
+
+export const lockUser = async (userId) => {
+  const res = await Apis.patch(`users/${userId}/toggle-lock/`);
+  return res.data;
+};
+
+export const changeUserRole = async (userId, data) => {
+  const res = await Apis.patch(`users/${userId}/role/`, data);
+  return res.data;
+};
+
+export const createTeacher = async (data) => {
+  const res = await Apis.post("users/", data);
+  return res.data;
+};

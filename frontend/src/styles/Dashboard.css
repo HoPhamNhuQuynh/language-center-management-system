@@ -1,77 +1,303 @@
-.dashboard-filters {
-  display: flex;
-  gap: 8px;
-  align-items: flex-end;
-  width: fit-content; 
+* {
+  box-sizing: border-box;
 }
 
-.dashboard-filters .filter-item select {
-  width: 240px;
+.dashboard-layout {
+  background: #f0f4f9;
+  min-height: 100vh;
 }
 
-/* Content */
 .dashboard-content {
-  padding: 40px;
-  background: #eff3f7;
+  padding: 28px 32px;
+  background: #f0f4f9;
 }
 
 .content-header {
   display: flex;
-  justify-content: space-between;  
-  align-items: center;
+  justify-content: space-between;
+  align-items: flex-end;
   margin-bottom: 24px;
 }
 
-/* Cards */
+/* ── Filters ── */
+.dashboard-filters {
+  display: flex;
+  gap: 15px;
+  align-items: flex-end;
+}
+
+.ds-filter-item {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.ds-filter-item label {
+  font-size: 16px;
+  font-weight: 600;
+  color: #6b7d94;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.ds-filter-item select {
+  height: 36px;
+  width: 200px;
+  padding: 0 12px;
+  border: 1px solid #d0dae8;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #0f2744;
+  font-size: 14px;
+  font-weight: 500;
+}
+
 .stat-card {
-  border: none;
-  border-radius: 12px;
+  border: none !important;
+  border-radius: 12px !important;
   overflow: hidden;
 }
 
-.stat-footer {
-  margin-top: 10px;
-  color: rgba(255, 255, 255, 0.8);
-  font-size: 12px;
+.stat-card.navy {
+  background: #0f2744 !important;
 }
 
-.chart-card {
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+.stat-card.gold {
+  background: #c9973a !important;
 }
 
+.stat-card.accent {
+  background: #2d7dd2 !important;
+}
+
+.stat-card.teal {
+  background: #1a8a6e !important;
+}
+
+.stat-card .ant-card-body {
+  padding: 20px 22px !important;
+}
+
+.stat-card .ant-statistic-title {
+  color: rgba(255, 255, 255, 0.7) !important;
+  font-size: 14px !important;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+}
+
+.stat-card .ant-statistic-content {
+  color: #ffffff !important;
+  font-size: 30px !important;
+  font-weight: 700 !important;
+}
+
+/* ── Revenue card (dark) ── */
 .dark-card {
-  background: #1a2d42 !important;
-  color: white !important;
-  border-radius: 12px;
+  background: #0f2744 !important;
+  border: none !important;
+  border-radius: 12px !important;
+}
+
+.dark-card .ant-card-head {
+  background: #0f2744 !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+  padding: 0 20px !important;
+  min-height: 44px;
 }
 
 .dark-card .ant-card-head-title {
-  color: white !important;
+  color: rgba(255, 255, 255, 0.5) !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.dark-card .ant-card-body {
+  padding: 18px 20px !important;
 }
 
 .revenue-value {
-  font-size: 32px;
-  font-weight: bold;
-  color: #fff;
-  margin-top: 10px;
+  font-size: 28px;
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1.15;
+  margin-top: 4px;
 }
 
-/* Buttons */
+/* ── Chart / plain cards ── */
+.chart-card {
+  border-radius: 12px !important;
+  border: 1px solid #d0dae8 !important;
+  box-shadow: none !important;
+  background: #ffffff !important;
+}
+
+.chart-card .ant-card-head {
+  border-bottom: 1px solid #e8eef5 !important;
+  padding: 0 20px !important;
+  min-height: 44px;
+}
+
+.chart-card .ant-card-head-title {
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  color: #6b7d94 !important;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.chart-card .ant-card-body {
+  padding: 16px 20px !important;
+}
+
+/* ── Pass rate mini stats ── */
+.pass-stat-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.pass-stat-box {
+  border-radius: 8px;
+  padding: 10px 12px;
+  text-align: center;
+}
+
+.pass-stat-box.pass {
+  background: #d6f3ec;
+}
+
+.pass-stat-box.fail {
+  background: #fde8e8;
+}
+
+.pass-stat-num {
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.pass-stat-box.pass .pass-stat-num {
+  color: #1a8a6e;
+}
+
+.pass-stat-box.fail .pass-stat-num {
+  color: #c0392b;
+}
+
+.pass-stat-label {
+  font-size: 13px;
+  margin-top: 3px;
+}
+
+.pass-stat-box.pass .pass-stat-label {
+  color: #0f6e56;
+}
+
+.pass-stat-box.fail .pass-stat-label {
+  color: #922b21;
+}
+
+/* ── Progress bar ── */
+.progress-wrap {
+  margin: 14px 0 4px;
+}
+
+.progress-bg {
+  height: 8px;
+  border-radius: 4px;
+  background: #e5e7eb;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 4px;
+  background: #1a8a6e;
+  transition: width 0.4s ease;
+}
+
+.progress-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: #6b7d94;
+  margin-top: 5px;
+}
+
+/* ── Legend rows ── */
+.legend-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.legend-row-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+}
+
+.legend-dot-label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: #374151;
+}
+
+.legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.legend-count {
+  font-weight: 600;
+  color: #0f2744;
+}
+
+/* ── Action buttons ── */
 .action-buttons {
-  margin-top: 30px;
+  margin-top: 28px;
   display: flex;
   justify-content: center;
-  gap: 20px;
+  gap: 16px;
 }
 
-.ant-btn-primary {
-  background: #1a2d42;
-  border-color: #1a2d42;
+.action-buttons .ant-btn-primary {
+  background: #0f2744 !important;
+  border-color: #0f2744 !important;
+  border-radius: 8px !important;
+  font-weight: 500;
 }
 
-/* Responsive Customization */
+.action-buttons .ant-btn-primary:hover {
+  background: #1a3a5c !important;
+  border-color: #1a3a5c !important;
+}
+
+.action-buttons .ant-btn-default {
+  border-color: #d0dae8 !important;
+  color: #0f2744 !important;
+  border-radius: 8px !important;
+  font-weight: 500;
+}
+
+.action-buttons .ant-btn-default:hover {
+  border-color: #0f2744 !important;
+}
+
+/* ── Responsive ── */
 @media (max-width: 768px) {
+  .dashboard-content {
+    padding: 16px;
+  }
+
   .content-header {
     flex-direction: column;
     align-items: flex-start;

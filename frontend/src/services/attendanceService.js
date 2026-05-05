@@ -2,7 +2,7 @@ import Apis from "./Apis";
 
 export const getSessionsApi = async (classId) => {
     const res = await Apis.get(`classes/${classId}/sessions/`);
-    return res.data;
+    return res.data.sessions;
 }
 
 export const getAttendancesApi = async ( sessionId) => {

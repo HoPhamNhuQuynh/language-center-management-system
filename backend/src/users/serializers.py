@@ -160,17 +160,21 @@ class UserDetailSerializer(UserSerializer):
 
     class Meta:
         model = UserSerializer.Meta.model
-        fields = UserSerializer.Meta.fields + ['date_joined', 'last_login', 'auth_provider', 'avatar']
+        fields = UserSerializer.Meta.fields + ['date_joined', 'last_login', 'auth_provider', 'avatar', 'is_active']
         extra_kwargs = UserSerializer.Meta.extra_kwargs
 
     @transaction.atomic
     def create(self, validated_data):
+        phone = validated_data.pop("phone_num", None)
         password = validated_data.pop('password', None)
         user = User(**validated_data)
 
         if password:
             user.set_password(password)
         user.save()
+
+        if phone:
+            Profile.objects.create(user=user, phone_num=phone)
 
         request = self.context.get('request')
         if request and request.user and request.user.is_authenticated and request.user.is_admin:
@@ -182,6 +186,11 @@ class UserDetailSerializer(UserSerializer):
         list_attrs_to_drop = ['password', 'avatar', 'date_joined', 'last_login', 'auth_provider']
         for attr in list_attrs_to_drop:
             validated_data.pop(attr, None)
+
+        phone = validated_data.pop("phone_num", None)
+        if phone:
+            instance.profile.phone_num = phone
+            instance.profile.save()
 
         for attr, value in validated_data.items():
             setattr(instance, attr, value)

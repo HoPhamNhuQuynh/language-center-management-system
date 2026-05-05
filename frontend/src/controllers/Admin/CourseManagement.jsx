@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import '../../styles/CourseManagement.css';
+import "../../styles/Styles.css";
 import { FaPen } from "react-icons/fa6";
 import { ImBin2 } from 'react-icons/im';
 import { createCourse, deleteCourse, getCourses, getLevels, updateCourse } from '../../services/manageService';
@@ -62,6 +63,8 @@ const CourseManagement = () => {
             errs.description = "Vui lòng nhập mô tả";
         if (!form.price) 
             errs.price = "Vui lòng nhập học phí";
+        else if (form.price < 2000000) 
+          errs.price = "Học phí tối thiểu là 2 triệu VND";
         if (!form.total_sessions)
             errs.total_sessions = "Vui lòng nhập số buổi học";
         else if (form.total_sessions < 10 || form.total_sessions > 30)
@@ -142,7 +145,14 @@ const CourseManagement = () => {
             showToast(editingCourse ? "Cập nhật khóa học thành công!" : "Thêm khóa học thành công!");
             handleClose();
         } catch (ex) {
-            console.error(ex);
+            const data = ex.response?.data;
+            console.error("Toàn bộ lỗi:", JSON.stringify(data, null, 2));
+            const msg = Array.isArray(data)
+              ? data[0]
+              : typeof data === "object"
+                ? Object.values(data).flat()[0]
+                : "Lưu thất bại, vui lòng thử lại.";
+            setErrors({ general: msg });
         } finally {
             setSaving(false);
         }
@@ -150,221 +160,307 @@ const CourseManagement = () => {
 
 
     return (
-        <div className="course-page">
-        <div className="course-header">
-            <h1>Quản lý khóa học</h1>
-            <button className="add-button" onClick={() => setShowModal(true)}>Thêm</button>
+      <div className="page-layout">
+        <div className="page-header">
+          <h1>Quản lý khóa học</h1>
+          <button className="add-btn" onClick={() => setShowModal(true)}>
+            Thêm
+          </button>
         </div>
 
-        <div className="course-table-wrapper">
-            <table className="course-table">
+        <div className="table-wrapper">
+          <table className="data-table course-table">
             <thead>
-                <tr>
-                <th>Mã khóa học</th>
+              <tr>
+                <th>ID</th>
                 <th>Tên khóa học</th>
                 <th>Trạng thái</th>
+                <th>Mô tả</th>
                 <th>Cấp độ</th>
                 <th>Số buổi</th>
                 <th>Ngày tạo</th>
                 <th>Thao tác</th>
-                </tr>
+              </tr>
             </thead>
             <tbody>
-                {courses.map((course) => (
+              {courses.map((course) => (
                 <tr key={course.id}>
-                    <td>{course.id}</td>
-                    <td>{course.name}</td>
-                    <td>
-                    <span className={`status-badge ${course.active ? "active" : "inactive"}`}>
-                        {course.active ? "Đang hoạt động" : "Không hoạt động"}
+                  <td>{course.id}</td>
+                  <td>{course.name}</td>
+                  <td>
+                    <span
+                      className={`status-badge ${course.active ? "active" : "inactive"}`}
+                    >
+                      {course.active ? "Đang hoạt động" : "Không hoạt động"}
                     </span>
-                    </td>
-                    <td>{course.level_name}</td>
-                    <td>{course.actual_total_sessions ?? 0} / {course.total_sessions}</td>
-                    <td>{formatDate(course.created_at)}</td>
-                    <td>
-                    <span className="icon-edit" onClick={() => handleEdit(course)}><FaPen /></span>
-                    <span className="icon-delete" onClick={() => setDeleteModal({ show: true, courseId: course.id, courseName: course.name })}><ImBin2 /></span>
-                    </td>
+                  </td>
+                  <td>{course.description}</td>
+                  <td>{course.level_name}</td>
+                  <td>{course.total_sessions}</td>
+                  <td>{formatDate(course.created_at)}</td>
+                  <td>
+                    <span
+                      className="icon-edit"
+                      onClick={() => handleEdit(course)}
+                    >
+                      <FaPen />
+                    </span>
+                    <span
+                      className="icon-delete"
+                      onClick={() =>
+                        setDeleteModal({
+                          show: true,
+                          courseId: course.id,
+                          courseName: course.name,
+                        })
+                      }
+                    >
+                      <ImBin2 />
+                    </span>
+                  </td>
                 </tr>
-                ))}
+              ))}
             </tbody>
-            </table>
+          </table>
         </div>
 
         {deleteModal.show && (
-        <div className="course-modal">
-            <div className="modal-body" style={{ maxWidth: "420px", textAlign: "center", padding: "32px" }}>
-            
-            <div style={{
-                width: "64px", height: "64px", borderRadius: "50%",
-                background: "#fee2e2", display: "flex", alignItems: "center",
-                justifyContent: "center", margin: "0 auto 16px", fontSize: "28px"
-            }}>
+          <div className="modal-overlay">
+            <div
+              className="modal-body"
+              style={{
+                maxWidth: "420px",
+                textAlign: "center",
+                padding: "32px",
+              }}
+            >
+              <div
+                style={{
+                  width: "64px",
+                  height: "64px",
+                  borderRadius: "50%",
+                  background: "#fee2e2",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  margin: "0 auto 16px",
+                  fontSize: "28px",
+                }}
+              >
                 🗑️
-            </div>
+              </div>
 
-            <h2 style={{ margin: "0 0 8px", fontSize: "18px" }}>Xác nhận xóa</h2>
-            
-            <p style={{ color: "#6b7280", fontSize: "14px", margin: "0 0 20px", lineHeight: "1.6" }}>
-                Bạn có chắc muốn xóa khóa học<br />
-                <strong style={{ color: "#111827" }}>"{deleteModal.courseName}"</strong> không?<br />
-                <span style={{ color: "#ef4444", fontSize: "13px" }}>Hành động này không thể hoàn tác.</span>
-            </p>
+              <h2 style={{ margin: "0 0 8px", fontSize: "18px" }}>
+                Xác nhận xóa
+              </h2>
 
-            {deleteModal.error && (
-                <div style={{
-                display: "flex", alignItems: "center", gap: "8px",
-                background: "#fff7ed", border: "1px solid #fed7aa",
-                color: "#c2410c", padding: "10px 14px", borderRadius: "8px",
-                fontSize: "13px", marginBottom: "20px", textAlign: "left"
-                }}>
-                <span style={{ fontSize: "16px" }}>⚠️</span>
-                <span>{deleteModal.error}</span>
+              <p
+                style={{
+                  color: "#6b7280",
+                  fontSize: "14px",
+                  margin: "0 0 20px",
+                  lineHeight: "1.6",
+                }}
+              >
+                Bạn có chắc muốn xóa khóa học
+                <br />
+                <strong style={{ color: "#111827" }}>
+                  "{deleteModal.courseName}"
+                </strong>{" "}
+                không?
+                <br />
+                <span style={{ color: "#ef4444", fontSize: "13px" }}>
+                  Hành động này không thể hoàn tác.
+                </span>
+              </p>
+
+              {deleteModal.error && (
+                <div className="status-badge badge-warning">
+                  <span style={{ fontSize: "16px" }}>⚠️</span>
+                  <span>{deleteModal.error}</span>
                 </div>
-            )}
+              )}
 
-            <div style={{ display: "flex", gap: "10px", justifyContent: "center" }}>
-                <button
-                onClick={() => setDeleteModal({ show: false, courseId: null, courseName: "", error: "" })}
+              <div
                 style={{
-                    padding: "9px 24px", borderRadius: "8px", border: "1px solid #d1d5db",
-                    background: "#fff", color: "#374151", cursor: "pointer", fontSize: "14px"
+                  display: "flex",
+                  gap: "10px",
+                  justifyContent: "center",
                 }}
-                >
-                Hủy
-                </button>
+              >
                 <button
-                onClick={handleDelete}
-                style={{
-                    padding: "9px 24px", borderRadius: "8px", border: "none",
-                    background: "#ef4444", color: "#fff", cursor: "pointer", fontSize: "14px",
-                    fontWeight: "600"
-                }}
+                  className="btn-cancel"
+                  onClick={() =>
+                    setDeleteModal({
+                      show: false,
+                      courseId: null,
+                      courseName: "",
+                      error: "",
+                    })
+                  }
                 >
-                Xóa
+                  Hủy
                 </button>
+                <button className="btn-delete" onClick={handleDelete}>
+                  Xóa
+                </button>
+              </div>
             </div>
-
-            </div>
-        </div>
+          </div>
         )}
 
         {showModal && (
-            <div className="course-modal">
+          <div className="modal-overlay">
             <div className="modal-body">
-                <span className="close-btn" onClick={handleClose}>&times;</span>
-                <h2>{editingCourse ? "Sửa khóa học" : "Thêm khóa học"}</h2>
+              <span className="modal-close-btn" onClick={handleClose}>
+                &times;
+              </span>
+              <h2 className="title-form">
+                {editingCourse ? "SỬA KHÓA HỌC" : "THÊM KHÓA HỌC MỚI"}
+              </h2>
 
-                <div className="form-row">
-                    <div className="input-group">
-                        <label>Tên khóa</label>
-                        <input
-                        type="text"
-                        name="name"
-                        value={form.name}
-                        onChange={handleChange}
-                        placeholder="VD: IELTS 6.5"
-                        />
-                        {errors.name && <div className="input-error">{errors.name}</div>}
-                    </div>
-
-                    <div className="input-group">
-                        <label>Học phí (VND)</label>
-                        <input
-                            type="text"
-                            name="price"
-                            value={Number(form.price).toLocaleString("vi-VN")}  
-                            onChange={(e) => {
-                                const raw = e.target.value.replace(/\./g, "");
-                                setForm((prev) => ({ ...prev, price: raw }));
-                                setErrors((prev) => ({ ...prev, price: undefined }));
-                            }}
-                            placeholder="VD: 2.000.000"
-                            />
-                        {errors.price && <div className="input-error">{errors.price}</div>}
-                    </div>
-                </div>
-
-                <div className="form-row">
-                    <div className="input-group">
-                        <label>Cấp độ</label>
-                        <select name="level" value={form.level} onChange={handleChange}>
-                            <option value="">-- Chọn cấp độ --</option>
-                            {levels.map((lv) => (
-                                <option key={lv.id} value={lv.id}>{lv.name}</option>
-                            ))}
-                            </select>
-                        {errors.level && <div className="input-error">{errors.level}</div>}
-                    </div>
-                    <div className="input-group">
-                        <label>Số buổi học (kế hoạch)</label>
-                        <input
-                        type="number"
-                        name="total_sessions"
-                        value={form.total_sessions}
-                        onChange={handleChange}
-                        placeholder="VD: 20"
-                        />
-                        {errors.total_sessions && <div className="input-error">{errors.total_sessions}</div>}
-                    </div>
-                    <div className="input-group">
-                        <label>Trạng thái</label>
-                        <select name="active" value={String(form.active)} onChange={handleChange}>
-                            <option value="true">Đang hoạt động</option>
-                            <option value="false">Không hoạt động</option>
-                        </select>
-                    </div>
+              <div className="form-row">
+                <div className="input-group">
+                  <label>Tên khóa</label>
+                  <input
+                    type="text"
+                    name="name"
+                    value={form.name}
+                    onChange={handleChange}
+                    placeholder="VD: IELTS 6.5"
+                  />
+                  {errors.name && (
+                    <div className="input-error">{errors.name}</div>
+                  )}
                 </div>
 
                 <div className="input-group">
+                  <label>Học phí (VND)</label>
+                  <input
+                    type="text"
+                    name="price"
+                    value={Number(form.price).toLocaleString("vi-VN")}
+                    onChange={(e) => {
+                      const raw = e.target.value.replace(/\./g, "");
+                      setForm((prev) => ({ ...prev, price: raw }));
+                      setErrors((prev) => ({ ...prev, price: undefined }));
+                    }}
+                    placeholder="VD: 2.000.000"
+                  />
+                  {errors.price && (
+                    <div className="input-error">{errors.price}</div>
+                  )}
+                </div>
+              </div>
+
+              <div className="form-row">
+                <div className="input-group">
+                  <label>Cấp độ</label>
+                  <select
+                    name="level"
+                    value={form.level}
+                    onChange={handleChange}
+                  >
+                    <option value="">-- Chọn cấp độ --</option>
+                    {levels.map((lv) => (
+                      <option key={lv.id} value={lv.id}>
+                        {lv.name}
+                      </option>
+                    ))}
+                  </select>
+                  {errors.level && (
+                    <div className="input-error">{errors.level}</div>
+                  )}
+                </div>
+                <div className="input-group">
+                  <label>Số buổi học (kế hoạch)</label>
+                  <input
+                    type="number"
+                    name="total_sessions"
+                    value={form.total_sessions}
+                    onChange={handleChange}
+                    placeholder="VD: 20"
+                  />
+                  {errors.total_sessions && (
+                    <div className="input-error">{errors.total_sessions}</div>
+                  )}
+                </div>
+                <div className="input-group">
+                  <label>Trạng thái</label>
+                  <select
+                    name="active"
+                    value={String(form.active)}
+                    onChange={handleChange}
+                  >
+                    <option value="true">Đang hoạt động</option>
+                    <option value="false">Không hoạt động</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="input-group">
                 <label>Mô tả khóa học</label>
                 <textarea
-                    name="description"
-                    rows="4"
-                    value={form.description}
-                    onChange={handleChange}
+                  name="description"
+                  rows="4"
+                  value={form.description}
+                  onChange={handleChange}
                 />
-                {errors.description && <div className="input-error">{errors.description}</div>}
+                {errors.description && (
+                  <div className="input-error">{errors.description}</div>
+                )}
+              </div>
+
+              <div className="input-group">
+                <label>Ảnh khóa học</label>
+
+                {editingCourse?.image && !form.image && (
+                  <img
+                    src={editingCourse.image}
+                    alt="Ảnh hiện tại"
+                    style={{
+                      width: "100px",
+                      height: "100px",
+                      objectFit: "cover",
+                      borderRadius: "8px",
+                      marginBottom: "8px",
+                      display: "block",
+                    }}
+                  />
+                )}
+
+                <input
+                  type="file"
+                  name="image"
+                  accept="image/*"
+                  onChange={handleChange}
+                />
+              </div>
+
+              {errors.general && (
+                <div className="status-badge badge-warning">
+                  <span>⚠️</span>
+                  <span>{errors.general}</span>
                 </div>
+              )}
 
-                <div className="input-group">
-                    <label>Ảnh khóa học</label>
-                    
-                    {editingCourse?.image && !form.image && (
-                        <img
-                        src={editingCourse.image}
-                        alt="Ảnh hiện tại"
-                        style={{ width: "100px", height: "100px", objectFit: "cover", borderRadius: "8px", marginBottom: "8px", display: "block" }}
-                        />
-                    )}
-
-                    <input type="file" name="image" accept="image/*" onChange={handleChange} />
-                </div>
-
-                <div className="modal-actions">
-                <button className="btn-save" onClick={handleSave} disabled={saving}>
-                    {saving ? "Đang lưu..." : "Lưu"}
+              <div className="modal-actions">
+                <button
+                  className="btn-save"
+                  onClick={handleSave}
+                  disabled={saving}
+                >
+                  {saving ? "Đang lưu..." : "Lưu"}
                 </button>
-                <button className="btn-cancel" onClick={handleClose}>Hủy</button>
-                </div>
+                <button className="btn-cancel" onClick={handleClose}>
+                  Hủy
+                </button>
+              </div>
             </div>
-            </div>
-            )}
-        {toast.show && (
-            <div style={{
-                position: "fixed", bottom: "24px", right: "24px",
-                background: "#16a34a", color: "#fff",
-                padding: "12px 20px", borderRadius: "10px",
-                fontSize: "14px", fontWeight: "500",
-                boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
-                display: "flex", alignItems: "center", gap: "8px",
-                zIndex: 9999,
-            }}>
-                {toast.message}
-            </div>
+          </div>
         )}
-        </div>
+        {toast.show && <div className="toast-badge">{toast.message}</div>}
+      </div>
     );
 };
 

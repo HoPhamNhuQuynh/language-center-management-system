@@ -1,0 +1,122 @@
+.session-count {
+    font-size: 13px;
+    color: #6b7280;
+}
+
+.session-empty {
+    padding: 60px 20px;
+    text-align: center;
+    color: #9ca3af;
+    font-size: 15px;
+}
+
+.session-info-box {
+    background: #f0f4ff;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    color: #374151;
+    line-height: 1.8;
+}
+
+.teacher-assigned {
+    color: var(--primary-navy);
+    font-weight: 500;
+}
+
+.teacher-unassigned {
+    color: #ef4444;
+    font-size: 13px;
+}
+
+.btn-primary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.status-badge.cancelled {
+    background-color: #f3f4f6;
+    color: #6b7280;
+}
+
+.class-title {
+    background: var(--white);
+    border-radius: 10px;
+    padding: 16px 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.session-table th,
+.session-table td {
+    padding: 14px 16px;
+    font-size: 15px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.session-table th:nth-child(1),
+.session-table td:nth-child(1) {
+    width: 5%;
+}
+
+.session-table th:nth-child(2),
+.session-table td:nth-child(2) {
+    width: 10%;
+    text-align: center;
+}
+
+.session-table th:nth-child(3),
+.session-table td:nth-child(3) {
+    width: 15%;
+    text-align: center;
+}
+
+.session-table th:nth-child(4),
+.session-table td:nth-child(4) {
+    width: 15%;
+    text-align: center;
+}
+
+.session-table th:nth-child(5),
+.session-table td:nth-child(5) {
+    width: 12%;
+    text-align: center;
+}
+
+.session-table th:nth-child(6),
+.session-table td:nth-child(6) {
+    width: 15%;
+    text-align: center;
+}
+
+.session-table th:nth-child(7),
+.session-table td:nth-child(7) {
+    width: 15%;
+    text-align: center;
+}
+
+.session-table th:nth-child(8),
+.session-table td:nth-child(8) {
+    width: 15%;
+    text-align: center;
+}
+
+.session-table th:nth-child(9),
+.session-table td:nth-child(9) {
+    text-align: center;
+}
+
+.status-badge.pending {
+    background-color: #fef9c3 !important;
+    color: #854d0e !important;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 600;
+    display: inline-block;
+}

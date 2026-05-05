@@ -22,6 +22,8 @@ import Dashboard from "./controllers/Admin/Dashboard";
 import CourseManagement from "./controllers/Admin/CourseManagement";
 import ClassManagement from "./controllers/Admin/ClassManagement";
 import AccountManagement from "./controllers/Admin/AccountManagement";
+import SessionManagement from "./controllers/Admin/SessionManagement";
+import PaymentManagement from "./controllers/Admin/PaymentManagement";
 
 const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 function App() {
@@ -33,10 +35,10 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/about-us" element={<AboutUs />} />
           <Route path="/course-list" element={<CourseList />} />
+          <Route path="/course-register" element={<CourseRegister />} />
 
           {/* CHỈ HỌC VIÊN (STUDENT) MỚI VÀO ĐƯỢC */}
           <Route element={<ProtectedRoute allowedRoles={["Student"]} />}>
-            <Route path="/course-register" element={<CourseRegister />} />
             <Route path="/payment" element={<Payment />} />
             <Route path="/student-info" element={<StudentInfo />} />
             <Route path="/payment-history" element={<PaymentHistory />} />
@@ -55,7 +57,12 @@ function App() {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/course-config" element={<CourseManagement />} />
             <Route path="/class-config" element={<ClassManagement />} />
+            <Route path="/payment-config" element={<PaymentManagement />} />
             <Route path="/account-config" element={<AccountManagement />} />
+            <Route
+              path="/session-config/:classId"
+              element={<SessionManagement />}
+            />
             <Route path="/setting" element={<AdminView />} />
           </Route>
         </Route>
