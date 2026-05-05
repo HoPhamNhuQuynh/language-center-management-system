@@ -19,6 +19,9 @@ from oauth2_provider.views import TokenView, RevokeTokenView
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import Group
+from grades.models import AcademicResult
+from grades.serializers import AcademicResultSerializer
+
 
 
 class SocialLoginThrottle(AnonRateThrottle):
@@ -228,13 +231,7 @@ class UserViewSet(
     pagination_class = UserPaginator
 
     def get_permissions(self):
-        if self.action in [
-            "current_user",
-            "update_avatar",
-            "update_password",
-            "get_payments",
-            "get_enrollments",
-        ]:
+        if self.action in ['current_user', 'update_avatar', 'update_password', 'get_payments', 'get_enrollments', 'get_results']:
             return [permissions.IsAuthenticated()]
         return [core_perms.IsAdmin()]
 
@@ -330,7 +327,17 @@ class UserViewSet(
         payments = Payment.objects.filter(
             enrollment__student=request.user
         ).select_related("enrollment__classroom")
+        return Response(PaymentSerializer(payments, many=True).data, status=status.HTTP_200_OK)
 
-        return Response(
-            PaymentSerializer(payments, many=True).data, status=status.HTTP_200_OK
+    @action(methods=['get'], url_path="me/results", detail=False)
+    def get_results(self, request):
+        results = AcademicResult.objects.filter(
+            enrollment__student=request.user,
+            active=True
+        ).select_related(
+            'enrollment__classroom__course__level',
+        ).prefetch_related(
+            'enrollment__classroom__teachingassignment_set__teacher'
         )
+        return Response(AcademicResultSerializer(results, many=True).data, status=status.HTTP_200_OK)
+

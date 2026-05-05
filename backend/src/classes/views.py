@@ -34,7 +34,7 @@ class ClassRoomViewSet(viewsets.ModelViewSet):
                 'teachingassignment_set',
                 queryset=TeachingAssignment.objects.select_related('teacher')
             )
-        ).select_related('course'))
+        ).select_related('course__level'))
 
         if self.request.user.is_authenticated and self.request.user.is_student:
             query = query.filter(student__lt=F('capacity'))

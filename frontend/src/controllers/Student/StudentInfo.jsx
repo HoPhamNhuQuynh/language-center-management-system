@@ -72,6 +72,7 @@ function StudentInfo() {
 
     return {
       id: enrollment.id,
+      enrollmentId: enrollment.id,
       classId: classroom?.id || "---",
       className: classroom?.name || "---",
       schedule: formatSchedule(classroom?.schedules),

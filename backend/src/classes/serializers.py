@@ -74,8 +74,10 @@ class ClassRoomSerializer(serializers.ModelSerializer):
     def to_representation(self, classroom):
         data = super().to_representation(classroom)
 
-        data["course_id"] = classroom.course.id
-        data["course_name"] = classroom.course.name
+        data['course_id'] = classroom.course.id
+        data['course_name'] = classroom.course.name
+        data['course_level'] = classroom.course.level.name if classroom.course.level else None  
+
 
         assignment = next(
             (a for a in classroom.teachingassignment_set.all() if a.is_main), None

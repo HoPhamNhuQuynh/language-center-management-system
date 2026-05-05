@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import { myScheduleApi } from "../../services/studentService";
 import ScheduleForm from "../../pages/Schedule/ScheduleForm";
+import { getRole } from "../../utils/token";
 import "../../styles/Schedule.css";
 
 function Schedule() {
   const [sessions, setSessions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedWeek, setSelectedWeek] = useState(1);
+  const role = getRole();
 
   useEffect(() => {
     const load = async () => {
@@ -43,13 +45,13 @@ function Schedule() {
   };
 
   const getWeekDates = (startDateStr, weekNumber) => {
-    const start = new Date(startDateStr);
-    const weekStart = new Date(start);
-    weekStart.setDate(start.getDate() + (weekNumber - 1) * 7);
+    const [y, mo, d] = startDateStr.split('-').map(Number);
+    const weekStart = new Date(y, mo - 1, d + (weekNumber - 1) * 7);
     return Array.from({ length: 7 }, (_, i) => {
-      const d = new Date(weekStart);
-      d.setDate(weekStart.getDate() + i);
-      return d.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit' });
+      const date = new Date(y, mo - 1, d + (weekNumber - 1) * 7 + i);
+      const dd = String(date.getDate()).padStart(2, '0');
+      const mm = String(date.getMonth() + 1).padStart(2, '0');
+      return `${dd}/${mm}`;
     });
   };
 
@@ -63,13 +65,14 @@ function Schedule() {
 
   const filteredSessions = sessions.filter(session => {
     if (!weekDates.length) return true;
-    const sessionDate = new Date(session.date).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit' });
+    const [y, m, d] = session.date.split('-');
+    const sessionDate = `${d}/${m}`;
     return weekDates.includes(sessionDate);
   });
 
   const scheduleData = filteredSessions.map(session => ({
     day: dayMap[session.day_of_week] || "---",
-    dateLabel: new Date(session.date).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit' }),
+    dateLabel: (() => { const [y, m, d] = session.date.split('-'); return `${d}/${m}`; })(),
     className: session.classroom_name,
     start_time: session.start_time.slice(0, 5),
     end_time: session.end_time.slice(0, 5),
@@ -88,6 +91,7 @@ function Schedule() {
       totalWeeks={totalWeeks}
       onWeekChange={setSelectedWeek}
       scheduleData={scheduleData}
+      isTeacher={role === "Teacher"}
     />
   );
 }
