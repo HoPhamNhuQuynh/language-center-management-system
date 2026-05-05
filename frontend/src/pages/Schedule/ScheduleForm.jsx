@@ -1,4 +1,4 @@
-function ScheduleForm({ weekLabel, weekNumber, weekDates, totalWeeks, onWeekChange, scheduleData }) {
+function ScheduleForm({ weekLabel, weekNumber, weekDates, totalWeeks, onWeekChange, scheduleData, isTeacher }) {
 
   const daysOfWeek = [
     "Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu", "Thứ Bảy", "Chủ Nhật"
@@ -10,9 +10,17 @@ function ScheduleForm({ weekLabel, weekNumber, weekDates, totalWeeks, onWeekChan
   const getLessonsByDay = (day) =>
     scheduleData.filter(item => item.day === day);
 
+  const HOUR_HEIGHT = 80;
+
   const timeToY = (hhmm) => {
     const [h, m] = hhmm.split(':').map(Number);
-    return (h - 8) * 80 + (m / 60) * 80;
+    return (h - 8) * HOUR_HEIGHT + (m / 60) * HOUR_HEIGHT;
+  };
+
+  const durationToHeight = (start, end) => {
+    const [sh, sm] = start.split(':').map(Number);
+    const [eh, em] = end.split(':').map(Number);
+    return ((eh * 60 + em) - (sh * 60 + sm)) / 60 * HOUR_HEIGHT + HOUR_HEIGHT;
   };
 
   return (
@@ -57,11 +65,12 @@ function ScheduleForm({ weekLabel, weekNumber, weekDates, totalWeeks, onWeekChan
                 <div className="schedule-day-body">
                   {getLessonsByDay(item.day).map((lesson, i) => {
                     const top = timeToY(lesson.start_time);
+                    const height = durationToHeight(lesson.start_time, lesson.end_time);
                     return (
                       <div
                         className="schedule-class-card"
                         key={i}
-                        style={{ top: `${top}px` }}
+                        style={{ top: `${top}px`, height: `${height}px` }}
                       >
                         <h3>{lesson.className}</h3>
                         <div className="schedule-class-info">
@@ -72,10 +81,12 @@ function ScheduleForm({ weekLabel, weekNumber, weekDates, totalWeeks, onWeekChan
                           <p className="schedule-label">Phòng:</p>
                           <p className="schedule-value">{lesson.room}</p>
                         </div>
-                        <div className="schedule-class-info">
-                          <p className="schedule-label">GV:</p>
-                          <p className="schedule-value">{lesson.teacher}</p>
-                        </div>
+                        {!isTeacher && (
+                          <div className="schedule-class-info">
+                            <p className="schedule-label">GV:</p>
+                            <p className="schedule-value">{lesson.teacher}</p>
+                          </div>
+                        )}
                       </div>
                     );
                   })}

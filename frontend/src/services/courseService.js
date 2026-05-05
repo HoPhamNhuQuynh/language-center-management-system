@@ -10,6 +10,11 @@ export const courseDetailApi = async (data) => {
     return res.data;
 }
 
+export const classApi = async (id) => {
+    const res = await Apis.get(`courses/${id}/classes/`);
+    return res.data;
+};
+
 export const searchCourseApi = async (query) => {
     return await Apis.get(`courses?q=${query}`);
 };

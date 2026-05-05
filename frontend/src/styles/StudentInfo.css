@@ -421,3 +421,8 @@
 }
 
 .btn-cancel-inline:hover { background: #f8f9fa; }
+
+.student-course-table a {
+  color: var(--navy-600);
+  text-decoration: underline;
+}

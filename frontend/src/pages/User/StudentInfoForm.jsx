@@ -85,6 +85,7 @@ function StudentInfoForm({ user, studentProfile, tuition, courses, isModalOpen, 
                 <tr>
                   <th>MÃ LỚP</th><th>TÊN LỚP</th><th>LỊCH HỌC</th>
                   <th>GIÁO VIÊN</th><th>HỌC PHÍ</th><th>TRẠNG THÁI</th>
+                  <th></th>
                 </tr>
               </thead>
               <tbody>
@@ -100,6 +101,11 @@ function StudentInfoForm({ user, studentProfile, tuition, courses, isModalOpen, 
                         course.status === "PENDING_PAYMENT" ? "Đang chờ thanh toán" :
                           course.status === "PARTIAL_PAYMENT" ? "Thanh toán một phần" :
                             course.status}
+                    </td>
+                    <td>
+                      <Link to="/result-academic" state={{ enrollmentId: course.id, classId: course.classId }}>
+                        Xem chi tiết
+                      </Link>
                     </td>
                   </tr>
                 ))}
