@@ -105,7 +105,9 @@ class TestUserModule:
             # không cần tạo profile vì signals đã tạo sẵn, nếu gửi thêm thì duplicate
         }
         response = api_client.post(url, data, format='json')
-        
+        print("STATUS:", response.status_code)
+        print("DATA:", getattr(response, "data", None))
+        print("CONTENT:", response.content.decode())
         assert response.status_code == status.HTTP_201_CREATED
         new_user = User.objects.get(username="new_teacher_unique")
         assert new_user.groups.filter(id=teacher_group.id).exists()

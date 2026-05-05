@@ -44,10 +44,12 @@ class TestAttendanceService:
         baker.make('grades.Attendance', enrollment=enrollment, session=session, 
                    attendance_status="PRESENT")
         
-        result = AttendanceService.get_attendances_list(session)
+        result = AttendanceService.get_or_initialize_attendances(session)
 
-        assert result[0]['enrollment_id'] == enrollment.id
-        assert result[0]['attendance_status'] == "PRESENT"
+        attendance = result.first()
+
+        assert attendance.enrollment_id == enrollment.id
+        assert attendance.attendance_status == "PRESENT"
 
     def test_bulk_sync_attendances_creates_attendances_and_returns_created_count(self, classroom):
         session = baker.make('classes.Session', schedule__classroom=classroom)
