@@ -12,6 +12,7 @@ import Attendance from "./controllers/Attendance/Attendance";
 import ScoreEntry from "./controllers/Score/ScoreEntry";
 import Schedule from "./controllers/Schedule/Schedule";
 import StudentInfo from "./controllers/Student/StudentInfo";
+import ResultAcademic from "./controllers/Student/ResultAcademic";
 import PaymentHistory from "./controllers/Payment/PaymentHistory";
 import './App.css'
 import MainLayout from "./components/Base/MainLayout";
@@ -34,20 +35,24 @@ function App() {
           <Route path="/about-us" element={<AboutUs />} />
           <Route path="/course-list" element={<CourseList />} />
 
+          <Route element={<ProtectedRoute allowedRoles={["Teacher", "Student"]} />}>
+            <Route path="/schedule" element={<Schedule />} />
+          </Route>
+
+
           {/* CHỈ HỌC VIÊN (STUDENT) MỚI VÀO ĐƯỢC */}
           <Route element={<ProtectedRoute allowedRoles={["Student"]} />}>
             <Route path="/course-register" element={<CourseRegister />} />
             <Route path="/payment" element={<Payment />} />
             <Route path="/student-info" element={<StudentInfo />} />
+            <Route path="/result-academic" element={<ResultAcademic />} />
             <Route path="/payment-history" element={<PaymentHistory />} />
-            {/* <Route path="/schedule" element={<Schedule />} /> */}
           </Route>
 
           {/* CHỈ GIẢNG VIÊN (TEACHER) MỚI VÀO ĐƯỢC */}
           <Route element={<ProtectedRoute allowedRoles={["Teacher"]} />}>
             <Route path="/attendance" element={<Attendance />} />
             <Route path="/score-entry" element={<ScoreEntry />} />
-            <Route path="/schedule" element={<Schedule />} />
           </Route>
 
           {/* CHỈ ADMIN MỚI VÀO ĐƯỢC */}

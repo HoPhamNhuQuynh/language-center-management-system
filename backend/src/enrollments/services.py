@@ -3,6 +3,7 @@ from django.conf import settings
 from urllib.parse import urlencode
 import datetime
 from .utils import hmacsha512
+from urllib.parse import quote
 
 class VNPayService:
     @classmethod
@@ -20,10 +21,16 @@ class VNPayService:
             'vnp_OrderType': 'billpayment',
             'vnp_ReturnUrl': settings.VNPAY_RETURN_URL,
             'vnp_TxnRef': str(payment.id),
+            'vnp_IpnUrl': settings.VNPAY_IPN_URL,
         }
 
         vnp_params = dict(sorted(vnp_params.items()))
-        query_string = urlencode(vnp_params)
+        # query_string = urlencode(vnp_params)
+        query_string = '&'.join(f"{k}={quote(str(v), safe='')}" for k, v in vnp_params.items())
         secure_hash = hmacsha512(settings.VNPAY_HASH_SECRET, query_string)
+
+        print("QUERY STRING:", query_string)
+        print("HASH:", secure_hash)
+        print("HASH SECRET:", settings.VNPAY_HASH_SECRET)
 
         return f'{settings.VNPAY_URL}?{query_string}&vnp_SecureHash={secure_hash}'

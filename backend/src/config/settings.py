@@ -173,7 +173,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'language_center_db',
         'USER': 'root',
-        'PASSWORD': 'Nhuquynh261105@',
+        'PASSWORD': 'root',
         'HOST': '', # mặc định localhost
         'PORT': '3306',
     }
@@ -217,12 +217,18 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 # Setting payment service
-VNPAY_TMN_CODE = 'YCXQRNYD'
-VNPAY_HASH_SECRET = 'SAR75YVR7QKTU9HLD3C4MXY77Y01E387'
-VNPAY_URL = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html"
-VNPAY_RETURN_URL = 'https://pseudopsychological-vasoconstrictive-ellison.ngrok-free.dev/course-register'
+# VNPAY_TMN_CODE = 'YCXQRNYD'
+# VNPAY_HASH_SECRET = 'SAR75YVR7QKTU9HLD3C4MXY77Y01E387'
+# VNPAY_URL = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html"
 # VNPAY_RETURN_URL = 'https://pseudopsychological-vasoconstrictive-ellison.ngrok-free.dev/course-register'
-VNPAY_IPN_URL = "https://pseudopsychological-vasoconstrictive-ellison.ngrok-free.dev/api/payments/vnpay-callback/"
+# VNPAY_IPN_URL = "https://pseudopsychological-vasoconstrictive-ellison.ngrok-free.dev/api/payments/vnpay-callback/"
+
+
+VNPAY_TMN_CODE = '4X8RC0YB'
+VNPAY_HASH_SECRET = 'CE9WGXR13I3M5ZSPSEEWWK6LF3D4IBDD'
+VNPAY_URL = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html"
+VNPAY_RETURN_URL = 'https://localhost:5173/course-register'
+VNPAY_IPN_URL = "https://juggling-widen-prewar.ngrok-free.dev/api/payments/vnpay-ipn/"
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 SECURE_SSL_REDIRECT = False

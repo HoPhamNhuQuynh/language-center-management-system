@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Score, Attendance
+from .models import Score, Attendance, AcademicResult
 from users.serializers import UserSerializer
 
 class RemarkItemSerializer(serializers.Serializer):
@@ -78,3 +78,30 @@ class BulkSyncAttendanceSerializer(serializers.Serializer):
             seen.add(key)
 
         return data
+
+class AcademicResultSerializer(serializers.ModelSerializer):
+    enrollment_id = serializers.IntegerField(source='enrollment.id', read_only=True)
+    scores = serializers.SerializerMethodField()
+    attendance_count = serializers.SerializerMethodField()
+
+    class Meta:
+        model = AcademicResult
+        fields = [
+            'id', 'enrollment_id',
+            'scores', 'attendance_count',
+            'average_score', 'comment',
+        ]
+
+    def get_scores(self, obj):
+        scores = Score.objects.filter(
+            enrollment=obj.enrollment,
+            active=True
+        ).select_related('score_type')
+        return ScoreSerializer(scores, many=True).data
+
+    def get_attendance_count(self, obj):
+        return Attendance.objects.filter(
+            enrollment=obj.enrollment,
+            attendance_status=Attendance.Status.PRESENT
+        ).count()
+

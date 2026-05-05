@@ -41,7 +41,14 @@ export const myScheduleApi = async () => {
     return res.data;
 };
 
+export const myClassResultApi = async () => {
+    const res = await Apis.get("users/me/results/");
+    return res.data;
+}
+
 export const paymentDetailApi = async (id) => {
     const res = await Apis.get(`payments/${id}/`);
     return res.data;
 };
+
+

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import CourseRegisterForm from "../../pages/Payment/CourseRegisterForm";
-import { courseDetailApi, searchCourseApi } from "../../services/courseService";
+import { courseDetailApi, searchCourseApi, classApi } from "../../services/courseService";
 import { enrollmentApi, paymentApi, enrollmentDetailApi } from "../../services/enrollmentService";
 import { myPaymentApi } from "../../services/studentService";
 import Apis from "../../services/Apis";
@@ -22,7 +22,7 @@ function CourseRegister() {
   const [method, setMethod] = useState("momo");
   const [percent, setPercent] = useState(100);
   const [loading, setLoading] = useState(false);
-  const [enrollmentStatus, setEnrollmentStatus] = useState(null);
+  const [paymentStatus, setPaymentStatus] = useState(null);
   const [myEnrollments, setMyEnrollments] = useState([]);
 
   useEffect(() => {
@@ -42,7 +42,6 @@ function CourseRegister() {
       .then((res) => {
         const data = Array.isArray(res.data) ? res.data : res.data.results ?? [];
         setMyEnrollments(data);
-        console.log("myEnrollments:", JSON.stringify(data[0]));
       })
       .catch(console.error);
   }, []);
@@ -55,10 +54,13 @@ function CourseRegister() {
       if (courseId) {
         setLoading(true);
         try {
-          const res = await courseDetailApi(courseId);
+          const [detail, classes] = await Promise.all([
+            courseDetailApi(courseId),
+            classApi(courseId),
+          ]);
           setCourse({
-            ...res,
-            classes: res.classroom_set || res.classes || [],
+            ...detail,
+            classes: classes?.results ?? classes ?? [],
           });
         } catch (ex) {
           console.error("Lỗi lấy chi tiết khóa học:", ex);
@@ -78,6 +80,11 @@ function CourseRegister() {
     const amount = searchParams.get("vnp_Amount");
 
     if (responseCode && txnRef) {
+      if (window.opener) {
+        window.opener.postMessage({ type: "PAYMENT_SUCCESS", txnRef }, "*");
+        window.close(); 
+      }
+
       const savedCourseId = localStorage.getItem("pendingCourseId");
       localStorage.removeItem("pendingCourseId");
 
@@ -86,7 +93,7 @@ function CourseRegister() {
         : new Date().toISOString();
       const price = amount ? Number(amount) / 100 : 0;
 
-      setEnrollmentStatus({
+      setPaymentStatus({
         id: transactionNo,
         status: responseCode === "00" ? "SUCCESS" : "FAILED",
         created_at: formattedDate,
@@ -123,6 +130,18 @@ function CourseRegister() {
     }
   }, []);
 
+  useEffect(() => {
+  const handler = (e) => {
+    if (e.data?.type === "PAYMENT_SUCCESS") {
+      setPaid(true);
+      setBill(true);
+    }
+  };
+  window.addEventListener("message", handler);
+  return () => window.removeEventListener("message", handler);
+}, []);
+
+
   const handleSubmit = async () => {
     if (!selected_class || !course) {
       alert("Vui lòng chọn lớp học trước khi đăng ký!");
@@ -132,7 +151,6 @@ function CourseRegister() {
     setLoading(true);
     try {
       const enrollmentData = await enrollmentApi({ classroom: selected_class.id });
-      console.log("Đã tạo Enrollment:", enrollmentData);
       if (enrollmentData?.id) {
         const paymentPayload = {
           enrollment: enrollmentData.id,
@@ -143,9 +161,6 @@ function CourseRegister() {
         const res = await paymentApi(paymentPayload);
         const paymentData = res.data || res;
 
-        console.log("Dữ liệu payment:", paymentData);
-        console.log("Link thanh toán:", paymentData.payment_url);
-
         if (paymentData && paymentData.payment_url) {
           localStorage.setItem("pendingCourseId", course.id);
           localStorage.setItem("lastCourseId", course.id);
@@ -154,11 +169,9 @@ function CourseRegister() {
           setPayment(false);
           setConfirm(false);
           alert("Đang chuyển hướng sang cổng thanh toán VNPay...");
-          window.location.href = paymentData.payment_url;
+          window.open(paymentData.payment_url, "_blank");
         } else {
           alert("Không tìm thấy link trong paymentData rồi!");
-          console.log("Dữ liệu payment:", paymentData);
-
         }
       }
     } catch (ex) {
@@ -181,16 +194,23 @@ function CourseRegister() {
     }
   };
 
+
+
   const handleSearch = async () => {
     try {
       setLoading(true);
       let res = await searchCourseApi(search);
-      const data = res.results || res;
+      const data = res.results || res.data?.results || res.data || res;
       if (data.length > 0) {
-        const detail = await courseDetailApi(data[0].id);
+        const courseId = data[0].id;
+        const [detail, classes] = await Promise.all([
+          courseDetailApi(courseId),
+          classApi(courseId),
+        ]);
+
         setCourse({
           ...detail,
-          classes: detail.classroom_set
+          classes: classes?.results ?? classes ?? [],
         });
         setSelectedClass(null);
       } else {
@@ -213,15 +233,12 @@ function CourseRegister() {
 
   const handleSelectClass = (cls) => {
     setSelectedClass(cls);
-    setPaid(false);     
-    setBill(false);      
-    setPayment(false);   
-    setConfirm(false);   
-    setEnrollmentStatus(null);
+    setPaid(false);
+    setBill(false);
+    setPayment(false);
+    setConfirm(false);
+    setPaymentStatus(null);
   };
-
-  // console.log("Dữ liệu course hiện tại:", course);
-  // console.log("Danh sách lớp tìm thấy:", course?.classes);
 
   const openBill = () => {
     setPayment(false);
@@ -270,7 +287,7 @@ function CourseRegister() {
         openBill={openBill}
         openConfirm={openConfirm}
         backToCourse={backToCourse}
-        enrollmentStatus={enrollmentStatus}
+        paymentStatus={paymentStatus}
         myEnrollments={myEnrollments}
       />
     </div>

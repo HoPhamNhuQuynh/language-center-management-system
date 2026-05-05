@@ -103,17 +103,19 @@ class PaymentViewSet(viewsets.ViewSet, generics.ListAPIView):
         data = request.GET
         vnp_txn_ref = data.get('vnp_TxnRef') 
         vnp_response_code = data.get('vnp_ResponseCode')
+        vnp_transaction_no = data.get('vnp_TransactionNo')
 
         try:
             payment = Payment.objects.select_related('enrollment').get(id=vnp_txn_ref)
-            
+
             if payment.payment_status == Payment.Status.SUCCESS:
                 return Response({"RspCode": "00", "Message": "Already confirmed"})
-    
+
             with transaction.atomic():
                 if vnp_response_code == "00":
                     payment.payment_status = Payment.Status.SUCCESS
                     payment.paid_at = timezone.now()
+                    payment.transaction_id = vnp_transaction_no
                     payment.save()
 
                     enrollment = payment.enrollment
@@ -124,6 +126,6 @@ class PaymentViewSet(viewsets.ViewSet, generics.ListAPIView):
                     payment.payment_status = Payment.Status.FAILED
                     payment.save()
 
-            return Response({"RspCode": "00", "Message": "Confirm success"}) 
+            return Response({"RspCode": "00", "Message": "Confirm success"})
         except Payment.DoesNotExist:
             return Response({"RspCode": "01", "Message": "Enrollment not found"})

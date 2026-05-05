@@ -10,7 +10,7 @@ import { myPaymentApi } from "../../services/studentService";
 
 function CourseRegisterForm({ search, course, selected_class, payment, method, percent, confirm, bill, paid,
   setPercent, setMethod, setSearch, setPayment, setConfirm, setBill, setPaid, onSearch, onSelectClass, onSubmit,
-  enrollmentStatus, myEnrollments = [] }) {
+  paymentStatus, myEnrollments = [] }) {
   const [currentUser, setCurrentUser] = useState(null);
   const [billData, setBillData] = useState(null);
 
@@ -31,7 +31,7 @@ function CourseRegisterForm({ search, course, selected_class, payment, method, p
         setBillData({
           receiptId: found.transaction_id || found.id,
           created_at: found.paid_at || new Date().toISOString(),
-          enrollmentStatus: found.payment_status,
+          paymentStatus: found.payment_status,
           paymentMethod: found.payment_method,
           total: found.amount,
           className: found.classroom,
@@ -99,7 +99,7 @@ function CourseRegisterForm({ search, course, selected_class, payment, method, p
     studentId: currentUser?.id,
     studentname: `${currentUser?.last_name || ""} ${currentUser?.first_name || ""}`.trim(),
     email: currentUser?.email,
-    phone: currentUser?.profile?.phone_num || "",
+    phone: currentUser?.phone_num || "",
     total_sessions: course?.total_sessions || "",
   }
 
@@ -239,9 +239,9 @@ function CourseRegisterForm({ search, course, selected_class, payment, method, p
                   ...(billData || {}),
                   total: billData?.total || (percent === 50 ? course?.price * 0.5 : course?.price),
                   paymentMethod: billData?.paymentMethod || method.toUpperCase(),
-                  enrollmentStatus: billData?.enrollmentStatus || enrollmentStatus?.status || "SUCCESS",
-                  receiptId: billData?.receiptId || enrollmentStatus?.id,
-                  created_at: billData?.created_at || enrollmentStatus?.created_at,
+                  paymentStatus: billData?.paymentStatus || paymentStatus?.status,
+                  receiptId: billData?.receiptId || paymentStatus?.id,
+                  created_at: billData?.created_at || paymentStatus?.created_at,
                 }}
                 onClose={() => {
                   setBill(false);

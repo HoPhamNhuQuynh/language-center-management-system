@@ -74,6 +74,7 @@ class ClassRoomSerializer(serializers.ModelSerializer):
 
         data['course_id'] = classroom.course.id
         data['course_name'] = classroom.course.name
+        data['course_level'] = classroom.course.level.name if classroom.course.level else None  # thêm dòng này
 
         assignment = next(
             (a for a in classroom.teachingassignment_set.all() if a.is_main),
