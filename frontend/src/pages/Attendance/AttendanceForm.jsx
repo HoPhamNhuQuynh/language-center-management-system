@@ -1,5 +1,6 @@
 import { LockFilled, WarningFilled } from "@ant-design/icons";
 import { Tag } from "antd";
+import { formatDate } from "../../utils/format";
 
 function AttendanceForm({
   classes,
@@ -46,7 +47,7 @@ function AttendanceForm({
               <option value="">-- Chọn buổi --</option>
               {sessions.map((s) => (
                 <option key={s.id} value={s.id}>
-                  {s.date} — Buổi {s.id}
+                  {formatDate(s.date)} — Buổi {s.id}
                 </option>
               ))}
             </select>
@@ -125,8 +126,11 @@ function AttendanceForm({
                 </button>
               ) : (
                 <div className="locked-notification">
-                  <Tag icon={<WarningFilled />} color="warning"
-                  className="ant-tag-warning">
+                  <Tag
+                    icon={<WarningFilled />}
+                    color="warning"
+                    className="ant-tag-warning"
+                  >
                     Chỉ có thể điểm danh trong ngày diễn ra buổi học.
                   </Tag>
                 </div>

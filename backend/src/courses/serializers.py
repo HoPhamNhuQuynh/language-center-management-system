@@ -37,6 +37,16 @@ class CourseSerializer(ItemImageSerializer):
         if total_sessions > 30:
             raise serializers.ValidationError("Giá trị nhập vào không hợp lệ, tổng số buổi học tối đa là 30 buổi.")
         return total_sessions
+    
+    def validate_name(self, value):
+        qs = Course.objects.filter(name__iexact=value.strip())
+        if self.instance:
+            qs = qs.exclude(pk=self.instance.pk)
+
+        if qs.exists():
+            raise serializers.ValidationError("Tên khóa học đã tồn tại.")
+
+        return value
 
 class CourseDetailSerializer(CourseSerializer):
     actual_total_sessions = serializers.ReadOnlyField()
