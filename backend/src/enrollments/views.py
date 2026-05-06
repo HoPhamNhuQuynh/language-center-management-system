@@ -53,7 +53,7 @@ class EnrollmentViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.R
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class PaymentViewSet(viewsets.ViewSet, generics.ListAPIView):
+class PaymentViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAPIView):
     serializer_class = PaymentSerializer
     permission_classes = [permissions.IsAuthenticated]
     pagination_class = paginators.ItemPaginator

@@ -33,7 +33,6 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/about-us" element={<AboutUs />} />
           <Route path="/course-list" element={<CourseList />} />
-          <Route path="/course-register" element={<CourseRegister />} />
 
           <Route element={<ProtectedRoute allowedRoles={["Teacher", "Student"]} />}>
             <Route path="/schedule" element={<Schedule />} />
@@ -46,6 +45,7 @@ function App() {
             <Route path="/student-info" element={<StudentInfo />} />
             <Route path="/result-academic" element={<ResultAcademic />} />
             <Route path="/payment-history" element={<PaymentHistory />} />
+            <Route path="/course-register" element={<CourseRegister />} />
           </Route>
 
           {/* CHỈ GIẢNG VIÊN (TEACHER) MỚI VÀO ĐƯỢC */}
