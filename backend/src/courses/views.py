@@ -1,4 +1,4 @@
-from rest_framework import viewsets, status, permissions, parsers
+from rest_framework import viewsets, status, permissions, parsers, generics
 from courses.models import Course, Tag, ScoreType, Level
 from courses import serializers
 from rest_framework.decorators import action
@@ -39,47 +39,12 @@ class CourseViewSet(viewsets.ModelViewSet):
           classes = ClassRoom.objects.filter(course_id=pk)
           return Response(ClassRoomSerializer(classes, many=True).data, status=status.HTTP_200_OK) 
 
-class TagViewSet(viewsets.ModelViewSet):
+class TagViewSet(viewsets.ViewSet, generics.ListAPIView):
     queryset = Tag.objects.filter(active=True).all()
     serializer_class = serializers.TagSerializer
-
-    def get_permissions(self):
-        if self.action == 'list':
-            return [permissions.AllowAny()]
-        return [core_perms.IsAdmin()]
-
-    def perform_destroy(self, instance):
-        if instance.course_set.exists():
-            raise ValidationError("Không thể xóa thẻ này do ràng buộc dữ liệu.")
-        instance.delete()
     
-class LevelViewSet(viewsets.ModelViewSet):
+class LevelViewSet(viewsets.ViewSet, generics.ListAPIView):
     queryset = Level.objects.all()
     serializer_class = serializers.LevelSerializer
 
-    def get_permissions(self):
-        if self.action == 'list':
-            return [permissions.AllowAny()]
-        return [core_perms.IsAdmin()]
-    
-    def perform_destroy(self, instance):
-        try:
-            instance.delete()
-        except ProtectedError:
-            raise ValidationError("Không thể xóa cấp độ này do ràng buộc dữ liệu.")
-
-class ScoreTypeViewSet(viewsets.ModelViewSet):
-    queryset = ScoreType.objects.all()
-    serializer_class = serializers.ScoreTypeSerializer
-
-    def get_permissions(self):
-        if self.action == 'list':
-            return [permissions.AllowAny()]
-        return [core_perms.IsAdmin()]
-    
-    def perform_destroy(self, instance):
-        try:
-            instance.delete()
-        except ProtectedError:
-            raise ValidationError("Không thể xóa cột điểm này do ràng buộc dữ liệu.")
     

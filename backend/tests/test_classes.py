@@ -1,11 +1,14 @@
 import pytest
 from model_bakery import baker
 from django.urls import reverse
-from classes.serializers import *
+from classes.models import Session
+from classes.serializers import ClassRoomSerializer, RoomSerializer, ScheduleSerializer
 from rest_framework.serializers import ValidationError
 import datetime
 from classes.serializers import SessionSerializer
 from django.test import RequestFactory
+
+from users.serializers import UserSerializer
 
 @pytest.mark.django_db
 class TestClassesModels:

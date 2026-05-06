@@ -83,7 +83,7 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 # OAUTH2_PROVIDER = {
-#     'ACCESS_TOKEN_EXPIRE_SECONDS': 900, #15p
+#     'ACCESS_TOKEN_EXPIRE_SECONDS': 60, #15p
 #     'REFRESH_TOKEN_EXPIRE_SECONDS': 86400 * 30, #10 ngày 
 # }
 
@@ -222,18 +222,19 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 # Setting payment service
-# VNPAY_TMN_CODE = 'YCXQRNYD'
-# VNPAY_HASH_SECRET = 'SAR75YVR7QKTU9HLD3C4MXY77Y01E387'
-# VNPAY_URL = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html"
-# VNPAY_RETURN_URL = 'https://pseudopsychological-vasoconstrictive-ellison.ngrok-free.dev/course-register'
-# VNPAY_IPN_URL = "https://pseudopsychological-vasoconstrictive-ellison.ngrok-free.dev/api/payments/vnpay-callback/"
-
-
-VNPAY_TMN_CODE = '4X8RC0YB'
-VNPAY_HASH_SECRET = 'CE9WGXR13I3M5ZSPSEEWWK6LF3D4IBDD'
+# ngrok http 8000 --domain=pseudopsychological-vasoconstrictive-ellison.ngrok-free.dev - ngrok http 5173
+VNPAY_TMN_CODE = 'YCXQRNYD'
+VNPAY_HASH_SECRET = 'SAR75YVR7QKTU9HLD3C4MXY77Y01E387'
 VNPAY_URL = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html"
-VNPAY_RETURN_URL = 'https://localhost:5173/course-register'
-VNPAY_IPN_URL = "https://juggling-widen-prewar.ngrok-free.dev/api/payments/vnpay-ipn/"
+VNPAY_RETURN_URL = 'https://pseudopsychological-vasoconstrictive-ellison.ngrok-free.dev/course-register'
+VNPAY_IPN_URL = "https://pseudopsychological-vasoconstrictive-ellison.ngrok-free.dev/api/payments/vnpay-callback/"
+
+
+# VNPAY_TMN_CODE = '4X8RC0YB'
+# VNPAY_HASH_SECRET = 'CE9WGXR13I3M5ZSPSEEWWK6LF3D4IBDD'
+# VNPAY_URL = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html"
+# VNPAY_RETURN_URL = 'https://localhost:5173/course-register'
+# VNPAY_IPN_URL = "https://juggling-widen-prewar.ngrok-free.dev/api/payments/vnpay-ipn/"
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 SECURE_SSL_REDIRECT = False

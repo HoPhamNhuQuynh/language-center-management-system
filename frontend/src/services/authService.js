@@ -58,7 +58,9 @@ export const refreshTokenApi = async (refresh_token) => {
     "auth/refresh/",
     { refresh_token },
     {
-      headers: { "ngrok-skip-browser-warning": "true" },
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
     },
   );
   return res.data;
