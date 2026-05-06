@@ -2,12 +2,13 @@ from rest_framework import viewsets, generics, permissions, status
 from rest_framework.decorators import action
 from enrollments.models import Enrollment, Payment
 from enrollments.serializers import PaymentSerializer, EnrollmentSerializer, EnrollmentDetailSerializer
-from core import core_perms
+from core import core_perms, paginators
 from .perms import IsEnrollmentOwner
 from rest_framework.response import Response
 from .services import VNPayService
 from django.utils import timezone
 from django.db import transaction
+from rest_framework.filters import SearchFilter
 
 
 class EnrollmentViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.RetrieveDestroyAPIView):
@@ -55,19 +56,28 @@ class EnrollmentViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.R
 class PaymentViewSet(viewsets.ViewSet, generics.ListAPIView):
     serializer_class = PaymentSerializer
     permission_classes = [permissions.IsAuthenticated]
+    pagination_class = paginators.ItemPaginator
+    filter_backends = [SearchFilter]
+    search_fields = ["transaction_id"]
 
     def get_queryset(self):
         user = self.request.user
 
-        if user.is_staff:
-            return Payment.objects.select_related(
+        if user.is_authenticated and user.is_admin:
+            qs = Payment.objects.select_related(
                 'enrollment__classroom',
                 'enrollment__student'
             ).all()
+        else: 
+            qs = Payment.objects.select_related("enrollment__classroom").filter(
+                enrollment__student=user
+            )
 
-        return Payment.objects.select_related(
-            'enrollment__classroom'
-        ).filter(enrollment__student=user)
+        status = self.request.query_params.get("payment_status")
+        if status:
+            qs = qs.filter(payment_status=status)
+
+        return qs.order_by("id")
 
     def create(self, request):
         s = PaymentSerializer(data=request.data, context={'request': request})

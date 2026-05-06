@@ -5,8 +5,6 @@ import AboutUs from "./controllers/Home/AboutUs";
 import CourseList from "./controllers/Course/CourseList";
 import CourseRegister from "./controllers/Course/CourseRegister";
 import Payment from "./controllers/Payment/Payment";
-import Confirm from "./controllers/Payment/Confirm";
-import BillView from "./controllers/Payment/BillView";
 import Home from "./controllers/Home/Home";
 import Attendance from "./controllers/Attendance/Attendance";
 import ScoreEntry from "./controllers/Score/ScoreEntry";
@@ -17,7 +15,6 @@ import PaymentHistory from "./controllers/Payment/PaymentHistory";
 import './App.css'
 import MainLayout from "./components/Base/MainLayout";
 import { GoogleOAuthProvider } from "@react-oauth/google";
-import AdminView from "./controllers/Admin/AdminView";
 import ProtectedRoute from "./components/Base/ProtectedRoute";
 import Dashboard from "./controllers/Admin/Dashboard";
 import CourseManagement from "./controllers/Admin/CourseManagement";
@@ -68,7 +65,6 @@ function App() {
               path="/session-config/:classId"
               element={<SessionManagement />}
             />
-            <Route path="/setting" element={<AdminView />} />
           </Route>
         </Route>
 

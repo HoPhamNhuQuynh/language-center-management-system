@@ -1,101 +1,177 @@
 import { useEffect, useState } from "react";
 import "../../styles/PaymentManagement.css";
 import "../../styles/Styles.css";
-import { getUsers } from "../../services/manageService";
-import { FaLock, FaPen } from "react-icons/fa6";
+import { FaPen, FaSearch } from "react-icons/fa";
+import { getPayments } from "../../services/manageService";
 import { formatDate } from "../../utils/format";
+import { ImBin2 } from "react-icons/im";
 
 const PaymentManagement = () => {
-  const [users, setUsers] = useState([]);
+  const [payments, setPayments] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [keyword, setKeyword] = useState("");
+  const [status, setStatus] = useState("");
+  const [debouncedKeyword, setDebouncedKeyword] = useState("");
 
-  const loadUsers = async () => {
+  const loadPayments = async (page = 1, search = "", status = "") => {
     try {
-      let res = await getUsers();
-      console.info(res);
-      setUsers(res);
+      let res = await getPayments(page, search, status);
+      console.info(res.results);
+      setPayments(res.results);
+      setTotalPages(Math.ceil(res.count / 20));
     } catch (err) {
       console.error(err);
     }
   };
 
   useEffect(() => {
-    loadUsers();
-  }, []);
+    loadPayments(currentPage, debouncedKeyword, status);
+  }, [currentPage, debouncedKeyword, status]);
 
-  const getRoleClass = (role) => {
-    switch (role?.toLowerCase()) {
-      case "admin":
-        return "admin";
-      case "teacher":
-        return "teacher";
-      case "student":
-        return "student";
-      default:
-        return "";
-    }
-  };
+  useEffect(() => {
+    const delay = setTimeout(() => {
+      setDebouncedKeyword(keyword);
+      setCurrentPage(1);
+    }, 500);
+
+    return () => clearTimeout(delay);
+  }, [keyword]);
 
   return (
     <div className="page-layout">
       <div className="page-header">
         <h1>Quản lý doanh thu trung tâm</h1>
-        <button className="add-btn">Tạo tài khoản</button>
+        <div className="filter-group">
+          <div className="search-box">
+            <FaSearch className="search-icon" />
+            <input
+              type="text"
+              className="search-input"
+              placeholder="Tìm theo mã giao dịch..."
+              value={keyword}
+              onChange={(e) => {
+                setKeyword(e.target.value);
+                setCurrentPage(1);
+              }}
+            />
+          </div>
+
+          <select
+            className="status-select"
+            value={status}
+            onChange={(e) => {
+              setStatus(e.target.value);
+              setCurrentPage(1);
+            }}
+          >
+            <option value="">Tất cả trạng thái</option>
+            <option value="pending">Pending</option>
+            <option value="success">Success</option>
+            <option value="failed">Failed</option>
+          </select>
+        </div>
       </div>
 
       <div className="table-wrapper">
-        <table className="data-table account-table">
+        <table className="data-table payment-table">
           <thead>
             <tr>
               <th>ID</th>
               <th>Họ và tên</th>
               <th>Email</th>
-              <th>Username</th>
-              <th>Số điện thoại</th>
+              <th>Số tiền</th>
+              <th>Phương thức</th>
+              <th>Lớp học</th>
               <th>Trạng thái</th>
-              <th>Loại chứng thực</th>
-              <th>Vai trò</th>
-              <th>Last login</th>
+              <th>Mã giao dịch</th>
+              <th>Thời gian giao dịch</th>
               <th>Ngày tạo</th>
               <th>Thao tác</th>
             </tr>
           </thead>
           <tbody>
-            {users.map((u) => (
-              <tr key={u.id}>
-                <td>{u.id}</td>
-                <td>
-                  {u.first_name} {u.last_name}
-                </td>
-                <td>{u.email}</td>
-                <td>{u.username}</td>
-                <td>{u.phone_num}</td>
+            {payments.map((p) => (
+              <tr key={p.id}>
+                <td>{p.id}</td>
+                <td>{p.student_name}</td>
+                <td>{p.student_email}</td>
+                <td>{p.amount}</td>
+                <td>{p.payment_method}</td>
+                <td>{p.classroom}</td>
+                <td>{p.payment_status}</td>
+                <td>{p.transaction_id}</td>
+                <td>{formatDate(p.paid_at)}</td>
+                <td>{formatDate(p.created_at)}</td>
                 <td>
                   <span
-                    className={`status-badge ${u.is_active ? "active" : "inactive"}`}
+                    className="icon-edit"
+                    onClick={() => handleEdit(classroom)}
                   >
-                    {u.is_active ? "Đang hoạt động" : "Không hoạt động"}
-                  </span>
-                </td>
-                <td>{u.auth_provider}</td>
-                <td>
-                  <span className={`role-badge ${getRoleClass(u.role)}`}>
-                    {u.role}
-                  </span>
-                </td>
-                <td>{formatDate(u.last_login)}</td>
-                <td>{formatDate(u.date_joined)}</td>
-                <td>
-                  <span className="icon-edit">
                     <FaPen />
                   </span>
-                  <span className="icon-delete">
-                    <FaLock />
+                  <span
+                    className="icon-delete"
+                    onClick={() =>
+                      setDeleteModal({
+                        show: true,
+                        classId: classroom.id,
+                        className: classroom.name,
+                        error: "",
+                      })
+                    }
+                  >
+                    <ImBin2 />
                   </span>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
+      </div>
+
+      <div className="pagination">
+        <button
+          className="page-btn"
+          disabled={currentPage === 1}
+          onClick={() => setCurrentPage((p) => p - 1)}
+        >
+          &laquo;
+        </button>
+
+        {Array.from({ length: totalPages }, (_, i) => i + 1)
+          .filter(
+            (p) =>
+              p === 1 || p === totalPages || Math.abs(p - currentPage) <= 2,
+          )
+          .reduce((acc, p, idx, arr) => {
+            if (idx > 0 && p - arr[idx - 1] > 1) acc.push("...");
+            acc.push(p);
+            return acc;
+          }, [])
+          .map((p, idx) =>
+            p === "..." ? (
+              <span key={`ellipsis-${idx}`} className="page-ellipsis">
+                ...
+              </span>
+            ) : (
+              <button
+                key={p}
+                className={`page-btn ${currentPage === p ? "active" : ""}`}
+                onClick={() => setCurrentPage(p)}
+              >
+                {p}
+              </button>
+            ),
+          )}
+
+        <button
+          className="page-btn"
+          disabled={currentPage === totalPages}
+          onClick={() => setCurrentPage((p) => p + 1)}
+        >
+          &raquo;
+        </button>
       </div>
     </div>
   );
