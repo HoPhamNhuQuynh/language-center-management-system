@@ -11,8 +11,7 @@ from enrollments.models import Payment, Enrollment
 from .utils import generate_auth_token, parse_token_response
 import requests
 from config import settings
-from core import core_perms
-from core.paginators import UserPaginator
+from core import core_perms, paginators
 from oauth2_provider.models import AccessToken
 from rest_framework.throttling import AnonRateThrottle
 from oauth2_provider.views import TokenView, RevokeTokenView
@@ -228,7 +227,7 @@ class UserViewSet(
 ):
     queryset = User.objects.all()
     serializer_class = serializers.UserDetailSerializer
-    pagination_class = UserPaginator
+    pagination_class = paginators.ItemPaginator
 
     def get_permissions(self):
         if self.action in ['current_user', 'update_avatar', 'update_password', 'get_payments', 'get_enrollments', 'get_results']:

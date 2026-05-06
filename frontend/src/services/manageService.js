@@ -111,3 +111,14 @@ export const createTeacher = async (data) => {
   const res = await Apis.post("users/", data);
   return res.data;
 };
+
+// Payment
+export const getPayments = async (page = 1, search = "", status = "", signal) => {
+  const res = await Apis.get(
+    `payments/?page=${page}&search=${search}&payment_status=${status}`,
+    {
+      signal,
+    },
+  );
+  return res.data;
+};

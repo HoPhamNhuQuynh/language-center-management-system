@@ -10,7 +10,7 @@ from rest_framework.serializers import ValidationError
 from core import core_perms
 
 class CourseViewSet(viewsets.ModelViewSet):
-      queryset = Course.objects.select_related('level').prefetch_related('tags').all()
+      queryset = Course.objects.select_related('level').prefetch_related('tags').all().order_by("id")
       parser_classes = [parsers.MultiPartParser]
 
       def get_queryset(self):

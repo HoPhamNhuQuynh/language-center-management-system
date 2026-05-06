@@ -38,9 +38,8 @@ const CourseManagement = () => {
 
     const loadCourses = async() => {
         let res = await getCourses();
-        const sorted = res.sort((a, b) => a.id - b.id);
-        setCourses(sorted);
-        console.info(sorted);
+        setCourses(res);
+        console.info(res);
     }
 
     const loadLevels = async () => {

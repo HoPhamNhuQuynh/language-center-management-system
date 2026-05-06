@@ -1,5 +1,4 @@
 from django.db import transaction, models
-from django.utils import timezone
 from enrollments.models import Enrollment, Payment
 from classes.models import Session
 from rest_framework import serializers
@@ -86,7 +85,13 @@ class PaymentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Payment
-        fields = ['id', 'enrollment', 'amount', 'payment_method', 'paid_at', 'classroom', 'payment_url', 'payment_status', 'total_sessions', 'transaction_id']
+        fields = ['id', 'enrollment', 'amount', 'payment_method', 'paid_at', 'classroom', 'payment_url', 'payment_status', 'total_sessions', 'transaction_id', 'created_at']
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data["student_name"] = instance.enrollment.student.full_name
+        data["student_email"] = instance.enrollment.student.email
+        return data
 
     def validate(self, data):
         enrollment = data.get('enrollment')
