@@ -10,7 +10,7 @@ import { myPaymentApi } from "../../services/studentService";
 
 function CourseRegisterForm({ search, course, selected_class, payment, method, percent, confirm, bill, paid,
   setPercent, setMethod, setSearch, setPayment, setConfirm, setBill, setPaid, onSearch, onSelectClass, onSubmit,
-  paymentStatus, myEnrollments = [] }) {
+  paymentStatus, myEnrollments = [], onCancelConfirm, onOpenConfirm }) {
   const [currentUser, setCurrentUser] = useState(null);
   const [billData, setBillData] = useState(null);
 
@@ -206,8 +206,7 @@ function CourseRegisterForm({ search, course, selected_class, payment, method, p
                 method={method} setMethod={setMethod}
                 percent={percent} setPercent={setPercent}
                 onSubmit={() => {
-                  setPayment(false);
-                  setConfirm(true);
+                  onOpenConfirm();
                 }}
                 setPayment={setPayment}
                 setBill={setBill}
@@ -225,9 +224,7 @@ function CourseRegisterForm({ search, course, selected_class, payment, method, p
                   onSubmit();
                 }}
                 setBill={setBill} isPaid={paid}
-                onCancel={() => {
-                  setConfirm(false);
-                }}
+                onCancel={onCancelConfirm}
                 onClose={() => { setConfirm(false); }}
               />
             )}
