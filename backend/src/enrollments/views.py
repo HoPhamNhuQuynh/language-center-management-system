@@ -11,7 +11,7 @@ from django.db import transaction
 from rest_framework.filters import SearchFilter
 
 
-class EnrollmentViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.RetrieveDestroyAPIView):
+class EnrollmentViewSet(viewsets.ViewSet, generics.ListCreateAPIView):
     def get_queryset(self):
         if getattr(self, 'swagger_fake_view', False):
             return Enrollment.objects.none()
@@ -26,7 +26,7 @@ class EnrollmentViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.R
         return Enrollment.objects.select_related('student', 'classroom').filter(student=self.request.user, active=True)
     
     def get_serializer_class(self):
-        if self.action == 'retrieve' or self.request.user.is_staff:
+        if self.request.user.is_authenticated and self.request.user.is_admin:
             return EnrollmentDetailSerializer
         return EnrollmentSerializer
     

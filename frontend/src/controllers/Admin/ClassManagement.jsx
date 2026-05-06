@@ -67,6 +67,8 @@ const ClassManagement = () => {
   const [teachers, setTeachers] = useState([]);
   const [toast, setToast] = useState({ show: false, message: "" });
   const [rooms, setRooms] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   const showToast = (message) => {
     setToast({ show: true, message });
@@ -78,11 +80,11 @@ const ClassManagement = () => {
     setRooms(res);
   };
 
-  const loadClasses = async () => {
-    let res = await getClasses();
-    const sorted = res.sort((a, b) => a.id - b.id);
-    setClasses(sorted);
-    console.info(sorted);
+  const loadClasses = async (page = 1) => {
+    let res = await getClasses(page);
+    setClasses(res.results);
+    setTotalPages(Math.ceil(res.count / 20));
+    console.info(res.results);
   };
 
   const loadCourses = async () => {
@@ -96,7 +98,10 @@ const ClassManagement = () => {
   };
 
   useEffect(() => {
-    loadClasses();
+    loadClasses(currentPage);
+  }, [currentPage]);
+
+  useEffect(() => {
     loadCourses();
     loadTeachers();
     loadRooms();
@@ -336,6 +341,50 @@ const ClassManagement = () => {
             ))}
           </tbody>
         </table>
+      </div>
+
+      <div className="pagination">
+        <button
+          className="page-btn"
+          disabled={currentPage === 1}
+          onClick={() => setCurrentPage((p) => p - 1)}
+        >
+          &laquo;
+        </button>
+
+        {Array.from({ length: totalPages }, (_, i) => i + 1)
+          .filter(
+            (p) =>
+              p === 1 || p === totalPages || Math.abs(p - currentPage) <= 2,
+          )
+          .reduce((acc, p, idx, arr) => {
+            if (idx > 0 && p - arr[idx - 1] > 1) acc.push("...");
+            acc.push(p);
+            return acc;
+          }, [])
+          .map((p, idx) =>
+            p === "..." ? (
+              <span key={`ellipsis-${idx}`} className="page-ellipsis">
+                ...
+              </span>
+            ) : (
+              <button
+                key={p}
+                className={`page-btn ${currentPage === p ? "active" : ""}`}
+                onClick={() => setCurrentPage(p)}
+              >
+                {p}
+              </button>
+            ),
+          )}
+
+        <button
+          className="page-btn"
+          disabled={currentPage === totalPages}
+          onClick={() => setCurrentPage((p) => p + 1)}
+        >
+          &raquo;
+        </button>
       </div>
 
       {deleteModal.show && (

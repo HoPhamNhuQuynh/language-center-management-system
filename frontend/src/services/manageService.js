@@ -35,8 +35,8 @@ export const deleteCourse = async (courseId) => {
 };
 
 // Classes
-export const getClasses = async () => {
-  const res = await Apis.get("classes/");
+export const getClasses = async (page = 1, signal) => {
+  const res = await Apis.get(`classes/?page=${page}`, { signal });
   return res.data;
 };
 

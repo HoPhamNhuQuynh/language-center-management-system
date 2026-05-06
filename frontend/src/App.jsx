@@ -12,7 +12,7 @@ import Schedule from "./controllers/Schedule/Schedule";
 import StudentInfo from "./controllers/Student/StudentInfo";
 import ResultAcademic from "./controllers/Student/ResultAcademic";
 import PaymentHistory from "./controllers/Payment/PaymentHistory";
-import './App.css'
+import "./App.css";
 import MainLayout from "./components/Base/MainLayout";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import ProtectedRoute from "./components/Base/ProtectedRoute";
@@ -22,6 +22,7 @@ import ClassManagement from "./controllers/Admin/ClassManagement";
 import AccountManagement from "./controllers/Admin/AccountManagement";
 import SessionManagement from "./controllers/Admin/SessionManagement";
 import PaymentManagement from "./controllers/Admin/PaymentManagement";
+import PublicRoute from "./components/Base/PublicRoute";
 
 const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 function App() {
@@ -34,10 +35,11 @@ function App() {
           <Route path="/about-us" element={<AboutUs />} />
           <Route path="/course-list" element={<CourseList />} />
 
-          <Route element={<ProtectedRoute allowedRoles={["Teacher", "Student"]} />}>
+          <Route
+            element={<ProtectedRoute allowedRoles={["Teacher", "Student"]} />}
+          >
             <Route path="/schedule" element={<Schedule />} />
           </Route>
-
 
           {/* CHỈ HỌC VIÊN (STUDENT) MỚI VÀO ĐƯỢC */}
           <Route element={<ProtectedRoute allowedRoles={["Student"]} />}>
@@ -68,8 +70,10 @@ function App() {
           </Route>
         </Route>
 
-        <Route path="/register" element={<Register />} />
-        <Route path="/login" element={<Login />} />
+        <Route element={<PublicRoute />}>
+          <Route path="/register" element={<Register />} />
+          <Route path="/login" element={<Login />} />
+        </Route>
       </Routes>
     </GoogleOAuthProvider>
   );
