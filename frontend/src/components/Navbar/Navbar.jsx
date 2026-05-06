@@ -25,12 +25,6 @@ function Navbar() {
       path: "course-config",
     },
     {
-      key: "assignments",
-      label: "Sắp xếp lịch dạy",
-      icon: <TeamOutlined />,
-      path: "/assignment-config",
-    },
-    {
       key: "payments",
       label: "Quản lý học phí",
       icon: <CreditCardOutlined />,
