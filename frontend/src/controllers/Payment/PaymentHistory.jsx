@@ -1,71 +1,60 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import PaymentHistoryForm from "../../pages/Payment/PaymentHistoryForm";
 import "../../styles/PaymentHistory.css";
+import { myPaymentApi } from "../../services/studentService";
 
 function PaymentHistory() {
-  const user = {
-    name: "Le Minh Khoi",
-    id: "987654321",
-  };
+  const [payments, setPayments] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [status, setStatus] = useState("");
 
-  const [statusFilter, setStatusFilter] = useState("");
-  const [monthFilter, setMonthFilter] = useState("");
+  useEffect(() => {
+    const loadPayments = async () => {
+      try {
+        const res = await myPaymentApi();
+        setPayments(res);
+      } catch (ex) {
+        console.error("Failed to load payment history:", ex);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadPayments();
+  }, []);
 
-  const payments = [
-    {
-      id: 1,
-      paymentCode: "PAY001",
-      date: "22/02/2026",
-      content: "Học phí Tiếng Anh nâng cao",
-      status: "Đã thanh toán",
-      amount: 4500000,
-      month: "02/2026",
-    },
-    {
-      id: 2,
-      paymentCode: "PAY002",
-      date: "24/02/2026",
-      content: "Học phí Tiếng Trung giao tiếp",
-      status: "Đã thanh toán",
-      amount: 4000000,
-      month: "02/2026",
-    },
-    {
-      id: 3,
-      paymentCode: "PAY003",
-      date: "10/03/2026",
-      content: "Phí tài liệu",
-      status: "Chưa thanh toán",
-      amount: 500000,
-      month: "03/2026",
-    },
-  ];
+  const mappedPayments = useMemo(() => {
+    return payments.map(payment => ({
+      id: payment.id,
+      paymentCode: `PAY${payment.id.toString().padStart(3, '0')}`,
+      date: payment.paid_at
+        ? new Date(payment.paid_at).toLocaleDateString('vi-VN')
+        : "---",
+      amount: Number(payment.amount) || 0,
+      content: `Học phí lớp ${payment.classroom || "---"}`, 
+      status: payment.payment_status,
+    }));
+  }, [payments]);
 
-  const filteredPayments = payments.filter((item) => {
-    const matchStatus = statusFilter ? item.status === statusFilter : true;
-    const matchMonth = monthFilter ? item.month === monthFilter : true;
-    return matchStatus && matchMonth;
-  });
+  const filteredPayments = mappedPayments.filter(item =>
+    status ? item.status === status : true
+  );
 
   const totalPaid = useMemo(() => {
     return filteredPayments
-      .filter((item) => item.status === "Đã thanh toán")
+      .filter(item => item.status === "SUCCESS")
       .reduce((sum, item) => sum + item.amount, 0);
   }, [filteredPayments]);
 
-  const formatCurrency = (value) => {
-    return `${value.toLocaleString("vi-VN")} vnđ`;
-  };
+  const formatCurrency = (value) => `${value.toLocaleString('vi-VN')} VND`;
+
+  if (loading) return <div>Loading...</div>;
 
   return (
     <PaymentHistoryForm
-      user={user}
       payments={filteredPayments}
       totalPaid={formatCurrency(totalPaid)}
-      statusFilter={statusFilter}
-      monthFilter={monthFilter}
-      setStatusFilter={setStatusFilter}
-      setMonthFilter={setMonthFilter}
+      statusFilter={status}
+      setStatusFilter={setStatus}
       formatCurrency={formatCurrency}
     />
   );

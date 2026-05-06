@@ -1,23 +1,20 @@
 import { Card, Divider, Radio, Button } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
 
-function PaymentForm({ data, method, setMethod, percent, setPercent, onSubmit, onClose }) {
-const getValue = (value) => value || "---";
+function PaymentForm({ data, method, setMethod, percent, setPercent, onSubmit, onClose, setBill, isPaid, setPayment }) {
+  const getValue = (value) => value || "---";
 
   return (
     <div style={{ display: "flex", justifyContent: "center", marginTop: 40 }}>
       <Card style={{ width: 700, borderRadius: 20 }}>
-        <div style={{ display: "flex", alignItems: "center", border: "1px solid #ccc", borderRadius: 10, padding: "10px 0", marginBottom: 20, background: "#f5f5f5" }}>
-          <div style={{ width: 32 }} />
+        <div style={{
+          display: "flex", alignItems: "center", border: "1px solid #ccc",
+          borderRadius: 10, padding: "10px 0", marginBottom: 20, background: "#1a1059"
+        }}>          <div style={{ width: 32 }} />
           <div style={{ flex: 1, textAlign: "center" }}>
-            <h2 style={{ margin: 0 }}>THANH TOÁN HỌC PHÍ</h2>
+            <h2 style={{ margin: 0, color: "#ffffff" }}>THANH TOÁN HỌC PHÍ</h2>
           </div>
-          <Button
-            type="text"
-            icon={<CloseOutlined />}
-            onClick={() => navigate("/confirm", { state: { data, method, percent } })}
-          />
-        </div>
+          <Button type="text" icon={<CloseOutlined />} onClick={onClose} style={{ color: "#ffffff" }} />        </div>
         <h3 style={{ marginBottom: 15, textAlign: "left" }}>THÔNG TIN HỌC VIÊN</h3>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, textAlign: "left", lineHeight: 1.8 }}>
           <div><b>Mã học viên:</b> {getValue(data?.studentId)}</div>
@@ -30,7 +27,7 @@ const getValue = (value) => value || "---";
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12, textAlign: "left", lineHeight: 1.8 }}>
           <div><b>Mã lớp:</b> {getValue(data?.classId)}</div>
           <div><b>Tên lớp:</b> {getValue(data?.className)}</div>
-          <div><b>Khóa học:</b> {getValue(data?.course)}</div>
+          <div><b>Khóa học:</b> {getValue(data?.courseName)}</div>
         </div>
         <Divider style={{ margin: "15px 0" }} />
         <h3 style={{ marginBottom: 15, textAlign: "left" }}>THÔNG TIN THANH TOÁN</h3>
@@ -39,28 +36,53 @@ const getValue = (value) => value || "---";
             <div style={{ width: 280, textAlign: "left" }}>
               <b>Phương thức thanh toán:</b>
             </div>
-            <Radio.Group value={method} onChange={(e) => setMethod(e.target.value)}>
+            <Radio.Group disabled={isPaid} value={method} onChange={(e) => setMethod(e.target.value)} disabled={isPaid}>
               <Radio value="momo" style={{ marginRight: 60 }}>Momo</Radio>
               <Radio value="vnpay">VNPay</Radio>
             </Radio.Group>
           </div>
           <div style={{ display: "flex", alignItems: "center" }}>
             <div style={{ width: 280, textAlign: "left" }}>
-              <b>Trạng thái:</b>
+              <b>Mức thanh toán:</b>
             </div>
-            <Radio.Group value={percent} onChange={(e) => setPercent(e.target.value)}>
+            <Radio.Group
+              disabled={isPaid}
+              value={percent}
+              onChange={(e) => setPercent(e.target.value)}
+            >
               <Radio value={100} style={{ marginRight: 60 }}>100%</Radio>
-              <Radio value={50}>50%</Radio>
+              <Radio
+                value={50}
+                disabled={data?.price < 5000000}
+              >
+                50% {data?.price < 5000000}
+              </Radio>
             </Radio.Group>
           </div>
         </div>
         <h2 style={{ textAlign: "center", marginTop: 25 }}>
-          Tổng học phí: {(data?.total || 0).toLocaleString()} VND
+          Tổng học phí: {data?.total ? Number(data.total).toLocaleString('vi-VN') : "0"} VND
         </h2>
         <div style={{ textAlign: "center", marginTop: 25 }}>
-          <Button type="primary" onClick={onSubmit}>
-            THANH TOÁN
-          </Button>
+          {!isPaid ? (
+            <Button
+              style={{ background: "#1a1059", fontWeight: "bold" }}
+              type="primary"
+              onClick={onSubmit}
+            >
+              THANH TOÁN
+            </Button>
+          ) : (
+            <Button
+              style={{ background: "#1a1059", fontWeight: "bold", color: "#fff" }}
+              onClick={() => {
+                if (setPayment) setPayment(false);
+                setBill(true);
+              }}
+            >
+              XEM BIÊN LAI
+            </Button>
+          )}
         </div>
       </Card>
     </div>

@@ -102,3 +102,38 @@ class TestPaymentModule:
         assert response.data['RspCode'] == "01"
         assert "not found" in response.data['Message']
         assert response.status_code == 200
+
+    #Bổ sung
+    def test_create_payment_returns_400_when_amount_missing(self, api_client, active_user, classroom):
+        """Test không cho tạo thanh toán khi chưa chọn mức thanh toán"""
+        enrollment = baker.make('enrollments.Enrollment', student=active_user, classroom=classroom)
+
+        api_client.force_authenticate(user=active_user)
+        url = reverse('payment-list')
+        data = {
+            "enrollment": enrollment.id,
+            "payment_method": "VNPAY"
+        }
+
+        response = api_client.post(url, data, format='json')
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+    def test_create_payment_returns_200_when_amount_is_full_course_price(self, api_client, active_user, classroom):
+        """Test cho phép thanh toán 100% học phí"""
+        enrollment = baker.make('enrollments.Enrollment', student=active_user, classroom=classroom)
+
+        api_client.force_authenticate(user=active_user)
+        url = reverse('payment-list')
+        data = {
+            "enrollment": enrollment.id,
+            "amount": classroom.course.price,
+            "payment_method": "VNPAY"
+        }
+
+        response = api_client.post(url, data, format='json')
+
+        assert response.status_code == status.HTTP_200_OK
+        assert "payment_url" in response.data
+    
+   

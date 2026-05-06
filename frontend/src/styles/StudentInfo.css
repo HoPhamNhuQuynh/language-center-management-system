@@ -60,7 +60,6 @@
   border-color: transparent;
 }
 
-/* Main */
 .student-info-main {
   flex: 1;
   min-width: 0;
@@ -72,7 +71,6 @@
   text-align: left;
 }
 
-/* Topbar */
 .student-info-topbar {
   min-height: 82px;
   display: flex;
@@ -327,4 +325,104 @@
 .student-profile-avatar {
   align-self: center;
 }
+}
+
+.student-profile-avatar {
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.avatar-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.45);
+  color: #fff;
+  font-size: 11px;
+  text-align: center;
+  padding: 4px 0;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.student-profile-avatar:hover .avatar-overlay {
+  opacity: 1;
+}
+
+.inline-input {
+  height: 30px;
+  padding: 0 10px;
+  font-size: 14px;
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  color: inherit;
+  box-sizing: border-box;
+  width: auto;        
+  max-width: 160px;   
+}
+
+.inline-input:focus {
+  outline: none;
+  border-color: #adb5bd;
+  background: #fff;
+}
+
+.inline-name-inputs {
+  display: inline-flex;
+  gap: 6px;
+}
+
+.inline-name-inputs .inline-input {
+  max-width: 120px; 
+}
+
+.student-profile-content p {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 10px 0;
+  font-size: 15px;
+}
+
+.inline-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.btn-save-inline {
+  height: 32px;
+  padding: 0 18px;
+  border-radius: 20px;  
+  border: none;
+  background: var(--navy-800, #1e2f5b);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.btn-save-inline:hover { opacity: 0.85; }
+
+.btn-cancel-inline {
+  height: 32px;
+  padding: 0 18px;
+  border-radius: 20px;       
+  border: 1px solid #dee2e6;
+  background: transparent;
+  color: #6c757d;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.btn-cancel-inline:hover { background: #f8f9fa; }
+
+.student-course-table a {
+  color: var(--navy-600);
+  text-decoration: underline;
 }

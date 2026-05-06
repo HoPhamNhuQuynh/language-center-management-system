@@ -1,4 +1,5 @@
 from datetime import timedelta
+import json
 from django.utils import timezone
 from oauth2_provider.models import AccessToken, RefreshToken
 from oauthlib.common import generate_token
@@ -26,3 +27,13 @@ def generate_auth_token(user, application):
     )
 
     return access_token, refresh_token
+
+def parse_token_response(response):
+    """
+    TokenView luôn trả về HttpResponse (không phải DRF Response),
+    nên phải parse token từ .content thay vì .data.
+    """
+    try:
+        return json.loads(response.content.decode("utf-8"))
+    except (json.JSONDecodeError, AttributeError):
+        return {}

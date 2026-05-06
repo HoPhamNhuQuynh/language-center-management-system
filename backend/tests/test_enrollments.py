@@ -136,3 +136,33 @@ class TestEnrollmentModule:
 
         assert response.status_code == 200
         assert len(response.data) == 2
+
+    # Bổ sung
+    def test_enroll_returns_400_when_classroom_missing(self, api_client, active_user):
+        """Test không cho đăng ký khi chưa chọn lớp học"""
+        api_client.force_authenticate(user=active_user)
+
+        url = reverse('enrollment-list')
+        data = {}
+
+        response = api_client.post(url, data, format='json')
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+    def test_enroll_returns_201_when_schedule_does_not_overlap_existing_enrollment(self, api_client, active_user):
+        """Test cho phép đăng ký lớp khác khi lịch học không bị trùng"""
+        class_a = baker.make('classes.ClassRoom', capacity=10)
+        baker.make('classes.Schedule', classroom=class_a, day_of_week=2, start_time="08:00:00", end_time="10:00:00")
+        baker.make('enrollments.Enrollment', student=active_user, classroom=class_a, active=True)
+
+        class_b = baker.make('classes.ClassRoom', capacity=10, name="Lớp không trùng")
+        baker.make('classes.Schedule', classroom=class_b, day_of_week=2, start_time="10:30:00", end_time="12:00:00")
+
+        api_client.force_authenticate(user=active_user)
+        url = reverse('enrollment-list')
+        data = {"classroom": class_b.id}
+
+        response = api_client.post(url, data, format='json')
+
+        assert response.status_code == status.HTTP_201_CREATED
+        assert Enrollment.objects.filter(student=active_user, classroom=class_b).exists()

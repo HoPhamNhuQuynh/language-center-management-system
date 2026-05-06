@@ -2,6 +2,7 @@ from courses.models import Course, Level, ScoreType, Tag
 from rest_framework import serializers
 from core.serializers import ItemImageSerializer
 
+
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag
@@ -19,14 +20,10 @@ class CourseSerializer(ItemImageSerializer):
         trim_whitespace=True
     )
     level_name = serializers.ReadOnlyField(source='level.name')
+    tags = TagSerializer(many=True, read_only=True)
     class Meta:
         model = Course
-        fields = ['id', 'name', 'image', 'total_sessions', 'level', 'level_name', 'tags']
-    
-    def validate_total_sessions(self, value):
-        if value <= 0:
-            raise serializers.ValidationError("Số buổi học phải lớn hơn 0.")
-        return value
+        fields = ['id', 'name', 'image', 'total_sessions', 'level', 'level_name', 'tags', 'price']
     
     def to_representation(self, instance):
         data = super().to_representation(instance)
@@ -40,14 +37,26 @@ class CourseSerializer(ItemImageSerializer):
         if total_sessions > 30:
             raise serializers.ValidationError("Giá trị nhập vào không hợp lệ, tổng số buổi học tối đa là 30 buổi.")
         return total_sessions
+    
+    def validate_name(self, value):
+        qs = Course.objects.filter(name__iexact=value.strip())
+        if self.instance:
+            qs = qs.exclude(pk=self.instance.pk)
+
+        if qs.exists():
+            raise serializers.ValidationError("Tên khóa học đã tồn tại.")
+
+        return value
 
 class CourseDetailSerializer(CourseSerializer):
+    actual_total_sessions = serializers.ReadOnlyField()
+
     class Meta:
         model = CourseSerializer.Meta.model
-        fields = CourseSerializer.Meta.fields + ['price', 'description', 'active', 'created_at']
+        fields = CourseSerializer.Meta.fields + ['price', 'description', 'active', 'created_at', 'actual_total_sessions']
 
     def update(self, course, validated_data):
-        field_to_update = ['name', 'total_sessions', 'level', 'price', 'description', 'image']
+        field_to_update = ['name', 'total_sessions', 'level', 'price', 'description', 'image', 'active']
         tags = validated_data.pop('tags', [])
 
         for attr, value in validated_data.items():

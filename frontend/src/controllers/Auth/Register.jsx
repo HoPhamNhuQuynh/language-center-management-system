@@ -4,7 +4,8 @@ import { setTokens } from "../../utils/token";
 import { useGoogleLogin } from "@react-oauth/google";
 import { useNavigate } from "react-router-dom";
 import { FacebookLoginClient } from "@greatsumini/react-facebook-login";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { message } from "antd";
 
 function Register(){
   const navigate = useNavigate();
@@ -35,14 +36,24 @@ function Register(){
 
       const res = await registerApi(payload);
 
-      setTokens(res.access, res.refresh);
+      setTokens(res.access, res.refresh, res.user);
       navigate("/");
 
-      alert("Đăng ký thành công!");
+      message.success("Đăng ký thành công!");
     } catch (err) {
-      console.log("Lỗi đăng ký:", err.response?.data);
-      alert("Đăng ký thất bại!");
-    }
+      const data = err.response?.data; 
+      let msg = "Đăng ký thất bại";
+
+      if (data?.username || data?.email) {
+        msg = "Tài khoản đã tồn tại";
+      } else if (data?.password) {
+        msg = "Mật khẩu không hợp lệ";
+      } else if (data?.phone_num) {
+        msg = "Số điện thoại không hợp lệ";
+      }
+
+      message.error(msg);
+      }
   };
 
   const googleLogin = useGoogleLogin({
@@ -53,18 +64,21 @@ function Register(){
       try {
         const res = await googleLoginApi(tokenResponse.access_token);
 
-        setTokens(res.access_token, res.refresh_token);
+        setTokens(res.access_token, res.refresh_token, res.user);
         console.log("Backend trả về:", res);
         navigate("/");
       } catch (err) {
         console.log(err.response?.data);
         console.log(err.response?.status);
-        alert("Google login thất bại");
+        message.error("Google login thất bại");
       }
     },
-    onError: () => {
-      console.log("Google OAuth lỗi:", err);
-      alert("Google login lỗi");
+    onError: (err) => {
+      if (err?.response?.data) {
+        setErrors(err.response.data);
+      } else {
+        console.error("Lỗi hệ thống:", err?.message);
+      }
     },
   });
 
@@ -74,13 +88,19 @@ function Register(){
             if (response.status === "connected") {
               facebookLoginApi(response.authResponse.accessToken)
                 .then((res) => {
-                  console.info(res)
-                  setTokens(res.access_token, res.refresh_token);
+                  console.info(res);
+                  setTokens(res.access_token, res.refresh_token, res.user);
                   navigate("/");
                 })
-                .catch(() => alert("Facebook login thất bại"));
+                .catch((err) => {
+                  if (err?.response?.data) {
+                    setErrors(err.response.data);
+                  } else {
+                    console.error("Lỗi hệ thống:", err?.message);
+                  }
+                });
             } else {
-              alert("Facebook login bị huỷ");
+              message.error("Facebook login thất bại");
             }
           },
           { scope: "email,public_profile" },
