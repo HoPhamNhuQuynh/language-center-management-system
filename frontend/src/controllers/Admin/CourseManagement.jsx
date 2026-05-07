@@ -68,8 +68,6 @@ const CourseManagement = () => {
             errs.total_sessions = "Vui lòng nhập số buổi học";
         else if (form.total_sessions < 10 || form.total_sessions > 30)
             errs.total_sessions = "Số buổi học phải từ 10 đến 30 buổi";
-        else if (editingCourse && form.total_sessions < editingCourse.actual_total_sessions)
-            errs.total_sessions = `Không thể giảm xuống dưới ${editingCourse.actual_total_sessions} buổi đã tạo thực tế`;
         return errs;
     };
 

@@ -15,7 +15,6 @@ const PublicRoute = () => {
     const redirectTo = ROLE_HOME[role] ?? "/";
     return <Navigate to={redirectTo} replace />;
   }
-
   return <Outlet />;
 };
 

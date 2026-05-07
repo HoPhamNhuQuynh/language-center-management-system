@@ -35,7 +35,7 @@ function Attendance() {
     const fetchClasses = async () => {
       try {
         const res = await loadClassesApi();
-        setClasses(res);
+        setClasses(res.results);
       } catch (err) {
         console.error(err);
       }

@@ -52,11 +52,11 @@ function Navbar() {
       console.info(refreshToken)
 
       await revokeTokenApi(refreshToken);
-
-      clearTokens();
-      navigate("/login");
     } catch (error) {
       console.log("Revoke token failed:", error);
+    } finally {
+      clearTokens();
+      navigate("/login");
     }
   };
 

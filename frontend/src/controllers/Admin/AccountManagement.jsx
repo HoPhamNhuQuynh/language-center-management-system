@@ -525,7 +525,8 @@ const AccountManagement = () => {
             </p>
             {lockModal.error && (
               <div className="badge-warning" style={{ marginBottom: 12 }}>
-                ⚠️ {lockModal.error}
+                <span aria-hidden="true">⚠️ </span>
+                <span>{lockModal.error}</span>
               </div>
             )}
             <div style={{ display: "flex", gap: 10, justifyContent: "center" }}>
