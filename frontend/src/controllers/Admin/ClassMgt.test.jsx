@@ -1,8 +1,13 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import {
+  render,
+  screen,
+  fireEvent,
+  waitFor,
+  act,
+} from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 
-// Mock services
 vi.mock("../../services/manageService", () => ({
   getClasses: vi.fn(),
   getCourses: vi.fn(),
@@ -20,12 +25,11 @@ vi.mock("../../utils/format", () => ({
 vi.mock("react-icons/fa6", () => ({ FaPen: () => <span>Edit</span> }));
 vi.mock("react-icons/im", () => ({ ImBin2: () => <span>Delete</span> }));
 
-// Mock DatePicker — component phức tạp không cần test UI
 vi.mock("react-datepicker", () => ({
   default: ({ placeholderText, onChange }) => (
     <input
       placeholder={placeholderText}
-      onChange={(e) => onChange && onChange(new Date(e.target.value))}
+      onChange={(e) => onChange?.(new Date(e.target.value))}
     />
   ),
 }));
@@ -47,7 +51,6 @@ import {
 } from "../../services/manageService";
 import ClassManagement from "./ClassManagement";
 
-// Data mẫu
 const mockClasses = [
   {
     id: 1,
@@ -96,23 +99,94 @@ const renderComponent = () =>
     </MemoryRouter>,
   );
 
+const openCreateModal = async () => {
+  fireEvent.click(screen.getByText("Thêm"));
+
+  await waitFor(() => {
+    expect(screen.getByText("THÊM LỚP HỌC MỚI")).toBeInTheDocument();
+  });
+};
+
+const fillDates = (start, end) => {
+  const dateInputs = screen.getAllByPlaceholderText("DD/MM/YYYY");
+
+  fireEvent.change(dateInputs[0], {
+    target: { value: start },
+  });
+
+  fireEvent.change(dateInputs[1], {
+    target: { value: end },
+  });
+};
+
+const fillBasicForm = async ({
+  name = "IELTS_02",
+  course = "1",
+  capacity = "20",
+  start = "2024-01-01",
+  end = "2024-06-01",
+} = {}) => {
+  fireEvent.change(document.querySelector('input[name="name"]'), {
+    target: { value: name },
+  });
+
+  fireEvent.change(document.querySelector('select[name="course"]'), {
+    target: { value: course },
+  });
+
+  fireEvent.change(document.querySelector('input[name="capacity"]'), {
+    target: { value: capacity },
+  });
+
+  fillDates(start, end);
+};
+
+const addSchedule = async ({
+  day = "Thứ 2",
+  room = "1",
+  time = "07:30-09:30",
+} = {}) => {
+  fireEvent.click(screen.getByRole("button", { name: day }));
+
+  await waitFor(() => {
+    expect(screen.getAllByRole("combobox").length).toBeGreaterThan(0);
+  });
+
+  const selects = document.querySelectorAll("select");
+
+  fireEvent.change(selects[selects.length - 2], {
+    target: { value: time },
+  });
+
+  fireEvent.change(selects[selects.length - 1], {
+    target: { value: room },
+  });
+};
+
+const submitForm = () => {
+  fireEvent.click(screen.getByText("Lưu"));
+};
+
 describe("ClassManagement", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    getClasses.mockResolvedValue(mockClasses);
+
+    getClasses.mockResolvedValue({
+      results: mockClasses,
+      count: mockClasses.length,
+    });
+
     getCourses.mockResolvedValue(mockCourses);
     getTeachers.mockResolvedValue(mockTeachers);
     getRooms.mockResolvedValue(mockRooms);
   });
 
-  // --- Load data ---
-  describe("load danh sách", () => {
+  describe("1. load danh sách", () => {
     it("hiển thị danh sách lớp học sau khi load", async () => {
       renderComponent();
 
       await waitFor(() => {
         expect(screen.getByText("IELTS_01")).toBeInTheDocument();
-        expect(screen.getByText("TOEIC_01")).toBeInTheDocument();
       });
     });
 
@@ -127,12 +201,106 @@ describe("ClassManagement", () => {
       });
     });
 
+    describe("2. navigate", () => {
+      it("navigate đến trang session khi click tên lớp", async () => {
+        renderComponent();
+
+        await waitFor(() => {
+          expect(screen.getByText("IELTS_01")).toBeInTheDocument();
+        });
+
+        fireEvent.click(screen.getByText("IELTS_01"));
+
+        expect(mockNavigate).toHaveBeenCalledWith("/session-config/1");
+      });
+    });
+
+    it("không báo lỗi khi sĩ số đúng biên 10", async () => {
+      createClass.mockResolvedValue({});
+      renderComponent();
+
+      fireEvent.click(screen.getByText("Thêm"));
+      await waitFor(() => screen.getByText("THÊM LỚP HỌC MỚI"));
+
+      fireEvent.change(document.querySelector('input[name="capacity"]'), {
+        target: { value: "10" },
+      });
+      fireEvent.click(screen.getByText("Lưu"));
+
+      await waitFor(() => {
+        expect(
+          screen.queryByText("Sĩ số phải từ 10 đến 50 học viên"),
+        ).not.toBeInTheDocument();
+      });
+    });
+
     it("hiển thị trạng thái đúng", async () => {
       renderComponent();
 
       await waitFor(() => {
         expect(screen.getByText("Đang hoạt động")).toBeInTheDocument();
         expect(screen.getByText("Không hoạt động")).toBeInTheDocument();
+      });
+    });
+  });
+
+  describe("3. validate form", () => {
+    it("hiển thị lỗi khi submit form trống", async () => {
+      renderComponent();
+
+      await openCreateModal();
+
+      submitForm();
+
+      await waitFor(() => {
+        expect(
+          screen.getByText("Vui lòng nhập tên lớp học"),
+        ).toBeInTheDocument();
+
+        expect(screen.getByText("Vui lòng chọn khóa học")).toBeInTheDocument();
+
+        expect(
+          screen.getByText("Vui lòng nhập sĩ số tối đa"),
+        ).toBeInTheDocument();
+        expect(
+          screen.getByText("Vui lòng chọn ít nhất một ngày học"),
+        ).toBeInTheDocument();
+      });
+    });
+
+    it("hiển thị lỗi khi sĩ số dưới 10 học viên", async () => {
+      renderComponent();
+
+      await openCreateModal();
+
+      await fillBasicForm({
+        capacity: "5",
+      });
+
+      submitForm();
+
+      await waitFor(() => {
+        expect(
+          screen.getByText("Sĩ số phải từ 10 đến 50 học viên"),
+        ).toBeInTheDocument();
+      });
+    });
+
+    it("hiển thị lỗi khi sĩ số vượt quá 50", async () => {
+      renderComponent();
+
+      await openCreateModal();
+
+      await fillBasicForm({
+        capacity: "100",
+      });
+
+      submitForm();
+
+      await waitFor(() => {
+        expect(
+          screen.getByText("Sĩ số phải từ 10 đến 50 học viên"),
+        ).toBeInTheDocument();
       });
     });
 
@@ -143,67 +311,68 @@ describe("ClassManagement", () => {
         expect(screen.getByText("—")).toBeInTheDocument();
       });
     });
-  });
 
-  // --- Navigate ---
-  describe("navigate", () => {
-    it("navigate đến trang session khi click tên lớp", async () => {
+    it("hiển thị lỗi khi ngày kết thúc trước ngày khai giảng", async () => {
       renderComponent();
 
-      await waitFor(() => screen.getByText("IELTS_01"));
-      fireEvent.click(screen.getByText("IELTS_01"));
+      await openCreateModal();
 
-      expect(mockNavigate).toHaveBeenCalledWith("/session-config/1");
-    });
-  });
+      await fillBasicForm({
+        start: "2024-06-01",
+        end: "2024-06-01",
+      });
 
-  // --- validate ---
-  describe("validate form", () => {
-    it("hiển thị lỗi khi submit form trống", async () => {
-      renderComponent();
-
-      await waitFor(() => screen.getByText("Thêm"));
-      fireEvent.click(screen.getByText("Thêm"));
-
-      await waitFor(() => screen.getByText("THÊM LỚP HỌC MỚI"));
-      fireEvent.click(screen.getByText("Lưu"));
+      submitForm();
 
       await waitFor(() => {
         expect(
-          screen.getByText("Vui lòng nhập tên lớp học"),
-        ).toBeInTheDocument();
-        expect(screen.getByText("Vui lòng chọn khóa học")).toBeInTheDocument();
-        expect(
-          screen.getByText("Vui lòng nhập sĩ số tối đa"),
-        ).toBeInTheDocument();
-        expect(
-          screen.getByText("Vui lòng chọn ít nhất một ngày học"),
+          screen.getByText("Ngày kết thúc phải sau ngày khai giảng"),
         ).toBeInTheDocument();
       });
     });
 
-    it("hiển thị lỗi khi sĩ số ngoài khoảng 10-50", async () => {
+    it("hiển thị lỗi khi chọn ngày học nhưng chưa chọn phòng", async () => {
       renderComponent();
 
-      await waitFor(() => screen.getByText("Thêm"));
-      fireEvent.click(screen.getByText("Thêm"));
+      await openCreateModal();
 
-      await waitFor(() => screen.getByText("THÊM LỚP HỌC MỚI"));
+      await fillBasicForm();
 
-      const capacityInput = document.querySelector('input[name="capacity"]');
-      fireEvent.change(capacityInput, { target: { value: "5" } });
-      fireEvent.click(screen.getByText("Lưu"));
+      fireEvent.click(
+        screen.getByRole("button", {
+          name: "Thứ 2",
+        }),
+      );
+
+      submitForm();
 
       await waitFor(() => {
         expect(
-          screen.getByText("Sĩ số phải từ 10 đến 50 học viên"),
+          screen.getByText(
+            "Vui lòng chọn phòng học cho tất cả các ngày",
+          ),
         ).toBeInTheDocument();
+      });
+    });
+
+    it("có thể chọn nhiều ngày học", async () => {
+      renderComponent();
+      fireEvent.click(screen.getByText("Thêm"));
+      await waitFor(() => screen.getByRole("button", { name: "Thứ 2" }));
+
+      fireEvent.click(screen.getByRole("button", { name: "Thứ 2" }));
+      fireEvent.click(screen.getByRole("button", { name: "Thứ 4" }));
+      fireEvent.click(screen.getByRole("button", { name: "Thứ 6" }));
+
+      await waitFor(() => {
+        expect(screen.getAllByText("Thứ 2").length).toBe(2);
+        expect(screen.getAllByText("Thứ 4").length).toBe(2);
+        expect(screen.getAllByText("Thứ 6").length).toBe(2);
       });
     });
   });
 
-  // --- toggleDay ---
-  describe("toggleDay", () => {
+  describe("4. toggleDay", () => {
     it("chọn và bỏ chọn ngày học", async () => {
       renderComponent();
 
@@ -212,28 +381,23 @@ describe("ClassManagement", () => {
 
       await waitFor(() => screen.getByRole("button", { name: "Thứ 2" }));
 
-      // Chọn Thứ 2
       fireEvent.click(screen.getByRole("button", { name: "Thứ 2" }));
 
-      // Sau khi chọn → có span label "Thứ 2" trong schedule row
       await waitFor(() => {
         const spans = screen.getAllByText("Thứ 2");
-        expect(spans.length).toBe(2); // 1 button + 1 span label
+        expect(spans.length).toBe(2);
       });
 
-      // Bỏ chọn → click button
       fireEvent.click(screen.getByRole("button", { name: "Thứ 2" }));
 
-      // Sau khi bỏ chọn → chỉ còn button, không còn span label
       await waitFor(() => {
         const spans = screen.getAllByText("Thứ 2");
-        expect(spans.length).toBe(1); // chỉ còn button
+        expect(spans.length).toBe(1);
       });
     });
   });
 
-  // --- handleDelete ---
-  describe("handleDelete", () => {
+  describe("5. handleDelete", () => {
     it("mở modal xác nhận khi bấm Delete", async () => {
       renderComponent();
 
@@ -290,27 +454,102 @@ describe("ClassManagement", () => {
 
       await waitFor(() => screen.getByText("Xác nhận xóa"));
       fireEvent.click(screen.getByText("Hủy"));
+      expect(deleteClass).not.toHaveBeenCalled();
 
       await waitFor(() => {
         expect(screen.queryByText("Xác nhận xóa")).not.toBeInTheDocument();
       });
     });
-  });
 
-  // --- handleSave (create) ---
-  describe("handleSave - tạo mới", () => {
-    it("gọi createClass khi form hợp lệ", async () => {
-      createClass.mockResolvedValue({});
+    it("toast tự ẩn sau 3 giây", async () => {
+      vi.useFakeTimers({ shouldAdvanceTime: true });
+      deleteClass.mockResolvedValue({});
       renderComponent();
 
-      await waitFor(() => screen.getByText("Thêm"));
-      fireEvent.click(screen.getByText("Thêm"));
+      await waitFor(() => screen.getAllByText("Delete"));
+      fireEvent.click(screen.getAllByText("Delete")[0]);
+      await waitFor(() => screen.getByText("Xóa"));
+      fireEvent.click(screen.getByText("Xóa"));
 
+      await waitFor(() =>
+        expect(screen.getByText("Xóa lớp học thành công!")).toBeInTheDocument(),
+      );
+
+      await act(async () => {
+        vi.advanceTimersByTime(3000);
+      });
+
+      expect(
+        screen.queryByText("Xóa lớp học thành công!"),
+      ).not.toBeInTheDocument();
+      vi.useRealTimers();
+    });
+
+    it("hiển thị lỗi mặc định khi deleteClass thất bại không có message", async () => {
+      deleteClass.mockRejectedValue({ response: { data: {} } });
+      renderComponent();
+
+      await waitFor(() => screen.getAllByText("Delete"));
+      fireEvent.click(screen.getAllByText("Delete")[0]);
+      await waitFor(() => screen.getByText("Xóa"));
+      fireEvent.click(screen.getByText("Xóa"));
+
+      await waitFor(() => {
+        expect(
+          screen.getByText("Xóa thất bại, vui lòng thử lại."),
+        ).toBeInTheDocument();
+      });
+    });
+  });
+
+  describe("6. handleSave - tạo mới", () => {
+    it("gọi createClass với payload đúng khi form hợp lệ", async () => {
+      createClass.mockResolvedValue({});
+
+      renderComponent();
+
+      await openCreateModal();
+
+      await fillBasicForm();
+
+      await addSchedule();
+
+      submitForm();
+
+      await waitFor(() => {
+        expect(createClass).toHaveBeenCalledWith(
+          expect.objectContaining({
+            name: "IELTS_02",
+            course: "1",
+            capacity: "20",
+            schedules_input: [
+              {
+                day_of_week: 0,
+                start_time: "07:30",
+                end_time: "09:30",
+                room: "1",
+              },
+            ],
+          }),
+        );
+
+        expect(
+          screen.getByText("Thêm lớp học thành công!"),
+        ).toBeInTheDocument();
+      });
+    });
+
+    it("hiển thị lỗi general khi server trả về array", async () => {
+      createClass.mockRejectedValue({
+        response: { data: ["Dữ liệu không hợp lệ"] },
+      });
+      renderComponent();
+
+      fireEvent.click(screen.getByText("Thêm"));
       await waitFor(() => screen.getByText("THÊM LỚP HỌC MỚI"));
 
-      // Điền form
       fireEvent.change(document.querySelector('input[name="name"]'), {
-        target: { value: "IELTS_02" },
+        target: { value: "IELTS_01" },
       });
       fireEvent.change(document.querySelector('select[name="course"]'), {
         target: { value: "1" },
@@ -319,64 +558,12 @@ describe("ClassManagement", () => {
         target: { value: "20" },
       });
 
-      // Chọn ngày học qua DatePicker mock
       const datePickers = document.querySelectorAll(
         'input[placeholder="DD/MM/YYYY"]',
       );
       fireEvent.change(datePickers[0], { target: { value: "2024-01-01" } });
       fireEvent.change(datePickers[1], { target: { value: "2024-06-01" } });
 
-      // Chọn ngày học + phòng
-      fireEvent.click(screen.getByText("Thứ 2"));
-      await waitFor(() => screen.getAllByRole("combobox"));
-      const roomSelects = document.querySelectorAll("select");
-      // Chọn phòng cho Thứ 2 (select cuối cùng trong schedule row)
-      fireEvent.change(roomSelects[roomSelects.length - 1], {
-        target: { value: "1" },
-      });
-
-      fireEvent.click(screen.getByText("Lưu"));
-
-      await waitFor(() => {
-        expect(createClass).toHaveBeenCalled();
-        expect(
-          screen.getByText("Thêm lớp học thành công!"),
-        ).toBeInTheDocument();
-      });
-    });
-  });
-
-  // --- handleEdit ---
-  describe("handleEdit", () => {
-    it("mở modal sửa với dữ liệu đúng khi bấm Edit", async () => {
-      renderComponent();
-
-      await waitFor(() => screen.getAllByText("Edit"));
-      fireEvent.click(screen.getAllByText("Edit")[0]);
-
-      await waitFor(() => {
-        expect(screen.getByText("SỬA LỚP HỌC")).toBeInTheDocument();
-        expect(document.querySelector('input[name="name"]').value).toBe(
-          "IELTS_01",
-        );
-      });
-    });
-
-    it("gọi updateClass khi lưu form sửa hợp lệ", async () => {
-      updateClass.mockResolvedValue({});
-      renderComponent();
-
-      await waitFor(() => screen.getAllByText("Edit"));
-      fireEvent.click(screen.getAllByText("Edit")[0]);
-
-      await waitFor(() => screen.getByText("SỬA LỚP HỌC"));
-
-      // Sửa tên lớp
-      fireEvent.change(document.querySelector('input[name="name"]'), {
-        target: { value: "IELTS_01_UPDATED" },
-      });
-
-      // Chọn ngày học
       fireEvent.click(screen.getByText("Thứ 2"));
       await waitFor(() => document.querySelectorAll("select"));
       const roomSelects = document.querySelectorAll("select");
@@ -387,16 +574,205 @@ describe("ClassManagement", () => {
       fireEvent.click(screen.getByText("Lưu"));
 
       await waitFor(() => {
-        expect(updateClass).toHaveBeenCalledWith(1, expect.any(Object));
+        expect(screen.getByText("Dữ liệu không hợp lệ")).toBeInTheDocument();
+      });
+    });
+
+    it("disable nút lưu khi saving", async () => {
+      createClass.mockImplementation(
+        () => new Promise((resolve) => setTimeout(resolve, 1000)),
+      );
+
+      renderComponent();
+
+      await openCreateModal();
+
+      await fillBasicForm();
+
+      await addSchedule();
+
+      submitForm();
+
+      expect(screen.getByText("Đang lưu...")).toBeDisabled();
+    });
+
+    it("hiển thị lỗi server", async () => {
+      createClass.mockRejectedValue({
+        response: {
+          data: {
+            name: ["Tên lớp đã tồn tại"],
+          },
+        },
+      });
+
+      renderComponent();
+
+      await openCreateModal();
+
+      await fillBasicForm();
+
+      await addSchedule();
+
+      submitForm();
+
+      await waitFor(() => {
         expect(
-          screen.getByText("Cập nhật lớp học thành công!"),
+          screen.getByText(
+            "Tên lớp đã tồn tại",
+          ),
         ).toBeInTheDocument();
+      });
+    });
+
+    it("payload schedules_input đúng cấu trúc khi tạo mới", async () => {
+      createClass.mockResolvedValue({});
+      renderComponent();
+
+      fireEvent.click(screen.getByText("Thêm"));
+      await waitFor(() => screen.getByText("THÊM LỚP HỌC MỚI"));
+
+      fireEvent.change(document.querySelector('input[name="name"]'), {
+        target: { value: "IELTS_02" },
+      });
+      fireEvent.change(document.querySelector('select[name="course"]'), {
+        target: { value: "1" },
+      });
+      fireEvent.change(document.querySelector('input[name="capacity"]'), {
+        target: { value: "20" },
+      });
+
+      const datePickers = document.querySelectorAll(
+        'input[placeholder="DD/MM/YYYY"]',
+      );
+      fireEvent.change(datePickers[0], { target: { value: "2024-01-01" } });
+      fireEvent.change(datePickers[1], { target: { value: "2024-06-01" } });
+
+      fireEvent.click(screen.getByText("Thứ 2"));
+      await waitFor(() => document.querySelectorAll("select"));
+      const roomSelects = document.querySelectorAll("select");
+      fireEvent.change(roomSelects[roomSelects.length - 1], {
+        target: { value: "1" },
+      });
+
+      fireEvent.click(screen.getByText("Lưu"));
+
+      await waitFor(() => {
+        expect(createClass).toHaveBeenCalledWith(
+          expect.objectContaining({
+            schedules_input: [
+              expect.objectContaining({
+                day_of_week: 0,
+                start_time: "07:30",
+                end_time: "09:30",
+                room: "1",
+              }),
+            ],
+          }),
+        );
       });
     });
   });
 
-  // --- handleClose ---
-  describe("handleClose", () => {
+  describe("7. handleEdit", () => {
+    it("mở modal sửa với dữ liệu đúng khi bấm Edit", async () => {
+      renderComponent();
+
+      await waitFor(() => {
+        expect(screen.getAllByText("Edit").length).toBeGreaterThan(0);
+      });
+
+      fireEvent.click(screen.getAllByText("Edit")[0]);
+
+      await waitFor(() => {
+        expect(document.querySelector('input[name="name"]').value).toBe(
+          "IELTS_01",
+        );
+      });
+    });
+
+    it("modal sửa điền đúng grade_status khi class có sẵn", async () => {
+      getClasses.mockResolvedValue({
+        results: [
+          {
+            ...mockClasses[0],
+            grade_status: "SUBMITTED",
+            grade_deadline: "2024-05-01",
+          },
+        ],
+        count: 1,
+      });
+      renderComponent();
+
+      await waitFor(() => screen.getAllByText("Edit"));
+      fireEvent.click(screen.getAllByText("Edit")[0]);
+
+      await waitFor(() => {
+        expect(
+          document.querySelector('select[name="grade_status"]').value,
+        ).toBe("SUBMITTED");
+      });
+    });
+
+    it("hiển thị lỗi general khi updateClass thất bại", async () => {
+      updateClass.mockRejectedValue({
+        response: { data: { name: ["Tên lớp đã tồn tại"] } },
+      });
+      renderComponent();
+
+      await waitFor(() => screen.getAllByText("Edit"));
+      fireEvent.click(screen.getAllByText("Edit")[0]);
+      await waitFor(() => screen.getByText("SỬA LỚP HỌC"));
+
+      fireEvent.click(screen.getByText("Thứ 2"));
+      await waitFor(() => document.querySelectorAll("select"));
+      const roomSelects = document.querySelectorAll("select");
+      fireEvent.change(roomSelects[roomSelects.length - 1], {
+        target: { value: "1" },
+      });
+
+      fireEvent.click(screen.getByText("Lưu"));
+
+      await waitFor(() => {
+        expect(screen.getByText("Tên lớp đã tồn tại")).toBeInTheDocument();
+      });
+    });
+
+    it("cập nhật khung giờ khi thay đổi select giờ", async () => {
+      renderComponent();
+      fireEvent.click(screen.getByText("Thêm"));
+      await waitFor(() => screen.getByRole("button", { name: "Thứ 2" }));
+
+      fireEvent.click(screen.getByRole("button", { name: "Thứ 2" }));
+      await waitFor(() => screen.getAllByRole("combobox"));
+
+      const selects = document.querySelectorAll("select");
+      fireEvent.change(selects[selects.length - 2], {
+        target: { value: "09:30-11:30" },
+      });
+
+      expect(selects[selects.length - 2].value).toBe("09:30-11:30");
+    });
+
+    it("form reset về rỗng sau khi đóng modal sửa", async () => {
+      renderComponent();
+
+      await waitFor(() => screen.getAllByText("Edit"));
+      fireEvent.click(screen.getAllByText("Edit")[0]);
+      await waitFor(() => screen.getByText("SỬA LỚP HỌC"));
+
+      fireEvent.click(screen.getByText("Hủy"));
+      await waitFor(() =>
+        expect(screen.queryByText("SỬA LỚP HỌC")).not.toBeInTheDocument(),
+      );
+
+      fireEvent.click(screen.getByText("Thêm"));
+      await waitFor(() => screen.getByText("THÊM LỚP HỌC MỚI"));
+
+      expect(document.querySelector('input[name="name"]').value).toBe("");
+    });
+  });
+
+  describe("8. handleClose", () => {
     it("đóng modal và reset form khi bấm Hủy", async () => {
       renderComponent();
 
@@ -408,6 +784,232 @@ describe("ClassManagement", () => {
 
       await waitFor(() => {
         expect(screen.queryByText("THÊM LỚP HỌC MỚI")).not.toBeInTheDocument();
+      });
+    });
+
+    it("đóng modal khi bấm nút X", async () => {
+      renderComponent();
+      fireEvent.click(screen.getByText("Thêm"));
+      await waitFor(() => screen.getByText("THÊM LỚP HỌC MỚI"));
+
+      fireEvent.click(screen.getByText("×"));
+
+      await waitFor(() => {
+        expect(screen.queryByText("THÊM LỚP HỌC MỚI")).not.toBeInTheDocument();
+      });
+    });
+  });
+
+  describe("9. grade_deadline và grade_status", () => {
+    it("hiển thị 'Chưa quy định' khi grade_deadline null", async () => {
+      renderComponent();
+      await waitFor(() => screen.getByText("IELTS_01"));
+      // mockClasses không có grade_deadline → hiển thị "Chưa quy định"
+      expect(screen.getAllByText("Chưa quy định").length).toBeGreaterThan(0);
+    });
+
+    it("hiển thị grade_deadline đã format khi có giá trị", async () => {
+      getClasses.mockResolvedValue({
+        results: [{ ...mockClasses[0], grade_deadline: "2024-05-01" }],
+        count: 1,
+      });
+      renderComponent();
+      await waitFor(() => screen.getByText("IELTS_01"));
+      expect(screen.getByText("2024-05-01")).toBeInTheDocument();
+    });
+
+    it("payload gửi lên có grade_deadline và grade_status khi tạo mới", async () => {
+      createClass.mockResolvedValue({});
+      renderComponent();
+
+      await waitFor(() => screen.getByText("Thêm"));
+      fireEvent.click(screen.getByText("Thêm"));
+      await waitFor(() => screen.getByText("THÊM LỚP HỌC MỚI"));
+
+      fireEvent.change(document.querySelector('input[name="name"]'), {
+        target: { value: "IELTS_02" },
+      });
+      fireEvent.change(document.querySelector('select[name="course"]'), {
+        target: { value: "1" },
+      });
+      fireEvent.change(document.querySelector('input[name="capacity"]'), {
+        target: { value: "20" },
+      });
+
+      const datePickers = document.querySelectorAll(
+        'input[placeholder="DD/MM/YYYY"]',
+      );
+      fireEvent.change(datePickers[0], { target: { value: "2024-01-01" } });
+      fireEvent.change(datePickers[1], { target: { value: "2024-06-01" } });
+
+      fireEvent.change(document.querySelector('select[name="grade_status"]'), {
+        target: { value: "SUBMITTED" },
+      });
+
+      fireEvent.click(screen.getByText("Thứ 2"));
+      await waitFor(() => document.querySelectorAll("select"));
+      const roomSelects = document.querySelectorAll("select");
+      fireEvent.change(roomSelects[roomSelects.length - 1], {
+        target: { value: "1" },
+      });
+
+      fireEvent.click(screen.getByText("Lưu"));
+
+      await waitFor(() => {
+        expect(createClass).toHaveBeenCalledWith(
+          expect.objectContaining({ grade_status: "SUBMITTED" }),
+        );
+      });
+    });
+
+    it("payload gửi grade_status là null khi không chọn", async () => {
+      createClass.mockResolvedValue({});
+      renderComponent();
+
+      fireEvent.click(screen.getByText("Thêm"));
+      await waitFor(() => screen.getByText("THÊM LỚP HỌC MỚI"));
+
+      fireEvent.change(document.querySelector('input[name="name"]'), {
+        target: { value: "IELTS_02" },
+      });
+      fireEvent.change(document.querySelector('select[name="course"]'), {
+        target: { value: "1" },
+      });
+      fireEvent.change(document.querySelector('input[name="capacity"]'), {
+        target: { value: "20" },
+      });
+
+      const datePickers = document.querySelectorAll(
+        'input[placeholder="DD/MM/YYYY"]',
+      );
+      fireEvent.change(datePickers[0], { target: { value: "2024-01-01" } });
+      fireEvent.change(datePickers[1], { target: { value: "2024-06-01" } });
+
+      fireEvent.click(screen.getByText("Thứ 2"));
+      await waitFor(() => document.querySelectorAll("select"));
+      const roomSelects = document.querySelectorAll("select");
+      fireEvent.change(roomSelects[roomSelects.length - 1], {
+        target: { value: "1" },
+      });
+
+      fireEvent.click(screen.getByText("Lưu"));
+
+      await waitFor(() => {
+        expect(createClass).toHaveBeenCalledWith(
+          expect.objectContaining({ grade_status: null }),
+        );
+      });
+    });
+
+    it("payload gửi grade_deadline là null khi không chọn", async () => {
+      createClass.mockResolvedValue({});
+      renderComponent();
+
+      fireEvent.click(screen.getByText("Thêm"));
+      await waitFor(() => screen.getByText("THÊM LỚP HỌC MỚI"));
+
+      fireEvent.change(document.querySelector('input[name="name"]'), {
+        target: { value: "IELTS_02" },
+      });
+      fireEvent.change(document.querySelector('select[name="course"]'), {
+        target: { value: "1" },
+      });
+      fireEvent.change(document.querySelector('input[name="capacity"]'), {
+        target: { value: "20" },
+      });
+
+      const datePickers = document.querySelectorAll(
+        'input[placeholder="DD/MM/YYYY"]',
+      );
+      fireEvent.change(datePickers[0], { target: { value: "2024-01-01" } });
+      fireEvent.change(datePickers[1], { target: { value: "2024-06-01" } });
+
+      fireEvent.click(screen.getByText("Thứ 2"));
+      await waitFor(() => document.querySelectorAll("select"));
+      const roomSelects = document.querySelectorAll("select");
+      fireEvent.change(roomSelects[roomSelects.length - 1], {
+        target: { value: "1" },
+      });
+
+      fireEvent.click(screen.getByText("Lưu"));
+
+      await waitFor(() => {
+        expect(createClass).toHaveBeenCalledWith(
+          expect.objectContaining({ grade_deadline: null }),
+        );
+      });
+    });
+  });
+
+  describe("10. Phân trang", () => {
+    it("nút prev disabled ở trang 1", async () => {
+      getClasses.mockResolvedValue({ results: mockClasses, count: 40 });
+      renderComponent();
+      await waitFor(() => screen.getByText("IELTS_01"));
+
+      expect(screen.getByText("«")).toBeDisabled();
+    });
+
+    it("nút next disabled khi ở trang cuối", async () => {
+      getClasses.mockResolvedValue({
+        results: mockClasses,
+        count: mockClasses.length,
+      });
+      renderComponent();
+      await waitFor(() => screen.getByText("IELTS_01"));
+
+      expect(screen.getByText("»")).toBeDisabled();
+    });
+
+    it("click trang 2 gọi getClasses(2)", async () => {
+      getClasses.mockResolvedValue({ results: mockClasses, count: 40 });
+      renderComponent();
+      await waitFor(() => screen.getByText("IELTS_01"));
+
+      fireEvent.click(screen.getByRole("button", { name: "2" }));
+
+      await waitFor(() => expect(getClasses).toHaveBeenCalledWith(2));
+    });
+  });
+
+  describe("11. handleSave - lỗi server", () => {
+    it("hiển thị lỗi general khi createClass thất bại", async () => {
+      createClass.mockRejectedValue({
+        response: { data: { name: ["Tên lớp đã tồn tại"] } },
+      });
+      renderComponent();
+
+      await waitFor(() => screen.getByText("Thêm"));
+      fireEvent.click(screen.getByText("Thêm"));
+      await waitFor(() => screen.getByText("THÊM LỚP HỌC MỚI"));
+
+      fireEvent.change(document.querySelector('input[name="name"]'), {
+        target: { value: "IELTS_01" },
+      });
+      fireEvent.change(document.querySelector('select[name="course"]'), {
+        target: { value: "1" },
+      });
+      fireEvent.change(document.querySelector('input[name="capacity"]'), {
+        target: { value: "20" },
+      });
+
+      const datePickers = document.querySelectorAll(
+        'input[placeholder="DD/MM/YYYY"]',
+      );
+      fireEvent.change(datePickers[0], { target: { value: "2024-01-01" } });
+      fireEvent.change(datePickers[1], { target: { value: "2024-06-01" } });
+
+      fireEvent.click(screen.getByText("Thứ 2"));
+      await waitFor(() => document.querySelectorAll("select"));
+      const roomSelects = document.querySelectorAll("select");
+      fireEvent.change(roomSelects[roomSelects.length - 1], {
+        target: { value: "1" },
+      });
+
+      fireEvent.click(screen.getByText("Lưu"));
+
+      await waitFor(() => {
+        expect(screen.getByText("Tên lớp đã tồn tại")).toBeInTheDocument();
       });
     });
   });

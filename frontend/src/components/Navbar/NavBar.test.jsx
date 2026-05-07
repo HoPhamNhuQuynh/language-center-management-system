@@ -2,7 +2,6 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 
-// Mock dependencies
 vi.mock("../../utils/token", () => ({
   getAccessToken: vi.fn(),
   clearTokens: vi.fn(),
@@ -13,7 +12,6 @@ vi.mock("../../services/authService", () => ({
   revokeTokenApi: vi.fn(),
 }));
 
-// Mock useNavigate
 const mockNavigate = vi.fn();
 vi.mock("react-router-dom", async () => {
   const actual = await vi.importActual("react-router-dom");
@@ -73,11 +71,16 @@ describe("Navbar", () => {
       renderNavbar();
       expect(screen.getByText("Thông tin cá nhân")).toBeInTheDocument();
       expect(screen.getByText("Lịch học")).toBeInTheDocument();
+      expect(screen.getByText("Trang chủ")).toBeInTheDocument();
+      expect(screen.getByText("Về chúng tôi")).toBeInTheDocument();
+      expect(screen.getByText("Khóa học")).toBeInTheDocument();
     });
 
-    it("hiển thị nút Đăng xuất", () => {
+    it("hiển thị nút Đăng xuất và không có Đăng ký và Đăng nhập", () => {
       renderNavbar();
       expect(screen.getByText("Đăng xuất")).toBeInTheDocument();
+      expect(screen.queryByText("Đăng ký")).not.toBeInTheDocument();
+      expect(screen.queryByText("Đăng nhập")).not.toBeInTheDocument();
     });
 
     it("không hiển thị menu Teacher hay Admin", () => {
@@ -154,9 +157,9 @@ describe("Navbar", () => {
 
       fireEvent.click(screen.getByText("Đăng xuất"));
 
-      // Lỗi bị catch → không crash, chỉ log
       await vi.waitFor(() => {
         expect(revokeTokenApi).toHaveBeenCalled();
+        expect(clearTokens).toHaveBeenCalled();
       });
     });
   });

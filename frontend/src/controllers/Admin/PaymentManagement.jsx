@@ -87,7 +87,6 @@ const PaymentManagement = () => {
               <th>Mã giao dịch</th>
               <th>Thời gian giao dịch</th>
               <th>Ngày tạo</th>
-              <th>Thao tác</th>
             </tr>
           </thead>
           <tbody>
@@ -103,27 +102,6 @@ const PaymentManagement = () => {
                 <td>{p.transaction_id}</td>
                 <td>{formatDate(p.paid_at)}</td>
                 <td>{formatDate(p.created_at)}</td>
-                <td>
-                  <span
-                    className="icon-edit"
-                    onClick={() => handleEdit(classroom)}
-                  >
-                    <FaPen />
-                  </span>
-                  <span
-                    className="icon-delete"
-                    onClick={() =>
-                      setDeleteModal({
-                        show: true,
-                        classId: classroom.id,
-                        className: classroom.name,
-                        error: "",
-                      })
-                    }
-                  >
-                    <ImBin2 />
-                  </span>
-                </td>
               </tr>
             ))}
           </tbody>
