@@ -149,7 +149,9 @@ const mockScores = [
 beforeEach(() => {
   vi.resetAllMocks();
   localStorage.clear();
-  loadClassesApi.mockResolvedValue(mockClasses);
+  loadClassesApi.mockResolvedValue({
+    results: mockClasses,
+  });
   getScoreTypesApi.mockResolvedValue(mockScoreTypes);
   getScoresApi.mockResolvedValue(mockScores);
   vi.spyOn(window, "alert").mockImplementation(() => {});

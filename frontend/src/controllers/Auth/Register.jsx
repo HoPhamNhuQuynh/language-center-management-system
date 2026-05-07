@@ -9,6 +9,7 @@ import { message } from "antd";
 
 function Register(){
   const navigate = useNavigate();
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     window.fbAsyncInit = () => {

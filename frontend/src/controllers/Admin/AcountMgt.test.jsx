@@ -62,7 +62,7 @@ beforeEach(() => {
 });
 
 describe("1. Render & load data", () => {
-  it("gọi getUsers khi mount và hiển thị danh sách user", async () => {
+  it("ACC-001 gọi getUsers khi mount và hiển thị danh sách user", async () => {
     render(<AccountManagement />);
 
     await waitFor(() => {
@@ -73,7 +73,7 @@ describe("1. Render & load data", () => {
     expect(screen.getByText("binh_tran")).toBeInTheDocument();
   });
 
-  it("hiển thị trạng thái 'Đang hoạt động' và 'Không hoạt động' đúng", async () => {
+  it("ACC-002 hiển thị trạng thái 'Đang hoạt động' và 'Không hoạt động' đúng", async () => {
     render(<AccountManagement />);
     await waitFor(() => screen.getByText("an_nguyen"));
 
@@ -81,18 +81,18 @@ describe("1. Render & load data", () => {
     expect(screen.getByText("Không hoạt động")).toBeInTheDocument();
   });
 
-  it("icon khóa đúng theo trạng thái is_active của từng user", async () => {
+  it("ACC-003 icon khóa đúng theo trạng thái is_active của từng user", async () => {
     render(<AccountManagement />);
     await waitFor(() => screen.getByText("an_nguyen"));
 
     const lockBtns = screen.getAllByTitle(/Khóa tài khoản|Mở khóa/);
-    expect(lockBtns[0]).toHaveAttribute("title", "Khóa tài khoản"); 
-    expect(lockBtns[1]).toHaveAttribute("title", "Mở khóa"); 
+    expect(lockBtns[0]).toHaveAttribute("title", "Khóa tài khoản");
+    expect(lockBtns[1]).toHaveAttribute("title", "Mở khóa");
   });
 });
 
 describe("2. Phân trang", () => {
-  it("render đúng số trang, nút prev disabled ở trang 1", async () => {
+  it("ACC-004 render đúng số trang, nút prev disabled ở trang 1", async () => {
     getUsers.mockResolvedValue({ results: MOCK_USERS, count: 40 });
 
     render(<AccountManagement />);
@@ -104,7 +104,7 @@ describe("2. Phân trang", () => {
     expect(screen.getByRole("button", { name: "2" })).toBeInTheDocument();
   });
 
-  it("click trang 2 gọi getUsers(2)", async () => {
+  it("ACC-005 click trang 2 gọi getUsers(2)", async () => {
     getUsers.mockResolvedValue({ results: MOCK_USERS, count: 40 });
 
     render(<AccountManagement />);
@@ -119,7 +119,7 @@ describe("2. Phân trang", () => {
 });
 
 describe("3. Edit user", () => {
-  it("mở modal edit với dữ liệu của user được chọn", async () => {
+  it("ACC-006 mở modal edit với dữ liệu của user được chọn", async () => {
     render(<AccountManagement />);
     await waitFor(() => screen.getByText("an_nguyen"));
 
@@ -130,7 +130,7 @@ describe("3. Edit user", () => {
     expect(screen.getByDisplayValue("an@test.com")).toBeInTheDocument();
   });
 
-  it("validate: không cho submit khi bỏ trống tên", async () => {
+  it("ACC-007 không cho submit khi bỏ trống tên", async () => {
     render(<AccountManagement />);
     await waitFor(() => screen.getByText("an_nguyen"));
 
@@ -146,7 +146,7 @@ describe("3. Edit user", () => {
     expect(updateUser).not.toHaveBeenCalled();
   });
 
-  it("submit thành công: gọi updateUser, đóng modal, hiện toast", async () => {
+  it("ACC-008 submit thành công: gọi updateUser, đóng modal, hiện toast", async () => {
     updateUser.mockResolvedValue({});
     render(<AccountManagement />);
     await waitFor(() => screen.getByText("an_nguyen"));
@@ -173,7 +173,7 @@ describe("3. Edit user", () => {
     expect(screen.queryByText("SỬA THÔNG TIN")).not.toBeInTheDocument();
   });
 
-  it("submit thất bại: hiện toast lỗi từ server", async () => {
+  it("ACC-009 submit thất bại: hiện toast lỗi từ server", async () => {
     updateUser.mockRejectedValue({
       response: { data: { message: "Email đã tồn tại" } },
     });
@@ -201,7 +201,7 @@ describe("4. Tạo tài khoản giáo viên", () => {
     expect(screen.getByText("TẠO TÀI KHOẢN GIÁO VIÊN")).toBeInTheDocument();
   };
 
-  it("validate: hiện lỗi khi submit form rỗng", async () => {
+  it("ACC-010 validate: hiện lỗi khi submit form rỗng", async () => {
     await openCreateModal();
 
     await userEvent.click(screen.getByRole("button", { name: /Tạo mới/i }));
@@ -212,7 +212,7 @@ describe("4. Tạo tài khoản giáo viên", () => {
     expect(createTeacher).not.toHaveBeenCalled();
   });
 
-  it("validate: mật khẩu không khớp", async () => {
+  it("ACC-011 validate: mật khẩu không khớp", async () => {
     await openCreateModal();
 
     const inputs = document.querySelectorAll("input");
@@ -230,7 +230,7 @@ describe("4. Tạo tài khoản giáo viên", () => {
     expect(createTeacher).not.toHaveBeenCalled();
   });
 
-  it("submit thành công: không gửi confirm_password, đóng modal, hiện toast", async () => {
+  it("ACC-012 submit thành công: không gửi confirm_password, đóng modal, hiện toast", async () => {
     createTeacher.mockResolvedValue({});
     await openCreateModal();
 
@@ -249,7 +249,9 @@ describe("4. Tạo tài khoản giáo viên", () => {
       expect(createTeacher).toHaveBeenCalledWith(
         expect.not.objectContaining({ confirm_password: expect.anything() }),
       );
-      expect(screen.getByText("Tạo tài khoản giáo viên thành công!")).toBeInTheDocument();
+      expect(
+        screen.getByText("Tạo tài khoản giáo viên thành công!"),
+      ).toBeInTheDocument();
     });
 
     expect(
@@ -273,7 +275,7 @@ describe("5. Khóa / Mở khóa tài khoản", () => {
     });
   };
 
-  it("mở modal xác nhận với tên đúng user", async () => {
+  it("ACC-013 mở modal xác nhận với tên đúng user", async () => {
     await openLockModal(0);
 
     expect(
@@ -287,7 +289,7 @@ describe("5. Khóa / Mở khóa tài khoản", () => {
     ).toBeInTheDocument();
   });
 
-  it("click Hủy thì đóng modal, không gọi lockUser", async () => {
+  it("ACC-014 click Hủy thì đóng modal, không gọi lockUser", async () => {
     await openLockModal(0);
     await userEvent.click(screen.getByRole("button", { name: /Hủy/i }));
 
@@ -295,30 +297,87 @@ describe("5. Khóa / Mở khóa tài khoản", () => {
     expect(screen.queryByText(/Khóa tài khoản/)).not.toBeInTheDocument();
   });
 
-  it("xác nhận khóa user đang active thì gọi lockUser, hiện toast 'Đã khóa'", async () => {
+  it("ACC-015 xác nhận khóa user đang active: gọi API, đóng modal và hiện toast", async () => {
     lockUser.mockResolvedValue({});
-    await openLockModal(0); // user 1: is_active = true
+
+    getUsers.mockResolvedValueOnce({
+      results: MOCK_USERS,
+      count: MOCK_USERS.length,
+    });
+
+    getUsers.mockResolvedValueOnce({
+      results: [
+        {
+          ...MOCK_USERS[0],
+          is_active: false,
+        },
+        MOCK_USERS[1],
+      ],
+      count: MOCK_USERS.length,
+    });
+
+    await openLockModal(0);
 
     await userEvent.click(screen.getByRole("button", { name: /Xác nhận/i }));
 
     await waitFor(() => {
       expect(lockUser).toHaveBeenCalledWith(1);
+    });
+
+    await waitFor(() => {
       expect(screen.getByText("Đã khóa tài khoản!")).toBeInTheDocument();
+    });
+
+    expect(
+      screen.queryByRole("button", { name: /Xác nhận/i }),
+    ).not.toBeInTheDocument();
+
+    await waitFor(() => {
+      expect(screen.getAllByText("Không hoạt động").length).toBeGreaterThan(0);
     });
   });
 
-  it("xác nhận mở khóa user đang inactive → toast 'Đã mở khóa'", async () => {
+  it("ACC-016 xác nhận mở khóa user đang inactive: gọi API, đóng modal và hiện toast", async () => {
     lockUser.mockResolvedValue({});
-    await openLockModal(1); // user 2: is_active = false
+
+    getUsers.mockResolvedValueOnce({
+      results: MOCK_USERS,
+      count: MOCK_USERS.length,
+    });
+
+    getUsers.mockResolvedValueOnce({
+      results: [
+        MOCK_USERS[0],
+        {
+          ...MOCK_USERS[1],
+          is_active: true,
+        },
+      ],
+      count: MOCK_USERS.length,
+    });
+
+    await openLockModal(1);
 
     await userEvent.click(screen.getByRole("button", { name: /Xác nhận/i }));
 
-    await waitFor(() =>
-      expect(screen.getByText("Đã mở khóa tài khoản!")).toBeInTheDocument(),
-    );
+    await waitFor(() => {
+      expect(lockUser).toHaveBeenCalledWith(2);
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText("Đã mở khóa tài khoản!")).toBeInTheDocument();
+    });
+
+    expect(
+      screen.queryByRole("button", { name: /Xác nhận/i }),
+    ).not.toBeInTheDocument();
+
+    await waitFor(() => {
+      expect(screen.getAllByText("Đang hoạt động").length).toBeGreaterThan(0);
+    });
   });
 
-  it("API thất bại → hiện lỗi trong modal, không đóng", async () => {
+  it("ACC-017 API thất bại thì hiện lỗi trong modal, không đóng", async () => {
     lockUser.mockRejectedValue({
       response: { data: { message: "Không có quyền" } },
     });
@@ -326,8 +385,8 @@ describe("5. Khóa / Mở khóa tài khoản", () => {
 
     fireEvent.click(screen.getByRole("button", { name: /Xác nhận/i }));
 
-    await waitFor(
-      () => expect(screen.getByText("Không có quyền")).toBeInTheDocument()
+    await waitFor(() =>
+      expect(screen.getByText("Không có quyền")).toBeInTheDocument(),
     );
     expect(
       screen.getByRole("button", { name: /Xác nhận/i }),
@@ -345,14 +404,14 @@ describe("6. Đổi vai trò", () => {
     await waitFor(() => screen.getByText("PHÂN QUYỀN"));
   };
 
-  it("mở modal phân quyền với role hiện tại của user", async () => {
+  it("ACC-018 mở modal phân quyền với role hiện tại của user", async () => {
     await openRoleModal(0); // Student
 
     await waitFor(() => screen.getByText("PHÂN QUYỀN"));
     expect(screen.getByDisplayValue("Student")).toBeInTheDocument();
   });
 
-  it("đổi sang Teacher và submit thì gọi changeUserRole đúng payload", async () => {
+  it("ACC-019 đổi sang Teacher và submit thì gọi changeUserRole đúng payload", async () => {
     changeUserRole.mockResolvedValue({});
     await openRoleModal(0);
 
@@ -367,7 +426,7 @@ describe("6. Đổi vai trò", () => {
     });
   });
 
-  it("API thất bại → hiện lỗi trong modal", async () => {
+  it("ACC-020 API thất bại thì hiện lỗi trong modal", async () => {
     changeUserRole.mockRejectedValue({
       response: { data: { message: "Đổi role bị lỗi" } },
     });
@@ -385,7 +444,7 @@ describe("6. Đổi vai trò", () => {
 });
 
 describe("7. Toast notification", () => {
-  it("toast tự ẩn sau 3 giây", async () => {
+  it("ACC-021 toast tự ẩn sau 3 giây", async () => {
     vi.useFakeTimers({ shouldAdvanceTime: true });
     updateUser.mockResolvedValue({});
 
@@ -395,7 +454,7 @@ describe("7. Toast notification", () => {
     document.querySelectorAll(".icon-edit")[0].click();
 
     await waitFor(() => screen.getByRole("button", { name: /Cập nhật/i }));
-    fireEvent.click(screen.getByRole("button", { name: /Cập nhật/i })); 
+    fireEvent.click(screen.getByRole("button", { name: /Cập nhật/i }));
 
     await waitFor(() =>
       expect(
