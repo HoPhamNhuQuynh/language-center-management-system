@@ -51,4 +51,12 @@ export const paymentDetailApi = async (id) => {
     return res.data;
 };
 
+export const resetPasswordApi = async (payload) => {
+  const res = await Apis.patch("users/me/reset-password/", payload);
+  return res.data;
+};
 
+export const deleteAccountApi = async () => {
+  const res = await Apis.delete("users/me/");
+  return res.data;
+};

@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import CourseRegisterForm from "../../pages/Payment/CourseRegisterForm";
-import { courseDetailApi, searchCourseApi, classApi } from "../../services/courseService";
-import { enrollmentApi, paymentApi, enrollmentDetailApi } from "../../services/enrollmentService";
+import { searchCourseApi, classApi, courseApi } from "../../services/courseService";
+import { enrollmentApi, paymentApi, enrollmentDetailApi, deleteEnrollmentApi } from "../../services/enrollmentService";
 import { myPaymentApi } from "../../services/studentService";
 import Apis from "../../services/Apis";
 
@@ -12,6 +12,7 @@ function CourseRegister() {
   const [searchParams] = useSearchParams();
   const selectedCourse = location.state?.course;
 
+  const [pendingEnrollmentId, setPendingEnrollmentId] = useState(null);
   const [search, setSearch] = useState("");
   const [course, setCourse] = useState(null);
   const [selected_class, setSelectedClass] = useState(null);
@@ -55,7 +56,7 @@ function CourseRegister() {
         setLoading(true);
         try {
           const [detail, classes] = await Promise.all([
-            courseDetailApi(courseId),
+            courseApi(courseId),
             classApi(courseId),
           ]);
           setCourse({
@@ -82,7 +83,7 @@ function CourseRegister() {
     if (responseCode && txnRef) {
       if (window.opener) {
         window.opener.postMessage({ type: "PAYMENT_SUCCESS", txnRef }, "*");
-        window.close(); 
+        window.close();
       }
 
       const savedCourseId = localStorage.getItem("pendingCourseId");
@@ -102,22 +103,20 @@ function CourseRegister() {
       setPaid(true);
 
       Promise.all([
-        savedCourseId ? courseDetailApi(savedCourseId) : Promise.resolve(null),
-        myPaymentApi(),
-      ]).then(([courseRes, payments]) => {
-        const found = payments.find(p => String(p.id) === String(txnRef));
-
+        savedCourseId ? courseApi(savedCourseId) : Promise.resolve(null),
+        paymentDetailApi(txnRef),
+      ]).then(([courseRes, paymentDetail]) => {
         const mergedCourse = {
           ...(courseRes || {}),
           classes: courseRes?.classroom_set || courseRes?.classes || [],
           price,
-          total_sessions: found?.total_sessions || courseRes?.total_sessions || "---",
+          total_sessions: paymentDetail?.total_sessions || courseRes?.total_sessions || "---",
         };
 
         setCourse(mergedCourse);
         setSelectedClass({
-          id: found?.enrollment || txnRef,
-          name: found?.classroom || "---",
+          id: paymentDetail?.enrollment || txnRef,
+          name: paymentDetail?.classroom || "---",
         });
         setBill(true);
       }).catch(() => {
@@ -131,70 +130,82 @@ function CourseRegister() {
   }, []);
 
   useEffect(() => {
-  const handler = (e) => {
-    if (e.data?.type === "PAYMENT_SUCCESS") {
-      setPaid(true);
-      setBill(true);
-    }
-  };
-  window.addEventListener("message", handler);
-  return () => window.removeEventListener("message", handler);
-}, []);
+    const handler = (e) => {
+      if (e.data?.type === "PAYMENT_SUCCESS") {
+        setPaid(true);
+        setBill(true);
+      }
+    };
+    window.addEventListener("message", handler);
+    return () => window.removeEventListener("message", handler);
+  }, []);
 
-
-  const handleSubmit = async () => {
+  const handleOpenConfirm = async () => {
     if (!selected_class || !course) {
       alert("Vui lòng chọn lớp học trước khi đăng ký!");
       return;
     }
-
     setLoading(true);
     try {
       const enrollmentData = await enrollmentApi({ classroom: selected_class.id });
       if (enrollmentData?.id) {
-        const paymentPayload = {
-          enrollment: enrollmentData.id,
-          amount: course.price,
-          payment_method: "VNPAY",
-        };
-
-        const res = await paymentApi(paymentPayload);
-        const paymentData = res.data || res;
-
-        if (paymentData && paymentData.payment_url) {
-          localStorage.setItem("pendingCourseId", course.id);
-          localStorage.setItem("lastCourseId", course.id);
-          sessionStorage.setItem("pendingClass", JSON.stringify(selected_class));
-
-          setPayment(false);
-          setConfirm(false);
-          alert("Đang chuyển hướng sang cổng thanh toán VNPay...");
-          window.open(paymentData.payment_url, "_blank");
-        } else {
-          alert("Không tìm thấy link trong paymentData rồi!");
-        }
+        setPendingEnrollmentId(enrollmentData.id);
+        setPayment(false);
+        setConfirm(true);
       }
     } catch (ex) {
-      console.error("Lỗi đăng ký:", ex.response?.data);
       const errorData = ex.response?.data;
       let errorMsg = "Lỗi kết nối Server";
-
       if (errorData) {
-        if (typeof errorData === "string") {
-          errorMsg = errorData;
-        } else if (errorData.detail) {
-          errorMsg = errorData.detail;
-        } else if (Array.isArray(errorData)) {
-          errorMsg = errorData.join("\n");
-        } else if (typeof errorData === "object") {
-          errorMsg = Object.values(errorData).flat().join("\n");
-        }
+        if (typeof errorData === "string") errorMsg = errorData;
+        else if (errorData.detail) errorMsg = errorData.detail;
+        else if (Array.isArray(errorData)) errorMsg = errorData.join("\n");
+        else if (typeof errorData === "object") errorMsg = Object.values(errorData).flat().join("\n");
       }
       alert("Đăng ký thất bại: " + errorMsg);
+    } finally {
+      setLoading(false);
     }
   };
 
+  const handleSubmit = async () => {
+    if (!pendingEnrollmentId || !course) return;
+    setLoading(true);
+    try {
+      const res = await paymentApi({
+        enrollment: pendingEnrollmentId,
+        amount: course.price,
+        payment_method: "VNPAY",
+      });
+      const paymentData = res.data || res;
+      if (paymentData?.payment_url) {
+        localStorage.setItem("pendingCourseId", course.id);
+        localStorage.setItem("lastCourseId", course.id);
+        sessionStorage.setItem("pendingClass", JSON.stringify(selected_class));
+        setConfirm(false);
+        alert("Đang chuyển hướng sang cổng thanh toán VNPay...");
+        window.open(paymentData.payment_url, "_blank");
+      }
+    } catch (ex) {
+      alert("Thanh toán thất bại");
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  const handleCancelConfirm = async () => {
+    if (pendingEnrollmentId) {
+      try {
+        await deleteEnrollmentApi(pendingEnrollmentId);
+      } catch (ex) {
+        console.error("Lỗi hủy enrollment:", ex);
+      } finally {
+        setPendingEnrollmentId(null);
+      }
+    }
+    setConfirm(false);
+    setPayment(true);
+  };
 
   const handleSearch = async () => {
     try {
@@ -204,7 +215,7 @@ function CourseRegister() {
       if (data.length > 0) {
         const courseId = data[0].id;
         const [detail, classes] = await Promise.all([
-          courseDetailApi(courseId),
+          courseApi(courseId),
           classApi(courseId),
         ]);
 
@@ -289,6 +300,8 @@ function CourseRegister() {
         backToCourse={backToCourse}
         paymentStatus={paymentStatus}
         myEnrollments={myEnrollments}
+        onOpenConfirm={handleOpenConfirm}
+        onCancelConfirm={handleCancelConfirm}
       />
     </div>
   );
