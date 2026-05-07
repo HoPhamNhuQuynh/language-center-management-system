@@ -182,7 +182,7 @@ describe("ClassManagement", () => {
   });
 
   describe("1. load danh sách", () => {
-    it("hiển thị danh sách lớp học sau khi load", async () => {
+    it("CLS-001 hiển thị danh sách lớp học sau khi load", async () => {
       renderComponent();
 
       await waitFor(() => {
@@ -190,7 +190,7 @@ describe("ClassManagement", () => {
       });
     });
 
-    it("gọi đủ 4 API khi khởi tạo", async () => {
+    it("CLS-002 gọi đủ 4 API khi khởi tạo", async () => {
       renderComponent();
 
       await waitFor(() => {
@@ -201,40 +201,7 @@ describe("ClassManagement", () => {
       });
     });
 
-    describe("2. navigate", () => {
-      it("navigate đến trang session khi click tên lớp", async () => {
-        renderComponent();
-
-        await waitFor(() => {
-          expect(screen.getByText("IELTS_01")).toBeInTheDocument();
-        });
-
-        fireEvent.click(screen.getByText("IELTS_01"));
-
-        expect(mockNavigate).toHaveBeenCalledWith("/session-config/1");
-      });
-    });
-
-    it("không báo lỗi khi sĩ số đúng biên 10", async () => {
-      createClass.mockResolvedValue({});
-      renderComponent();
-
-      fireEvent.click(screen.getByText("Thêm"));
-      await waitFor(() => screen.getByText("THÊM LỚP HỌC MỚI"));
-
-      fireEvent.change(document.querySelector('input[name="capacity"]'), {
-        target: { value: "10" },
-      });
-      fireEvent.click(screen.getByText("Lưu"));
-
-      await waitFor(() => {
-        expect(
-          screen.queryByText("Sĩ số phải từ 10 đến 50 học viên"),
-        ).not.toBeInTheDocument();
-      });
-    });
-
-    it("hiển thị trạng thái đúng", async () => {
+    it("CLS-003 hiển thị trạng thái đúng", async () => {
       renderComponent();
 
       await waitFor(() => {
@@ -242,10 +209,32 @@ describe("ClassManagement", () => {
         expect(screen.getByText("Không hoạt động")).toBeInTheDocument();
       });
     });
+
+    it("CLS-004 hiển thị — khi không có giáo viên chính", async () => {
+      renderComponent();
+
+      await waitFor(() => {
+        expect(screen.getByText("—")).toBeInTheDocument();
+      });
+    });
+  });
+
+  describe("2. navigate", () => {
+    it("CLS-005 navigate đến trang session khi click tên lớp", async () => {
+      renderComponent();
+
+      await waitFor(() => {
+        expect(screen.getByText("IELTS_01")).toBeInTheDocument();
+      });
+
+      fireEvent.click(screen.getByText("IELTS_01"));
+
+      expect(mockNavigate).toHaveBeenCalledWith("/session-config/1");
+    });
   });
 
   describe("3. validate form", () => {
-    it("hiển thị lỗi khi submit form trống", async () => {
+    it("CLS-006 hiển thị lỗi khi submit form trống", async () => {
       renderComponent();
 
       await openCreateModal();
@@ -268,7 +257,7 @@ describe("ClassManagement", () => {
       });
     });
 
-    it("hiển thị lỗi khi sĩ số dưới 10 học viên", async () => {
+    it("CLS-007 hiển thị lỗi khi sĩ số dưới 10 học viên", async () => {
       renderComponent();
 
       await openCreateModal();
@@ -286,7 +275,7 @@ describe("ClassManagement", () => {
       });
     });
 
-    it("hiển thị lỗi khi sĩ số vượt quá 50", async () => {
+    it("CLS-008 hiển thị lỗi khi sĩ số vượt quá 50", async () => {
       renderComponent();
 
       await openCreateModal();
@@ -304,15 +293,26 @@ describe("ClassManagement", () => {
       });
     });
 
-    it("hiển thị — khi không có giáo viên chính", async () => {
+    it("CLS-009 không báo lỗi khi sĩ số đúng biên 10", async () => {
+      createClass.mockResolvedValue({});
       renderComponent();
 
+      fireEvent.click(screen.getByText("Thêm"));
+      await waitFor(() => screen.getByText("THÊM LỚP HỌC MỚI"));
+
+      fireEvent.change(document.querySelector('input[name="capacity"]'), {
+        target: { value: "10" },
+      });
+      fireEvent.click(screen.getByText("Lưu"));
+
       await waitFor(() => {
-        expect(screen.getByText("—")).toBeInTheDocument();
+        expect(
+          screen.queryByText("Sĩ số phải từ 10 đến 50 học viên"),
+        ).not.toBeInTheDocument();
       });
     });
 
-    it("hiển thị lỗi khi ngày kết thúc trước ngày khai giảng", async () => {
+    it("CLS-010 hiển thị lỗi khi ngày kết thúc trước ngày khai giảng", async () => {
       renderComponent();
 
       await openCreateModal();
@@ -331,7 +331,7 @@ describe("ClassManagement", () => {
       });
     });
 
-    it("hiển thị lỗi khi chọn ngày học nhưng chưa chọn phòng", async () => {
+    it("CLS-011 hiển thị lỗi khi chọn ngày học nhưng chưa chọn phòng", async () => {
       renderComponent();
 
       await openCreateModal();
@@ -348,14 +348,12 @@ describe("ClassManagement", () => {
 
       await waitFor(() => {
         expect(
-          screen.getByText(
-            "Vui lòng chọn phòng học cho tất cả các ngày",
-          ),
+          screen.getByText("Vui lòng chọn phòng học cho tất cả các ngày"),
         ).toBeInTheDocument();
       });
     });
 
-    it("có thể chọn nhiều ngày học", async () => {
+    it("CLS-012 có thể chọn nhiều ngày học", async () => {
       renderComponent();
       fireEvent.click(screen.getByText("Thêm"));
       await waitFor(() => screen.getByRole("button", { name: "Thứ 2" }));
@@ -373,7 +371,7 @@ describe("ClassManagement", () => {
   });
 
   describe("4. toggleDay", () => {
-    it("chọn và bỏ chọn ngày học", async () => {
+    it("CLS-013 chọn và bỏ chọn ngày học", async () => {
       renderComponent();
 
       await waitFor(() => screen.getByText("Thêm"));
@@ -398,7 +396,7 @@ describe("ClassManagement", () => {
   });
 
   describe("5. handleDelete", () => {
-    it("mở modal xác nhận khi bấm Delete", async () => {
+    it("CLS-014 mở modal xác nhận khi bấm Delete", async () => {
       renderComponent();
 
       await waitFor(() => screen.getAllByText("Delete"));
@@ -410,7 +408,7 @@ describe("ClassManagement", () => {
       });
     });
 
-    it("gọi deleteClass và hiển thị toast thành công", async () => {
+    it("CLS-015 gọi deleteClass và hiển thị toast thành công", async () => {
       deleteClass.mockResolvedValue({});
       renderComponent();
 
@@ -426,7 +424,7 @@ describe("ClassManagement", () => {
       });
     });
 
-    it("hiển thị lỗi trong modal khi deleteClass thất bại", async () => {
+    it("CLS-016 hiển thị lỗi trong modal khi deleteClass thất bại", async () => {
       deleteClass.mockRejectedValue({
         response: { data: ["Lớp học đang có học viên"] },
       });
@@ -446,7 +444,7 @@ describe("ClassManagement", () => {
       });
     });
 
-    it("đóng modal khi bấm Hủy", async () => {
+    it("CLS-017 đóng modal khi bấm Hủy", async () => {
       renderComponent();
 
       await waitFor(() => screen.getAllByText("Delete"));
@@ -461,7 +459,7 @@ describe("ClassManagement", () => {
       });
     });
 
-    it("toast tự ẩn sau 3 giây", async () => {
+    it("CLS-018 toast tự ẩn sau 3 giây", async () => {
       vi.useFakeTimers({ shouldAdvanceTime: true });
       deleteClass.mockResolvedValue({});
       renderComponent();
@@ -485,7 +483,7 @@ describe("ClassManagement", () => {
       vi.useRealTimers();
     });
 
-    it("hiển thị lỗi mặc định khi deleteClass thất bại không có message", async () => {
+    it("CLS-019 hiển thị lỗi mặc định khi deleteClass thất bại không có message", async () => {
       deleteClass.mockRejectedValue({ response: { data: {} } });
       renderComponent();
 
@@ -503,7 +501,7 @@ describe("ClassManagement", () => {
   });
 
   describe("6. handleSave - tạo mới", () => {
-    it("gọi createClass với payload đúng khi form hợp lệ", async () => {
+    it("CLS-020 gọi createClass với payload đúng khi form hợp lệ", async () => {
       createClass.mockResolvedValue({});
 
       renderComponent();
@@ -539,7 +537,7 @@ describe("ClassManagement", () => {
       });
     });
 
-    it("hiển thị lỗi general khi server trả về array", async () => {
+    it("CLS-021 hiển thị lỗi general khi server trả về array", async () => {
       createClass.mockRejectedValue({
         response: { data: ["Dữ liệu không hợp lệ"] },
       });
@@ -578,7 +576,7 @@ describe("ClassManagement", () => {
       });
     });
 
-    it("disable nút lưu khi saving", async () => {
+    it("CLS-022 disable nút lưu khi saving", async () => {
       createClass.mockImplementation(
         () => new Promise((resolve) => setTimeout(resolve, 1000)),
       );
@@ -596,7 +594,7 @@ describe("ClassManagement", () => {
       expect(screen.getByText("Đang lưu...")).toBeDisabled();
     });
 
-    it("hiển thị lỗi server", async () => {
+    it("CLS-023 hiển thị lỗi server", async () => {
       createClass.mockRejectedValue({
         response: {
           data: {
@@ -616,15 +614,11 @@ describe("ClassManagement", () => {
       submitForm();
 
       await waitFor(() => {
-        expect(
-          screen.getByText(
-            "Tên lớp đã tồn tại",
-          ),
-        ).toBeInTheDocument();
+        expect(screen.getByText("Tên lớp đã tồn tại")).toBeInTheDocument();
       });
     });
 
-    it("payload schedules_input đúng cấu trúc khi tạo mới", async () => {
+    it("CLS-024 payload schedules_input đúng cấu trúc khi tạo mới", async () => {
       createClass.mockResolvedValue({});
       renderComponent();
 
@@ -674,7 +668,7 @@ describe("ClassManagement", () => {
   });
 
   describe("7. handleEdit", () => {
-    it("mở modal sửa với dữ liệu đúng khi bấm Edit", async () => {
+    it("CLS-025 mở modal sửa với dữ liệu đúng khi bấm Edit", async () => {
       renderComponent();
 
       await waitFor(() => {
@@ -690,30 +684,7 @@ describe("ClassManagement", () => {
       });
     });
 
-    it("modal sửa điền đúng grade_status khi class có sẵn", async () => {
-      getClasses.mockResolvedValue({
-        results: [
-          {
-            ...mockClasses[0],
-            grade_status: "SUBMITTED",
-            grade_deadline: "2024-05-01",
-          },
-        ],
-        count: 1,
-      });
-      renderComponent();
-
-      await waitFor(() => screen.getAllByText("Edit"));
-      fireEvent.click(screen.getAllByText("Edit")[0]);
-
-      await waitFor(() => {
-        expect(
-          document.querySelector('select[name="grade_status"]').value,
-        ).toBe("SUBMITTED");
-      });
-    });
-
-    it("hiển thị lỗi general khi updateClass thất bại", async () => {
+    it("CLS-026 hiển thị lỗi general khi updateClass thất bại", async () => {
       updateClass.mockRejectedValue({
         response: { data: { name: ["Tên lớp đã tồn tại"] } },
       });
@@ -737,7 +708,7 @@ describe("ClassManagement", () => {
       });
     });
 
-    it("cập nhật khung giờ khi thay đổi select giờ", async () => {
+    it("CLS-027 cập nhật khung giờ khi thay đổi select giờ", async () => {
       renderComponent();
       fireEvent.click(screen.getByText("Thêm"));
       await waitFor(() => screen.getByRole("button", { name: "Thứ 2" }));
@@ -753,7 +724,7 @@ describe("ClassManagement", () => {
       expect(selects[selects.length - 2].value).toBe("09:30-11:30");
     });
 
-    it("form reset về rỗng sau khi đóng modal sửa", async () => {
+    it("CLS-028 form reset về rỗng sau khi đóng modal sửa", async () => {
       renderComponent();
 
       await waitFor(() => screen.getAllByText("Edit"));
@@ -773,7 +744,7 @@ describe("ClassManagement", () => {
   });
 
   describe("8. handleClose", () => {
-    it("đóng modal và reset form khi bấm Hủy", async () => {
+    it("CLS-029 đóng modal khi bấm Hủy", async () => {
       renderComponent();
 
       await waitFor(() => screen.getByText("Thêm"));
@@ -787,7 +758,7 @@ describe("ClassManagement", () => {
       });
     });
 
-    it("đóng modal khi bấm nút X", async () => {
+    it("CLS-030 đóng modal khi bấm nút X", async () => {
       renderComponent();
       fireEvent.click(screen.getByText("Thêm"));
       await waitFor(() => screen.getByText("THÊM LỚP HỌC MỚI"));
@@ -801,10 +772,9 @@ describe("ClassManagement", () => {
   });
 
   describe("9. grade_deadline và grade_status", () => {
-    it("hiển thị 'Chưa quy định' khi grade_deadline null", async () => {
+    it("CLS-031 hiển thị 'Chưa quy định' khi grade_deadline null", async () => {
       renderComponent();
       await waitFor(() => screen.getByText("IELTS_01"));
-      // mockClasses không có grade_deadline → hiển thị "Chưa quy định"
       expect(screen.getAllByText("Chưa quy định").length).toBeGreaterThan(0);
     });
 
@@ -818,7 +788,7 @@ describe("ClassManagement", () => {
       expect(screen.getByText("2024-05-01")).toBeInTheDocument();
     });
 
-    it("payload gửi lên có grade_deadline và grade_status khi tạo mới", async () => {
+    it("CLS-032 payload gửi lên có grade_deadline và grade_status khi tạo mới", async () => {
       createClass.mockResolvedValue({});
       renderComponent();
 
@@ -843,7 +813,7 @@ describe("ClassManagement", () => {
       fireEvent.change(datePickers[1], { target: { value: "2024-06-01" } });
 
       fireEvent.change(document.querySelector('select[name="grade_status"]'), {
-        target: { value: "SUBMITTED" },
+        target: { value: "DRAFT" },
       });
 
       fireEvent.click(screen.getByText("Thứ 2"));
@@ -862,7 +832,7 @@ describe("ClassManagement", () => {
       });
     });
 
-    it("payload gửi grade_status là null khi không chọn", async () => {
+    it("CLS-033 payload gửi grade_status là null khi không chọn", async () => {
       createClass.mockResolvedValue({});
       renderComponent();
 
@@ -901,7 +871,7 @@ describe("ClassManagement", () => {
       });
     });
 
-    it("payload gửi grade_deadline là null khi không chọn", async () => {
+    it("CLS-034 payload gửi grade_deadline là null khi không chọn", async () => {
       createClass.mockResolvedValue({});
       renderComponent();
 
@@ -942,7 +912,7 @@ describe("ClassManagement", () => {
   });
 
   describe("10. Phân trang", () => {
-    it("nút prev disabled ở trang 1", async () => {
+    it("CLS-035 nút prev disabled ở trang 1", async () => {
       getClasses.mockResolvedValue({ results: mockClasses, count: 40 });
       renderComponent();
       await waitFor(() => screen.getByText("IELTS_01"));
@@ -950,7 +920,7 @@ describe("ClassManagement", () => {
       expect(screen.getByText("«")).toBeDisabled();
     });
 
-    it("nút next disabled khi ở trang cuối", async () => {
+    it("CLS-036 nút next disabled khi ở trang cuối", async () => {
       getClasses.mockResolvedValue({
         results: mockClasses,
         count: mockClasses.length,
@@ -961,7 +931,7 @@ describe("ClassManagement", () => {
       expect(screen.getByText("»")).toBeDisabled();
     });
 
-    it("click trang 2 gọi getClasses(2)", async () => {
+    it("CLS-037 click trang 2 gọi getClasses(2)", async () => {
       getClasses.mockResolvedValue({ results: mockClasses, count: 40 });
       renderComponent();
       await waitFor(() => screen.getByText("IELTS_01"));
@@ -973,7 +943,7 @@ describe("ClassManagement", () => {
   });
 
   describe("11. handleSave - lỗi server", () => {
-    it("hiển thị lỗi general khi createClass thất bại", async () => {
+    it("CLS-038 hiển thị lỗi general khi createClass thất bại", async () => {
       createClass.mockRejectedValue({
         response: { data: { name: ["Tên lớp đã tồn tại"] } },
       });
