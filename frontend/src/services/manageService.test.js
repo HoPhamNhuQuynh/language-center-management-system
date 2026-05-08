@@ -59,9 +59,11 @@ describe("manageService", () => {
     it("SER-027 gọi đúng endpoint danh sách courses", async () => {
       Apis.get.mockResolvedValue({ data: [{ id: 1, name: "IELTS" }] });
 
-      const result = await getCourses();
+      const result = await getCourses(1);
 
-      expect(Apis.get).toHaveBeenCalledWith("courses/");
+      expect(Apis.get).toHaveBeenCalledWith("courses/?page=1", {
+        signal: undefined,
+      });
       expect(result).toEqual([{ id: 1, name: "IELTS" }]);
     });
   });
