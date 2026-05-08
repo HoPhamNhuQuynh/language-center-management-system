@@ -10,6 +10,7 @@ import "../../styles/Dashboard.css";
 import { Content } from "antd/es/layout/layout";
 import { useEffect, useState } from "react";
 import { getDashboardApi } from "../../services/manageService";
+import { exportDashboardCSV, exportDashboardPDF } from "../../utils/exportFile";
 
 const { Text } = Typography;
 
@@ -107,10 +108,34 @@ const Dashboard = () => {
               </div>
             </div>
             <div className="action-buttons">
-              <Button type="primary" size="large" icon={<DownloadOutlined />}>
+              <Button
+                type="primary"
+                size="large"
+                icon={<DownloadOutlined />}
+                onClick={() =>
+                  exportDashboardCSV({
+                    summary,
+                    revenueSummary,
+                    revenueByQuarter,
+                    paymentStatusStats,
+                    passRateStats,
+                    selectedYear,
+                    selectedQuarter,
+                  })
+                }
+              >
                 Xuất báo cáo
               </Button>
-              <Button size="large" icon={<PrinterOutlined />}>
+              <Button
+                size="large"
+                icon={<PrinterOutlined />}
+                onClick={() =>
+                  exportDashboardPDF(
+                    ".dashboard-content",
+                    `dashboard_${selectedYear}_Q${selectedQuarter}.pdf`,
+                  )
+                }
+              >
                 In báo cáo
               </Button>
             </div>

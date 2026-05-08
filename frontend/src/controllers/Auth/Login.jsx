@@ -14,8 +14,15 @@ const translateError = (errorMsg) => {
     return "Email này đã được đăng ký qua Facebook. Vui lòng đăng nhập bằng Facebook.";
   if (errorMsg.includes("GOOGLE"))
     return "Email này đã được đăng ký qua Google. Vui lòng đăng nhập bằng Google.";
+  if (
+    errorMsg.toLowerCase().includes("invalid") ||
+    errorMsg.toLowerCase().includes("unauthorized") ||
+    errorMsg.toLowerCase().includes("credentials") ||
+    errorMsg.toLowerCase().includes("grant")
+  )
+    return "Tên đăng nhập hoặc mật khẩu không đúng.";
 
-  return errorMsg; 
+  return "Đã có lỗi xảy ra. Vui lòng thử lại."; // ← đổi từ return errorMsg
 };
 
 function Login(){
@@ -49,7 +56,7 @@ function Login(){
         console.info(res)
       } catch (error) {
         const errorMsg = error.response?.data?.error;
-        message.error(translateError(errorMsg) || "Sai tài khoản hoặc mật khẩu.");
+        message.error(translateError(errorMsg));
       }
     };
 

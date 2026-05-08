@@ -25,12 +25,6 @@ function Navbar() {
       path: "course-config",
     },
     {
-      key: "assignments",
-      label: "Sắp xếp lịch dạy",
-      icon: <TeamOutlined />,
-      path: "/assignment-config",
-    },
-    {
       key: "payments",
       label: "Quản lý học phí",
       icon: <CreditCardOutlined />,
@@ -58,11 +52,11 @@ function Navbar() {
       console.info(refreshToken)
 
       await revokeTokenApi(refreshToken);
-
-      clearTokens();
-      navigate("/login");
     } catch (error) {
       console.log("Revoke token failed:", error);
+    } finally {
+      clearTokens();
+      navigate("/login");
     }
   };
 

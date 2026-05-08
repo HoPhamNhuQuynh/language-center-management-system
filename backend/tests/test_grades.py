@@ -12,7 +12,7 @@ from datetime import timedelta
 
 @pytest.mark.django_db
 class TestScoreService:
-    def test_bulk_sync_scores_creates_updates_and_skips_invalid_enrollments(self, classroom):
+    def test_UTL_001_bulk_sync_scores_creates_updates_and_skips_invalid_enrollments(self, classroom):
         """ Hàm này kiểm tra bulk nhập điểm cho lớp học trong các trường hợp điểm đã có, chưa có và user không tồn tại trong lớp """
         e1 = baker.make('enrollments.Enrollment', classroom=classroom, enrollment_status=Enrollment.Status.SUCCESS)
         e2 = baker.make('enrollments.Enrollment', classroom=classroom, enrollment_status=Enrollment.Status.SUCCESS)
@@ -37,7 +37,7 @@ class TestScoreService:
 
 @pytest.mark.django_db
 class TestAttendanceService:
-    def test_get_attendances_list_returns_attendances_for_session(self, classroom):
+    def test_UTL_002_get_attendances_list_returns_attendances_for_session(self, classroom):
         """ Hàm này unit test service lấy ds điểm danh của buổi học cụ thể """
         session = baker.make('classes.Session', schedule__classroom=classroom,)
         enrollment = baker.make('enrollments.Enrollment', classroom=classroom, enrollment_status=Enrollment.Status.SUCCESS)
@@ -51,7 +51,7 @@ class TestAttendanceService:
         assert attendance.enrollment_id == enrollment.id
         assert attendance.attendance_status == "PRESENT"
 
-    def test_bulk_sync_attendances_creates_attendances_and_returns_created_count(self, classroom):
+    def test_UTL_003_bulk_sync_attendances_creates_attendances_and_returns_created_count(self, classroom):
         session = baker.make('classes.Session', schedule__classroom=classroom)
         
         e1 = baker.make('enrollments.Enrollment', classroom=classroom, enrollment_status=Enrollment.Status.SUCCESS)
@@ -85,7 +85,7 @@ class TestAttendanceService:
 @pytest.mark.django_db
 class TestGradesAPI:
     
-    def test_attendance_list_auto_creates_attendances_when_not_exist(self, api_client, active_teacher, classroom):
+    def test_UTL_004_attendance_list_auto_creates_attendances_when_not_exist(self, api_client, active_teacher, classroom):
         """ Hàm này test lấy ds điểm danh của một buổi học, nếu lần đầu điểm danh thì tạo bản ghi điểm danh cho cả buổi học đó có phân quyền giáo viên đứng lớp tại buổi học """
         api_client.force_authenticate(user=active_teacher)
         session = baker.make(
@@ -102,7 +102,7 @@ class TestGradesAPI:
         assert response.status_code == status.HTTP_200_OK
         assert Attendance.objects.filter(session=session).count() == 3
 
-    def test_bulk_sync_scores_returns_403_when_user_not_main_teacher(self, api_client, active_teacher, classroom):
+    def test_UTL_005_bulk_sync_scores_returns_403_when_user_not_main_teacher(self, api_client, active_teacher, classroom):
         """User nhập điểm không phải giáo viên chính"""
         api_client.force_authenticate(user=active_teacher)
 
@@ -113,7 +113,7 @@ class TestGradesAPI:
 
         assert res.status_code == status.HTTP_403_FORBIDDEN
 
-    def test_bulk_sync_scores_returns_403_when_past_deadline(self, api_client, active_teacher, classroom):
+    def test_UTL_006_bulk_sync_scores_returns_403_when_past_deadline(self, api_client, active_teacher, classroom):
         """ Test đã quá hạn nhập điểm"""
         api_client.force_authenticate(user=active_teacher)
 
@@ -127,7 +127,7 @@ class TestGradesAPI:
 
         assert res.status_code == status.HTTP_403_FORBIDDEN
 
-    def test_bulk_sync_attendances_returns_403_when_session_not_in_classroom(self, api_client, active_teacher, classroom):
+    def test_UTL_007_bulk_sync_attendances_returns_403_when_session_not_in_classroom(self, api_client, active_teacher, classroom):
         """Session không thuộc classroom"""
         api_client.force_authenticate(user=active_teacher)
 
@@ -154,7 +154,7 @@ class TestGradesAPI:
         (10.1, False),
         ("abc", False),
     ]) # Bổ sung
-    def test_score_item_serializer_validates_score_boundary_values(self, score_value, expected_valid):
+    def test_UTL_008_score_item_serializer_validates_score_boundary_values(self, score_value, expected_valid):
         """Score phải nằm trong khoảng [0, 10] và phải là số hợp lệ"""
         from grades.serializers import ScoreItemSerializer
 
@@ -166,7 +166,7 @@ class TestGradesAPI:
 
         assert s.is_valid() is expected_valid
 
-    def test_bulk_sync_score_serializer_invalid_when_duplicate_items(self):
+    def test_UTL_009_bulk_sync_score_serializer_invalid_when_duplicate_items(self):
         """ Test mỗi cột điểm thì học viên chỉ có 1 số điểm """
         from grades.serializers import BulkSyncScoreSerializer
 

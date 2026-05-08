@@ -3,19 +3,15 @@ from rest_framework.response import Response
 from rest_framework import viewsets, filters, permissions, status, generics
 from . import serializers
 from .models import ClassRoom, Room, Session, TeachingAssignment
-from core import paginators
-from enrollments.serializers import EnrollmentSerializer
 from rest_framework.exceptions import ValidationError
 from django.db.models.deletion import ProtectedError
 from django.db.models import Prefetch, Count, Q, F
-from grades.serializers import ScoreSerializer
-from grades.models import Score
-from core import core_perms
+from core import core_perms, paginators
 
 
 class ClassRoomViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.ClassRoomSerializer
-    # pagination_class = paginators.ClassRoomPaginator
+    pagination_class = paginators.ItemPaginator
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ["name"]
     ordering_fields = ["-id"]
@@ -43,7 +39,7 @@ class ClassRoomViewSet(viewsets.ModelViewSet):
                 teachingassignment__teacher=self.request.user,
                 teachingassignment__is_main=True
             )
-        return query
+        return query.order_by("id")
 
     def get_permissions(self):
         if self.action in ['create', 'update', 'destroy', 'partial_update']:
@@ -77,13 +73,6 @@ class ClassRoomViewSet(viewsets.ModelViewSet):
             "sessions": data
             }, status=status.HTTP_200_OK,
         )
-
-    @action(methods=['get'], url_path='students', detail=True)
-    def get_students(self, request, pk):
-        enrollments = self.get_object().enrollment_set.filter(active=True, enrollment_status__in=['SUCCESS']).select_related(
-            'student')
-        return Response(EnrollmentSerializer(enrollments, many=True, context={"request": request}).data,
-                        status=status.HTTP_200_OK)
 
     @action(methods=['get'], url_path='scores', detail=True)
     def get_scores(self, request, pk):
@@ -150,7 +139,7 @@ class ClassRoomViewSet(viewsets.ModelViewSet):
             "created": created_count,
         }, status=status.HTTP_200_OK)
 
-class SessionViewSet(viewsets.ModelViewSet):
+class SessionViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.UpdateAPIView, generics.DestroyAPIView):
     serializer_class = serializers.SessionSerializer
     permission_classes = [permissions.IsAuthenticated]
 
@@ -203,7 +192,7 @@ class SessionViewSet(viewsets.ModelViewSet):
         serializer.save(schedule=schedule)  # gán schedule vào khi save
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     
-class RoomViewSet(viewsets.ModelViewSet):
+class RoomViewSet(viewsets.ViewSet, generics.ListAPIView):
     queryset = Room.objects.filter(active=True)
     serializer_class = serializers.RoomSerializer
     permission_classes = [core_perms.IsAdmin]

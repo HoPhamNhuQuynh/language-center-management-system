@@ -2,7 +2,43 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 
-// Mock dependencies
+vi.mock("antd", async () => {
+  const actual = await vi.importActual("antd");
+  return {
+    ...actual,
+    Dropdown: ({ menu, children }) => (
+      <div>
+        {children}
+        <button
+          data-testid="dropdown-classes"
+          onClick={() => menu.onClick({ key: "classes" })}
+        >
+          Quản lý lớp học
+        </button>
+        <button
+          data-testid="dropdown-courses"
+          onClick={() => menu.onClick({ key: "courses" })}
+        >
+          Quản lý khóa học
+        </button>
+        <button
+          data-testid="dropdown-payments"
+          onClick={() => menu.onClick({ key: "payments" })}
+        >
+          Quản lý học phí
+        </button>
+        <button
+          data-testid="dropdown-accounts"
+          onClick={() => menu.onClick({ key: "accounts" })}
+        >
+          Cấu hình hệ thống
+        </button>
+      </div>
+    ),
+    Space: ({ children }) => <span>{children}</span>,
+  };
+});
+
 vi.mock("../../utils/token", () => ({
   getAccessToken: vi.fn(),
   clearTokens: vi.fn(),
@@ -13,7 +49,6 @@ vi.mock("../../services/authService", () => ({
   revokeTokenApi: vi.fn(),
 }));
 
-// Mock useNavigate
 const mockNavigate = vi.fn();
 vi.mock("react-router-dom", async () => {
   const actual = await vi.importActual("react-router-dom");
@@ -43,21 +78,13 @@ describe("Navbar", () => {
       getRole.mockReturnValue(null);
     });
 
-    it("hiển thị link Trang chủ, Về chúng tôi, Khóa học", () => {
+    it("NAV-010 hiển thị link Trang chủ, Về chúng tôi, Khóa học và 2 nút đăng ký và đăng nhập, không hiển thị nút Đăng xuất", () => {
       renderNavbar();
       expect(screen.getByText("Trang chủ")).toBeInTheDocument();
       expect(screen.getByText("Về chúng tôi")).toBeInTheDocument();
       expect(screen.getByText("Khóa học")).toBeInTheDocument();
-    });
-
-    it("hiển thị nút Đăng ký và Đăng nhập", () => {
-      renderNavbar();
       expect(screen.getByText("Đăng ký")).toBeInTheDocument();
       expect(screen.getByText("Đăng nhập")).toBeInTheDocument();
-    });
-
-    it("không hiển thị nút Đăng xuất", () => {
-      renderNavbar();
       expect(screen.queryByText("Đăng xuất")).not.toBeInTheDocument();
     });
   });
@@ -69,18 +96,23 @@ describe("Navbar", () => {
       getRole.mockReturnValue("Student");
     });
 
-    it("hiển thị menu Student", () => {
+    it("NAV-011 hiển thị menu Student", () => {
       renderNavbar();
       expect(screen.getByText("Thông tin cá nhân")).toBeInTheDocument();
       expect(screen.getByText("Lịch học")).toBeInTheDocument();
+      expect(screen.getByText("Trang chủ")).toBeInTheDocument();
+      expect(screen.getByText("Về chúng tôi")).toBeInTheDocument();
+      expect(screen.getByText("Khóa học")).toBeInTheDocument();
     });
 
-    it("hiển thị nút Đăng xuất", () => {
+    it("NAV-011 hiển thị nút Đăng xuất và không có Đăng ký và Đăng nhập", () => {
       renderNavbar();
       expect(screen.getByText("Đăng xuất")).toBeInTheDocument();
+      expect(screen.queryByText("Đăng ký")).not.toBeInTheDocument();
+      expect(screen.queryByText("Đăng nhập")).not.toBeInTheDocument();
     });
 
-    it("không hiển thị menu Teacher hay Admin", () => {
+    it("NAV-011 không hiển thị menu Teacher hay Admin", () => {
       renderNavbar();
       expect(screen.queryByText("Điểm danh")).not.toBeInTheDocument();
       expect(screen.queryByText("Dashboard")).not.toBeInTheDocument();
@@ -94,14 +126,14 @@ describe("Navbar", () => {
       getRole.mockReturnValue("Teacher");
     });
 
-    it("hiển thị menu Teacher", () => {
+    it("NAV-012 hiển thị menu Teacher", () => {
       renderNavbar();
       expect(screen.getByText("Điểm danh")).toBeInTheDocument();
       expect(screen.getByText("Nhập điểm")).toBeInTheDocument();
       expect(screen.getByText("Lịch dạy")).toBeInTheDocument();
     });
 
-    it("không hiển thị menu Student hay Admin", () => {
+    it("NAV-012 không hiển thị menu Student hay Admin", () => {
       renderNavbar();
       expect(screen.queryByText("Thông tin cá nhân")).not.toBeInTheDocument();
       expect(screen.queryByText("Dashboard")).not.toBeInTheDocument();
@@ -115,13 +147,13 @@ describe("Navbar", () => {
       getRole.mockReturnValue("Admin");
     });
 
-    it("hiển thị menu Admin", () => {
+    it("NAV-013 hiển thị menu Admin", () => {
       renderNavbar();
       expect(screen.getByText("Dashboard")).toBeInTheDocument();
       expect(screen.getByText("Quản trị hệ thống")).toBeInTheDocument();
     });
 
-    it("không hiển thị menu Student hay Teacher", () => {
+    it("NAV-013 không hiển thị menu Student hay Teacher", () => {
       renderNavbar();
       expect(screen.queryByText("Thông tin cá nhân")).not.toBeInTheDocument();
       expect(screen.queryByText("Điểm danh")).not.toBeInTheDocument();
@@ -135,7 +167,7 @@ describe("Navbar", () => {
       getRole.mockReturnValue("Student");
     });
 
-    it("gọi revokeTokenApi và clearTokens khi bấm Đăng xuất", async () => {
+    it("NAV-014 gọi revokeTokenApi và clearTokens khi bấm Đăng xuất", async () => {
       revokeTokenApi.mockResolvedValue({});
       renderNavbar();
 
@@ -148,16 +180,45 @@ describe("Navbar", () => {
       });
     });
 
-    it("vẫn clearTokens khi revokeTokenApi thất bại", async () => {
+    it("NAV-015 vẫn clearTokens khi revokeTokenApi thất bại", async () => {
       revokeTokenApi.mockRejectedValue(new Error("failed"));
       renderNavbar();
 
       fireEvent.click(screen.getByText("Đăng xuất"));
 
-      // Lỗi bị catch → không crash, chỉ log
       await vi.waitFor(() => {
         expect(revokeTokenApi).toHaveBeenCalled();
+        expect(clearTokens).toHaveBeenCalled();
       });
+    });
+  });
+  describe("Admin dropdown menu", () => {
+    beforeEach(() => {
+      getAccessToken.mockReturnValue("acc_123");
+      getRole.mockReturnValue("Admin");
+    });
+
+    it("NAV-016 click item classes gọi navigate đúng path", () => {
+      renderNavbar();
+
+      fireEvent.click(screen.getByTestId("dropdown-classes"));
+
+      expect(mockNavigate).toHaveBeenCalledWith("/class-config");
+    });
+
+    it("NAV-017 click Django Admin mở window mới", () => {
+      const windowOpen = vi.spyOn(window, "open").mockImplementation(() => {});
+      renderNavbar();
+
+      const djangoLink = screen.getByText("Django Admin");
+      fireEvent.click(djangoLink);
+
+      expect(windowOpen).toHaveBeenCalledWith(
+        "https://localhost:8000/admin",
+        "django_admin",
+      );
+
+      windowOpen.mockRestore();
     });
   });
 });

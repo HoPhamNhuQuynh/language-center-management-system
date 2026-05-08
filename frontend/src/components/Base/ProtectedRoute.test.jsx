@@ -1,16 +1,14 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { MemoryRouter, Routes, Route } from "react-router-dom";
+import { getAccessToken, getRole } from "../../utils/token";
+import ProtectedRoute from "./ProtectedRoute";
 
 vi.mock("../../utils/token", () => ({
   getAccessToken: vi.fn(),
   getRole: vi.fn(),
 }));
 
-import { getAccessToken, getRole } from "../../utils/token";
-import ProtectedRoute from "./ProtectedRoute";
-
-// Helper render có route thật
 const renderProtectedRoute = (allowedRoles) => {
   return render(
     <MemoryRouter initialEntries={["/protected"]}>
@@ -30,68 +28,51 @@ describe("ProtectedRoute", () => {
     vi.clearAllMocks();
   });
 
-  // --- Chưa đăng nhập ---
   describe("khi chưa có token", () => {
     beforeEach(() => {
       getAccessToken.mockReturnValue(null);
       getRole.mockReturnValue(null);
     });
 
-    it("redirect về /login", () => {
+    it("NAV-001 redirect về trang đăng nhập", () => {
       renderProtectedRoute(["Admin"]);
       expect(screen.getByText("Trang Login")).toBeInTheDocument();
-    });
-
-    it("không hiển thị nội dung trang được bảo vệ", () => {
-      renderProtectedRoute(["Admin"]);
       expect(screen.queryByText("Trang được bảo vệ")).not.toBeInTheDocument();
     });
   });
 
-  // --- Đúng role ---
   describe("khi có token và đúng role", () => {
     beforeEach(() => {
       getAccessToken.mockReturnValue("acc_123");
       getRole.mockReturnValue("Admin");
     });
 
-    it("hiển thị nội dung trang được bảo vệ", () => {
-      renderProtectedRoute(["Admin"]);
-      expect(screen.getByText("Trang được bảo vệ")).toBeInTheDocument();
-    });
-
-    it("cho vào khi role nằm trong danh sách allowedRoles", () => {
+    it("NAV-002 cho vào khi role nằm trong danh sách allowedRoles", () => {
       renderProtectedRoute(["Admin", "Teacher"]);
       expect(screen.getByText("Trang được bảo vệ")).toBeInTheDocument();
     });
   });
 
-  // --- Sai role ---
   describe("khi có token nhưng sai role", () => {
     beforeEach(() => {
       getAccessToken.mockReturnValue("acc_123");
       getRole.mockReturnValue("Student");
     });
 
-    it("redirect về / khi không đủ quyền", () => {
+    it("NAV-003 redirect về trang chủ khi không đủ quyền", () => {
       renderProtectedRoute(["Admin"]);
       expect(screen.getByText("Trang chủ")).toBeInTheDocument();
-    });
-
-    it("không hiển thị nội dung trang được bảo vệ", () => {
-      renderProtectedRoute(["Admin"]);
       expect(screen.queryByText("Trang được bảo vệ")).not.toBeInTheDocument();
     });
   });
 
-  // --- Không truyền allowedRoles ---
   describe("khi không truyền allowedRoles", () => {
     beforeEach(() => {
       getAccessToken.mockReturnValue("acc_123");
       getRole.mockReturnValue("Student");
     });
 
-    it("cho vào bất kể role khi không có allowedRoles", () => {
+    it("NAV-004 cho vào bất kể role khi không có allowedRoles", () => {
       renderProtectedRoute(undefined);
       expect(screen.getByText("Trang được bảo vệ")).toBeInTheDocument();
     });

@@ -76,6 +76,7 @@ npm install
 npm run test:run  # xác nhận toàn bộ test pass/fail
 npm run test:run -- --reporter=verbose 2>&1 # debug và xem log lỗi chi tiết
 npm run test  # cần feedback ngay khi code có thay đổi
+npm run test -- --coverage
 ```
 
 ### Truy cập hệ thống

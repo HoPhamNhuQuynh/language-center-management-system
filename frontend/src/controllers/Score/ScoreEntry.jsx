@@ -123,7 +123,7 @@ function ScoreEntry() {
   const loadClasses = async () => {
     try {
       let res = await loadClassesApi();
-      setClasses(res);
+      setClasses(res.results);
       console.info(res);
     } catch (ex) {
       console.error(ex);

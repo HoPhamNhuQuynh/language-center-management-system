@@ -1,4 +1,4 @@
-from rest_framework import viewsets, status, permissions, parsers
+from rest_framework import viewsets, status, permissions, parsers, generics
 from courses.models import Course, Tag, ScoreType, Level
 from courses import serializers
 from rest_framework.decorators import action
@@ -56,7 +56,7 @@ class CourseViewSet(viewsets.ModelViewSet):
         return Response(ClassRoomSerializer(classes, many=True).data, status=status.HTTP_200_OK)
 
 
-class TagViewSet(viewsets.ModelViewSet):
+class TagViewSet(viewsets.ViewSet, generics.ListAPIView):
     queryset = Tag.objects.filter(active=True).all()
     serializer_class = serializers.TagSerializer
 

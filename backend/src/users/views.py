@@ -221,7 +221,6 @@ class SocialTokenExchangeViewSet(APIView):
 
 class UserViewSet(
     viewsets.ViewSet,
-    generics.DestroyAPIView,
     generics.ListCreateAPIView,
     generics.UpdateAPIView,
 ):
@@ -233,11 +232,6 @@ class UserViewSet(
         if self.action in ['current_user', 'update_avatar', 'update_password', 'get_payments', 'get_enrollments', 'get_results']:
             return [permissions.IsAuthenticated()]
         return [core_perms.IsAdmin()]
-
-    def perform_destroy(self, instance):
-        instance.is_active = False
-        instance.save()
-        AccessToken.objects.filter(user=instance).delete()
 
     @action(methods=["get", "patch", "delete"], url_path="me", detail=False)
     def current_user(self, request):

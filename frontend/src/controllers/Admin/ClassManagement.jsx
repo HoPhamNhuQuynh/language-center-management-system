@@ -67,6 +67,8 @@ const ClassManagement = () => {
   const [teachers, setTeachers] = useState([]);
   const [toast, setToast] = useState({ show: false, message: "" });
   const [rooms, setRooms] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   const showToast = (message) => {
     setToast({ show: true, message });
@@ -78,11 +80,11 @@ const ClassManagement = () => {
     setRooms(res);
   };
 
-  const loadClasses = async () => {
-    let res = await getClasses();
-    const sorted = res.sort((a, b) => a.id - b.id);
-    setClasses(sorted);
-    console.info(sorted);
+  const loadClasses = async (page = 1) => {
+    let res = await getClasses(page);
+    setClasses(res.results);
+    setTotalPages(Math.ceil(res.count / 20));
+    console.info(res.results);
   };
 
   const loadCourses = async () => {
@@ -96,7 +98,10 @@ const ClassManagement = () => {
   };
 
   useEffect(() => {
-    loadClasses();
+    loadClasses(currentPage);
+  }, [currentPage]);
+
+  useEffect(() => {
     loadCourses();
     loadTeachers();
     loadRooms();
@@ -221,6 +226,8 @@ const ClassManagement = () => {
         start_date: form.start_date,
         end_date: form.end_date,
         capacity: form.capacity,
+        grade_deadline: form.grade_deadline || null, 
+        grade_status: form.grade_status || null,
         ...(form.main_teacher && { main_teacher_id: form.main_teacher }),
         schedules_input: form.schedules.map((s) => ({
           day_of_week: s.day_of_week,
@@ -275,6 +282,8 @@ const ClassManagement = () => {
               <th>Khóa học</th>
               <th>Sĩ số</th>
               <th>Giáo viên chính</th>
+              <th>Hạn nhập điểm</th>
+              <th>Trạng thái điểm</th>
               <th>Khai giảng</th>
               <th>Kết thúc</th>
               <th>Ngày tạo</th>
@@ -308,6 +317,12 @@ const ClassManagement = () => {
                     ? `${classroom.main_teacher.last_name} ${classroom.main_teacher.first_name}`
                     : "—"}
                 </td>
+                <td>
+                  {classroom?.grade_deadline
+                    ? formatDate(classroom.grade_deadline)
+                    : "Chưa quy định"}
+                </td>
+                <td>{classroom.grade_status}</td>
                 <td>{formatDate(classroom.start_date)}</td>
                 <td>{formatDate(classroom.end_date)}</td>
                 <td>{formatDate(classroom.created_at)}</td>
@@ -336,6 +351,50 @@ const ClassManagement = () => {
             ))}
           </tbody>
         </table>
+      </div>
+
+      <div className="pagination">
+        <button
+          className="page-btn"
+          disabled={currentPage === 1}
+          onClick={() => setCurrentPage((p) => p - 1)}
+        >
+          &laquo;
+        </button>
+
+        {Array.from({ length: totalPages }, (_, i) => i + 1)
+          .filter(
+            (p) =>
+              p === 1 || p === totalPages || Math.abs(p - currentPage) <= 2,
+          )
+          .reduce((acc, p, idx, arr) => {
+            if (idx > 0 && p - arr[idx - 1] > 1) acc.push("...");
+            acc.push(p);
+            return acc;
+          }, [])
+          .map((p, idx) =>
+            p === "..." ? (
+              <span key={`ellipsis-${idx}`} className="page-ellipsis">
+                ...
+              </span>
+            ) : (
+              <button
+                key={p}
+                className={`page-btn ${currentPage === p ? "active" : ""}`}
+                onClick={() => setCurrentPage(p)}
+              >
+                {p}
+              </button>
+            ),
+          )}
+
+        <button
+          className="page-btn"
+          disabled={currentPage === totalPages}
+          onClick={() => setCurrentPage((p) => p + 1)}
+        >
+          &raquo;
+        </button>
       </div>
 
       {deleteModal.show && (
@@ -521,6 +580,42 @@ const ClassManagement = () => {
                       {t.last_name} {t.first_name}
                     </option>
                   ))}
+                </select>
+              </div>
+            </div>
+
+            <div className="form-row">
+              <div className="input-group">
+                <label>Hạn nhập điểm</label>
+                <DatePicker
+                  selected={
+                    form.grade_deadline ? new Date(form.grade_deadline) : null
+                  }
+                  onChange={(date) =>
+                    setForm((prev) => ({
+                      ...prev,
+                      grade_deadline: date
+                        ? date.toISOString().split("T")[0]
+                        : "",
+                    }))
+                  }
+                  dateFormat="dd/MM/yyyy"
+                  locale={vi}
+                  placeholderText="DD/MM/YYYY"
+                  isClearable
+                />
+              </div>
+              <div className="input-group">
+                <label>Trạng thái điểm</label>
+                <select
+                  name="grade_status"
+                  value={form.grade_status}
+                  onChange={handleChange}
+                >
+                  <option value="">-- Chọn trạng thái --</option>
+                  <option value="DRAFT">DRAFT</option>
+                  <option value="SUBMITTED">SUBMITTED</option>
+                  <option value="REOPENED">REOPENED</option>
                 </select>
               </div>
             </div>

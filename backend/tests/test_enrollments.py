@@ -7,7 +7,7 @@ from enrollments.models import Enrollment
 @pytest.mark.django_db
 class TestEnrollmentModule:
 
-    def test_enroll_creates_enrollment_and_returns_201(self, api_client, active_user, classroom):
+    def test_UTL_001_enroll_creates_enrollment_and_returns_201(self, api_client, active_user, classroom):
         """Test đăng ký lớp học thành công"""
         api_client.force_authenticate(user=active_user)
         url = reverse('enrollment-list')
@@ -17,7 +17,7 @@ class TestEnrollmentModule:
         assert response.status_code == status.HTTP_201_CREATED
         assert Enrollment.objects.filter(student=active_user, classroom=classroom).exists()
 
-    def test_enroll_returns_400_when_student_already_enrolled(self, api_client, active_user, classroom):
+    def test_UTL_002_UTL_001_enroll_returns_400_when_student_already_enrolled(self, api_client, active_user, classroom):
         """Test không cho phép đăng ký lại lớp đã học """
         baker.make('enrollments.Enrollment', student=active_user, classroom=classroom)
         api_client.force_authenticate(user=active_user)
@@ -29,7 +29,7 @@ class TestEnrollmentModule:
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert "Sinh viên này đã đăng ký lớp học này rồi." in str(response.data)
 
-    def test_enroll_returns_400_when_classroom_is_full(self, api_client, active_user):
+    def test_UTL_003_UTL_002_enroll_returns_400_when_classroom_is_full(self, api_client, active_user):
         """Test không cho đăng ký khi lớp đã đầy sĩ số """
         full_classroom = baker.make('classes.ClassRoom', capacity=1)
         baker.make('enrollments.Enrollment', classroom=full_classroom)
@@ -42,7 +42,7 @@ class TestEnrollmentModule:
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert "Lớp đã đủ sỉ số" in str(response.data)
 
-    def test_enroll_returns_400_when_schedule_overlaps_with_existing_enrollment(self, api_client, active_user):
+    def test_UTL_004_enroll_returns_400_when_schedule_overlaps_with_existing_enrollment(self, api_client, active_user):
         """Test không cho phép đăng ký lớp học bị trùng lịch với lớp đã đăng ký """
         class_a = baker.make('classes.ClassRoom', capacity=10)
         baker.make('classes.Schedule', classroom=class_a, day_of_week=2, 
@@ -62,7 +62,7 @@ class TestEnrollmentModule:
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert "Lịch học bị trùng" in str(response.data)
 
-    def test_delete_enrollment_returns_204_and_deletes_record_when_unpaid(self, api_client, active_user, classroom):
+    def test_UTL_005_delete_enrollment_returns_204_and_deletes_record_when_unpaid(self, api_client, active_user, classroom):
         """ Test xóa thành công khi chưa đóng tiền """
         enrollment = baker.make('enrollments.Enrollment', 
                                 student=active_user, 
@@ -77,7 +77,7 @@ class TestEnrollmentModule:
         assert response.status_code == status.HTTP_204_NO_CONTENT
         assert not Enrollment.objects.filter(id=enrollment.id).exists()
 
-    def test_delete_enrollment_returns_400_and_keeps_record_when_already_paid(self, api_client, active_user, classroom):
+    def test_UTL_006_delete_enrollment_returns_400_and_keeps_record_when_already_paid(self, api_client, active_user, classroom):
         """Test chặn xóa khi đơn đã được thanh toán (SUCCESS)"""
         enrollment = baker.make('enrollments.Enrollment',
                                 student=active_user,
@@ -93,7 +93,7 @@ class TestEnrollmentModule:
         assert "Không thể xóa" in response.data['detail']
         assert Enrollment.objects.filter(id=enrollment.id).exists()
 
-    def test_admin_returns_all_enrollments(self, api_client, admin_user):
+    def test_UTL_007_admin_returns_all_enrollments(self, api_client, admin_user):
         """Test Admin xem được tất cả đăng ký """
         baker.make('enrollments.Enrollment', _quantity=3)
         
@@ -105,7 +105,7 @@ class TestEnrollmentModule:
         expected_count = Enrollment.objects.count()
         assert len(response.data) == expected_count
 
-    def test_teacher_returns_enrollments_of_assigned_class(self, api_client, active_teacher, classroom):
+    def test_UTL_008_teacher_returns_enrollments_of_assigned_class(self, api_client, active_teacher, classroom):
         """ Giáo viên chỉ thấy ds đăng ký của lớp được phân công """
         baker.make('classes.TeachingAssignment', teacher=active_teacher, classroom=classroom)
         baker.make('enrollments.Enrollment', classroom=classroom, _quantity=2)
@@ -119,7 +119,7 @@ class TestEnrollmentModule:
         for item in response.data:
             assert item["classroom"]["id"] == classroom.id
 
-    def test_teacher_cannot_view_enrollments_of_other_classes(self, api_client, active_teacher):
+    def test_UTL_009_teacher_cannot_view_enrollments_of_other_classes(self, api_client, active_teacher):
         """ Giáo viên kh thể nhìn thấy ds đăng ký của lớp khác """
 
         class_a = baker.make('classes.ClassRoom')
@@ -138,7 +138,7 @@ class TestEnrollmentModule:
         assert len(response.data) == 2
 
     # Bổ sung
-    def test_enroll_returns_400_when_classroom_missing(self, api_client, active_user):
+    def test_UTL_010_enroll_returns_400_when_classroom_missing(self, api_client, active_user):
         """Test không cho đăng ký khi chưa chọn lớp học"""
         api_client.force_authenticate(user=active_user)
 
@@ -149,7 +149,7 @@ class TestEnrollmentModule:
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
-    def test_enroll_returns_201_when_schedule_does_not_overlap_existing_enrollment(self, api_client, active_user):
+    def test_UTL_011_enroll_returns_201_when_schedule_does_not_overlap_existing_enrollment(self, api_client, active_user):
         """Test cho phép đăng ký lớp khác khi lịch học không bị trùng"""
         class_a = baker.make('classes.ClassRoom', capacity=10)
         baker.make('classes.Schedule', classroom=class_a, day_of_week=2, start_time="08:00:00", end_time="10:00:00")
