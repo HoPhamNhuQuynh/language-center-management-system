@@ -9,8 +9,8 @@ export const getDashboardApi = async (year, quarter) => {
 };
 
 // Courses
-export const getCourses = async () => {
-  const res = await Apis.get("courses/");
+export const getCourses = async (page, signal) => {
+  const res = await Apis.get(`courses/?page=${page}`, { signal });
   return res.data;
 };
 

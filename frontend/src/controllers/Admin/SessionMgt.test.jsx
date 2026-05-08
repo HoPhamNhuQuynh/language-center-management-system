@@ -381,7 +381,7 @@ describe("5. Tạo buổi học mới", () => {
 
     await waitFor(() => {
       expect(screen.getByText(/Phòng đã bị trùng/)).toBeInTheDocument();
-      expect(screen.getByText("TẠO BUỔI HỌC BÙ")).toBeInTheDocument(); // modal vẫn mở
+      expect(screen.getByText("TẠO BUỔI HỌC BÙ")).toBeInTheDocument(); 
     });
   });
 
@@ -402,7 +402,7 @@ describe("5. Tạo buổi học mới", () => {
 });
 
 describe("6. Sửa buổi học", () => {
-  it("mở modal sửa với dữ liệu đúng", async () => {
+  it("SES-024 mở modal sửa với dữ liệu đúng", async () => {
     renderComp();
     await waitForLoad();
 
@@ -410,10 +410,18 @@ describe("6. Sửa buổi học", () => {
 
     await waitFor(() => {
       expect(screen.getByText("SỬA BUỔI HỌC")).toBeInTheDocument();
+
+      expect(screen.getByTestId("date-picker").value).toBe(futureDate);
+
+      expect(screen.getByDisplayValue("7:30 - 9:30")).toBeInTheDocument();
+
+      expect(screen.getByDisplayValue("P.101")).toBeInTheDocument();
+
+      expect(screen.getByDisplayValue("Nguyen An")).toBeInTheDocument();
     });
   });
 
-  it("gọi updateSession với đúng id và payload", async () => {
+  it("SES-025 gọi updateSession đúng payload, đóng modal và hiện toast thành công", async () => {
     updateSession.mockResolvedValue({});
     renderComp();
     await waitForLoad();
@@ -424,6 +432,7 @@ describe("6. Sửa buổi học", () => {
     fireEvent.click(screen.getByText("Cập nhật"));
 
     await waitFor(() => {
+      // Gọi API đúng id và payload
       expect(updateSession).toHaveBeenCalledWith(
         1,
         expect.objectContaining({
@@ -433,20 +442,11 @@ describe("6. Sửa buổi học", () => {
           room: 1,
         }),
       );
-    });
-  });
 
-  it("hiện toast 'Cập nhật buổi học thành công!' sau khi sửa", async () => {
-    updateSession.mockResolvedValue({});
-    renderComp();
-    await waitForLoad();
+      // Modal đóng sau khi thành công
+      expect(screen.queryByText("SỬA BUỔI HỌC")).not.toBeInTheDocument();
 
-    fireEvent.click(screen.getByText("Edit"));
-    await waitFor(() => screen.getByText("SỬA BUỔI HỌC"));
-
-    fireEvent.click(screen.getByText("Cập nhật"));
-
-    await waitFor(() => {
+      // Toast thành công hiện ra
       expect(
         screen.getByText("Cập nhật buổi học thành công!"),
       ).toBeInTheDocument();

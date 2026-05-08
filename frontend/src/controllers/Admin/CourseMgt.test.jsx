@@ -67,7 +67,10 @@ const renderComponent = () => render(<CourseManagement />);
 
 beforeEach(() => {
   vi.clearAllMocks();
-  getCourses.mockResolvedValue({ results: mockCourses });
+  getCourses.mockResolvedValue({
+    results: mockCourses,
+    count: mockCourses.length,
+  });
   getLevels.mockResolvedValue(mockLevels);
 });
 
@@ -509,5 +512,36 @@ describe("7. Toast tự ẩn sau 3 giây", () => {
     ).not.toBeInTheDocument();
 
     vi.useRealTimers();
+  });
+});
+
+describe("8. Phân trang", () => {
+  it("COU-022 nút prev disabled ở trang 1", async () => {
+    getCourses.mockResolvedValue({ results: mockCourses, count: 40 });
+    renderComponent();
+    await waitFor(() => screen.getByText("IELTS Basic"));
+
+    expect(screen.getByText("«")).toBeDisabled();
+  });
+
+  it("COU-023 nút next disabled khi ở trang cuối", async () => {
+    getCourses.mockResolvedValue({
+      results: mockCourses,
+      count: mockCourses.length,
+    });
+    renderComponent();
+    await waitFor(() => screen.getByText("IELTS Basic"));
+
+    expect(screen.getByText("»")).toBeDisabled();
+  });
+
+  it("COU-024 click trang 2 gọi getCourses với page 2", async () => {
+    getCourses.mockResolvedValue({ results: mockCourses, count: 40 });
+    renderComponent();
+    await waitFor(() => screen.getByText("IELTS Basic"));
+
+    fireEvent.click(screen.getByRole("button", { name: "2" }));
+
+    await waitFor(() => expect(getCourses).toHaveBeenCalledWith(2));
   });
 });
