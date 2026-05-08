@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { courseApi, classApi, searchCourseApi, tagApi } from "./courseService";
+import { courseApi, classApi, searchCourseApi, tagApi, coursePageApi } from "./courseService";
 import Apis from "./Apis";
 
 vi.mock("./Apis");
@@ -35,8 +35,6 @@ describe("courseService", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
-
-  // ─── courseApi (gộp get all + get by id) ─────────────────────────────────
 
   describe("courseApi", () => {
     it("gọi GET /courses/ khi không truyền id", async () => {
@@ -114,8 +112,6 @@ describe("courseService", () => {
     });
   });
 
-  // ─── classApi ────────────────────────────────────────────────────────────
-
   describe("classApi", () => {
     it("gọi GET /courses/:id/classes/ với đúng id", async () => {
       Apis.get.mockResolvedValue({ data: mockClasses });
@@ -149,8 +145,6 @@ describe("courseService", () => {
       await expect(classApi(1)).rejects.toThrow("Server error");
     });
   });
-
-  // ─── searchCourseApi ─────────────────────────────────────────────────────
 
   describe("searchCourseApi", () => {
     it("gọi GET với query string đúng", async () => {
@@ -187,8 +181,6 @@ describe("courseService", () => {
     });
   });
 
-  // ─── tagApi ──────────────────────────────────────────────────────────────
-
   describe("tagApi", () => {
     it("gọi GET /tags/ và trả về danh sách tag", async () => {
       Apis.get.mockResolvedValue({ data: mockTags });
@@ -222,6 +214,40 @@ describe("courseService", () => {
       Apis.get.mockRejectedValue(new Error("Unauthorized"));
 
       await expect(tagApi()).rejects.toThrow("Unauthorized");
+    });
+  });
+
+  describe("coursePageApi", () => {
+    it("gọi GET /courses/:id/ khi truyền id", async () => {
+      Apis.get.mockResolvedValue({ data: mockCourseDetail });
+
+      const result = await coursePageApi(1);
+
+      expect(Apis.get).toHaveBeenCalledWith("courses/1/");
+      expect(result).toEqual(mockCourseDetail);
+    });
+
+    it("gọi GET /courses/ với params khi không truyền id", async () => {
+      Apis.get.mockResolvedValue({ data: { results: mockCourses, count: 2 } });
+
+      const result = await coursePageApi(null, { page: 1, page_size: 10 });
+
+      expect(Apis.get).toHaveBeenCalledWith("courses/", { params: { page: 1, page_size: 10 } });
+      expect(result).toHaveProperty("results");
+    });
+
+    it("gọi GET /courses/ không có params khi bỏ trống", async () => {
+      Apis.get.mockResolvedValue({ data: { results: [], count: 0 } });
+
+      await coursePageApi();
+
+      expect(Apis.get).toHaveBeenCalledWith("courses/", { params: {} });
+    });
+
+    it("throw error khi API lỗi", async () => {
+      Apis.get.mockRejectedValue(new Error("Network Error"));
+
+      await expect(coursePageApi()).rejects.toThrow("Network Error");
     });
   });
 });

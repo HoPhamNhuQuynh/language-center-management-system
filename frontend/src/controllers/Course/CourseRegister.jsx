@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import CourseRegisterForm from "../../pages/Payment/CourseRegisterForm";
 import { searchCourseApi, classApi, courseApi } from "../../services/courseService";
-import { enrollmentApi, paymentApi, enrollmentDetailApi, deleteEnrollmentApi } from "../../services/enrollmentService";
+import { enrollmentApi, paymentApi, enrollmentDetailApi, deleteEnrollmentApi,paymentDetailApi } from "../../services/enrollmentService";
 import { myPaymentApi } from "../../services/studentService";
 import Apis from "../../services/Apis";
 
@@ -234,14 +234,6 @@ function CourseRegister() {
     }
   };
 
-  const handlePayment = () => {
-    if (!selected_class) {
-      alert("Vui lòng chọn lớp!");
-      return;
-    }
-    setPayment(true);
-  };
-
   const handleSelectClass = (cls) => {
     setSelectedClass(cls);
     setPaid(false);
@@ -269,8 +261,6 @@ function CourseRegister() {
     navigate("/course-list");
   };
 
-
-
   return (
     <div>
       <CourseRegisterForm
@@ -280,7 +270,6 @@ function CourseRegister() {
         onSearch={handleSearch}
         selected_class={selected_class}
         onSelectClass={handleSelectClass}
-        onPayment={handlePayment}
         onSubmit={handleSubmit}
         method={method}
         setMethod={setMethod}

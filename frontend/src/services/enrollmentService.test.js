@@ -39,8 +39,6 @@ describe("enrollmentService", () => {
     vi.clearAllMocks();
   });
 
-  // ─── enrollmentApi ───────────────────────────────────────────────────────
-
   describe("enrollmentApi", () => {
     it("gọi POST /enrollments/ với đúng payload", async () => {
       Apis.post.mockResolvedValue({ data: mockEnrollment });
@@ -83,8 +81,6 @@ describe("enrollmentService", () => {
       await expect(enrollmentApi({ classroom: 10 })).rejects.toEqual(error);
     });
   });
-
-  // ─── paymentApi ──────────────────────────────────────────────────────────
 
   describe("paymentApi", () => {
     it("gọi POST /payments/ với đúng payload", async () => {
@@ -133,8 +129,6 @@ describe("enrollmentService", () => {
     });
   });
 
-  // ─── enrollmentDetailApi ─────────────────────────────────────────────────
-
   describe("enrollmentDetailApi", () => {
     it("gọi GET /enrollments/:id/ với đúng id", async () => {
       Apis.get.mockResolvedValue({ data: mockEnrollmentDetail });
@@ -177,8 +171,6 @@ describe("enrollmentService", () => {
       await expect(enrollmentDetailApi(1)).rejects.toEqual(error);
     });
   });
-
-  // ─── deleteEnrollmentApi ─────────────────────────────────────────────────
 
   describe("deleteEnrollmentApi", () => {
     it("gọi DELETE /enrollments/:id/ với đúng id số", async () => {

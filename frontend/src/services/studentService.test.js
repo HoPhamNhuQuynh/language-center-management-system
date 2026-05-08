@@ -8,6 +8,8 @@ import {
   myScheduleApi,
   myClassResultApi,
   paymentDetailApi,
+  resetPasswordApi,
+  deleteAccountApi,
 } from "./studentService";
 import Apis from "./Apis";
 
@@ -55,8 +57,6 @@ describe("studentService", () => {
     vi.clearAllMocks();
   });
 
-  // ─── studentApi ──────────────────────────────────────────────────────────────
-
   describe("studentApi", () => {
     it("gọi GET /users/me/ và trả về data", async () => {
       Apis.get.mockResolvedValue({ data: mockUser });
@@ -86,8 +86,6 @@ describe("studentService", () => {
     });
   });
 
-  // ─── updateStudentApi ────────────────────────────────────────────────────────
-
   describe("updateStudentApi", () => {
     it("gọi PATCH /users/me/ với formData", async () => {
       const updatePayload = { first_name: "Minh", phone_num: "0909876543" };
@@ -115,8 +113,6 @@ describe("studentService", () => {
       await expect(updateStudentApi({ email: "bad-email" })).rejects.toEqual(error);
     });
   });
-
-  // ─── updateStudentAvatarApi ──────────────────────────────────────────────────
 
   describe("updateStudentAvatarApi", () => {
     it("gọi PATCH /users/me/avatar/ với multipart header", async () => {
@@ -150,8 +146,6 @@ describe("studentService", () => {
     });
   });
 
-  // ─── myEnrollmentApi ─────────────────────────────────────────────────────────
-
   describe("myEnrollmentApi", () => {
     it("gọi GET /users/me/enrollments/ và trả về danh sách", async () => {
       Apis.get.mockResolvedValue({ data: mockEnrollments });
@@ -182,8 +176,6 @@ describe("studentService", () => {
       expect(result).toHaveLength(0);
     });
   });
-
-  // ─── myPaymentApi ────────────────────────────────────────────────────────────
 
   describe("myPaymentApi", () => {
     it("gọi GET /users/me/payments/ và trả về danh sách payment", async () => {
@@ -224,8 +216,6 @@ describe("studentService", () => {
     });
   });
 
-  // ─── myScheduleApi ───────────────────────────────────────────────────────────
-
   describe("myScheduleApi", () => {
     it("gọi GET /sessions/ và trả về lịch học", async () => {
       Apis.get.mockResolvedValue({ data: mockSchedule });
@@ -256,8 +246,6 @@ describe("studentService", () => {
     });
   });
 
-  // ─── myClassResultApi ────────────────────────────────────────────────────────
-
   describe("myClassResultApi", () => {
     it("gọi GET /users/me/results/ và trả về kết quả học", async () => {
       Apis.get.mockResolvedValue({ data: mockResults });
@@ -285,8 +273,6 @@ describe("studentService", () => {
       await expect(myClassResultApi()).rejects.toThrow("Internal Server Error");
     });
   });
-
-  // ─── paymentDetailApi ────────────────────────────────────────────────────────
 
   describe("paymentDetailApi", () => {
     it("gọi GET /payments/:id/ với đúng id", async () => {
@@ -322,6 +308,70 @@ describe("studentService", () => {
       Apis.get.mockRejectedValue(error);
 
       await expect(paymentDetailApi(9999)).rejects.toEqual(error);
+    });
+  });
+
+  describe("resetPasswordApi", () => {
+    it("gọi PATCH /users/me/reset-password/ với payload đúng", async () => {
+      const payload = { old_password: "OldPass123", new_password: "NewPass456" };
+      Apis.patch.mockResolvedValue({ data: { detail: "Password updated." } });
+
+      const result = await resetPasswordApi(payload);
+
+      expect(Apis.patch).toHaveBeenCalledWith("users/me/reset-password/", payload);
+      expect(result).toEqual({ detail: "Password updated." });
+    });
+
+    it("throw error khi mật khẩu cũ sai (400)", async () => {
+      const error = {
+        response: { status: 400, data: { old_password: ["Mật khẩu cũ không đúng."] } },
+      };
+      Apis.patch.mockRejectedValue(error);
+
+      await expect(
+        resetPasswordApi({ old_password: "wrong", new_password: "NewPass456" })
+      ).rejects.toEqual(error);
+    });
+
+    it("throw error khi chưa xác thực (401)", async () => {
+      const error = { response: { status: 401, data: { detail: "Unauthorized" } } };
+      Apis.patch.mockRejectedValue(error);
+
+      await expect(
+        resetPasswordApi({ old_password: "any", new_password: "any" })
+      ).rejects.toEqual(error);
+    });
+  });
+
+  describe("deleteAccountApi", () => {
+    it("gọi DELETE /users/me/ và trả về data", async () => {
+      Apis.delete.mockResolvedValue({ data: { detail: "Account deleted." } });
+
+      const result = await deleteAccountApi();
+
+      expect(Apis.delete).toHaveBeenCalledWith("users/me/");
+      expect(result).toEqual({ detail: "Account deleted." });
+    });
+
+    it("trả về undefined nếu server trả về 204 (no content)", async () => {
+      Apis.delete.mockResolvedValue({ data: undefined });
+
+      const result = await deleteAccountApi();
+
+      expect(result).toBeUndefined();
+    });
+
+    it("throw error khi chưa xác thực (401)", async () => {
+      const error = { response: { status: 401, data: { detail: "Unauthorized" } } };
+      Apis.delete.mockRejectedValue(error);
+
+      await expect(deleteAccountApi()).rejects.toEqual(error);
+    });
+
+    it("throw error khi server lỗi (500)", async () => {
+      Apis.delete.mockRejectedValue(new Error("Internal Server Error"));
+
+      await expect(deleteAccountApi()).rejects.toThrow("Internal Server Error");
     });
   });
 });

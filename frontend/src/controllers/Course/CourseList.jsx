@@ -50,7 +50,6 @@ function CourseList() {
       };
       if (search) params.search = search;
       if (selectedLang) params.tag = selectedLang;
-      console.log("Params gọi API:", params);
       const data = await coursePageApi(null, params);
       setCourses(data.results || []);
       setTotalCount(data.count || 0);

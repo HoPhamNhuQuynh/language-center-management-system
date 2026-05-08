@@ -11,27 +11,10 @@ vi.mock("./Apis", () => ({
 
 import Apis from "./Apis";
 import {
-  getDashboardApi,
-  getCourses,
-  getLevels,
-  createCourse,
-  updateCourse,
-  deleteCourse,
-  getClasses,
-  createClass,
-  updateClass,
-  deleteClass,
-  getTeachers,
-  getRooms,
-  getSessionsByClass,
-  createSession,
-  updateSession,
-  deleteSession,
-  getUsers,
-  updateUser,
-  lockUser,
-  changeUserRole,
-  createTeacher,
+  getDashboardApi, getCourses, getLevels, createCourse, updateCourse, deleteCourse,
+  getClasses, createClass, updateClass, deleteClass, getTeachers, getRooms,
+  getSessionsByClass, createSession, updateSession, deleteSession, getUsers, updateUser, lockUser,
+  changeUserRole, createTeacher
 } from "./manageService";
 
 describe("manageService", () => {

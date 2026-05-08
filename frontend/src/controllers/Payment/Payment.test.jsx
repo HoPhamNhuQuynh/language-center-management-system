@@ -39,19 +39,19 @@ describe("Payment", () => {
     vi.clearAllMocks();
   });
 
-  it("render với method mặc định là momo", () => {
+  it("PMC-001: render với method mặc định là momo", () => {
     renderPayment();
     expect(screen.getByTestId("method").textContent).toBe("momo");
     expect(screen.getByTestId("percent").textContent).toBe("100");
   });
 
-  it("handleSubmit navigate đến /bill-view", () => {
+  it("PMC-002: handleSubmit navigate đến /bill-view", () => {
     renderPayment();
     fireEvent.click(screen.getByTestId("btn-submit"));
     expect(mockedNavigate).toHaveBeenCalledWith("/bill-view", expect.any(Object));
   });
 
-  it("setMethod thay đổi method", () => {
+  it("PMC-003: setMethod thay đổi method", () => {
     renderPayment();
     fireEvent.click(screen.getByTestId("btn-method"));
     expect(screen.getByTestId("method").textContent).toBe("vnpay");
