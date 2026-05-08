@@ -21,7 +21,6 @@ describe("scoreService", () => {
     vi.clearAllMocks();
   });
 
-  // --- getScoresApi ---
   describe("getScoresApi", () => {
     it("gọi đúng endpoint với classId", async () => {
       Apis.get.mockResolvedValue({ data: { scores: [{ id: 1, value: 9 }] } });
@@ -39,7 +38,6 @@ describe("scoreService", () => {
     });
   });
 
-  // --- getScoreTypesApi ---
   describe("getScoreTypesApi", () => {
     it("gọi đúng endpoint với classId", async () => {
       Apis.get.mockResolvedValue({
@@ -65,7 +63,6 @@ describe("scoreService", () => {
     });
   });
 
-  // --- bulkSyncScoresApi ---
   describe("bulkSyncScoresApi", () => {
     it("gọi đúng endpoint với classId và scores", async () => {
       const scores = [
@@ -89,7 +86,6 @@ describe("scoreService", () => {
     });
   });
 
-  // --- submitScoresApi ---
   describe("submitScoresApi", () => {
     it("gọi đúng endpoint với classId và payload", async () => {
       const payload = { confirmed: true };
@@ -111,7 +107,6 @@ describe("scoreService", () => {
     });
   });
 
-  // --- loadClassesApi ---
   describe("loadClassesApi", () => {
     it("gọi đúng endpoint danh sách classes", async () => {
       Apis.get.mockResolvedValue({ data: [{ id: 1, name: "IELTS Basic" }] });

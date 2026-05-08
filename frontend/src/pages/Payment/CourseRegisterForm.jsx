@@ -112,9 +112,6 @@ function CourseRegisterForm({ search, course, selected_class, payment, method, p
 
   const enrolledAlready = selected_class && isEnrolled(selected_class.id);
 
-  console.log("course:", course);
-  console.log("sharedData total_sessions:", course?.total_sessions);
-
   return (
     <div style={{ padding: "20px", minHeight: "100vh", position: "relative" }}>
       <div style={{ display: "flex", justifyContent: "center" }}>

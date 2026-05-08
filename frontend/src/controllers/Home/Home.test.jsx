@@ -31,7 +31,7 @@ describe("Home", () => {
 
   afterEach(() => vi.restoreAllMocks());
 
-  it("fetch courses và truyền vào HomeContent (tối đa 3)", async () => {
+  it("HOM-001: fetch courses và truyền vào HomeContent (tối đa 3)", async () => {
     global.fetch.mockResolvedValue({
       json: () => Promise.resolve([
         { id: 1 }, { id: 2 }, { id: 3 }, { id: 4 },
@@ -43,7 +43,7 @@ describe("Home", () => {
     });
   });
 
-  it("xử lý khi API trả về { results: [] }", async () => {
+  it("HOM-002: xử lý khi API trả về { results: [] }", async () => {
     global.fetch.mockResolvedValue({
       json: () => Promise.resolve({ results: [{ id: 1 }] }),
     });
@@ -53,7 +53,7 @@ describe("Home", () => {
     });
   });
 
-  it("log lỗi khi fetch fail", async () => {
+  it("HOM-003: log lỗi khi fetch fail", async () => {
     const spy = vi.spyOn(console, "error").mockImplementation(() => {});
     global.fetch.mockRejectedValue(new Error("network fail"));
     render(<MemoryRouter><Home /></MemoryRouter>);
@@ -61,11 +61,21 @@ describe("Home", () => {
     spy.mockRestore();
   });
 
-  it("luôn render đủ 4 languages", async () => {
+  it("HOM-004: luôn render đủ 4 languages", async () => {
     global.fetch.mockResolvedValue({ json: () => Promise.resolve([]) });
     render(<MemoryRouter><Home /></MemoryRouter>);
     await waitFor(() => {
       expect(screen.getByTestId("languages-count").textContent).toBe("4");
+    });
+  });
+
+  it("HOM-005: fetch trả về object không có results thì courses = []", async () => {
+    global.fetch.mockResolvedValue({
+      json: () => Promise.resolve({ count: 0 }), 
+    });
+    render(<MemoryRouter><Home /></MemoryRouter>);
+    await waitFor(() => {
+      expect(screen.getByTestId("courses-count").textContent).toBe("0");
     });
   });
 });

@@ -184,8 +184,6 @@ function AboutUsForm() {
           </Row>
         </div>
 
-
-
         <section style={{ textAlign: "center", marginBottom: 60 }}>
           <Title level={1} style={{ fontSize: 45 }}>HỆ THỐNG CƠ SỞ QATH</Title>
           <div style={{ width: 60, height: 4, background: '#1890ff', margin: '0 auto 40px' }}></div>

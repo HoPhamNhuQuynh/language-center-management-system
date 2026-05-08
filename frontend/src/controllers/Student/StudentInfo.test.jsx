@@ -5,6 +5,7 @@ import StudentInfo from "./StudentInfo";
 import {
   studentApi, updateStudentApi, updateStudentAvatarApi, myEnrollmentApi,
 } from "../../services/studentService";
+import { resetPasswordApi, deleteAccountApi } from "../../services/studentService";
 
 vi.mock("../../pages/User/StudentInfoForm", () => ({
   default: (props) => (
@@ -17,6 +18,14 @@ vi.mock("../../pages/User/StudentInfoForm", () => ({
       <button data-testid="btn-save" onClick={props.onSave}>Save</button>
       <button data-testid="btn-close-modal" onClick={() => props.setIsOpen(false)}>Close</button>
       <button data-testid="btn-avatar" onClick={() => props.onAvatarChange(new File(["x"], "avatar.png"))}>Avatar</button>
+      <button data-testid="btn-change-password" onClick={props.onChangePassword}>ChangePassword</button>
+      <button data-testid="btn-delete-account" onClick={props.onDeleteAccount}>DeleteAccount</button>
+      <button data-testid="btn-set-mismatch-password" onClick={() => {
+        props.setPasswordData({ old_password: "old", password: "abc", confirm_password: "xyz" });
+      }}>SetMismatch</button>
+      <button data-testid="btn-set-match-password" onClick={() => {
+        props.setPasswordData({ old_password: "old", password: "abc", confirm_password: "abc" });
+      }}>SetMatch</button>
       {props.courses?.map(c => (
         <div key={c.id} data-testid={`course-${c.id}`}>{c.className}</div>
       ))}
@@ -32,6 +41,9 @@ vi.mock("../../services/studentService", () => ({
   updateStudentApi: vi.fn(),
   updateStudentAvatarApi: vi.fn(),
   myEnrollmentApi: vi.fn(),
+  resetPasswordApi: vi.fn(),
+  deleteAccountApi: vi.fn(),
+
 }));
 
 const mockUser = {
@@ -59,21 +71,21 @@ const mockEnrollments = [
 describe("StudentInfo", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.spyOn(window, "alert").mockImplementation(() => {});
+    vi.spyOn(window, "alert").mockImplementation(() => { });
     studentApi.mockResolvedValue(mockUser);
     myEnrollmentApi.mockResolvedValue(mockEnrollments);
   });
 
   afterEach(() => vi.restoreAllMocks());
 
-  it("hiện Loading khi đang fetch", () => {
-    studentApi.mockReturnValue(new Promise(() => {}));
-    myEnrollmentApi.mockReturnValue(new Promise(() => {}));
+  it("SDI-001: hiện Loading khi đang fetch", () => {
+    studentApi.mockReturnValue(new Promise(() => { }));
+    myEnrollmentApi.mockReturnValue(new Promise(() => { }));
     render(<MemoryRouter><StudentInfo /></MemoryRouter>);
     expect(screen.getByText("Loading...")).toBeInTheDocument();
   });
 
-  it("hiện lỗi khi studentApi fail", async () => {
+  it("SDI-002: hiện lỗi khi studentApi fail", async () => {
     studentApi.mockRejectedValue(new Error("fail"));
     render(<MemoryRouter><StudentInfo /></MemoryRouter>);
     await waitFor(() => {
@@ -81,7 +93,7 @@ describe("StudentInfo", () => {
     });
   });
 
-  it("render đúng fullName và học phí", async () => {
+  it("SDI-003: render đúng fullName và học phí", async () => {
     render(<MemoryRouter><StudentInfo /></MemoryRouter>);
     await waitFor(() => {
       expect(screen.getByTestId("fullname").textContent).toBe("Nguyen Van A");
@@ -90,14 +102,14 @@ describe("StudentInfo", () => {
     });
   });
 
-  it("mở modal khi click Edit", async () => {
+  it("SDI-004: mở modal khi click Edit", async () => {
     render(<MemoryRouter><StudentInfo /></MemoryRouter>);
     await waitFor(() => screen.getByTestId("btn-open-modal"));
     fireEvent.click(screen.getByTestId("btn-open-modal"));
     expect(screen.getByTestId("modal").textContent).toBe("open");
   });
 
-  it("đóng modal khi click Close", async () => {
+  it("SDI-005: đóng modal khi click Close", async () => {
     render(<MemoryRouter><StudentInfo /></MemoryRouter>);
     await waitFor(() => screen.getByTestId("btn-open-modal"));
     fireEvent.click(screen.getByTestId("btn-open-modal"));
@@ -105,7 +117,7 @@ describe("StudentInfo", () => {
     expect(screen.getByTestId("modal").textContent).toBe("closed");
   });
 
-  it("handleSaveProfile gọi updateStudentApi và đóng modal", async () => {
+  it("SDI-006: handleSaveProfile gọi updateStudentApi và đóng modal", async () => {
     updateStudentApi.mockResolvedValue({ ...mockUser, first_name: "Updated" });
     render(<MemoryRouter><StudentInfo /></MemoryRouter>);
     await waitFor(() => screen.getByTestId("btn-open-modal"));
@@ -117,7 +129,7 @@ describe("StudentInfo", () => {
     });
   });
 
-  it("handleSaveProfile alert lỗi khi updateStudentApi fail", async () => {
+  it("SDI-007: handleSaveProfile alert lỗi khi updateStudentApi fail", async () => {
     updateStudentApi.mockRejectedValue({ response: { data: { detail: "err" } } });
     render(<MemoryRouter><StudentInfo /></MemoryRouter>);
     await waitFor(() => screen.getByTestId("btn-open-modal"));
@@ -128,7 +140,7 @@ describe("StudentInfo", () => {
     });
   });
 
-  it("handleAvatarChange gọi updateStudentAvatarApi", async () => {
+  it("SDI-008: handleAvatarChange gọi updateStudentAvatarApi", async () => {
     updateStudentAvatarApi.mockResolvedValue({});
     studentApi
       .mockResolvedValueOnce(mockUser)
@@ -141,7 +153,7 @@ describe("StudentInfo", () => {
     });
   });
 
-  it("handleAvatarChange alert lỗi khi upload fail", async () => {
+  it("SDI-009: handleAvatarChange alert lỗi khi upload fail", async () => {
     updateStudentAvatarApi.mockRejectedValue({ response: { data: { detail: "upload fail" } } });
     render(<MemoryRouter><StudentInfo /></MemoryRouter>);
     await waitFor(() => screen.getByTestId("btn-avatar"));
@@ -151,14 +163,14 @@ describe("StudentInfo", () => {
     });
   });
 
-  it("render course từ enrollment", async () => {
+  it("SDI-010: render course từ enrollment", async () => {
     render(<MemoryRouter><StudentInfo /></MemoryRouter>);
     await waitFor(() => {
       expect(screen.getByTestId("course-1").textContent).toBe("Lớp React");
     });
   });
 
-  it("schedule với day_of_week=8 hiện Chủ nhật", async () => {
+  it("SDI-011: schedule với day_of_week=8 hiện Chủ nhật", async () => {
     myEnrollmentApi.mockResolvedValue([{
       id: 2,
       amount: 0,
@@ -174,6 +186,339 @@ describe("StudentInfo", () => {
     render(<MemoryRouter><StudentInfo /></MemoryRouter>);
     await waitFor(() => {
       expect(screen.getByTestId("course-2")).toBeInTheDocument();
+    });
+  });
+
+  it("SDI-012: handleChangePassword alert khi mật khẩu xác nhận không khớp", async () => {
+    render(<MemoryRouter><StudentInfo /></MemoryRouter>);
+    await waitFor(() => screen.getByTestId("btn-set-mismatch-password"));
+    fireEvent.click(screen.getByTestId("btn-set-mismatch-password"));
+    fireEvent.click(screen.getByTestId("btn-change-password"));
+    await waitFor(() => {
+      expect(window.alert).toHaveBeenCalledWith("Mật khẩu xác nhận không khớp!");
+    });
+  });
+
+  it("SDI-013: handleChangePassword đổi mật khẩu thành công", async () => {
+    resetPasswordApi.mockResolvedValue({});
+    render(<MemoryRouter><StudentInfo /></MemoryRouter>);
+    await waitFor(() => screen.getByTestId("btn-change-password"));
+    fireEvent.click(screen.getByTestId("btn-change-password"));
+    await waitFor(() => {
+      expect(window.alert).toHaveBeenCalled();
+    });
+  });
+
+  it("SDI-014: handleDeleteAccount hủy khi confirm = false", async () => {
+    vi.spyOn(window, "confirm").mockReturnValue(false);
+    render(<MemoryRouter><StudentInfo /></MemoryRouter>);
+    await waitFor(() => screen.getByTestId("btn-delete-account"));
+    fireEvent.click(screen.getByTestId("btn-delete-account"));
+    expect(deleteAccountApi).not.toHaveBeenCalled();
+  });
+
+  it("SDI-015: handleDeleteAccount xóa tài khoản thành công", async () => {
+    vi.spyOn(window, "confirm").mockReturnValue(true);
+    deleteAccountApi.mockResolvedValue({});
+    delete window.location;
+    window.location = { href: "" };
+    render(<MemoryRouter><StudentInfo /></MemoryRouter>);
+    await waitFor(() => screen.getByTestId("btn-delete-account"));
+    fireEvent.click(screen.getByTestId("btn-delete-account"));
+    await waitFor(() => {
+      expect(deleteAccountApi).toHaveBeenCalled();
+      expect(window.location.href).toBe("/login");
+    });
+  });
+
+  it("SDI-016: handleChangePassword alert lỗi old_password từ server", async () => {
+    resetPasswordApi.mockRejectedValue({
+      response: { data: { old_password: ["Mật khẩu cũ không đúng"] } }
+    });
+    render(<MemoryRouter><StudentInfo /></MemoryRouter>);
+    await waitFor(() => screen.getByTestId("btn-set-match-password"));
+    fireEvent.click(screen.getByTestId("btn-set-match-password"));
+    fireEvent.click(screen.getByTestId("btn-change-password"));
+    await waitFor(() => {
+      expect(window.alert).toHaveBeenCalledWith("Mật khẩu cũ không đúng");
+    });
+  });
+
+  it("SDI-017: handleChangePassword alert lỗi password từ server", async () => {
+    resetPasswordApi.mockRejectedValue({
+      response: { data: { password: "Mật khẩu quá ngắn" } }
+    });
+    render(<MemoryRouter><StudentInfo /></MemoryRouter>);
+    await waitFor(() => screen.getByTestId("btn-set-match-password"));
+    fireEvent.click(screen.getByTestId("btn-set-match-password"));
+    fireEvent.click(screen.getByTestId("btn-change-password"));
+    await waitFor(() => {
+      expect(window.alert).toHaveBeenCalledWith("Mật khẩu quá ngắn");
+    });
+  });
+
+  it("SDI-018: handleChangePassword alert lỗi non_field_errors từ server", async () => {
+    resetPasswordApi.mockRejectedValue({
+      response: { data: { non_field_errors: ["Lỗi không xác định"] } }
+    });
+    render(<MemoryRouter><StudentInfo /></MemoryRouter>);
+    await waitFor(() => screen.getByTestId("btn-set-match-password"));
+    fireEvent.click(screen.getByTestId("btn-set-match-password"));
+    fireEvent.click(screen.getByTestId("btn-change-password"));
+    await waitFor(() => {
+      expect(window.alert).toHaveBeenCalledWith("Lỗi không xác định");
+    });
+  });
+
+  it("SDI-019: handleChangePassword alert lỗi dạng string từ server", async () => {
+    resetPasswordApi.mockRejectedValue({
+      response: { data: "Lỗi server" }
+    });
+    render(<MemoryRouter><StudentInfo /></MemoryRouter>);
+    await waitFor(() => screen.getByTestId("btn-set-match-password"));
+    fireEvent.click(screen.getByTestId("btn-set-match-password"));
+    fireEvent.click(screen.getByTestId("btn-change-password"));
+    await waitFor(() => {
+      expect(window.alert).toHaveBeenCalledWith("Lỗi server");
+    });
+  });
+
+  it("SDI-020: handleDeleteAccount alert lỗi khi deleteAccountApi fail", async () => {
+    vi.spyOn(window, "confirm").mockReturnValue(true);
+    deleteAccountApi.mockRejectedValue({ response: { data: { detail: "Không thể xóa" } } });
+    render(<MemoryRouter><StudentInfo /></MemoryRouter>);
+    await waitFor(() => screen.getByTestId("btn-delete-account"));
+    fireEvent.click(screen.getByTestId("btn-delete-account"));
+    await waitFor(() => {
+      expect(window.alert).toHaveBeenCalledWith(expect.stringContaining("Không thể xóa"));
+    });
+  });
+
+  it("SDI-021: handleChangePassword alert lỗi password dạng string", async () => {
+    resetPasswordApi.mockRejectedValue({
+      response: { data: { password: "Mật khẩu quá ngắn" } }
+    });
+    render(<MemoryRouter><StudentInfo /></MemoryRouter>);
+    await waitFor(() => screen.getByTestId("btn-set-match-password"));
+    fireEvent.click(screen.getByTestId("btn-set-match-password"));
+    fireEvent.click(screen.getByTestId("btn-change-password"));
+    await waitFor(() => {
+      expect(window.alert).toHaveBeenCalledWith("Mật khẩu quá ngắn");
+    });
+  });
+
+  it("SDI-022: handleChangePassword alert lỗi non_field_errors dạng string", async () => {
+    resetPasswordApi.mockRejectedValue({
+      response: { data: { non_field_errors: "Lỗi không xác định" } }
+    });
+    render(<MemoryRouter><StudentInfo /></MemoryRouter>);
+    await waitFor(() => screen.getByTestId("btn-set-match-password"));
+    fireEvent.click(screen.getByTestId("btn-set-match-password"));
+    fireEvent.click(screen.getByTestId("btn-change-password"));
+    await waitFor(() => {
+      expect(window.alert).toHaveBeenCalledWith("Lỗi không xác định");
+    });
+  });
+
+  it("SDI-023: handleChangePassword alert lỗi old_password dạng string", async () => {
+    resetPasswordApi.mockRejectedValue({
+      response: { data: { old_password: "Sai mật khẩu cũ" } }
+    });
+    render(<MemoryRouter><StudentInfo /></MemoryRouter>);
+    await waitFor(() => screen.getByTestId("btn-set-match-password"));
+    fireEvent.click(screen.getByTestId("btn-set-match-password"));
+    fireEvent.click(screen.getByTestId("btn-change-password"));
+    await waitFor(() => {
+      expect(window.alert).toHaveBeenCalledWith("Sai mật khẩu cũ");
+    });
+  });
+
+  it("SDI-024: handleChangePassword alert mặc định khi không có response.data", async () => {
+    resetPasswordApi.mockRejectedValue(new Error("Network error"));
+    render(<MemoryRouter><StudentInfo /></MemoryRouter>);
+    await waitFor(() => screen.getByTestId("btn-set-match-password"));
+    fireEvent.click(screen.getByTestId("btn-set-match-password"));
+    fireEvent.click(screen.getByTestId("btn-change-password"));
+    await waitFor(() => {
+      expect(window.alert).toHaveBeenCalledWith("Đổi mật khẩu thất bại!");
+    });
+  });
+
+  it("SDI-025: handleAvatarChange alert lỗi khi không có detail", async () => {
+    updateStudentAvatarApi.mockRejectedValue({ response: { data: {} } });
+    render(<MemoryRouter><StudentInfo /></MemoryRouter>);
+    await waitFor(() => screen.getByTestId("btn-avatar"));
+    fireEvent.click(screen.getByTestId("btn-avatar"));
+    await waitFor(() => {
+      expect(window.alert).toHaveBeenCalledWith(
+        expect.stringContaining("Check console")
+      );
+    });
+  });
+
+  it("SDI-026: enrollment không có classroom thì hiện className là '---'", async () => {
+    myEnrollmentApi.mockResolvedValue([
+      { id: 5, amount: 0, enrollment_status: "active", classroom: null },
+    ]);
+    render(<MemoryRouter><StudentInfo /></MemoryRouter>);
+    await waitFor(() => {
+      expect(screen.getByTestId("course-5")).toBeInTheDocument();
+      expect(screen.getByTestId("course-5").textContent).toBe("---");
+    });
+  });
+
+  it("SDI-027: schedule rỗng hiện 'Chưa có lịch học'", async () => {
+    myEnrollmentApi.mockResolvedValue([
+      {
+        id: 6,
+        amount: 0,
+        enrollment_status: "active",
+        classroom: {
+          id: 20,
+          name: "Lớp không có lịch",
+          course_price: 0,
+          schedules: [],
+          main_teacher: null,
+        },
+      },
+    ]);
+    render(<MemoryRouter><StudentInfo /></MemoryRouter>);
+    await waitFor(() => {
+      expect(screen.getByTestId("course-6")).toBeInTheDocument();
+    });
+  });
+
+  it("SDI-028: handleChangePassword alert lỗi password dạng array từ server", async () => {
+    resetPasswordApi.mockRejectedValue({
+      response: { data: { password: ["Mật khẩu phải có ít nhất 8 ký tự"] } }
+    });
+    render(<MemoryRouter><StudentInfo /></MemoryRouter>);
+    await waitFor(() => screen.getByTestId("btn-set-match-password"));
+    fireEvent.click(screen.getByTestId("btn-set-match-password"));
+    fireEvent.click(screen.getByTestId("btn-change-password"));
+    await waitFor(() => {
+      expect(window.alert).toHaveBeenCalledWith("Mật khẩu phải có ít nhất 8 ký tự");
+    });
+  });
+
+  it("SDI-029: handleChangePassword alert mặc định khi data là object không có key quen", async () => {
+    resetPasswordApi.mockRejectedValue({
+      response: { data: { unknown_field: "some error" } }
+    });
+    render(<MemoryRouter><StudentInfo /></MemoryRouter>);
+    await waitFor(() => screen.getByTestId("btn-set-match-password"));
+    fireEvent.click(screen.getByTestId("btn-set-match-password"));
+    fireEvent.click(screen.getByTestId("btn-change-password"));
+    await waitFor(() => {
+      expect(window.alert).toHaveBeenCalledWith("Đổi mật khẩu thất bại!");
+    });
+  });
+
+  it("SDI-030: classroom.schedules là null thì hiện 'Chưa có lịch học'", async () => {
+    myEnrollmentApi.mockResolvedValue([
+      {
+        id: 7,
+        amount: 0,
+        enrollment_status: "active",
+        classroom: {
+          id: 30,
+          name: "Lớp schedules null",
+          course_price: 0,
+          schedules: null,
+          main_teacher: null,
+        },
+      },
+    ]);
+    render(<MemoryRouter><StudentInfo /></MemoryRouter>);
+    await waitFor(() => {
+      expect(screen.getByTestId("course-7")).toBeInTheDocument();
+    });
+  });
+
+  it("SDI-031: enrollment không có enrollment_status thì status là '---'", async () => {
+    myEnrollmentApi.mockResolvedValue([
+      {
+        id: 8,
+        amount: 0,
+        enrollment_status: undefined,
+        classroom: {
+          id: 40,
+          name: "Lớp no status",
+          course_price: 0,
+          schedules: [],
+          main_teacher: { first_name: "X", last_name: "Y" },
+        },
+      },
+    ]);
+    render(<MemoryRouter><StudentInfo /></MemoryRouter>);
+    await waitFor(() => {
+      expect(screen.getByTestId("course-8")).toBeInTheDocument();
+    });
+  });
+
+  it("SDI-032: day_of_week=8 (Chủ nhật) khi enrollment CÓ main_teacher", async () => {
+    myEnrollmentApi.mockResolvedValue([
+      {
+        id: 9,
+        amount: 100000,
+        enrollment_status: "active",
+        classroom: {
+          id: 50,
+          name: "Lớp Chủ Nhật",
+          course_price: 100000,
+          schedules: [
+            { day_of_week: 8, start_time: "09:00:00", end_time: "11:00:00" },
+            { day_of_week: 2, start_time: "07:00:00", end_time: "09:00:00" },
+          ],
+          main_teacher: { first_name: "Nguyen", last_name: "C" },
+        },
+      },
+    ]);
+    render(<MemoryRouter><StudentInfo /></MemoryRouter>);
+    await waitFor(() => {
+      expect(screen.getByTestId("course-9")).toBeInTheDocument();
+      expect(screen.getByTestId("course-9").textContent).toBe("Lớp Chủ Nhật");
+    });
+  });
+
+  it("SDI-033: enrollment_status là empty string thì status hiện '---'", async () => {
+    myEnrollmentApi.mockResolvedValue([
+      {
+        id: 10,
+        amount: 0,
+        enrollment_status: "",
+        classroom: {
+          id: 60,
+          name: "Lớp empty status",
+          course_price: 0,
+          schedules: [],
+          main_teacher: null,
+        },
+      },
+    ]);
+    render(<MemoryRouter><StudentInfo /></MemoryRouter>);
+    await waitFor(() => {
+      expect(screen.getByTestId("course-10")).toBeInTheDocument();
+    });
+  });
+
+  it("SDI-034: openEditModal điền đúng editData từ userInfo hiện tại", async () => {
+    render(<MemoryRouter><StudentInfo /></MemoryRouter>);
+    await waitFor(() => screen.getByTestId("btn-open-modal"));
+
+    fireEvent.click(screen.getByTestId("btn-open-modal"));
+
+    expect(screen.getByTestId("modal").textContent).toBe("open");
+  });
+
+  it("SDI-035: hiện Failed to load khi myEnrollmentApi fail (userInfo = null)", async () => {
+    studentApi.mockRejectedValue(new Error("server down"));
+    myEnrollmentApi.mockRejectedValue(new Error("server down"));
+
+    render(<MemoryRouter><StudentInfo /></MemoryRouter>);
+
+    await waitFor(() => {
+      expect(screen.getByText("Failed to load user information.")).toBeInTheDocument();
     });
   });
 });

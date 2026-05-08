@@ -42,24 +42,24 @@ describe("Confirm", () => {
     mockLocationState = { data: { id: 1 }, method: "momo", percent: 100 };
   });
 
-  it("render method từ location.state", () => {
+  it("CFM-001: render method từ location.state", () => {
     renderConfirm();
     expect(screen.getByTestId("method").textContent).toBe("momo");
   });
 
-  it("handleSubmit navigate đến /bill-view", () => {
+  it("CFM-002: handleSubmit navigate đến /bill-view", () => {
     renderConfirm();
     fireEvent.click(screen.getByTestId("btn-submit"));
     expect(mockedNavigate).toHaveBeenCalledWith("/bill-view", expect.any(Object));
   });
 
-  it("handleCancel navigate đến /payment", () => {
+  it("CFM-003: handleCancel navigate đến /payment", () => {
     renderConfirm();
     fireEvent.click(screen.getByTestId("btn-cancel"));
     expect(mockedNavigate).toHaveBeenCalledWith("/payment", expect.any(Object));
   });
 
-  it("state null vẫn render không crash", () => {
+  it("CFM-004: state null vẫn render không crash", () => {
     mockLocationState = null;
     renderConfirm();
     expect(screen.getByTestId("btn-submit")).toBeInTheDocument();

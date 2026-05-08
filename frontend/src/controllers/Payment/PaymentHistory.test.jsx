@@ -32,27 +32,27 @@ describe("PaymentHistory", () => {
     myPaymentApi.mockResolvedValue(mockPayments);
   });
 
-  it("hiện Loading khi fetch", () => {
+  it("PMH-001: hiện Loading khi fetch", () => {
     myPaymentApi.mockReturnValue(new Promise(() => {}));
     render(<MemoryRouter><PaymentHistory /></MemoryRouter>);
     expect(screen.getByText("Loading...")).toBeInTheDocument();
   });
 
-  it("render tổng tiền sau khi load", async () => {
+  it("PMH-002: render tổng tiền sau khi load", async () => {
     render(<MemoryRouter><PaymentHistory /></MemoryRouter>);
     await waitFor(() => {
       expect(screen.getByTestId("total-paid").textContent).toContain("500.000");
     });
   });
 
-  it("render đúng số lượng payments", async () => {
+  it("PMH-003: render đúng số lượng payments", async () => {
     render(<MemoryRouter><PaymentHistory /></MemoryRouter>);
     await waitFor(() => {
       expect(screen.getByTestId("payments-count").textContent).toBe("2");
     });
   });
 
-  it("filter theo SUCCESS chỉ còn 1", async () => {
+  it("PMH-004: filter theo SUCCESS chỉ còn 1", async () => {
     render(<MemoryRouter><PaymentHistory /></MemoryRouter>);
     await waitFor(() => screen.getByTestId("btn-filter-success"));
     fireEvent.click(screen.getByTestId("btn-filter-success"));
@@ -61,7 +61,7 @@ describe("PaymentHistory", () => {
     });
   });
 
-  it("clear filter trả về tất cả", async () => {
+  it("PMH-005: clear filter trả về tất cả", async () => {
     render(<MemoryRouter><PaymentHistory /></MemoryRouter>);
     await waitFor(() => screen.getByTestId("btn-filter-success"));
     fireEvent.click(screen.getByTestId("btn-filter-success"));
@@ -71,11 +71,32 @@ describe("PaymentHistory", () => {
     });
   });
 
-  it("log lỗi khi myPaymentApi fail", async () => {
+  it("PMH-006: log lỗi khi myPaymentApi fail", async () => {
     const spy = vi.spyOn(console, "error").mockImplementation(() => {});
     myPaymentApi.mockRejectedValue(new Error("fail"));
     render(<MemoryRouter><PaymentHistory /></MemoryRouter>);
     await waitFor(() => expect(spy).toHaveBeenCalled());
     spy.mockRestore();
+  });
+
+  it("PMH-007: payment có paid_at null thì date hiện '---'", async () => {
+    myPaymentApi.mockResolvedValue([
+      { id: 10, paid_at: null, amount: "200000", classroom: "Lớp X", payment_status: "PENDING" },
+    ]);
+    render(<MemoryRouter><PaymentHistory /></MemoryRouter>);
+    await waitFor(() => {
+      expect(screen.getByTestId("payments-count").textContent).toBe("1");
+      expect(screen.getByTestId("total-paid").textContent).toContain("0");
+    });
+  });
+ 
+  it("PMH-008: amount không hợp lệ thì hiện 0", async () => {
+    myPaymentApi.mockResolvedValue([
+      { id: 11, paid_at: "2024-03-01T00:00:00Z", amount: null, classroom: null, payment_status: "SUCCESS" },
+    ]);
+    render(<MemoryRouter><PaymentHistory /></MemoryRouter>);
+    await waitFor(() => {
+      expect(screen.getByTestId("total-paid").textContent).toContain("0");
+    });
   });
 });

@@ -55,18 +55,16 @@ function StudentInfo() {
           message = data;
         }
       }
-
       alert(message);
     }
   };
 
   const handleDeleteAccount = async () => {
-    const confirmed = window.confirm("Bạn có chắc muốn xóa tài khoản? Hành động này không thể hoàn tác!");
+    const confirmed = window.confirm("Bạn có chắc muốn xóa tài khoản?");
     if (!confirmed) return;
     try {
       await deleteAccountApi();
       alert("Tài khoản đã bị xóa.");
-      // redirect về trang login hoặc home
       window.location.href = "/login";
     } catch (ex) {
       alert("Lỗi: " + JSON.stringify(ex.response?.data));
@@ -163,8 +161,6 @@ function StudentInfo() {
   };
 
   const handleSaveProfile = async () => {
-    console.log("1. State hiện tại (editData):", editData);
-
     const payload = {
       first_name: editData.first_name,
       last_name: editData.last_name,
@@ -172,24 +168,18 @@ function StudentInfo() {
       phone_num: editData.phone_num
     };
 
-    console.log("2. Payload gửi đi (Check cấu trúc profile):", JSON.stringify(payload, null, 2));
-
     try {
       const res = await updateStudentApi(payload);
 
-      console.log("3. Server phản hồi (Response):", res);
-
       if (res) {
-        console.log("4. Kiểm tra tên trong Response:", res.first_name, res.last_name);
-
         setUserInfo(res);
         setIsModalOpen(false);
-        alert("Cập nhật thành công! Check Console để xem dữ liệu mới nhen babi.");
+        alert("Cập nhật thành công!");
       }
     } catch (ex) {
       console.error("❌ LỖI API:");
       console.error("- Status:", ex.response?.status);
-      console.error("- Data lỗi:", JSON.stringify(ex.response?.data, null, 2)); // ← đổi thành JSON.stringify
+      console.error("- Data lỗi:", JSON.stringify(ex.response?.data, null, 2)); 
       alert("Lỗi: " + JSON.stringify(ex.response?.data));
     }
   };

@@ -40,14 +40,14 @@ describe("ResultAcademic", () => {
     mockLocationState = { enrollmentId: "5", classId: 10 };
   });
 
-  it("hiện Loading khi đang fetch", () => {
+  it("RAC-001: hiện Loading khi đang fetch", () => {
     myClassResultApi.mockReturnValue(new Promise(() => {}));
     classDetailApi.mockReturnValue(new Promise(() => {}));
     render(<MemoryRouter><ResultAcademic /></MemoryRouter>);
     expect(screen.getByText("Loading...")).toBeInTheDocument();
   });
 
-  it("render result và classInfo đúng", async () => {
+  it("RAC-002: render result và classInfo đúng", async () => {
     myClassResultApi.mockResolvedValue([
       { enrollment_id: 5, score: 9 },
       { enrollment_id: 6, score: 7 },
@@ -60,7 +60,7 @@ describe("ResultAcademic", () => {
     });
   });
 
-  it("result = null nếu không tìm thấy enrollmentId", async () => {
+  it("RAC-003: result = null nếu không tìm thấy enrollmentId", async () => {
     myClassResultApi.mockResolvedValue([{ enrollment_id: 999 }]);
     classDetailApi.mockResolvedValue({ name: "Lớp X" });
     render(<MemoryRouter><ResultAcademic /></MemoryRouter>);
@@ -69,7 +69,7 @@ describe("ResultAcademic", () => {
     });
   });
 
-  it("log lỗi khi API fail", async () => {
+  it("RAC-004: log lỗi khi API fail", async () => {
     const spy = vi.spyOn(console, "error").mockImplementation(() => {});
     myClassResultApi.mockRejectedValue(new Error("fail"));
     classDetailApi.mockRejectedValue(new Error("fail"));
