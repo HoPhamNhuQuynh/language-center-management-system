@@ -313,7 +313,7 @@ describe("manageService", () => {
 
   // --- Payments ---
   describe("getPayments", () => {
-    it("SER-049 SER-048 gọi đúng endpoint với giá trị mặc định", async () => {
+    it("SER-048 gọi đúng endpoint với giá trị mặc định", async () => {
       Apis.get.mockResolvedValue({ data: { results: [], count: 0 } });
 
       const result = await getPayments();
@@ -325,7 +325,7 @@ describe("manageService", () => {
       expect(result).toEqual({ results: [], count: 0 });
     });
 
-    it("gọi đúng endpoint với đầy đủ tham số", async () => {
+    it("SER-049 gọi đúng endpoint với đầy đủ tham số", async () => {
       Apis.get.mockResolvedValue({ data: { results: [{ id: 1 }], count: 1 } });
 
       const result = await getPayments(2, "john", "paid");
