@@ -34,13 +34,9 @@ describe("ProtectedRoute", () => {
       getRole.mockReturnValue(null);
     });
 
-    it("redirect về trang đăng nhập", () => {
+    it("NAV-001 redirect về trang đăng nhập", () => {
       renderProtectedRoute(["Admin"]);
       expect(screen.getByText("Trang Login")).toBeInTheDocument();
-    });
-
-    it("không hiển thị nội dung trang được bảo vệ", () => {
-      renderProtectedRoute(["Admin"]);
       expect(screen.queryByText("Trang được bảo vệ")).not.toBeInTheDocument();
     });
   });
@@ -51,12 +47,7 @@ describe("ProtectedRoute", () => {
       getRole.mockReturnValue("Admin");
     });
 
-    it("hiển thị nội dung trang được bảo vệ", () => {
-      renderProtectedRoute(["Admin"]);
-      expect(screen.getByText("Trang được bảo vệ")).toBeInTheDocument();
-    });
-
-    it("cho vào khi role nằm trong danh sách allowedRoles", () => {
+    it("NAV-002 cho vào khi role nằm trong danh sách allowedRoles", () => {
       renderProtectedRoute(["Admin", "Teacher"]);
       expect(screen.getByText("Trang được bảo vệ")).toBeInTheDocument();
     });
@@ -68,13 +59,9 @@ describe("ProtectedRoute", () => {
       getRole.mockReturnValue("Student");
     });
 
-    it("redirect về trang chủ khi không đủ quyền", () => {
+    it("NAV-003 redirect về trang chủ khi không đủ quyền", () => {
       renderProtectedRoute(["Admin"]);
       expect(screen.getByText("Trang chủ")).toBeInTheDocument();
-    });
-
-    it("không hiển thị nội dung trang được bảo vệ", () => {
-      renderProtectedRoute(["Admin"]);
       expect(screen.queryByText("Trang được bảo vệ")).not.toBeInTheDocument();
     });
   });
@@ -85,7 +72,7 @@ describe("ProtectedRoute", () => {
       getRole.mockReturnValue("Student");
     });
 
-    it("cho vào bất kể role khi không có allowedRoles", () => {
+    it("NAV-004 cho vào bất kể role khi không có allowedRoles", () => {
       renderProtectedRoute(undefined);
       expect(screen.getByText("Trang được bảo vệ")).toBeInTheDocument();
     });

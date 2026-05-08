@@ -38,8 +38,8 @@ const CourseManagement = () => {
 
     const loadCourses = async() => {
         let res = await getCourses();
-        setCourses(res);
-        console.info(res);
+        setCourses(res.results);
+        console.info(res.results);
     }
 
     const loadLevels = async () => {

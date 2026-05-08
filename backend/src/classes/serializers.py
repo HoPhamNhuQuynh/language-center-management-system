@@ -256,11 +256,32 @@ class SessionSerializer(serializers.ModelSerializer):
     def validate(self, data):
         end_time = data.get("end_time")
         start_time = data.get("start_time")
+        room = data.get("room")
+        date = data.get("date")
 
         if end_time and start_time and end_time <= start_time:
             raise serializers.ValidationError(
                 {"end_time": "Giờ kết thúc phải lớn hơn giờ bắt đầu."}
             )
+        
+        if room and date and start_time and end_time:
+            qs = Session.objects.filter(
+                room=room,
+                date=date,
+                start_time__lt=end_time,
+                end_time__gt=start_time,
+            )
+            if self.instance:
+                qs = qs.exclude(pk=self.instance.pk)
+
+            if qs.exists():
+                conflicting = qs.first()
+                raise serializers.ValidationError(
+                    f"Phòng {room.name} đã bị trùng lịch vào ngày {date} "
+                    f"({start_time.strftime('%H:%M')}-{end_time.strftime('%H:%M')}) "
+                    f"với buổi học của lớp \"{conflicting.schedule.classroom.name}\"."
+                )
+        
         if self.instance:
             classroom = self.instance.schedule.classroom
         else:

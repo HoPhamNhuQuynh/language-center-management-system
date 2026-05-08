@@ -30,7 +30,7 @@ describe("PublicRoute", () => {
     vi.clearAllMocks();
   });
 
-  it("hiển thị trang đăng nhập khi chưa đăng nhập", () => {
+  it("NAV-005 hiển thị trang đăng nhập khi chưa đăng nhập", () => {
     getAccessToken.mockReturnValue(null);
     getRole.mockReturnValue(null);
 
@@ -38,7 +38,7 @@ describe("PublicRoute", () => {
     expect(screen.getByText("Trang Login")).toBeInTheDocument();
   });
 
-  it("redirect Admin về dashboard", () => {
+  it("NAV-006 redirect Admin về dashboard", () => {
     getAccessToken.mockReturnValue("acc_123");
     getRole.mockReturnValue("Admin");
 
@@ -48,7 +48,7 @@ describe("PublicRoute", () => {
     expect(screen.queryByText("Trang Login")).not.toBeInTheDocument();
   });
 
-  it("redirect Teacher về trang điểm danh", () => {
+  it("NAV-007 redirect Teacher về trang điểm danh", () => {
     getAccessToken.mockReturnValue("acc_123");
     getRole.mockReturnValue("Teacher");
 
@@ -57,7 +57,7 @@ describe("PublicRoute", () => {
     expect(screen.getByText("Trang Attendance")).toBeInTheDocument();
   });
 
-  it("redirect Student về trang chủ", () => {
+  it("NAV-008 redirect Student về trang chủ", () => {
     getAccessToken.mockReturnValue("acc_123");
     getRole.mockReturnValue("Student");
 
@@ -66,7 +66,7 @@ describe("PublicRoute", () => {
     expect(screen.getByText("Trang chủ")).toBeInTheDocument();
   });
 
-  it("redirect về trang chủ khi role không xác định", () => {
+  it("NAV-009 redirect về trang chủ khi role không xác định", () => {
     getAccessToken.mockReturnValue("acc_123");
     getRole.mockReturnValue(null);
 

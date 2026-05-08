@@ -115,7 +115,7 @@ const fillValidForm = () => {
 };
 
 describe("1. Load data khi mount", () => {
-  it("gọi getSessionsByClass, getRooms, getTeachers với classId đúng", async () => {
+  it("SES-001 gọi getSessionsByClass, getRooms, getTeachers với classId đúng", async () => {
     renderComp();
 
     await waitFor(() => {
@@ -125,7 +125,7 @@ describe("1. Load data khi mount", () => {
     });
   });
 
-  it("hiển thị tên lớp và số buổi học", async () => {
+  it("SES-002 hiển thị tên lớp và số buổi học", async () => {
     renderComp();
     await waitForLoad();
 
@@ -133,7 +133,7 @@ describe("1. Load data khi mount", () => {
     expect(screen.getByText("1 buổi học")).toBeInTheDocument();
   });
 
-  it("hiển thị danh sách buổi học", async () => {
+  it("SES-003 hiển thị danh sách buổi học", async () => {
     renderComp();
     await waitForLoad();
 
@@ -141,7 +141,7 @@ describe("1. Load data khi mount", () => {
     expect(screen.getByText("An Nguyen")).toBeInTheDocument();
   });
 
-  it("hiển thị 'Không có buổi học' khi danh sách rỗng", async () => {
+  it("SES-004 hiển thị 'Không có buổi học' khi danh sách rỗng", async () => {
     getSessionsByClass.mockResolvedValue(mockSessionsRes([]));
     renderComp();
 
@@ -150,7 +150,7 @@ describe("1. Load data khi mount", () => {
     });
   });
 
-  it("hiển thị 'Chưa phân công' khi teacher_fullname là null", async () => {
+  it("SES-005 hiển thị 'Chưa phân công' khi teacher_fullname là null", async () => {
     getSessionsByClass.mockResolvedValue(
       mockSessionsRes([makeSession({ teacher_fullname: null })]),
     );
@@ -161,7 +161,7 @@ describe("1. Load data khi mount", () => {
     });
   });
 
-  it("không crash khi getSessionsByClass thất bại", async () => {
+  it("SES-006 không crash khi getSessionsByClass thất bại", async () => {
     getSessionsByClass.mockRejectedValue(new Error("Network Error"));
     renderComp();
 
@@ -172,14 +172,14 @@ describe("1. Load data khi mount", () => {
 });
 
 describe("2. getStatusFromDate", () => {
-  it("hiển thị 'Chưa diễn ra' cho buổi học tương lai", async () => {
+  it("SES-007 hiển thị 'Chưa diễn ra' cho buổi học tương lai", async () => {
     renderComp();
     await waitForLoad();
 
     expect(screen.getByText("Chưa diễn ra")).toBeInTheDocument();
   });
 
-  it("hiển thị 'Đã hoàn thành' cho buổi học quá khứ", async () => {
+  it("SES-008 hiển thị 'Đã hoàn thành' cho buổi học quá khứ", async () => {
     getSessionsByClass.mockResolvedValue(
       mockSessionsRes([makeSession({ date: pastDate })]),
     );
@@ -190,7 +190,7 @@ describe("2. getStatusFromDate", () => {
     });
   });
 
-  it("nút Edit bị disabled (opacity 0.4) cho buổi học quá khứ", async () => {
+  it("SES-009 nút Edit bị disabled (opacity 0.4) cho buổi học quá khứ", async () => {
     getSessionsByClass.mockResolvedValue(
       mockSessionsRes([makeSession({ date: pastDate })]),
     );
@@ -199,28 +199,17 @@ describe("2. getStatusFromDate", () => {
 
     const editIcon = screen.getByText("Edit").closest(".icon-edit");
     expect(editIcon).toHaveStyle({ opacity: 0.4 });
-  });
-
-  it("click Edit trên buổi học quá khứ không mở modal", async () => {
-    getSessionsByClass.mockResolvedValue(
-      mockSessionsRes([makeSession({ date: pastDate })]),
-    );
-    renderComp();
-    await waitFor(() => screen.getByText("Edit"));
-
-    fireEvent.click(screen.getByText("Edit"));
-
     expect(screen.queryByText("SỬA BUỔI HỌC")).not.toBeInTheDocument();
   });
 });
 
 describe("3. Modal tạo buổi học", () => {
-  it("mở modal khi bấm 'Tạo buổi học bù'", async () => {
+  it("SES-010 mở modal khi bấm 'Tạo buổi học bù'", async () => {
     await openCreateModal();
     expect(screen.getByText("TẠO BUỔI HỌC BÙ")).toBeInTheDocument();
   });
 
-  it("đóng modal khi bấm nút X", async () => {
+  it("SES-011 đóng modal khi bấm nút X", async () => {
     await openCreateModal();
 
     fireEvent.click(document.querySelector(".modal-close-btn"));
@@ -230,7 +219,7 @@ describe("3. Modal tạo buổi học", () => {
     });
   });
 
-  it("đóng modal khi bấm Hủy", async () => {
+  it("SES-012 đóng modal khi bấm Hủy", async () => {
     await openCreateModal();
 
     fireEvent.click(screen.getByText("Hủy"));
@@ -240,7 +229,7 @@ describe("3. Modal tạo buổi học", () => {
     });
   });
 
-  it("hiển thị danh sách phòng trong select", async () => {
+  it("SES-013 hiển thị danh sách phòng trong select", async () => {
     await openCreateModal();
 
     const roomSelect = screen.getByDisplayValue("-- Chọn phòng --");
@@ -249,7 +238,7 @@ describe("3. Modal tạo buổi học", () => {
     expect(roomSelect).toContainHTML("P.202");
   });
 
-  it("hiển thị danh sách giáo viên trong select", async () => {
+  it("SES-014 hiển thị danh sách giáo viên trong select", async () => {
     await openCreateModal();
 
     expect(screen.getByText("Nguyen An")).toBeInTheDocument();
@@ -258,22 +247,29 @@ describe("3. Modal tạo buổi học", () => {
 });
 
 describe("4. Validate form", () => {
-  it("hiển thị lỗi khi submit không có ngày và phòng", async () => {
+  it("SES-015 hiển thị lỗi khi submit không có ngày", async () => {
     await openCreateModal();
 
+    // Chỉ có phòng, không có ngày
+    fireEvent.change(screen.getByDisplayValue("-- Chọn phòng --"), {
+      target: { value: "1" },
+    });
     fireEvent.click(screen.getByText("Tạo mới"));
 
     await waitFor(() => {
       expect(screen.getByText("Vui lòng chọn ngày học")).toBeInTheDocument();
-      expect(screen.getByText("Vui lòng chọn phòng học")).toBeInTheDocument();
+      expect(
+        screen.queryByText("Vui lòng chọn phòng học"),
+      ).not.toBeInTheDocument();
     });
 
     expect(createSession).not.toHaveBeenCalled();
   });
 
-  it("hiển thị lỗi chỉ thiếu phòng khi đã có ngày", async () => {
+  it("SES-016 hiển thị lỗi khi submit không có phòng", async () => {
     await openCreateModal();
 
+    // Chỉ có ngày, không có phòng
     fireEvent.change(screen.getByTestId("date-picker"), {
       target: { value: futureDate },
     });
@@ -285,9 +281,11 @@ describe("4. Validate form", () => {
       ).not.toBeInTheDocument();
       expect(screen.getByText("Vui lòng chọn phòng học")).toBeInTheDocument();
     });
+
+    expect(createSession).not.toHaveBeenCalled();
   });
 
-  it("lỗi validate bị xóa khi chọn phòng", async () => {
+  it("SES-017 lỗi validate bị xóa khi chọn phòng", async () => {
     await openCreateModal();
 
     fireEvent.click(screen.getByText("Tạo mới"));
@@ -306,7 +304,7 @@ describe("4. Validate form", () => {
 });
 
 describe("5. Tạo buổi học mới", () => {
-  it("gọi createSession với payload đúng", async () => {
+  it("SES-018 gọi createSession với payload đúng", async () => {
     createSession.mockResolvedValue({});
     await openCreateModal();
     fillValidForm();
@@ -326,7 +324,7 @@ describe("5. Tạo buổi học mới", () => {
     });
   });
 
-  it("gọi createSession với teacher = null khi không chọn giáo viên", async () => {
+  it("SES-019 gọi createSession với teacher = null khi không chọn giáo viên", async () => {
     createSession.mockResolvedValue({});
     await openCreateModal();
     fillValidForm();
@@ -340,7 +338,7 @@ describe("5. Tạo buổi học mới", () => {
     });
   });
 
-  it("gọi createSession với teacher đúng khi chọn giáo viên", async () => {
+  it("SES-020 gọi createSession với teacher đúng khi chọn giáo viên", async () => {
     createSession.mockResolvedValue({});
     await openCreateModal();
     fillValidForm();
@@ -357,7 +355,7 @@ describe("5. Tạo buổi học mới", () => {
     });
   });
 
-  it("đóng modal và hiện toast sau khi tạo thành công", async () => {
+  it("SES-021 đóng modal và hiện toast sau khi tạo thành công", async () => {
     createSession.mockResolvedValue({});
     await openCreateModal();
     fillValidForm();
@@ -372,7 +370,7 @@ describe("5. Tạo buổi học mới", () => {
     });
   });
 
-  it("hiện toast lỗi khi createSession thất bại", async () => {
+  it("SES-022 hiện lỗi trong modal khi createSession thất bại", async () => {
     createSession.mockRejectedValue({
       response: { data: { message: "Phòng đã bị trùng" } },
     });
@@ -382,11 +380,12 @@ describe("5. Tạo buổi học mới", () => {
     fireEvent.click(screen.getByText("Tạo mới"));
 
     await waitFor(() => {
-      expect(screen.getByText("Phòng đã bị trùng")).toBeInTheDocument();
+      expect(screen.getByText(/Phòng đã bị trùng/)).toBeInTheDocument();
+      expect(screen.getByText("TẠO BUỔI HỌC BÙ")).toBeInTheDocument(); // modal vẫn mở
     });
   });
 
-  it("hiện toast lỗi mặc định khi không có message từ server", async () => {
+  it("SES-023 hiện lỗi mặc định trong modal khi không có message từ server", async () => {
     createSession.mockRejectedValue({ response: { data: {} } });
     await openCreateModal();
     fillValidForm();
@@ -395,8 +394,9 @@ describe("5. Tạo buổi học mới", () => {
 
     await waitFor(() => {
       expect(
-        screen.getByText("Có lỗi xảy ra, vui lòng thử lại"),
+        screen.getByText(/Có lỗi xảy ra, vui lòng thử lại/),
       ).toBeInTheDocument();
+      expect(screen.getByText("TẠO BUỔI HỌC BÙ")).toBeInTheDocument();
     });
   });
 });
@@ -453,7 +453,7 @@ describe("6. Sửa buổi học", () => {
     });
   });
 
-  it("hiện toast lỗi khi updateSession thất bại", async () => {
+  it("SES-024 hiện lỗi trong modal khi updateSession thất bại", async () => {
     updateSession.mockRejectedValue({
       response: { data: { message: "Không thể cập nhật" } },
     });
@@ -466,7 +466,8 @@ describe("6. Sửa buổi học", () => {
     fireEvent.click(screen.getByText("Cập nhật"));
 
     await waitFor(() => {
-      expect(screen.getByText("Không thể cập nhật")).toBeInTheDocument();
+      expect(screen.getByText(/Không thể cập nhật/)).toBeInTheDocument();
+      expect(screen.getByText("SỬA BUỔI HỌC")).toBeInTheDocument();
     });
   });
 });

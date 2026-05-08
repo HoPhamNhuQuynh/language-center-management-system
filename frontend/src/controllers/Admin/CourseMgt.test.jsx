@@ -67,12 +67,12 @@ const renderComponent = () => render(<CourseManagement />);
 
 beforeEach(() => {
   vi.clearAllMocks();
-  getCourses.mockResolvedValue(mockCourses);
+  getCourses.mockResolvedValue({ results: mockCourses });
   getLevels.mockResolvedValue(mockLevels);
 });
 
 describe("1. Render & load data", () => {
-  it("gọi getCourses và getLevels khi mount", async () => {
+  it("COU-001 gọi getCourses và getLevels khi mount", async () => {
     renderComponent();
 
     await waitFor(() => {
@@ -81,7 +81,7 @@ describe("1. Render & load data", () => {
     });
   });
 
-  it("hiển thị danh sách khóa học sau khi load", async () => {
+  it("COU-002 hiển thị danh sách khóa học sau khi load", async () => {
     renderComponent();
 
     await waitFor(() => {
@@ -90,19 +90,12 @@ describe("1. Render & load data", () => {
     });
   });
 
-  it("hiển thị trạng thái đúng với từng khóa học", async () => {
+  it("COU-003 hiển thị trạng thái đúng với từng khóa học", async () => {
     renderComponent();
 
     await waitFor(() => {
       expect(screen.getByText("Đang hoạt động")).toBeInTheDocument();
       expect(screen.getByText("Không hoạt động")).toBeInTheDocument();
-    });
-  });
-
-  it("hiển thị level_name đúng", async () => {
-    renderComponent();
-
-    await waitFor(() => {
       expect(screen.getByText("Beginner")).toBeInTheDocument();
       expect(screen.getByText("Intermediate")).toBeInTheDocument();
     });
@@ -117,12 +110,14 @@ describe("2. Validate form", () => {
     await waitFor(() => screen.getByText("THÊM KHÓA HỌC MỚI"));
   };
 
-  it("hiển thị tất cả lỗi khi submit form rỗng", async () => {
+  it("COU-004 hiển thị tất cả lỗi khi submit form rỗng", async () => {
     await openModal();
     fireEvent.click(screen.getByText("Lưu"));
 
     await waitFor(() => {
-      expect(screen.getByText("Vui lòng nhập tên khóa học")).toBeInTheDocument();
+      expect(
+        screen.getByText("Vui lòng nhập tên khóa học"),
+      ).toBeInTheDocument();
       expect(screen.getByText("Vui lòng chọn cấp độ")).toBeInTheDocument();
       expect(screen.getByText("Vui lòng nhập mô tả")).toBeInTheDocument();
       expect(screen.getByText("Vui lòng nhập học phí")).toBeInTheDocument();
@@ -132,42 +127,112 @@ describe("2. Validate form", () => {
     expect(createCourse).not.toHaveBeenCalled();
   });
 
-  it("lỗi học phí khi nhập dưới 2 triệu", async () => {
+  it("COU-005 lỗi học phí khi nhập dưới 2 triệu", async () => {
     await openModal();
 
-    const priceInput = document.querySelector('input[name="price"]');
-    fireEvent.change(priceInput, { target: { value: "1000000" } });
+    // Nhập đầy đủ các trường hợp lệ
+    fireEvent.change(document.querySelector('input[name="name"]'), {
+      target: { value: "IELTS Basic" },
+    });
+
+    fireEvent.change(document.querySelector('select[name="level"]'), {
+      target: { value: "1" },
+    });
+
+    fireEvent.change(document.querySelector('textarea[name="description"]'), {
+      target: { value: "Mô tả khóa học" },
+    });
+
+    fireEvent.change(document.querySelector('input[name="total_sessions"]'), {
+      target: { value: "20" },
+    });
+
+    // Chỉ để học phí sai
+    fireEvent.change(document.querySelector('input[name="price"]'), {
+      target: { value: "1000000" },
+    });
+
     fireEvent.click(screen.getByText("Lưu"));
 
     await waitFor(() => {
-      expect(screen.getByText("Học phí tối thiểu là 2 triệu VND")).toBeInTheDocument();
+      expect(
+        screen.getByText("Học phí tối thiểu là 2 triệu VND"),
+      ).toBeInTheDocument();
     });
+
+    expect(createCourse).not.toHaveBeenCalled();
   });
 
-  it("lỗi số buổi khi nhập dưới 10", async () => {
+  it("COU-006 lỗi số buổi khi nhập dưới 10", async () => {
     await openModal();
 
+    // Nhập đầy đủ các trường hợp lệ
+    fireEvent.change(document.querySelector('input[name="name"]'), {
+      target: { value: "IELTS Basic" },
+    });
+
+    fireEvent.change(document.querySelector('select[name="level"]'), {
+      target: { value: "1" },
+    });
+
+    fireEvent.change(document.querySelector('textarea[name="description"]'), {
+      target: { value: "Mô tả khóa học" },
+    });
+
+    fireEvent.change(document.querySelector('input[name="price"]'), {
+      target: { value: "3000000" },
+    });
+
+    // Chỉ để số buổi sai
     fireEvent.change(document.querySelector('input[name="total_sessions"]'), {
       target: { value: "5" },
     });
+
     fireEvent.click(screen.getByText("Lưu"));
 
     await waitFor(() => {
-      expect(screen.getByText("Số buổi học phải từ 10 đến 30 buổi")).toBeInTheDocument();
+      expect(
+        screen.getByText("Số buổi học phải từ 10 đến 30 buổi"),
+      ).toBeInTheDocument();
     });
+
+    expect(createCourse).not.toHaveBeenCalled();
   });
 
-  it("lỗi số buổi khi nhập trên 30", async () => {
+  it("COU-007 lỗi số buổi khi nhập trên 30", async () => {
     await openModal();
 
+    // Nhập đầy đủ các trường hợp lệ
+    fireEvent.change(document.querySelector('input[name="name"]'), {
+      target: { value: "IELTS Basic" },
+    });
+
+    fireEvent.change(document.querySelector('select[name="level"]'), {
+      target: { value: "1" },
+    });
+
+    fireEvent.change(document.querySelector('textarea[name="description"]'), {
+      target: { value: "Mô tả khóa học" },
+    });
+
+    fireEvent.change(document.querySelector('input[name="price"]'), {
+      target: { value: "3000000" },
+    });
+
+    // Chỉ để số buổi sai
     fireEvent.change(document.querySelector('input[name="total_sessions"]'), {
       target: { value: "35" },
     });
+
     fireEvent.click(screen.getByText("Lưu"));
 
     await waitFor(() => {
-      expect(screen.getByText("Số buổi học phải từ 10 đến 30 buổi")).toBeInTheDocument();
+      expect(
+        screen.getByText("Số buổi học phải từ 10 đến 30 buổi"),
+      ).toBeInTheDocument();
     });
+
+    expect(createCourse).not.toHaveBeenCalled();
   });
 });
 
@@ -198,7 +263,7 @@ describe("3. Tạo khóa học mới", () => {
     });
   };
 
-  it("gọi createCourse với FormData khi form hợp lệ", async () => {
+  it("COU-008 gọi createCourse với FormData khi form hợp lệ", async () => {
     createCourse.mockResolvedValue({});
     await fillValidForm();
 
@@ -210,7 +275,7 @@ describe("3. Tạo khóa học mới", () => {
     });
   });
 
-  it("đóng modal sau khi tạo thành công", async () => {
+  it("COU-009 đóng modal sau khi tạo thành công", async () => {
     createCourse.mockResolvedValue({});
     await fillValidForm();
 
@@ -221,7 +286,7 @@ describe("3. Tạo khóa học mới", () => {
     });
   });
 
-  it("hiển thị lỗi general khi API trả về lỗi object", async () => {
+  it("COU-010 hiển thị lỗi general khi API trả về lỗi object", async () => {
     createCourse.mockRejectedValue({
       response: { data: { name: ["Tên đã tồn tại"] } },
     });
@@ -234,7 +299,7 @@ describe("3. Tạo khóa học mới", () => {
     });
   });
 
-  it("hiển thị lỗi general khi API trả về lỗi array", async () => {
+  it("COU-011 hiển thị lỗi general khi API trả về lỗi array", async () => {
     createCourse.mockRejectedValue({
       response: { data: ["Dữ liệu không hợp lệ"] },
     });
@@ -249,11 +314,11 @@ describe("3. Tạo khóa học mới", () => {
 });
 
 describe("4. Sửa khóa học", () => {
-  it("mở modal sửa với dữ liệu đúng của khóa học được chọn", async () => {
+  it("COU-012 mở modal sửa với dữ liệu đúng của khóa học được chọn", async () => {
     renderComponent();
     await waitFor(() => screen.getAllByText("Edit"));
 
-    fireEvent.click(screen.getAllByText("Edit")[0]); 
+    fireEvent.click(screen.getAllByText("Edit")[0]);
 
     await waitFor(() => {
       expect(screen.getByText("SỬA KHÓA HỌC")).toBeInTheDocument();
@@ -266,7 +331,7 @@ describe("4. Sửa khóa học", () => {
     });
   });
 
-  it("gọi updateCourse đúng id khi lưu thành công", async () => {
+  it("COU-013 gọi updateCourse đúng id khi lưu thành công", async () => {
     updateCourse.mockResolvedValue({});
     renderComponent();
     await waitFor(() => screen.getAllByText("Edit"));
@@ -285,12 +350,13 @@ describe("4. Sửa khóa học", () => {
       expect(
         screen.getByText("Cập nhật khóa học thành công!"),
       ).toBeInTheDocument();
+      expect(screen.queryByText("SỬA KHÓA HỌC")).not.toBeInTheDocument();
     });
   });
 });
 
 describe("5. Xóa khóa học", () => {
-  it("mở modal xác nhận với tên đúng khi bấm Delete", async () => {
+  it("COU-014 mở modal xác nhận với tên đúng khi bấm Delete", async () => {
     renderComponent();
     await waitFor(() => screen.getAllByText("Delete"));
 
@@ -302,7 +368,7 @@ describe("5. Xóa khóa học", () => {
     });
   });
 
-  it("click Hủy, đóng modal, không gọi deleteCourse", async () => {
+  it("COU-015 click Hủy, đóng modal, không gọi deleteCourse", async () => {
     renderComponent();
     await waitFor(() => screen.getAllByText("Delete"));
 
@@ -317,7 +383,7 @@ describe("5. Xóa khóa học", () => {
     expect(deleteCourse).not.toHaveBeenCalled();
   });
 
-  it("xác nhận xóa thành công và gọi deleteCourse, hiện toast", async () => {
+  it("COU-016 xác nhận xóa thành công và gọi deleteCourse, hiện toast", async () => {
     deleteCourse.mockResolvedValue({});
     renderComponent();
     await waitFor(() => screen.getAllByText("Delete"));
@@ -329,11 +395,12 @@ describe("5. Xóa khóa học", () => {
 
     await waitFor(() => {
       expect(deleteCourse).toHaveBeenCalledWith(1);
+      expect(screen.queryByText("Xác nhận xóa")).not.toBeInTheDocument();
       expect(screen.getByText("Xóa khóa học thành công!")).toBeInTheDocument();
     });
   });
 
-  it("xóa thất bại thì hiện lỗi trong modal, không đóng", async () => {
+  it("COU-017 xóa thất bại thì hiện lỗi trong modal, không đóng", async () => {
     deleteCourse.mockRejectedValue({
       response: { data: ["Khóa học đang có lớp học"] },
     });
@@ -353,7 +420,7 @@ describe("5. Xóa khóa học", () => {
 });
 
 describe("6. Đóng modal & reset form", () => {
-  it("bấm Hủy thì đóng modal và reset form", async () => {
+  it("COU-018 bấm Hủy thì đóng modal và reset form", async () => {
     renderComponent();
     await waitFor(() => screen.getByText("Thêm"));
 
@@ -376,7 +443,7 @@ describe("6. Đóng modal & reset form", () => {
     });
   });
 
-  it("bấm nút X thì đóng modal", async () => {
+  it("COU-019 bấm nút X thì đóng modal", async () => {
     renderComponent();
     await waitFor(() => screen.getByText("Thêm"));
 
@@ -390,7 +457,7 @@ describe("6. Đóng modal & reset form", () => {
     });
   });
 
-  it("lỗi validate bị xóa khi bắt đầu nhập lại", async () => {
+  it("COU-020 lỗi validate bị xóa khi bắt đầu nhập lại", async () => {
     renderComponent();
     await waitFor(() => screen.getByText("Thêm"));
 
@@ -410,14 +477,15 @@ describe("6. Đóng modal & reset form", () => {
 
     await waitFor(() => {
       expect(
-        screen.queryByText("Vui lòng nhập tên khóa học")).not.toBeInTheDocument();
+        screen.queryByText("Vui lòng nhập tên khóa học"),
+      ).not.toBeInTheDocument();
     });
   });
 });
 
 describe("7. Toast tự ẩn sau 3 giây", () => {
-  it("toast biến mất sau 3 giây", async () => {
-    vi.useFakeTimers({ shouldAdvanceTime: true }); 
+  it("COU-021 toast biến mất sau 3 giây", async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
 
     deleteCourse.mockResolvedValue({});
 
@@ -432,7 +500,7 @@ describe("7. Toast tự ẩn sau 3 giây", () => {
       expect(screen.getByText("Xóa khóa học thành công!")).toBeInTheDocument(),
     );
 
-    await act(async () => {
+    await act(async () => { // tua nhanh 3 giây để test
       vi.advanceTimersByTime(3000);
     });
 

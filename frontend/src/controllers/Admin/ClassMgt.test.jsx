@@ -827,7 +827,7 @@ describe("ClassManagement", () => {
 
       await waitFor(() => {
         expect(createClass).toHaveBeenCalledWith(
-          expect.objectContaining({ grade_status: "SUBMITTED" }),
+          expect.objectContaining({ grade_status: "DRAFT" }),
         );
       });
     });

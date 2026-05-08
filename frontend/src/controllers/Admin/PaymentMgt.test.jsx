@@ -64,24 +64,17 @@ beforeEach(() => {
 
 describe("PaymentManagement", () => {
   describe("1. Load dữ liệu", () => {
-    it("gọi getPayments khi mount với tham số mặc định", async () => {
+    it("PAY-001 gọi getPayments khi mount với tham số mặc định, hiển thị danh sách payment sau khi load", async () => {
       render(<PaymentManagement />);
 
       await waitFor(() => {
         expect(getPayments).toHaveBeenCalledWith(1, "", "");
-      });
-    });
-
-    it("hiển thị danh sách payment sau khi load", async () => {
-      render(<PaymentManagement />);
-
-      await waitFor(() => {
         expect(screen.getByText("Nguyen Van A")).toBeInTheDocument();
         expect(screen.getByText("Tran Thi B")).toBeInTheDocument();
       });
     });
 
-    it("hiển thị đúng các trường dữ liệu", async () => {
+    it("PAY-002 hiển thị đúng các trường dữ liệu", async () => {
       render(<PaymentManagement />);
 
       await waitFor(() => {
@@ -94,7 +87,7 @@ describe("PaymentManagement", () => {
       });
     });
 
-    it("hiển thị — khi paid_at là null", async () => {
+    it("PAY-003 hiển thị — khi paid_at là null", async () => {
       render(<PaymentManagement />);
 
       await waitFor(() => {
@@ -102,7 +95,7 @@ describe("PaymentManagement", () => {
       });
     });
 
-    it("không crash khi getPayments thất bại", async () => {
+    it("PAY-004 không crash khi getPayments thất bại", async () => {
       getPayments.mockRejectedValue(new Error("Network error"));
       render(<PaymentManagement />);
 
@@ -115,7 +108,7 @@ describe("PaymentManagement", () => {
   });
 
   describe("2. Tìm kiếm (debounce)", () => {
-    it("gọi getPayments với keyword sau 500ms debounce", async () => {
+    it("PAY-005 gọi getPayments với keyword sau 500ms debounce", async () => {
       vi.useFakeTimers({ shouldAdvanceTime: true });
       render(<PaymentManagement />);
 
@@ -142,7 +135,7 @@ describe("PaymentManagement", () => {
       vi.useRealTimers();
     });
 
-    it("reset về trang 1 khi nhập keyword", async () => {
+    it("PAY-006 reset về trang 1 khi nhập keyword", async () => {
       vi.useFakeTimers({ shouldAdvanceTime: true });
       getPayments.mockResolvedValue({ results: mockPayments, count: 40 });
       render(<PaymentManagement />);
@@ -153,7 +146,7 @@ describe("PaymentManagement", () => {
       fireEvent.click(screen.getByRole("button", { name: "2" }));
       await waitFor(() => expect(getPayments).toHaveBeenCalledWith(2, "", ""));
 
-      // Nhập keyword → reset về trang 1
+      // Nhập keyword thì reset về trang 1
       fireEvent.change(
         screen.getByPlaceholderText("Tìm theo mã giao dịch..."),
         {
@@ -172,7 +165,7 @@ describe("PaymentManagement", () => {
       vi.useRealTimers();
     });
 
-    it("không gọi API ngay khi đang gõ (trong 500ms)", async () => {
+    it("PAY-007 không gọi API ngay khi đang gõ (trong 500ms)", async () => {
       vi.useFakeTimers({ shouldAdvanceTime: true });
       render(<PaymentManagement />);
       await waitFor(() => expect(getPayments).toHaveBeenCalledTimes(1));
@@ -200,7 +193,6 @@ describe("PaymentManagement", () => {
         vi.advanceTimersByTime(499);
       });
 
-      // Vẫn chỉ 1 lần từ lúc mount
       expect(getPayments).toHaveBeenCalledTimes(1);
 
       vi.useRealTimers();
@@ -208,7 +200,7 @@ describe("PaymentManagement", () => {
   });
 
   describe("3. Filter trạng thái", () => {
-    it("gọi getPayments với status khi chọn filter", async () => {
+    it("PAY-008 gọi getPayments với status khi chọn filter", async () => {
       render(<PaymentManagement />);
       await waitFor(() => screen.getByText("Nguyen Van A"));
 
@@ -221,7 +213,7 @@ describe("PaymentManagement", () => {
       });
     });
 
-    it("reset về trang 1 khi đổi filter status", async () => {
+    it("PAY-009 reset về trang 1 khi đổi filter status", async () => {
       getPayments.mockResolvedValue({ results: mockPayments, count: 40 });
       render(<PaymentManagement />);
       await waitFor(() => screen.getByText("Nguyen Van A"));
@@ -238,7 +230,7 @@ describe("PaymentManagement", () => {
       });
     });
 
-    it("gọi getPayments không có status khi chọn Tất cả", async () => {
+    it("PAY-010 gọi getPayments không có status khi chọn Tất cả", async () => {
       render(<PaymentManagement />);
       await waitFor(() => screen.getByText("Nguyen Van A"));
 
@@ -259,21 +251,21 @@ describe("PaymentManagement", () => {
   });
 
   describe("4. Phân trang", () => {
-    it("nút prev disabled ở trang 1", async () => {
+    it("PAY-011 nút prev disabled ở trang 1", async () => {
       render(<PaymentManagement />);
       await waitFor(() => screen.getByText("Nguyen Van A"));
 
       expect(screen.getByText("«")).toBeDisabled();
     });
 
-    it("nút next disabled khi chỉ có 1 trang", async () => {
+    it("PAY-012 nút next disabled khi chỉ có 1 trang", async () => {
       render(<PaymentManagement />);
       await waitFor(() => screen.getByText("Nguyen Van A"));
 
       expect(screen.getByText("»")).toBeDisabled();
     });
 
-    it("click trang 2 gọi getPayments(2)", async () => {
+    it("PAY-013 click trang 2 gọi getPayments(2)", async () => {
       getPayments.mockResolvedValue({ results: mockPayments, count: 40 });
       render(<PaymentManagement />);
       await waitFor(() => screen.getByText("Nguyen Van A"));
@@ -285,7 +277,7 @@ describe("PaymentManagement", () => {
       });
     });
 
-    it("click prev về trang trước", async () => {
+    it("PAY-014 click prev về trang trước", async () => {
       getPayments.mockResolvedValue({ results: mockPayments, count: 40 });
       render(<PaymentManagement />);
       await waitFor(() => screen.getByText("Nguyen Van A"));
@@ -301,7 +293,7 @@ describe("PaymentManagement", () => {
   });
 
   describe("5. Kết hợp filter và search", () => {
-    it("gọi getPayments với cả keyword và status", async () => {
+    it("PAY-015 gọi getPayments với cả keyword và status", async () => {
       vi.useFakeTimers({ shouldAdvanceTime: true });
       render(<PaymentManagement />);
       await waitFor(() => screen.getByText("Nguyen Van A"));
@@ -330,7 +322,7 @@ describe("PaymentManagement", () => {
   });
 
   describe("6. Dữ liệu rỗng", () => {
-    it("không hiển thị row khi payments rỗng", async () => {
+    it("PAY-016 không hiển thị row khi payments rỗng", async () => {
       getPayments.mockResolvedValue({
         results: [],
         count: 0,
@@ -343,7 +335,7 @@ describe("PaymentManagement", () => {
       });
     });
 
-    it("không hiển thị nút trang 2 khi chỉ có 1 trang", async () => {
+    it("PAY-017 không hiển thị nút trang 2 khi chỉ có 1 trang", async () => {
       render(<PaymentManagement />);
 
       await waitFor(() => {
@@ -355,7 +347,7 @@ describe("PaymentManagement", () => {
   });
 
   describe("7. Pagination nhiều trang", () => {
-    it("hiển thị dấu ... khi có nhiều trang", async () => {
+    it("PAY-018 hiển thị dấu ... khi có nhiều trang", async () => {
       getPayments.mockResolvedValue({
         results: mockPayments,
         count: 200,
@@ -368,7 +360,7 @@ describe("PaymentManagement", () => {
       });
     });
 
-    it("next chuyển sang trang kế tiếp", async () => {
+    it("PAY-019 next chuyển sang trang kế tiếp", async () => {
       getPayments.mockResolvedValue({
         results: mockPayments,
         count: 40,

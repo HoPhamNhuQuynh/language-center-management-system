@@ -176,15 +176,17 @@ const SessionManagement = () => {
       setShowFormModal(false);
       loadSessions();
     } catch (err) {
-      console.log("Status:", err?.response?.status);
-      console.log(
-        "Error detail:",
-        JSON.stringify(err?.response?.data, null, 2),
-      );
-      showToast(
-        err?.response?.data?.message || "Có lỗi xảy ra, vui lòng thử lại",
-        "error",
-      );
+      const data = err?.response?.data;
+
+      const message =
+        data?.message ||
+        (Array.isArray(data?.non_field_errors)
+          ? data.non_field_errors[0]
+          : null) ||
+        (Array.isArray(data) ? data[0] : null) ||
+        "Có lỗi xảy ra, vui lòng thử lại";
+
+      setFormErrors((prev) => ({ ...prev, server: message }));
     } finally {
       setFormLoading(false);
     }
@@ -377,7 +379,11 @@ const SessionManagement = () => {
                 value={form.room}
                 onChange={(e) => {
                   setForm((prev) => ({ ...prev, room: e.target.value }));
-                  setFormErrors((prev) => ({ ...prev, room: undefined }));
+                  setFormErrors((prev) => ({
+                    ...prev,
+                    room: undefined,
+                    server: undefined,
+                  }));
                 }}
               >
                 <option value="">-- Chọn phòng --</option>
@@ -408,6 +414,15 @@ const SessionManagement = () => {
                 ))}
               </select>
             </div>
+
+            {formErrors.server && (
+              <div
+                className="status-badge badge-warning"
+                style={{ marginBottom: "12px" }}
+              >
+                ⚠️ {formErrors.server}
+              </div>
+            )}
 
             <div className="modal-actions">
               <button
