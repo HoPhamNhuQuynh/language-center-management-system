@@ -8,10 +8,10 @@ import {
   createClass,
   deleteClass,
   getClasses,
-  getCourses,
   getTeachers,
   updateClass,
   getRooms,
+  getAllCourses,
 } from "../../services/manageService";
 import { vi } from "date-fns/locale";
 import "react-datepicker/dist/react-datepicker.css";
@@ -88,7 +88,7 @@ const ClassManagement = () => {
   };
 
   const loadCourses = async () => {
-    let res = await getCourses();
+    let res = await getAllCourses();
     setCourses(res);
   };
 

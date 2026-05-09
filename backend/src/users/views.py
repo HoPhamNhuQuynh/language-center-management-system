@@ -22,7 +22,6 @@ from grades.models import AcademicResult
 from grades.serializers import AcademicResultSerializer
 
 
-
 class SocialLoginThrottle(AnonRateThrottle):
     scope = "social_login"
 
@@ -195,8 +194,8 @@ class SocialTokenExchangeViewSet(APIView):
         user.groups.add(user_group)
 
         try:
-            app = Application.objects.get(name="Language Center")
-        except:
+            app = Application.objects.get(client_id=settings.CLIENT_ID)
+        except Application.DoesNotExist:
             return Response(
                 {"error": "OAuth2 application not found"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -224,12 +223,19 @@ class UserViewSet(
     generics.ListCreateAPIView,
     generics.UpdateAPIView,
 ):
-    queryset = User.objects.all()
+    queryset = User.objects.order_by("id").all()
     serializer_class = serializers.UserDetailSerializer
     pagination_class = paginators.ItemPaginator
 
     def get_permissions(self):
-        if self.action in ['current_user', 'update_avatar', 'update_password', 'get_payments', 'get_enrollments', 'get_results']:
+        if self.action in [
+            "current_user",
+            "update_avatar",
+            "update_password",
+            "get_payments",
+            "get_enrollments",
+            "get_results",
+        ]:
             return [permissions.IsAuthenticated()]
         return [core_perms.IsAdmin()]
 
@@ -295,15 +301,22 @@ class UserViewSet(
         return Response(
             serializers.UserSerializer(user).data, status=status.HTTP_200_OK
         )
-    
-    @action(methods=['patch'], url_path='toggle-lock', detail=True, permission_classes=[core_perms.IsAdmin])
+
+    @action(
+        methods=["patch"],
+        url_path="toggle-lock",
+        detail=True,
+        permission_classes=[core_perms.IsAdmin],
+    )
     def toggle_lock(self, request, pk=None):
         user = self.get_object()
         user.is_active = not user.is_active
         user.save()
         if not user.is_active:
             AccessToken.objects.filter(user=user).delete()
-        return Response(serializers.UserSerializer(user).data, status=status.HTTP_200_OK)
+        return Response(
+            serializers.UserSerializer(user).data, status=status.HTTP_200_OK
+        )
 
     @action(methods=["get"], url_path="me/enrollments", detail=False)
     def get_enrollments(self, request):
@@ -320,17 +333,19 @@ class UserViewSet(
         payments = Payment.objects.filter(
             enrollment__student=request.user
         ).select_related("enrollment__classroom")
-        return Response(PaymentSerializer(payments, many=True).data, status=status.HTTP_200_OK)
-
-    @action(methods=['get'], url_path="me/results", detail=False)
-    def get_results(self, request):
-        results = AcademicResult.objects.filter(
-            enrollment__student=request.user,
-            active=True
-        ).select_related(
-            'enrollment__classroom__course__level',
-        ).prefetch_related(
-            'enrollment__classroom__teachingassignment_set__teacher'
+        return Response(
+            PaymentSerializer(payments, many=True).data, status=status.HTTP_200_OK
         )
-        return Response(AcademicResultSerializer(results, many=True).data, status=status.HTTP_200_OK)
 
+    @action(methods=["get"], url_path="me/results", detail=False)
+    def get_results(self, request):
+        results = (
+            AcademicResult.objects.filter(enrollment__student=request.user, active=True)
+            .select_related(
+                "enrollment__classroom__course__level",
+            )
+            .prefetch_related("enrollment__classroom__teachingassignment_set__teacher")
+        )
+        return Response(
+            AcademicResultSerializer(results, many=True).data, status=status.HTTP_200_OK
+        )

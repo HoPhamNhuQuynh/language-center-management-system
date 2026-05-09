@@ -713,7 +713,7 @@ describe("CourseRegister", () => {
 
     renderComponent(
       null,
-      "?vnp_ResponseCode=00&vnp_TxnRef=TXN_DETAIL&vnp_TransactionNo=TXN_DETAIL&vnp_PayDate=20250115&vnp_Amount=50000000"
+      "?vnp_ResponseCode=00&vnp_TxnRef=TXN_DETAIL&vnp_TransactionNo=TXN_DETAIL&vnp_PayDate=20250115&vnp_Amount=50000000",
     );
 
     await waitFor(() => {
@@ -724,7 +724,11 @@ describe("CourseRegister", () => {
   });
 
   it("ERM-040: VNPay callback không có pendingCourseId thì courseApi không được gọi với savedCourseId", async () => {
-    myPaymentApi.mockResolvedValue({ enrollment: 42, classroom: "Lớp A", total_sessions: 20 });
+    myPaymentApi.mockResolvedValue({
+      enrollment: 42,
+      classroom: "Lớp A",
+      total_sessions: 20,
+    });
 
     renderComponent(
       null,

@@ -443,10 +443,8 @@ describe("6. Sửa buổi học", () => {
         }),
       );
 
-      // Modal đóng sau khi thành công
       expect(screen.queryByText("SỬA BUỔI HỌC")).not.toBeInTheDocument();
 
-      // Toast thành công hiện ra
       expect(
         screen.getByText("Cập nhật buổi học thành công!"),
       ).toBeInTheDocument();
@@ -473,7 +471,7 @@ describe("6. Sửa buổi học", () => {
 });
 
 describe("7. Xóa buổi học", () => {
-  it("mở modal xác nhận với ngày đúng khi bấm Delete", async () => {
+  it("SES-026 mở modal xác nhận với ngày đúng khi bấm Delete", async () => {
     renderComp();
     await waitForLoad();
 
@@ -481,10 +479,13 @@ describe("7. Xóa buổi học", () => {
 
     await waitFor(() => {
       expect(screen.getByText("Xác nhận xóa")).toBeInTheDocument();
+      expect(
+        screen.getByText(futureDate, { selector: "strong" }),
+      ).toBeInTheDocument();
     });
   });
 
-  it("click Hủy đóng modal, không gọi deleteSession", async () => {
+  it("SES-027 click Hủy đóng modal, không gọi deleteSession", async () => {
     renderComp();
     await waitForLoad();
 
@@ -499,7 +500,7 @@ describe("7. Xóa buổi học", () => {
     expect(deleteSession).not.toHaveBeenCalled();
   });
 
-  it("gọi deleteSession đúng id và hiện toast khi xóa thành công", async () => {
+  it("SES-028 gọi deleteSession đúng id, đóng modal và hiện toast thành công", async () => {
     deleteSession.mockResolvedValue({});
     renderComp();
     await waitForLoad();
@@ -511,26 +512,12 @@ describe("7. Xóa buổi học", () => {
 
     await waitFor(() => {
       expect(deleteSession).toHaveBeenCalledWith(1);
+      expect(screen.queryByText("Xác nhận xóa")).not.toBeInTheDocument();
       expect(screen.getByText("Xóa buổi học thành công!")).toBeInTheDocument();
     });
   });
 
-  it("đóng modal sau khi xóa thành công", async () => {
-    deleteSession.mockResolvedValue({});
-    renderComp();
-    await waitForLoad();
-
-    fireEvent.click(screen.getByText("Delete"));
-    await waitFor(() => screen.getByText("Xác nhận xóa"));
-
-    fireEvent.click(screen.getByRole("button", { name: "Xóa" }));
-
-    await waitFor(() => {
-      expect(screen.queryByText("Xác nhận xóa")).not.toBeInTheDocument();
-    });
-  });
-
-  it("hiện lỗi trong modal khi deleteSession thất bại, không đóng", async () => {
+  it("SES-029 hiện lỗi trong modal khi deleteSession thất bại, không đóng", async () => {
     deleteSession.mockRejectedValue({
       response: { data: { message: "Buổi học đã có điểm danh" } },
     });
@@ -548,7 +535,7 @@ describe("7. Xóa buổi học", () => {
     });
   });
 
-  it("hiện lỗi mặc định khi server không trả message", async () => {
+  it("SES-030 hiện lỗi mặc định khi server không trả message", async () => {
     deleteSession.mockRejectedValue({ response: { data: {} } });
     renderComp();
     await waitForLoad();
@@ -565,7 +552,7 @@ describe("7. Xóa buổi học", () => {
     });
   });
 
-  it("click Delete trên buổi học quá khứ không mở modal", async () => {
+  it("SES-031 click Delete trên buổi học quá khứ không mở modal", async () => {
     getSessionsByClass.mockResolvedValue(
       mockSessionsRes([makeSession({ date: pastDate })]),
     );
@@ -579,7 +566,7 @@ describe("7. Xóa buổi học", () => {
 });
 
 describe("8. Toast tự ẩn sau 3 giây", () => {
-  it("toast biến mất sau 3000ms", async () => {
+  it("toast biến mất sau 3s", async () => {
     vi.useFakeTimers({ shouldAdvanceTime: true });
     deleteSession.mockResolvedValue({});
 

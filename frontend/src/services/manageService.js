@@ -40,6 +40,11 @@ export const getClasses = async (page = 1, signal) => {
   return res.data;
 };
 
+export const getAllCourses = async () => {
+  const res = await Apis.get("courses/all/");
+  return res.data;
+};
+
 export const createClass = async (formData) => {
   const res = await Apis.post("classes/", formData);
   return res.data;
