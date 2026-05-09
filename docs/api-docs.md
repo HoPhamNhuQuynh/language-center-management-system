@@ -484,7 +484,7 @@ Sử dụng `application/json`
 }
 ```
 
-### 2.2.6. Lấy dữ liệu thời khóa biểu - PHỨC TẠP CHECK LẠI SAU
+### 2.2.6. Lấy dữ liệu thời khóa biểu
 - Endpoint: GET users/me/timetable/
 - Mô tả: dùng khi người dùng muốn xem thời khóa biểu 
 - Authorization: Bearer <access_token>
@@ -499,7 +499,23 @@ Sử dụng `application/json`
   * HTTP Status Code: 200 OK
 ```
 {
-  
+  {
+      "id": 1,
+      "date": "2025-01-21",
+      "start_time": "17:00:00",
+      "end_time": "19:00:00",
+      "user": 30,
+      "room": {
+          "id": 29,
+          "name": "Phòng D.203",
+          "capacity": 40
+      },
+      "teacher_fullname": "Wilson David",
+      "classroom_name": "IELTS Foundation 4.5+-A",
+      "day_of_week": 1,
+      "classroom_start_date": "2025-01-15",
+      "classroom_end_date": "2025-04-15"
+  }
 }
 ```
 
@@ -521,6 +537,65 @@ Sử dụng `application/json`
   },
 ]
 ```
+
+### 2.2.8. Lấy kết quả học tập của người dùng
+- Endpoint: GET users/me/results/
+- Mô tả: dùng khi người dùng muốn xem kết quả học tập
+- Authorization: Bearer <access_token>
+- Success Response
+  * HTTP Status Code: 200 OK
+```
+[
+  {
+      "id": 104,
+      "enrollment_id": 104,
+      "scores": [
+          {
+              "id": 207,
+              "score_value": 7.2,
+              "score_type": "Mock Test",
+              "score_type_id": 15,
+              "enrollment_id": 104,
+              "student": {
+                  "id": 2,
+                  "first_name": "Minh",
+                  "last_name": "Trần",
+                  "email": "minhtran@gmail.com",
+                  "username": "student_minh",
+                  "role": "Student",
+                  "phone_num": "0912345678"
+              }
+          },
+          {
+              "id": 208,
+              "score_value": 8.8,
+              "score_type": "Final Test",
+              "score_type_id": 16,
+              "enrollment_id": 104,
+              "student": {
+                  "id": 2,
+                  "first_name": "Minh",
+                  "last_name": "Trần",
+                  "email": "minhtran@gmail.com",
+                  "username": "student_minh",
+                  "role": "Student",
+                  "phone_num": "0912345678"
+              }
+          }
+      ],
+      "attendance_count": 5,
+      "average_score": 8.2,
+      "comment": "Tiến bộ vượt bậc"
+  },
+]
+```
+
+### 2.2.9. Xóa mềm tài khoản của người dùng
+- Endpoint: DELETE users/me/
+- Mô tả: dùng khi người dùng muốn tự xóa tài khoản của mình hoặc admin muốn xóa tài khoản người dùng
+- Authorization: Bearer <access_token>
+- Success Response
+  * HTTP Status Code: 204 No Content
 
 ## 2.3. Quản lý Tài nguyên đào tạo (Training Resources)
 

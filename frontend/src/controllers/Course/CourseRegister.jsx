@@ -113,13 +113,13 @@ function CourseRegister() {
           total_sessions: paymentDetail?.total_sessions || courseRes?.total_sessions || "---",
         };
 
-          setCourse(mergedCourse);
-          setSelectedClass({
-            id: paymentDetail?.enrollment || txnRef,
-            name: paymentDetail?.classroom || "---",
-          });
-          setBill(true);
-        })
+        setCourse(mergedCourse);
+        setSelectedClass({
+          id: paymentDetail?.enrollment || txnRef,
+          name: paymentDetail?.classroom || "---",
+        });
+        setBill(true);
+      })
         .catch(() => {
           setCourse({ price, total_sessions: "---" });
           setSelectedClass({ id: txnRef, name: "---" });
@@ -131,14 +131,43 @@ function CourseRegister() {
   }, []);
 
   useEffect(() => {
-    const handler = (e) => {
+    const refreshEnrollments = async () => {
+      try {
+        const res = await Apis.get("users/me/enrollments/");
+        const data = Array.isArray(res.data) ? res.data : res.data.results ?? [];
+        setMyEnrollments(data);
+      } catch (ex) {
+        console.error("Lỗi refresh enrollments:", ex);
+      }
+    };
+
+    const handleMessage = async (e) => {
       if (e.data?.type === "PAYMENT_SUCCESS") {
+        await refreshEnrollments();
         setPaid(true);
         setBill(true);
       }
     };
-    window.addEventListener("message", handler);
-    return () => window.removeEventListener("message", handler);
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        refreshEnrollments();
+      }
+    };
+
+    const handleFocus = () => {
+      refreshEnrollments();
+    };
+
+    window.addEventListener("message", handleMessage);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    window.addEventListener("focus", handleFocus);
+
+    return () => {
+      window.removeEventListener("message", handleMessage);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      window.removeEventListener("focus", handleFocus);
+    };
   }, []);
 
   const handleOpenConfirm = async () => {
@@ -235,6 +264,18 @@ function CourseRegister() {
     }
   };
 
+  const handleRetry = (enrolledRecord) => {
+    const enrollmentId = enrolledRecord?.id;
+    if (!enrollmentId) return;
+
+    setPendingEnrollmentId(enrollmentId);
+    setPaid(false);
+    setBill(false);
+    setConfirm(false);
+    setPaymentStatus(null);
+    setPayment(true);
+  };
+
   const handleSelectClass = (cls) => {
     setSelectedClass(cls);
     setPaid(false);
@@ -292,6 +333,7 @@ function CourseRegister() {
         myEnrollments={myEnrollments}
         onOpenConfirm={handleOpenConfirm}
         onCancelConfirm={handleCancelConfirm}
+        onRetry={handleRetry}
       />
     </div>
   );
