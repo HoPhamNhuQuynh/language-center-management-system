@@ -21,7 +21,7 @@ export const submitScoresApi = async (classId, payload) => {
   return res.data;
 };
 
-export const loadClassesApi = async () => {
-  const res = await Apis.get("classes/");
+export const loadClassesApi = async (params = {}) => {
+  const res = await Apis.get("classes/", { params });
   return res.data;
 };
