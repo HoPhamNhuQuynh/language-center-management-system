@@ -54,6 +54,11 @@ class CourseViewSet(viewsets.ModelViewSet):
     def get_classes(self, request, pk):
         classes = ClassRoom.objects.filter(course_id=pk)
         return Response(ClassRoomSerializer(classes, many=True).data, status=status.HTTP_200_OK)
+    
+    @action(detail=False, methods=["get"], url_path="all")
+    def all_courses(self, request):
+        courses = Course.objects.filter(active=True).values("id", "name")
+        return Response(list(courses))
 
 
 class TagViewSet(viewsets.ViewSet, generics.ListAPIView):

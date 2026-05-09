@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import CourseRegisterForm from "../../pages/Payment/CourseRegisterForm";
 import { searchCourseApi, classApi, courseApi } from "../../services/courseService";
-import { enrollmentApi, paymentApi, enrollmentDetailApi, deleteEnrollmentApi,paymentDetailApi } from "../../services/enrollmentService";
+import { enrollmentApi, paymentApi, deleteEnrollmentApi } from "../../services/enrollmentService";
 import { myPaymentApi } from "../../services/studentService";
 import Apis from "../../services/Apis";
 
@@ -104,26 +104,31 @@ function CourseRegister() {
 
       Promise.all([
         savedCourseId ? courseApi(savedCourseId) : Promise.resolve(null),
-        paymentDetailApi(txnRef),
-      ]).then(([courseRes, paymentDetail]) => {
-        const mergedCourse = {
-          ...(courseRes || {}),
-          classes: courseRes?.classroom_set || courseRes?.classes || [],
-          price,
-          total_sessions: paymentDetail?.total_sessions || courseRes?.total_sessions || "---",
-        };
+        myPaymentApi(txnRef),
+      ])
+        .then(([courseRes, paymentDetail]) => {
+          const mergedCourse = {
+            ...(courseRes || {}),
+            classes: courseRes?.classroom_set || courseRes?.classes || [],
+            price,
+            total_sessions:
+              paymentDetail?.total_sessions ||
+              courseRes?.total_sessions ||
+              "---",
+          };
 
-        setCourse(mergedCourse);
-        setSelectedClass({
-          id: paymentDetail?.enrollment || txnRef,
-          name: paymentDetail?.classroom || "---",
+          setCourse(mergedCourse);
+          setSelectedClass({
+            id: paymentDetail?.enrollment || txnRef,
+            name: paymentDetail?.classroom || "---",
+          });
+          setBill(true);
+        })
+        .catch(() => {
+          setCourse({ price, total_sessions: "---" });
+          setSelectedClass({ id: txnRef, name: "---" });
+          setBill(true);
         });
-        setBill(true);
-      }).catch(() => {
-        setCourse({ price, total_sessions: "---" });
-        setSelectedClass({ id: txnRef, name: "---" });
-        setBill(true);
-      });
 
       window.history.replaceState({}, "", "/course-register");
     }

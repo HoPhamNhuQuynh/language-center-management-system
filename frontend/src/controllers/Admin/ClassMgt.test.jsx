@@ -10,7 +10,7 @@ import { MemoryRouter } from "react-router-dom";
 
 vi.mock("../../services/manageService", () => ({
   getClasses: vi.fn(),
-  getCourses: vi.fn(),
+  getAllCourses: vi.fn(),
   getTeachers: vi.fn(),
   getRooms: vi.fn(),
   createClass: vi.fn(),
@@ -42,7 +42,7 @@ vi.mock("react-router-dom", async () => {
 
 import {
   getClasses,
-  getCourses,
+  getAllCourses,
   getTeachers,
   getRooms,
   createClass,
@@ -176,7 +176,7 @@ describe("ClassManagement", () => {
       count: mockClasses.length,
     });
 
-    getCourses.mockResolvedValue(mockCourses);
+    getAllCourses.mockResolvedValue(mockCourses);
     getTeachers.mockResolvedValue(mockTeachers);
     getRooms.mockResolvedValue(mockRooms);
   });
@@ -195,7 +195,7 @@ describe("ClassManagement", () => {
 
       await waitFor(() => {
         expect(getClasses).toHaveBeenCalled();
-        expect(getCourses).toHaveBeenCalled();
+        expect(getAllCourses).toHaveBeenCalled();
         expect(getTeachers).toHaveBeenCalled();
         expect(getRooms).toHaveBeenCalled();
       });
