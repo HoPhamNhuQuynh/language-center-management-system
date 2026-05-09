@@ -70,7 +70,7 @@ function Attendance() {
         setError(null);
         const res = await getAttendancesApi(selectedSession);
 
-        setCanAttendance(res.can_attendance); // ← nhận trạng thái
+        setCanAttendance(res.can_attendance); 
 
         const rows = res.attendances.map((a) => ({
           enrollmentId: a.enrollment_id,

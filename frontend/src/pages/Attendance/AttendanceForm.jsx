@@ -47,7 +47,7 @@ function AttendanceForm({
               <option value="">-- Chọn buổi --</option>
               {sessions.map((s) => (
                 <option key={s.id} value={s.id}>
-                  {formatDate(s.date)} — Buổi {s.id}
+                  {formatDate(s.date)}
                 </option>
               ))}
             </select>
