@@ -178,7 +178,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'language_center_db',
         'USER': 'root',
-        'PASSWORD': 'Nhuquynh261105@',
+        'PASSWORD': 'root',
         'HOST': '127.0.0.1', # mặc định localhost
         'PORT': '3306',
     }

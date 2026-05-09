@@ -116,8 +116,12 @@ function StudentInfo() {
 
     const formatSchedule = (schedule) => {
       if (!schedule || schedule.length === 0) return "Chưa có lịch học";
+      const dayMap = {
+        0: "Thứ Hai", 1: "Thứ Ba", 2: "Thứ Tư",
+        3: "Thứ Năm", 4: "Thứ Sáu", 5: "Thứ Bảy", 6: "Chủ Nhật",
+      };
       return schedule.map(s => {
-        const day = s.day_of_week === 8 ? "Chủ nhật" : `Thứ ${s.day_of_week}`;
+        const day = dayMap[s.day_of_week] || "---";
         return `${day} ${s.start_time.slice(0, 5)} - ${s.end_time.slice(0, 5)}`;
       }).join(", ");
     };
@@ -179,7 +183,7 @@ function StudentInfo() {
     } catch (ex) {
       console.error("❌ LỖI API:");
       console.error("- Status:", ex.response?.status);
-      console.error("- Data lỗi:", JSON.stringify(ex.response?.data, null, 2)); 
+      console.error("- Data lỗi:", JSON.stringify(ex.response?.data, null, 2));
       alert("Lỗi: " + JSON.stringify(ex.response?.data));
     }
   };
