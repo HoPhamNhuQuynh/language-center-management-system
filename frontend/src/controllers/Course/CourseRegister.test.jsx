@@ -3,7 +3,7 @@ import { render, screen, waitFor, act } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import CourseRegister from "./CourseRegister";
-import { enrollmentApi, paymentApi, deleteEnrollmentApi, paymentDetailApi } from "../../services/enrollmentService";
+import { enrollmentApi, paymentApi, deleteEnrollmentApi } from "../../services/enrollmentService";
 import { courseApi, classApi, searchCourseApi } from "../../services/courseService";
 import { myPaymentApi } from "../../services/studentService";
 import Apis from "../../services/Apis";
@@ -37,7 +37,7 @@ vi.mock("../../services/enrollmentService", () => ({
   paymentApi: vi.fn(),
   enrollmentDetailApi: vi.fn(),
   deleteEnrollmentApi: vi.fn(),
-  paymentDetailApi: vi.fn(),
+  myPaymentApi: vi.fn(),
 }));
 
 vi.mock("../../services/studentService", () => ({
@@ -600,7 +600,7 @@ describe("CourseRegister", () => {
     });
 
     it("ERM-033: VNPay Promise.all lỗi vẫn show bill với fallback data", async () => {
-      paymentDetailApi.mockRejectedValueOnce(new Error("detail fail"));
+      myPaymentApi.mockRejectedValueOnce(new Error("detail fail"));
       courseApi.mockRejectedValueOnce(new Error("course fail"));
       localStorage.setItem("pendingCourseId", "99");
 
@@ -702,8 +702,8 @@ describe("CourseRegister", () => {
     });
   });
 
-  it("ERM-039: VNPay callback với paymentDetailApi thành công → setCourse đúng total_sessions", async () => {
-    paymentDetailApi.mockResolvedValue({
+  it("ERM-039: VNPay callback với myPaymentApi thành công → setCourse đúng total_sessions", async () => {
+    myPaymentApi.mockResolvedValue({
       enrollment: 42,
       classroom: "Lớp A",
       total_sessions: 30,
@@ -713,18 +713,22 @@ describe("CourseRegister", () => {
 
     renderComponent(
       null,
-      "?vnp_ResponseCode=00&vnp_TxnRef=TXN_DETAIL&vnp_TransactionNo=TXN_DETAIL&vnp_PayDate=20250115&vnp_Amount=50000000"
+      "?vnp_ResponseCode=00&vnp_TxnRef=TXN_DETAIL&vnp_TransactionNo=TXN_DETAIL&vnp_PayDate=20250115&vnp_Amount=50000000",
     );
 
     await waitFor(() => {
       expect(screen.getByTestId("bill").textContent).toBe("bill-open");
     });
 
-    expect(paymentDetailApi).toHaveBeenCalledWith("TXN_DETAIL");
+    expect(myPaymentApi).toHaveBeenCalledWith("TXN_DETAIL");
   });
 
   it("ERM-040: VNPay callback không có pendingCourseId thì courseApi không được gọi với savedCourseId", async () => {
-    paymentDetailApi.mockResolvedValue({ enrollment: 42, classroom: "Lớp A", total_sessions: 20 });
+    myPaymentApi.mockResolvedValue({
+      enrollment: 42,
+      classroom: "Lớp A",
+      total_sessions: 20,
+    });
 
     renderComponent(
       null,

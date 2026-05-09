@@ -1,13 +1,14 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen, fireEvent, waitFor, act } from "@testing-library/react";
-import { useGoogleLogin } from "@react-oauth/google";
+import {
+  render,
+  screen,
+  fireEvent,
+  waitFor,
+  act,
+} from "@testing-library/react";
 
-beforeEach(() => {
-  vi.clearAllMocks();
-  capturedGoogleOpts = {}; // reset mỗi test
-});
-
-const mockNavigate = vi.fn();
+let capturedGoogleOpts = {};
+const mockGoogleTrigger = vi.fn();
 
 vi.mock("react-router-dom", () => ({
   useNavigate: () => mockNavigate,
@@ -19,16 +20,12 @@ vi.mock("../../services/authService", () => ({
   facebookLoginApi: vi.fn(),
 }));
 
-vi.mock("../../utils/token", () => ({
-  setTokens: vi.fn(),
-}));
+vi.mock("../../utils/token", () => ({ setTokens: vi.fn() }));
 
 vi.mock("antd", () => ({
   message: { error: vi.fn(), success: vi.fn() },
 }));
 
-let capturedGoogleOpts = {};
-const mockGoogleTrigger = vi.fn();
 vi.mock("@react-oauth/google", () => ({
   useGoogleLogin: vi.fn((opts) => {
     capturedGoogleOpts = opts;
@@ -37,10 +34,7 @@ vi.mock("@react-oauth/google", () => ({
 }));
 
 vi.mock("@greatsumini/react-facebook-login", () => ({
-  FacebookLoginClient: {
-    loadSdk: vi.fn(),
-    login: vi.fn(),
-  },
+  FacebookLoginClient: { loadSdk: vi.fn(), login: vi.fn() },
 }));
 
 vi.mock("../../pages/Auth/LoginForm", () => ({
@@ -68,239 +62,141 @@ vi.mock("../../pages/Auth/LoginForm", () => ({
   ),
 }));
 
-import { loginApi, googleLoginApi, facebookLoginApi } from "../../services/authService";
+const mockNavigate = vi.fn();
+
+import {
+  loginApi,
+  googleLoginApi,
+  facebookLoginApi,
+} from "../../services/authService";
 import { setTokens } from "../../utils/token";
 import { message } from "antd";
 import { FacebookLoginClient } from "@greatsumini/react-facebook-login";
+import { useGoogleLogin } from "@react-oauth/google";
 import Login from "./Login";
 
+const renderLogin = () => render(<Login />);
+
 const typeAndLogin = (username = "admin", password = "123456") => {
-  fireEvent.change(screen.getByTestId("username"), { target: { value: username } });
-  fireEvent.change(screen.getByTestId("password"), { target: { value: password } });
+  fireEvent.change(screen.getByTestId("username"), {
+    target: { value: username },
+  });
+  fireEvent.change(screen.getByTestId("password"), {
+    target: { value: password },
+  });
   fireEvent.click(screen.getByTestId("btn-login"));
 };
 
+const makeRes = (role = "Student") => ({
+  access_token: "acc",
+  refresh_token: "ref",
+  user: { role },
+});
+
+beforeEach(() => {
+  vi.clearAllMocks();
+  capturedGoogleOpts = {};
+});
+
 describe("1. Khởi tạo", () => {
-  it("render LoginForm và khởi tạo Facebook SDK khi mount", () => {
-    render(<Login />);
+  it("AUTH-001 render đúng UI và khởi tạo Facebook SDK, không tự gọi loginApi", () => {
+    renderLogin();
 
     expect(screen.getByTestId("btn-login")).toBeInTheDocument();
-    expect(FacebookLoginClient.loadSdk).toHaveBeenCalledWith("vi_VN");
-  });
+    expect(screen.getByTestId("btn-google")).toBeInTheDocument();
+    expect(screen.getByTestId("btn-facebook")).toBeInTheDocument();
 
-  it("không gọi loginApi khi chỉ render", () => {
-    render(<Login />);
+    expect(FacebookLoginClient.loadSdk).toHaveBeenCalledWith("vi_VN");
+
     expect(loginApi).not.toHaveBeenCalled();
   });
 });
 
 describe("2. handleLogin — đăng nhập thường", () => {
-  it("gọi loginApi với đúng username và password", async () => {
-    loginApi.mockResolvedValue({
-      access_token: "acc",
-      refresh_token: "ref",
-      user: { role: "Student" },
-    });
+  it.each([
+    ["Admin", "/dashboard"],
+    ["Teacher", "/schedule"],
+    ["Student", "/"],
+  ])(
+    "AUTH-002 role=%s thì gọi API đúng tham số, lưu token, navigate đến %s",
+    async (role, expectedPath) => {
+      const res = makeRes(role);
+      loginApi.mockResolvedValue(res);
 
-    render(<Login />);
-    typeAndLogin("admin", "123456");
+      renderLogin();
+      typeAndLogin("admin", "123456");
 
-    await waitFor(() => {
-      expect(loginApi).toHaveBeenCalledWith("admin", "123456");
-    });
-  });
+      await waitFor(() => {
+        expect(loginApi).toHaveBeenCalledWith("admin", "123456");
 
-  it("gọi setTokens với tokens và user từ response", async () => {
-    const mockRes = {
-      access_token: "acc",
-      refresh_token: "ref",
-      user: { role: "Student" },
-    };
-    loginApi.mockResolvedValue(mockRes);
+        expect(setTokens).toHaveBeenCalledWith("acc", "ref", res.user);
 
-    render(<Login />);
-    typeAndLogin();
+        expect(mockNavigate).toHaveBeenCalledWith(expectedPath);
+      });
+    },
+  );
 
-    await waitFor(() => {
-      expect(setTokens).toHaveBeenCalledWith("acc", "ref", mockRes.user);
-    });
-  });
+  it.each([
+    [
+      "FACEBOOK_ACCOUNT",
+      "Email này đã được đăng ký qua Facebook. Vui lòng đăng nhập bằng Facebook.",
+    ],
+    [
+      "GOOGLE_ACCOUNT",
+      "Email này đã được đăng ký qua Google. Vui lòng đăng nhập bằng Google.",
+    ],
+    ["invalid credentials", "Tên đăng nhập hoặc mật khẩu không đúng."],
+    ["invalid password", "Tên đăng nhập hoặc mật khẩu không đúng."],
+    ["unauthorized", "Tên đăng nhập hoặc mật khẩu không đúng."],
+    ["No grant", "Tên đăng nhập hoặc mật khẩu không đúng."],
+    ["random error", "Đã có lỗi xảy ra. Vui lòng thử lại."],
+    [undefined, "Đã có lỗi xảy ra. Vui lòng thử lại."],
+  ])(
+    'AUTH-003 - 010 server lỗi "%s" thì hiển thị "%s"',
+    async (errorMsg, expectedMessage) => {
+      loginApi.mockRejectedValue({ response: { data: { error: errorMsg } } });
 
-  it("navigate đến /dashboard khi role = Admin", async () => {
-    loginApi.mockResolvedValue({
-      access_token: "acc",
-      refresh_token: "ref",
-      user: { role: "Admin" },
-    });
+      renderLogin();
+      typeAndLogin();
 
-    render(<Login />);
-    typeAndLogin();
-
-    await waitFor(() => {
-      expect(mockNavigate).toHaveBeenCalledWith("/dashboard");
-    });
-  });
-
-  it("navigate đến /schedule khi role = Teacher", async () => {
-    loginApi.mockResolvedValue({
-      access_token: "acc",
-      refresh_token: "ref",
-      user: { role: "Teacher" },
-    });
-
-    render(<Login />);
-    typeAndLogin();
-
-    await waitFor(() => {
-      expect(mockNavigate).toHaveBeenCalledWith("/schedule");
-    });
-  });
-
-  it("navigate đến / khi role = Student (hoặc role khác)", async () => {
-    loginApi.mockResolvedValue({
-      access_token: "acc",
-      refresh_token: "ref",
-      user: { role: "Student" },
-    });
-
-    render(<Login />);
-    typeAndLogin();
-
-    await waitFor(() => {
-      expect(mockNavigate).toHaveBeenCalledWith("/");
-    });
-  });
-
-  it("hiện lỗi 'sai mật khẩu' khi server trả invalid credentials", async () => {
-    loginApi.mockRejectedValue({
-      response: { data: { error: "invalid credentials" } },
-    });
-
-    render(<Login />);
-    typeAndLogin();
-
-    await waitFor(() => {
-      expect(message.error).toHaveBeenCalledWith(
-        "Tên đăng nhập hoặc mật khẩu không đúng."
-      );
-    });
-  });
-
-  it("hiện lỗi Facebook khi server trả error chứa FACEBOOK", async () => {
-    loginApi.mockRejectedValue({
-      response: { data: { error: "FACEBOOK_ACCOUNT" } },
-    });
-
-    render(<Login />);
-    typeAndLogin();
-
-    await waitFor(() => {
-      expect(message.error).toHaveBeenCalledWith(
-        "Email này đã được đăng ký qua Facebook. Vui lòng đăng nhập bằng Facebook."
-      );
-    });
-  });
-
-  it("hiện lỗi Google khi server trả error chứa GOOGLE", async () => {
-    loginApi.mockRejectedValue({
-      response: { data: { error: "GOOGLE_ACCOUNT" } },
-    });
-
-    render(<Login />);
-    typeAndLogin();
-
-    await waitFor(() => {
-      expect(message.error).toHaveBeenCalledWith(
-        "Email này đã được đăng ký qua Google. Vui lòng đăng nhập bằng Google."
-      );
-    });
-  });
-
-  it("hiện lỗi mặc định khi error không xác định", async () => {
-    loginApi.mockRejectedValue({
-      response: { data: { error: "some unknown error" } },
-    });
-
-    render(<Login />);
-    typeAndLogin();
-
-    await waitFor(() => {
-      expect(message.error).toHaveBeenCalledWith(
-        "Đã có lỗi xảy ra. Vui lòng thử lại."
-      );
-    });
-  });
-
-  it("hiện lỗi mặc định khi response không có error field", async () => {
-    loginApi.mockRejectedValue({ response: { data: {} } });
-
-    render(<Login />);
-    typeAndLogin();
-
-    await waitFor(() => {
-      expect(message.error).toHaveBeenCalledWith(
-        "Đã có lỗi xảy ra. Vui lòng thử lại."
-      );
-    });
-  });
+      await waitFor(() => {
+        expect(message.error).toHaveBeenCalledWith(expectedMessage);
+      });
+    },
+  );
 });
 
 describe("3. googleLogin", () => {
-  it("gọi googleTrigger khi bấm nút Google", () => {
-    render(<Login />);
-    fireEvent.click(screen.getByTestId("btn-google"));
+  it("AUTH-011 happy path: init implicit flow, gọi trigger, gọi API, lưu token, sau đó navigate về trang chủ", async () => {
+    const res = makeRes("Student");
+    googleLoginApi.mockResolvedValue(res);
 
-    expect(mockGoogleTrigger).toHaveBeenCalled();
-  });
+    renderLogin();
 
-  it("useGoogleLogin được khởi tạo với flow=implicit", () => {
-    render(<Login />);
-
+    // useGoogleLogin phải dùng implicit flow (lấy access_token trực tiếp, không qua code exchange)
     expect(useGoogleLogin).toHaveBeenCalledWith(
       expect.objectContaining({ flow: "implicit" }),
     );
-  });
 
-  it("gọi googleLoginApi với access_token từ Google", async () => {
-    googleLoginApi.mockResolvedValue({
-      access_token: "acc",
-      refresh_token: "ref",
-      user: { role: "Student" },
-    });
+    fireEvent.click(screen.getByTestId("btn-google"));
+    expect(mockGoogleTrigger).toHaveBeenCalled();
 
-    render(<Login />);
-
+    // Giả lập Google popup thành công, truyền access_token vào onSuccess
     await act(async () => {
       await capturedGoogleOpts.onSuccess({ access_token: "google_token_abc" });
     });
 
     expect(googleLoginApi).toHaveBeenCalledWith("google_token_abc");
-  });
-
-  it("setTokens và navigate về / khi Google login thành công", async () => {
-    const mockRes = {
-      access_token: "acc",
-      refresh_token: "ref",
-      user: { role: "Student" },
-    };
-    googleLoginApi.mockResolvedValue(mockRes);
-
-    render(<Login />);
-
-    await act(async () => {
-      await capturedGoogleOpts.onSuccess({ access_token: "google_token_abc" });
-    });
-
-    expect(setTokens).toHaveBeenCalledWith("acc", "ref", mockRes.user);
+    expect(setTokens).toHaveBeenCalledWith("acc", "ref", res.user);
     expect(mockNavigate).toHaveBeenCalledWith("/");
   });
 
-  it("hiện message.error khi Google login thất bại từ server", async () => {
+  it("AUTH-012 server từ chối Google token thì hiển thị lỗi đúng", async () => {
     googleLoginApi.mockRejectedValue({
       response: { data: { error: "FACEBOOK_ACCOUNT" } },
     });
 
-    render(<Login />);
+    renderLogin();
 
     await act(async () => {
       await capturedGoogleOpts.onSuccess({ access_token: "bad_token" });
@@ -313,60 +209,31 @@ describe("3. googleLogin", () => {
 });
 
 describe("4. facebookLogin", () => {
-  it("gọi FacebookLoginClient.login khi bấm nút Facebook", () => {
-    render(<Login />);
+  it("AUTH-013 happy path: bấm nút → FB connected → gọi API → lưu token → navigate /", async () => {
+    const res = makeRes("Student");
+    facebookLoginApi.mockResolvedValue(res);
+
+    // Giả lập FB SDK gọi callback ngay với status connected
+    FacebookLoginClient.login.mockImplementation((callback) => {
+      callback({
+        status: "connected",
+        authResponse: { accessToken: "fb_token_xyz" },
+      });
+    });
+
+    renderLogin();
     fireEvent.click(screen.getByTestId("btn-facebook"));
 
     expect(FacebookLoginClient.login).toHaveBeenCalled();
-  });
-
-  it("gọi facebookLoginApi với accessToken khi status=connected", async () => {
-    facebookLoginApi.mockResolvedValue({
-      access_token: "acc",
-      refresh_token: "ref",
-      user: { role: "Student" },
-    });
-
-    FacebookLoginClient.login.mockImplementation((callback) => {
-      callback({
-        status: "connected",
-        authResponse: { accessToken: "fb_token_xyz" },
-      });
-    });
-
-    render(<Login />);
-    fireEvent.click(screen.getByTestId("btn-facebook"));
 
     await waitFor(() => {
       expect(facebookLoginApi).toHaveBeenCalledWith("fb_token_xyz");
-    });
-  });
-
-  it("setTokens và navigate về / khi Facebook login thành công", async () => {
-    const mockRes = {
-      access_token: "acc",
-      refresh_token: "ref",
-      user: { role: "Student" },
-    };
-    facebookLoginApi.mockResolvedValue(mockRes);
-
-    FacebookLoginClient.login.mockImplementation((callback) => {
-      callback({
-        status: "connected",
-        authResponse: { accessToken: "fb_token_xyz" },
-      });
-    });
-
-    render(<Login />);
-    fireEvent.click(screen.getByTestId("btn-facebook"));
-
-    await waitFor(() => {
-      expect(setTokens).toHaveBeenCalledWith("acc", "ref", mockRes.user);
+      expect(setTokens).toHaveBeenCalledWith("acc", "ref", res.user);
       expect(mockNavigate).toHaveBeenCalledWith("/");
     });
   });
 
-  it("hiện message.error khi Facebook login thất bại từ server", async () => {
+  it("AUTH-014 server từ chối Facebook token thì hiển thị lỗi đúng", async () => {
     facebookLoginApi.mockRejectedValue({
       response: { data: { error: "GOOGLE_ACCOUNT" } },
     });
@@ -378,54 +245,26 @@ describe("4. facebookLogin", () => {
       });
     });
 
-    render(<Login />);
+    renderLogin();
     fireEvent.click(screen.getByTestId("btn-facebook"));
 
     await waitFor(() => {
       expect(message.error).toHaveBeenCalledWith(
-        "Email này đã được đăng ký qua Google. Vui lòng đăng nhập bằng Google."
+        "Email này đã được đăng ký qua Google. Vui lòng đăng nhập bằng Google.",
       );
     });
   });
 
-  it("không gọi facebookLoginApi khi status != connected", async () => {
+  it("AUTH-015 user huỷ Facebook popup thì không gọi facebookLoginApi", async () => {
     FacebookLoginClient.login.mockImplementation((callback) => {
       callback({ status: "not_authorized" });
     });
 
-    render(<Login />);
+    renderLogin();
     fireEvent.click(screen.getByTestId("btn-facebook"));
 
     await waitFor(() => {
       expect(facebookLoginApi).not.toHaveBeenCalled();
     });
   });
-});
-
-describe("5. translateError", () => {
-  const cases = [
-    ["FACEBOOK_ACCOUNT", "Email này đã được đăng ký qua Facebook. Vui lòng đăng nhập bằng Facebook."],
-    ["GOOGLE_ACCOUNT",   "Email này đã được đăng ký qua Google. Vui lòng đăng nhập bằng Google."],
-    ["invalid password", "Tên đăng nhập hoặc mật khẩu không đúng."],
-    ["unauthorized",     "Tên đăng nhập hoặc mật khẩu không đúng."],
-    ["No grant",         "Tên đăng nhập hoặc mật khẩu không đúng."],
-    ["random error",     "Đã có lỗi xảy ra. Vui lòng thử lại."],
-    [undefined,          "Đã có lỗi xảy ra. Vui lòng thử lại."],
-  ];
-
-  it.each(cases)(
-    'translateError("%s") → "%s" (kiểm tra gián tiếp qua message.error)',
-    async (errorMsg, expected) => {
-      loginApi.mockRejectedValue({
-        response: { data: { error: errorMsg } },
-      });
-
-      render(<Login />);
-      typeAndLogin();
-
-      await waitFor(() => {
-        expect(message.error).toHaveBeenCalledWith(expected);
-      });
-    }
-  );
 });

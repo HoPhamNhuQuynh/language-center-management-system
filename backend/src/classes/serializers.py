@@ -37,6 +37,28 @@ class ScheduleSerializer(serializers.ModelSerializer):
         if end_time and start_time and end_time <= start_time:
             raise serializers.ValidationError("Giờ kết thúc phải sau giờ bắt đầu.")
 
+        # Check trùng phòng
+        room = data.get("room")
+        day_of_week = data.get("day_of_week")
+
+        if room and day_of_week is not None and start_time and end_time:
+            qs = Schedule.objects.filter(
+                room=room,
+                day_of_week=day_of_week,
+                start_time__lt=end_time,
+                end_time__gt=start_time,
+            )
+            if self.instance:
+                qs = qs.exclude(pk=self.instance.pk)
+
+            current_classroom = self.context.get("classroom")
+
+            if current_classroom:
+                qs = qs.exclude(classroom=current_classroom)
+
+            if qs.exists():
+                raise serializers.ValidationError("Phòng học này đã bị trùng lịch.")
+
         return data
 
 
@@ -74,10 +96,11 @@ class ClassRoomSerializer(serializers.ModelSerializer):
     def to_representation(self, classroom):
         data = super().to_representation(classroom)
 
-        data['course_id'] = classroom.course.id
-        data['course_name'] = classroom.course.name
-        data['course_level'] = classroom.course.level.name if classroom.course.level else None  
-
+        data["course_id"] = classroom.course.id
+        data["course_name"] = classroom.course.name
+        data["course_level"] = (
+            classroom.course.level.name if classroom.course.level else None
+        )
 
         assignment = next(
             (a for a in classroom.teachingassignment_set.all() if a.is_main), None
@@ -102,7 +125,7 @@ class ClassRoomSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 "Ngày kết thúc phải lớn hơn ngày bắt đầu."
             )
-        
+
         if start_date and end_date and schedules and course:
             # Đếm số sessions sẽ được sinh ra
             selected_days = [s["day_of_week"] for s in schedules]
@@ -127,32 +150,6 @@ class ClassRoomSerializer(serializers.ModelSerializer):
                     f"nhưng khóa học yêu cầu {planned} buổi. "
                     f"Gợi ý ngày kết thúc: {suggested_end.strftime('%d/%m/%Y')}."
                 )
-        
-        for s in schedules:
-            room = s.get("room")
-            day_of_week = s.get("day_of_week")
-            start_time = s.get("start_time")
-            end_time = s.get("end_time")
-
-            current_classroom = self.instance
-
-            qs = Schedule.objects.filter(
-                room=room,
-                day_of_week=day_of_week,
-                start_time__lt=end_time,
-                end_time__gt=start_time,
-            )
-            if current_classroom:
-                qs = qs.exclude(classroom=current_classroom)
-
-            if qs.exists():
-                conflicting = qs.first()
-                raise serializers.ValidationError(
-                    f"Phòng {room.name} đã bị trùng lịch vào {DAY_NAMES[day_of_week]} "
-                    f"({start_time.strftime('%H:%M')}-{end_time.strftime('%H:%M')}) "
-                    f'với lớp "{conflicting.classroom.name}".'
-                )
-
         return data
 
     def create(self, validated_data):
@@ -169,7 +166,14 @@ class ClassRoomSerializer(serializers.ModelSerializer):
 
             for s in schedules_data:
                 s.pop("classroom", None)
-                Schedule.objects.create(classroom=classroom, **s)
+
+                serializer = ScheduleSerializer(data=s)
+
+                serializer.is_valid(raise_exception=True)
+
+                Schedule.objects.create(
+                    classroom=classroom, **serializer.validated_data
+                )
 
             if schedules_data:
                 classroom.generate_sessions_from_schedules()  # sinh sessions tu dong
@@ -205,7 +209,12 @@ class ClassRoomSerializer(serializers.ModelSerializer):
 
                 for s in schedules_data:
                     s.pop("classroom", None)
-                    Schedule.objects.create(classroom=instance, **s)
+
+                    serializer = ScheduleSerializer(context={"classroom": instance})
+
+                    validated_schedule = serializer.validate(s)
+
+                    Schedule.objects.create(classroom=instance, **validated_schedule)
 
                 instance.generate_sessions_from_schedules()
         return instance
@@ -253,17 +262,32 @@ class SessionSerializer(serializers.ModelSerializer):
             "classroom_id",
         ]
 
+    def _ensure_teaching_assignment(self, session):
+        teacher = session.user
+
+        if not teacher:
+            return
+
+        classroom = session.schedule.classroom
+
+        TeachingAssignment.objects.get_or_create(
+            classroom=classroom,
+            teacher=teacher,
+            defaults={"is_main": False},
+        )
+
     def validate(self, data):
-        end_time = data.get("end_time")
-        start_time = data.get("start_time")
-        room = data.get("room")
-        date = data.get("date")
+        end_time = data.get("end_time", getattr(self.instance, "end_time", None))
+        start_time = data.get("start_time", getattr(self.instance, "start_time", None))
+        room = data.get("room", getattr(self.instance, "room", None))
+        teacher = data.get("user", getattr(self.instance, "user", None))
+        date = data.get("date", getattr(self.instance, "date", None))
 
         if end_time and start_time and end_time <= start_time:
             raise serializers.ValidationError(
                 {"end_time": "Giờ kết thúc phải lớn hơn giờ bắt đầu."}
             )
-        
+
         if room and date and start_time and end_time:
             qs = Session.objects.filter(
                 room=room,
@@ -279,9 +303,26 @@ class SessionSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError(
                     f"Phòng {room.name} đã bị trùng lịch vào ngày {date} "
                     f"({start_time.strftime('%H:%M')}-{end_time.strftime('%H:%M')}) "
-                    f"với buổi học của lớp \"{conflicting.schedule.classroom.name}\"."
+                    f'với buổi học của lớp "{conflicting.schedule.classroom.name}".'
                 )
-        
+        if teacher and date and start_time and end_time:
+            qs = Session.objects.filter(
+                user=teacher,
+                date=date,
+                start_time__lt=end_time,
+                end_time__gt=start_time,
+            )
+
+            if self.instance:
+                qs = qs.exclude(pk=self.instance.pk)
+
+            if qs.exists():
+                conflicting = qs.first()
+                raise serializers.ValidationError(
+                    f"Giáo viên đã có lịch dạy bị trùng "
+                    f"với lớp {conflicting.schedule.classroom.name}."
+                )
+
         if self.instance:
             classroom = self.instance.schedule.classroom
         else:
@@ -304,10 +345,17 @@ class SessionSerializer(serializers.ModelSerializer):
             )
 
         return data
-    
+
     def create(self, validated_data):
         validated_data.pop("classroom_id", None)
-        return super().create(validated_data)
+        session = super().create(validated_data)
+        self._ensure_teaching_assignment(session)
+        return session
+
+    def update(self, instance, validated_data):
+        session = super().update(instance, validated_data)
+        self._ensure_teaching_assignment(session)   
+        return session
 
     def to_representation(self, session):
         data = super().to_representation(session)
