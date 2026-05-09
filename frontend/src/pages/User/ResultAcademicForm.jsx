@@ -2,9 +2,6 @@ import { useNavigate } from "react-router-dom";
 
 function ResultAcademicForm({ result, classInfo }) {
     const navigate = useNavigate();
-
-    const handlePrint = () => window.print();
-
     return (
         <div className="result-layout">
             <h1 style={{ textAlign: "center", marginBottom: "20px" }}>KẾT QUẢ HỌC TẬP</h1>
@@ -37,15 +34,8 @@ function ResultAcademicForm({ result, classInfo }) {
                         </tr>
                     </tbody>
                 </table>
-
-                <div className="result-print-btn-wrapper">
-                    <button className="result-print-btn" onClick={handlePrint}>
-                        IN BẢNG ĐIỂM
-                    </button>
-                </div>
             </section>
 
-            {/* TỔNG KẾT */}
             <section className="result-summary">
                 <p>Điểm tổng kết: {result?.average_score ?? "---"}</p>
                 <p>Nhận xét của giáo viên: {result?.comment || "Chưa có nhận xét"}</p>

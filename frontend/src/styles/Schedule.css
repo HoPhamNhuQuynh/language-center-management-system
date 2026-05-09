@@ -239,7 +239,7 @@
       #e8eef7,
       #e8eef7 1px,
       transparent 1px,
-      transparent 80px);
+      transparent 100px);
 }
 
 .schedule-session-block {
@@ -375,7 +375,7 @@
 
 .schedule-time-slot {
   flex: none;
-  height: 80px;
+  height: 100px;
   display: flex;
   align-items: center;
   justify-content: center;

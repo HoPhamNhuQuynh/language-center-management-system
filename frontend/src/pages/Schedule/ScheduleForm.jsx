@@ -10,17 +10,17 @@ function ScheduleForm({ weekLabel, weekNumber, weekDates, totalWeeks, onWeekChan
   const getLessonsByDay = (day) =>
     scheduleData.filter(item => item.day === day);
 
-  const HOUR_HEIGHT = 80;
+  const HOUR_HEIGHT = 100;
 
   const timeToY = (hhmm) => {
     const [h, m] = hhmm.split(':').map(Number);
-    return (h - 8) * HOUR_HEIGHT + (m / 60) * HOUR_HEIGHT;
+    return (h - 7) * HOUR_HEIGHT + (m / 60) * HOUR_HEIGHT + HOUR_HEIGHT / 2;
   };
 
   const durationToHeight = (start, end) => {
     const [sh, sm] = start.split(':').map(Number);
     const [eh, em] = end.split(':').map(Number);
-    return ((eh * 60 + em) - (sh * 60 + sm)) / 60 * HOUR_HEIGHT + HOUR_HEIGHT;
+    return ((eh * 60 + em) - (sh * 60 + sm)) / 60 * HOUR_HEIGHT;
   };
 
   return (
@@ -48,7 +48,7 @@ function ScheduleForm({ weekLabel, weekNumber, weekDates, totalWeeks, onWeekChan
             <div className="schedule-time-column">
               <div className="schedule-time-column__header" />
               <div className="schedule-time-column__body">
-                {["08:00", "09:00", "10:00", "11:00", "12:00", "13:00",
+                {["07:00", "08:00", "09:00", "10:00", "11:00", "12:00", "13:00",
                   "14:00", "15:00", "16:00", "17:00", "18:00", "19:00",
                   "20:00", "21:00", "22:00"].map(t => (
                     <div className="schedule-time-slot" key={t}>{t}</div>
