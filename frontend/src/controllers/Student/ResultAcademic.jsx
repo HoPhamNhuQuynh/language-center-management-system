@@ -34,6 +34,7 @@ function ResultAcademic() {
         loadData();
     }, [enrollmentId, classId]);
 
+
     if (loading) return <div>Loading...</div>;
 
     return (

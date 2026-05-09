@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import CourseRegisterForm from "../../pages/Payment/CourseRegisterForm";
 import { searchCourseApi, classApi, courseApi } from "../../services/courseService";
-import { enrollmentApi, paymentApi, enrollmentDetailApi, deleteEnrollmentApi,paymentDetailApi } from "../../services/enrollmentService";
+import { enrollmentApi, paymentApi, enrollmentDetailApi, deleteEnrollmentApi } from "../../services/enrollmentService";
 import { myPaymentApi } from "../../services/studentService";
 import Apis from "../../services/Apis";
 
@@ -104,7 +104,7 @@ function CourseRegister() {
 
       Promise.all([
         savedCourseId ? courseApi(savedCourseId) : Promise.resolve(null),
-        paymentDetailApi(txnRef),
+        myPaymentApi(txnRef),
       ]).then(([courseRes, paymentDetail]) => {
         const mergedCourse = {
           ...(courseRes || {}),
