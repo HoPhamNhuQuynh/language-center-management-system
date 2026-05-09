@@ -105,17 +105,13 @@ function CourseRegister() {
       Promise.all([
         savedCourseId ? courseApi(savedCourseId) : Promise.resolve(null),
         myPaymentApi(txnRef),
-      ])
-        .then(([courseRes, paymentDetail]) => {
-          const mergedCourse = {
-            ...(courseRes || {}),
-            classes: courseRes?.classroom_set || courseRes?.classes || [],
-            price,
-            total_sessions:
-              paymentDetail?.total_sessions ||
-              courseRes?.total_sessions ||
-              "---",
-          };
+      ]).then(([courseRes, paymentDetail]) => {
+        const mergedCourse = {
+          ...(courseRes || {}),
+          classes: courseRes?.classroom_set || courseRes?.classes || [],
+          price,
+          total_sessions: paymentDetail?.total_sessions || courseRes?.total_sessions || "---",
+        };
 
           setCourse(mergedCourse);
           setSelectedClass({

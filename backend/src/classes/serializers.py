@@ -222,6 +222,7 @@ class ClassRoomSerializer(serializers.ModelSerializer):
 
 class ClassRoomDetailSerializer(ClassRoomSerializer):
     active = serializers.ReadOnlyField(source="is_auto_active")
+    total_sessions = serializers.IntegerField(source='course.total_sessions', read_only=True)
 
     class Meta:
         model = ClassRoomSerializer.Meta.model
@@ -229,6 +230,7 @@ class ClassRoomDetailSerializer(ClassRoomSerializer):
             "created_at",
             "grade_deadline",
             "grade_status",
+            "total_sessions"
         ]
 
 

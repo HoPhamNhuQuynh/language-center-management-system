@@ -21,7 +21,7 @@ function ResultAcademicForm({ result, classInfo }) {
                 <div className="result-scores-header">
                     <h3>KẾT QUẢ HỌC TẬP:</h3>
                     <span>
-                        Chuyên cần: {result?.attendance_count}/{result?.total_sessions} buổi
+                        Chuyên cần: {result?.attendance_count}/{classInfo?.total_sessions ?? "—"} buổi
                     </span>
                 </div>
 

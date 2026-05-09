@@ -37,7 +37,7 @@ vi.mock("../../services/enrollmentService", () => ({
   paymentApi: vi.fn(),
   enrollmentDetailApi: vi.fn(),
   deleteEnrollmentApi: vi.fn(),
-  myPaymentApi: vi.fn(),
+  MyPaymentApi: vi.fn(),
 }));
 
 vi.mock("../../services/studentService", () => ({

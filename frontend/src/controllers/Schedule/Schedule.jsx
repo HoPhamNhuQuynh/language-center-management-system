@@ -4,10 +4,30 @@ import ScheduleForm from "../../pages/Schedule/ScheduleForm";
 import { getRole } from "../../utils/token";
 import "../../styles/Schedule.css";
 
+const getFirstMonday = (startDateStr) => {
+  const classStart = new Date(startDateStr);
+  const dow = classStart.getDay();
+  const diff = dow === 0 ? -6 : 1 - dow;
+  const mon = new Date(classStart);
+  mon.setDate(classStart.getDate() + diff);
+  return mon;
+};
+
+const getWeekDates = (mondayDate) => {
+  return Array.from({ length: 7 }, (_, i) => {
+    const date = new Date(mondayDate);
+    date.setDate(mondayDate.getDate() + i);
+    const dd = String(date.getDate()).padStart(2, '0');
+    const mm = String(date.getMonth() + 1).padStart(2, '0');
+    return `${dd}/${mm}`;
+  });
+};
+
 function Schedule() {
   const [sessions, setSessions] = useState([]);
+  const [allMondays, setAllMondays] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedWeek, setSelectedWeek] = useState(1);
+  const [selectedWeek, setSelectedWeek] = useState(null);
   const role = getRole();
 
   useEffect(() => {
@@ -15,8 +35,38 @@ function Schedule() {
       try {
         const res = await myScheduleApi();
         setSessions(res);
+
+        const today = new Date();
+        const allDates = res.map(s => new Date(s.date));
+        const minDate = new Date(Math.min(...allDates));
+        const maxDate = new Date(Math.max(Math.max(...allDates), today));
+
+        const firstMon = getFirstMonday(minDate.toISOString().split('T')[0]);
+        const mondays = [];
+        const cur = new Date(firstMon);
+        while (cur <= maxDate) {
+          mondays.push(new Date(cur));
+          cur.setDate(cur.getDate() + 7);
+        }
+
+        setAllMondays(mondays);
+
+        let weekIdx = mondays.findIndex(mon => {
+          const sunday = new Date(mon);
+          sunday.setDate(mon.getDate() + 6);
+          return today >= mon && today <= sunday;
+        });
+
+        if (weekIdx === -1) {
+          weekIdx = mondays.findIndex(mon => mon > today);
+        }
+        if (weekIdx === -1) weekIdx = mondays.length - 1;
+
+        setSelectedWeek(weekIdx + 1);
+
       } catch (ex) {
         console.error("Failed to load schedule:", ex);
+        setSelectedWeek(1);
       } finally {
         setLoading(false);
       }
@@ -25,54 +75,25 @@ function Schedule() {
   }, []);
 
   const dayMap = {
-    2: "Thứ Hai", 3: "Thứ Ba", 4: "Thứ Tư",
-    5: "Thứ Năm", 6: "Thứ Sáu", 7: "Thứ Bảy", 8: "Chủ Nhật",
+    0: "Thứ Hai", 1: "Thứ Ba", 2: "Thứ Tư",
+    3: "Thứ Năm", 4: "Thứ Sáu", 5: "Thứ Bảy", 6: "Chủ Nhật",
   };
 
-  const startDate = sessions[0]?.classroom_start_date || null;
-  const endDate = sessions[0]?.classroom_end_date || null;
+  const totalWeeks = allMondays.length;
 
-  const totalWeeks = startDate && endDate
-    ? Math.ceil((new Date(endDate) - new Date(startDate)) / (1000 * 60 * 60 * 24 * 7))
-    : 10;
-
-  const getCurrentWeek = (startDateStr) => {
-    if (!startDateStr) return 1;
-    const start = new Date(startDateStr);
-    const today = new Date();
-    const diffDays = Math.floor((today - start) / (1000 * 60 * 60 * 24));
-    return Math.max(1, Math.floor(diffDays / 7) + 1);
-  };
-
-  const getWeekDates = (startDateStr, weekNumber) => {
-    const [y, mo, d] = startDateStr.split('-').map(Number);
-    const weekStart = new Date(y, mo - 1, d + (weekNumber - 1) * 7);
-    return Array.from({ length: 7 }, (_, i) => {
-      const date = new Date(y, mo - 1, d + (weekNumber - 1) * 7 + i);
-      const dd = String(date.getDate()).padStart(2, '0');
-      const mm = String(date.getMonth() + 1).padStart(2, '0');
-      return `${dd}/${mm}`;
-    });
-  };
-
-  useEffect(() => {
-    if (startDate) {
-      setSelectedWeek(getCurrentWeek(startDate));
-    }
-  }, [startDate]);
-
-  const weekDates = startDate ? getWeekDates(startDate, selectedWeek) : [];
+  const currentMonday = allMondays[selectedWeek - 1];
+  const weekDates = currentMonday ? getWeekDates(currentMonday) : [];
 
   const filteredSessions = sessions.filter(session => {
-    if (!weekDates.length) return true;
-    const [y, m, d] = session.date.split('-');
+    if (!weekDates.length) return false;
+    const [, m, d] = session.date.split('-');
     const sessionDate = `${d}/${m}`;
     return weekDates.includes(sessionDate);
   });
 
   const scheduleData = filteredSessions.map(session => ({
     day: dayMap[session.day_of_week] || "---",
-    dateLabel: (() => { const [y, m, d] = session.date.split('-'); return `${d}/${m}`; })(),
+    dateLabel: (() => { const [, m, d] = session.date.split('-'); return `${d}/${m}`; })(),
     className: session.classroom_name,
     start_time: session.start_time.slice(0, 5),
     end_time: session.end_time.slice(0, 5),
@@ -81,7 +102,7 @@ function Schedule() {
     teacher: session.teacher_fullname,
   }));
 
-  if (loading) return <div>Loading...</div>;
+  if (loading || selectedWeek === null) return <div>Loading...</div>;
 
   return (
     <ScheduleForm

@@ -17,6 +17,14 @@ class ClassRoomViewSet(viewsets.ModelViewSet):
     ordering_fields = ["-id"]
 
     def get_queryset(self):
+        if self.action == 'retrieve':
+            return ClassRoom.objects.select_related('course__level').prefetch_related(
+                Prefetch(
+                    'teachingassignment_set',
+                    queryset=TeachingAssignment.objects.select_related('teacher')
+                )
+            )
+
         query = (ClassRoom.objects.filter(active=True).annotate(
             student=Count(
                 'enrollment',
