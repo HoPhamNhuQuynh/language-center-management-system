@@ -250,13 +250,22 @@ const ClassManagement = () => {
       );
       handleClose();
     } catch (ex) {
-      const data = ex.response?.data;
-      console.error("Toàn bộ lỗi:", JSON.stringify(data, null, 2));
-      const msg = Array.isArray(data)
-        ? data[0]
-        : typeof data === "object"
-          ? Object.values(data).flat()[0]
-          : "Lưu thất bại, vui lòng thử lại.";
+      const data = ex.response?.data; 
+
+      const extractErrorMessage = (data) => {
+        if (!data) return "Lưu thất bại, vui lòng thử lại.";
+        if (typeof data === "string") return data;
+        if (Array.isArray(data)) return extractErrorMessage(data[0]);
+        if (typeof data === "object") {
+          if (data.non_field_errors)
+            return extractErrorMessage(data.non_field_errors);
+          const first = Object.values(data)[0];
+          return extractErrorMessage(first);
+        }
+        return "Lưu thất bại, vui lòng thử lại.";
+      };
+
+      const msg = extractErrorMessage(data);
       setErrors({ general: msg });
     } finally {
       setSaving(false);

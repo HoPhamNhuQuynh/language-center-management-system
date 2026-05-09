@@ -61,6 +61,8 @@ class PaymentViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAP
     search_fields = ["transaction_id"]
 
     def get_queryset(self):
+        if getattr(self, 'swagger_fake_view', False): 
+            return Payment.objects.none()
         user = self.request.user
 
         if user.is_authenticated and user.is_admin:

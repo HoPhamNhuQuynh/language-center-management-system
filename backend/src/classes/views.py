@@ -150,6 +150,9 @@ class SessionViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.Upda
             raise ValidationError("Không thể xóa buổi do ràng buộc dữ liệu.")
 
     def get_queryset(self):
+        if getattr(self, 'swagger_fake_view', False):  # ← thêm dòng này
+            return Session.objects.none()
+    
         user = self.request.user
 
         query = Session.objects.select_related('schedule__classroom', 'user')
