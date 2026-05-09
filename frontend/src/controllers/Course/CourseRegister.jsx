@@ -20,7 +20,7 @@ function CourseRegister() {
   const [confirm, setConfirm] = useState(false);
   const [paid, setPaid] = useState(false);
   const [bill, setBill] = useState(false);
-  const [method, setMethod] = useState("momo");
+  const [method, setMethod] = useState("vnpay");
   const [percent, setPercent] = useState(100);
   const [loading, setLoading] = useState(false);
   const [paymentStatus, setPaymentStatus] = useState(null);
