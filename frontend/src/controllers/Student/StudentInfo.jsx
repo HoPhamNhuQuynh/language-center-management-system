@@ -2,11 +2,12 @@ import logo from "../../assets/hero.png";
 import StudentInfoForm from "../../pages/User/StudentInfoForm";
 import "../../styles/StudentInfo.css";
 import { useEffect, useState } from "react";
-import { studentApi, updateStudentApi, updateStudentAvatarApi, myEnrollmentApi, resetPasswordApi, deleteAccountApi } from "../../services/studentService";
+import { studentApi, updateStudentApi, updateStudentAvatarApi, myEnrollmentApi, resetPasswordApi, deleteAccountApi, myPaymentApi } from "../../services/studentService";
 
 function StudentInfo() {
   const [userInfo, setUserInfo] = useState(null);
   const [enrollments, setEnrollments] = useState([]);
+  const [payments, setPayments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
@@ -74,12 +75,14 @@ function StudentInfo() {
   useEffect(() => {
     const loadProfile = async () => {
       try {
-        const [user, enrollmentData] = await Promise.all([
+        const [user, enrollmentData, paymentData] = await Promise.all([
           studentApi(),
           myEnrollmentApi(),
+          myPaymentApi(),
         ]);
         setUserInfo(user);
         setEnrollments(enrollmentData);
+        setPayments(paymentData);
       } catch (ex) {
         console.error("Failed to load profile:", ex);
       } finally {
@@ -103,8 +106,13 @@ function StudentInfo() {
   };
 
   const totalAmount = enrollments.reduce((sum, e) => sum + (Number(e.classroom?.course_price) || 0), 0);
-  const totalPaid = enrollments.reduce((sum, e) => sum + (Number(e.amount) || 0), 0);
-  const remaining = totalAmount - totalPaid;
+  const totalPaid = payments
+    .filter((p) => {
+      const enrollment = enrollments.find((e) => e.id === p.enrollment);
+      return enrollment?.enrollment_status === "SUCCESS";
+    })
+    .reduce((sum, p) => sum + (Number(p.amount) || 0), 0); 
+    const remaining = totalAmount - totalPaid;
 
   const tuition = {
     paid: totalPaid.toLocaleString('vi-VN') + " VND",
