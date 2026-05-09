@@ -3,6 +3,7 @@ from users.models import User, Profile
 from rest_framework import serializers
 from django.db import transaction
 import re
+from django.core.files.uploadedfile import UploadedFile
 
 def validate_password_common(password):
         if len(password) < 6:
@@ -126,11 +127,18 @@ class AvatarUpdateSerializer(serializers.ModelSerializer):
         fields = ['avatar']
 
     def validate_avatar(self, file):
-        if file.size > 2 * 1024 * 1024:
-            raise serializers.ValidationError("Ảnh quá lớn (max 2MB)")
+        if isinstance(file, UploadedFile):
 
-        if not file.content_type.startswith('image/'):
-            raise serializers.ValidationError("File phải là ảnh")
+            if file.size > 2 * 1024 * 1024:
+                raise serializers.ValidationError(
+                    "Ảnh quá lớn (max 2MB)"
+                )
+
+            if not file.content_type.startswith("image/"):
+                raise serializers.ValidationError(
+                    "File phải là ảnh"
+                )
+
         return file
 
     def to_representation(self, instance):

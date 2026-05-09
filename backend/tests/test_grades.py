@@ -1,7 +1,7 @@
 import pytest
 from model_bakery import baker
-from grades.models import Score, Attendance
-from courses.models import ScoreType
+from grades.models import AcademicResult, Score, Attendance
+from grades.serializers import BulkSyncAttendanceSerializer
 from grades.service import ScoreService, AttendanceService
 from classes.models import ClassRoom, TeachingAssignment
 from enrollments.models import Enrollment
@@ -127,14 +127,36 @@ class TestGradesAPI:
 
         assert res.status_code == status.HTTP_403_FORBIDDEN
 
-    def test_UTL_007_bulk_sync_attendances_returns_403_when_session_not_in_classroom(self, api_client, active_teacher, classroom):
+    def test_UTL_007_bulk_sync_attendances_returns_403_when_session_not_in_classroom(
+        self,
+        api_client,
+        active_teacher,
+        classroom
+    ):
         """Session không thuộc classroom"""
+
         api_client.force_authenticate(user=active_teacher)
 
-        other_classroom = baker.make('classes.ClassRoom')
-        wrong_session = baker.make('classes.Session', schedule__classroom=other_classroom)
+        baker.make(
+            'classes.TeachingAssignment',
+            classroom=classroom,
+            teacher=active_teacher,
+            is_main=True
+        )
 
-        url = reverse('bulk-sync-attendances', kwargs={'class_id': classroom.id})
+        other_classroom = baker.make('classes.ClassRoom')
+
+        wrong_session = baker.make(
+            'classes.Session',
+            schedule__classroom=other_classroom,
+            date=timezone.localdate()
+        )
+
+        url = reverse(
+            'bulk-sync-attendances',
+            kwargs={'class_id': classroom.id}
+        )
+
         data = {
             "session_id": wrong_session.id,
             "attendances": []
@@ -181,5 +203,328 @@ class TestGradesAPI:
 
         assert not s.is_valid()
         assert "Trùng điểm" in str(s.errors)
-    
-    
+
+    def test_UTL_010_bulk_sync_attendance_serializer_invalid_when_duplicate_enrollment(self):
+        """Không cho phép trùng enrollment trong request điểm danh"""
+
+        data = {
+            "session_id": 1,
+            "attendances": [
+                {
+                    "enrollment_id": 1,
+                    "attendance_status": "PRESENT"
+                },
+                {
+                    "enrollment_id": 1,
+                    "attendance_status": "ABSENT"
+                }
+            ]
+        }
+
+        serializer = BulkSyncAttendanceSerializer(data=data)
+
+        assert not serializer.is_valid()
+        assert "Trùng mã đăng ký" in str(serializer.errors)
+
+
+    def test_UTL_011_bulk_sync_scores_returns_403_when_grade_submitted(
+        self,
+        api_client,
+        active_teacher,
+        classroom
+    ):
+        """Không cho nhập điểm khi bảng điểm đã khóa"""
+
+        api_client.force_authenticate(user=active_teacher)
+
+        baker.make(
+            "classes.TeachingAssignment",
+            classroom=classroom,
+            teacher=active_teacher,
+            is_main=True
+        )
+
+        classroom.grade_status = ClassRoom.Status.SUBMITTED
+        classroom.save()
+
+        url = reverse(
+            "bulk-sync-scores",
+            kwargs={"class_id": classroom.id}
+        )
+
+        response = api_client.post(
+            url,
+            {"scores": []},
+            format="json"
+        )
+
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+
+
+    def test_UTL_012_bulk_sync_attendance_returns_403_when_not_main_teacher(
+        self,
+        api_client,
+        active_teacher,
+        classroom
+    ):
+        """Không phải giáo viên chính thì không được điểm danh"""
+
+        api_client.force_authenticate(user=active_teacher)
+
+        baker.make(
+            "classes.TeachingAssignment",
+            classroom=classroom,
+            teacher=active_teacher,
+            is_main=False
+        )
+
+        session = baker.make(
+            "classes.Session",
+            schedule__classroom=classroom,
+            date=timezone.localdate()
+        )
+
+        url = reverse(
+            "bulk-sync-attendances",
+            kwargs={"class_id": classroom.id}
+        )
+
+        data = {
+            "session_id": session.id,
+            "attendances": []
+        }
+
+        response = api_client.post(url, data, format="json")
+
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+
+
+    def test_UTL_013_bulk_sync_attendance_returns_400_when_session_in_future(
+        self,
+        api_client,
+        active_teacher,
+        classroom
+    ):
+        """Không được điểm danh cho buổi học chưa diễn ra"""
+
+        api_client.force_authenticate(user=active_teacher)
+
+        baker.make(
+            "classes.TeachingAssignment",
+            classroom=classroom,
+            teacher=active_teacher,
+            is_main=True
+        )
+
+        session = baker.make(
+            "classes.Session",
+            schedule__classroom=classroom,
+            date=timezone.localdate() + timedelta(days=1)
+        )
+
+        url = reverse(
+            "bulk-sync-attendances",
+            kwargs={"class_id": classroom.id}
+        )
+
+        data = {
+            "session_id": session.id,
+            "attendances": []
+        }
+
+        response = api_client.post(url, data, format="json")
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert "chưa diễn ra" in str(response.data)
+
+
+    def test_UTL_014_bulk_sync_attendance_returns_400_when_session_in_past(
+        self,
+        api_client,
+        active_teacher,
+        classroom
+    ):
+        """Không được điểm danh cho buổi học đã qua"""
+
+        api_client.force_authenticate(user=active_teacher)
+
+        baker.make(
+            "classes.TeachingAssignment",
+            classroom=classroom,
+            teacher=active_teacher,
+            is_main=True
+        )
+
+        session = baker.make(
+            "classes.Session",
+            schedule__classroom=classroom,
+            date=timezone.localdate() - timedelta(days=1)
+        )
+
+        url = reverse(
+            "bulk-sync-attendances",
+            kwargs={"class_id": classroom.id}
+        )
+
+        data = {
+            "session_id": session.id,
+            "attendances": []
+        }
+
+        response = api_client.post(url, data, format="json")
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert "đã qua" in str(response.data)
+
+
+    def test_UTL_015_submit_score_returns_400_when_course_has_no_score_type(
+        self,
+        api_client,
+        active_teacher,
+        classroom
+    ):
+        """Không được nộp bảng điểm nếu khóa học chưa có loại điểm"""
+
+        api_client.force_authenticate(user=active_teacher)
+
+        baker.make(
+            "classes.TeachingAssignment",
+            classroom=classroom,
+            teacher=active_teacher,
+            is_main=True
+        )
+
+        url = reverse(
+            "submit-scores",
+            kwargs={"class_id": classroom.id}
+        )
+
+        response = api_client.post(
+            url,
+            {"remarks": []},
+            format="json"
+        )
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert "Chưa cấu hình các loại điểm" in str(response.data)
+
+
+    def test_UTL_016_submit_score_returns_400_when_student_not_enough_scores(
+        self,
+        api_client,
+        active_teacher,
+        classroom
+    ):
+        """Không được nộp bảng điểm nếu học viên chưa đủ cột điểm"""
+
+        api_client.force_authenticate(user=active_teacher)
+
+        baker.make(
+            "classes.TeachingAssignment",
+            classroom=classroom,
+            teacher=active_teacher,
+            is_main=True
+        )
+
+        enrollment = baker.make(
+            "enrollments.Enrollment",
+            classroom=classroom
+        )
+
+        score_type_1 = baker.make(
+            "courses.ScoreType",
+            course=classroom.course
+        )
+
+        baker.make(
+            "courses.ScoreType",
+            course=classroom.course
+        )
+
+        baker.make(
+            "grades.Score",
+            enrollment=enrollment,
+            score_type=score_type_1,
+            score_value=8
+        )
+
+        url = reverse(
+            "submit-scores",
+            kwargs={"class_id": classroom.id}
+        )
+
+        response = api_client.post(
+            url,
+            {"remarks": []},
+            format="json"
+        )
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert "chưa nhập đủ điểm" in str(response.data)
+
+
+    def test_UTL_017_submit_score_successfully(
+        self,
+        api_client,
+        active_teacher,
+        classroom
+    ):
+        """Nộp bảng điểm thành công"""
+
+        api_client.force_authenticate(user=active_teacher)
+
+        baker.make(
+            "classes.TeachingAssignment",
+            classroom=classroom,
+            teacher=active_teacher,
+            is_main=True
+        )
+
+        enrollment = baker.make(
+            "enrollments.Enrollment",
+            classroom=classroom
+        )
+
+        score_type = baker.make(
+            "courses.ScoreType",
+            course=classroom.course,
+            weight=1
+        )
+
+        baker.make(
+            "grades.Score",
+            enrollment=enrollment,
+            score_type=score_type,
+            score_value=8
+        )
+
+        url = reverse(
+            "submit-scores",
+            kwargs={"class_id": classroom.id}
+        )
+
+        response = api_client.post(
+            url,
+            {
+                "remarks": [
+                    {
+                        "enrollment_id": enrollment.id,
+                        "comment": "Học tốt"
+                    }
+                ]
+            },
+            format="json"
+        )
+
+        assert response.status_code == status.HTTP_200_OK
+
+        result = AcademicResult.objects.get(enrollment=enrollment)
+
+        assert result.average_score == 8
+        assert result.comment == "Học tốt"
+
+        classroom.refresh_from_db()
+
+        assert classroom.grade_status == ClassRoom.Status.SUBMITTED
+        
+        
