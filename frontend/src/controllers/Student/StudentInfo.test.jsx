@@ -3,7 +3,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { MemoryRouter } from "react-router-dom";
 import StudentInfo from "./StudentInfo";
 import {
-  studentApi, updateStudentApi, updateStudentAvatarApi, myEnrollmentApi,
+  studentApi, updateStudentApi, updateStudentAvatarApi, myEnrollmentApi, myPaymentApi
 } from "../../services/studentService";
 import { resetPasswordApi, deleteAccountApi } from "../../services/studentService";
 
@@ -43,7 +43,7 @@ vi.mock("../../services/studentService", () => ({
   myEnrollmentApi: vi.fn(),
   resetPasswordApi: vi.fn(),
   deleteAccountApi: vi.fn(),
-
+  myPaymentApi: vi.fn(),
 }));
 
 const mockUser = {
@@ -57,7 +57,7 @@ const mockEnrollments = [
   {
     id: 1,
     amount: 500000,
-    enrollment_status: "active",
+    enrollment_status: "SUCCESS",
     classroom: {
       id: 10,
       name: "Lớp React",
@@ -74,6 +74,9 @@ describe("StudentInfo", () => {
     vi.spyOn(window, "alert").mockImplementation(() => { });
     studentApi.mockResolvedValue(mockUser);
     myEnrollmentApi.mockResolvedValue(mockEnrollments);
+    myPaymentApi.mockResolvedValue([
+      { id: 1, enrollment: 1, amount: 500000 }
+    ]);
   });
 
   afterEach(() => vi.restoreAllMocks());

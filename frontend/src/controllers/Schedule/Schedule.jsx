@@ -17,11 +17,10 @@ const getWeekDates = (mondayDate) => {
   return Array.from({ length: 7 }, (_, i) => {
     const date = new Date(mondayDate);
     date.setDate(mondayDate.getDate() + i);
-    const dd = String(date.getDate()).padStart(2, '0');
-    const mm = String(date.getMonth() + 1).padStart(2, '0');
-    return `${dd}/${mm}`;
+    return date.toISOString().split('T')[0];
   });
 };
+
 
 function Schedule() {
   const [sessions, setSessions] = useState([]);
@@ -38,7 +37,7 @@ function Schedule() {
 
         const today = new Date();
         const allDates = res.map(s => new Date(s.date));
-        const minDate = new Date(Math.min(...allDates));
+        const minDate = new Date(Math.min(Math.min(...allDates), today));
         const maxDate = new Date(Math.max(Math.max(...allDates), today));
 
         const firstMon = getFirstMonday(minDate.toISOString().split('T')[0]);
@@ -57,9 +56,6 @@ function Schedule() {
           return today >= mon && today <= sunday;
         });
 
-        if (weekIdx === -1) {
-          weekIdx = mondays.findIndex(mon => mon > today);
-        }
         if (weekIdx === -1) weekIdx = mondays.length - 1;
 
         setSelectedWeek(weekIdx + 1);
@@ -84,11 +80,16 @@ function Schedule() {
   const currentMonday = allMondays[selectedWeek - 1];
   const weekDates = currentMonday ? getWeekDates(currentMonday) : [];
 
+  const weekLabel = weekDates.length
+    ? (() => {
+      const fmt = (d) => { const [, m, day] = d.split('-'); return `${day}/${m}`; };
+      return `${fmt(weekDates[0])} - ${fmt(weekDates[6])}`;
+    })()
+    : "";
+
   const filteredSessions = sessions.filter(session => {
     if (!weekDates.length) return false;
-    const [, m, d] = session.date.split('-');
-    const sessionDate = `${d}/${m}`;
-    return weekDates.includes(sessionDate);
+    return weekDates.includes(session.date);
   });
 
   const scheduleData = filteredSessions.map(session => ({
@@ -106,7 +107,7 @@ function Schedule() {
 
   return (
     <ScheduleForm
-      weekLabel={weekDates.length ? `${weekDates[0]} - ${weekDates[6]}` : ""}
+      weekLabel={weekLabel}
       weekNumber={selectedWeek}
       weekDates={weekDates}
       totalWeeks={totalWeeks}
