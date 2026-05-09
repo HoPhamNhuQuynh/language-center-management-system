@@ -27,7 +27,9 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["localhost",
                  "127.0.0.1",
-                 'juggling-widen-prewar.ngrok-free.dev']
+                 'juggling-widen-prewar.ngrok-free.dev',
+                 "pseudopsychological-vasoconstrictive-ellison.ngrok-free.dev",
+                 "*"]
 
 AUTH_USER_MODEL = 'users.User'
 
@@ -55,6 +57,7 @@ INSTALLED_APPS = [
     'enrollments.apps.EnrollmentsConfig',
     'grades.apps.GradesConfig',
     'core.apps.CoreConfig',
+    'analytics.apps.AnalyticsConfig',
     'drf_yasg',
     'oauth2_provider',
     'corsheaders',
@@ -79,9 +82,14 @@ AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
+# OAUTH2_PROVIDER = {
+#     'ACCESS_TOKEN_EXPIRE_SECONDS': 60, #15p
+#     'REFRESH_TOKEN_EXPIRE_SECONDS': 86400 * 30, #10 ngày 
+# }
+
 OAUTH2_PROVIDER = {
-    'ACCESS_TOKEN_EXPIRE_SECONDS': 36000,
-    'REFRESH_TOKEN_EXPIRE_SECONDS': 86400 * 30, 
+    "ACCESS_TOKEN_EXPIRE_SECONDS": 36000,  # 15p
+    "REFRESH_TOKEN_EXPIRE_SECONDS": 86400 * 30,  # 10 ngày
 }
 
 SOCIALACCOUNT_PROVIDERS = {
@@ -125,6 +133,7 @@ SECURE_CROSS_ORIGIN_EMBEDDER_POLICY = None
 CSRF_TRUSTED_ORIGINS = [
     "https://localhost:5173",
     "https://juggling-widen-prewar.ngrok-free.dev",
+    "https://pseudopsychological-vasoconstrictive-ellison.ngrok-free.dev",
 ]
 
 # CORS_ALLOW_CREDENTIALS = True
@@ -169,8 +178,8 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'language_center_db',
         'USER': 'root',
-        'PASSWORD': 'root',
-        'HOST': '', # mặc định localhost
+        'PASSWORD': 'Nhuquynh261105@',
+        'HOST': '127.0.0.1', # mặc định localhost
         'PORT': '3306',
     }
 }
@@ -213,11 +222,19 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 # Setting payment service
+# ngrok http 8000 --domain=pseudopsychological-vasoconstrictive-ellison.ngrok-free.dev - ngrok http 5173
 VNPAY_TMN_CODE = 'YCXQRNYD'
 VNPAY_HASH_SECRET = 'SAR75YVR7QKTU9HLD3C4MXY77Y01E387'
 VNPAY_URL = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html"
-VNPAY_RETURN_URL = 'https://localhost:5174/course-register'
-VNPAY_IPN_URL = "https://juggling-widen-prewar.ngrok-free.dev/api/payments/vnpay-callback/"
+VNPAY_RETURN_URL = 'https://pseudopsychological-vasoconstrictive-ellison.ngrok-free.dev/course-register'
+# VNPAY_IPN_URL = "https://pseudopsychological-vasoconstrictive-ellison.ngrok-free.dev/api/payments/vnpay-callback/"
+
+
+# VNPAY_TMN_CODE = '4X8RC0YB'
+# VNPAY_HASH_SECRET = 'CE9WGXR13I3M5ZSPSEEWWK6LF3D4IBDD'
+# VNPAY_URL = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html"
+# VNPAY_RETURN_URL = 'https://localhost:5173/course-register'
+# VNPAY_IPN_URL = "https://juggling-widen-prewar.ngrok-free.dev/api/payments/vnpay-ipn/"
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 SECURE_SSL_REDIRECT = False

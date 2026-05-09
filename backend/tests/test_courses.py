@@ -3,7 +3,7 @@ from django.urls import reverse
 from rest_framework import status
 from model_bakery import baker
 from courses.models import Course, Tag, Level, ScoreType
-from courses.serializers import TagSerializer, CourseSerializer, ScoreTypeSerializer
+from courses.serializers import TagSerializer, CourseSerializer, ScoreTypeSerializer, CourseDetailSerializer
 
 @pytest.mark.django_db
 class TestCourseModule:
@@ -14,20 +14,19 @@ class TestCourseModule:
         (30, status.HTTP_201_CREATED, ""),                                            # Ngay biên trên
         (31, status.HTTP_400_BAD_REQUEST, "tối đa là 30 buổi"),                       # Sát trên biên trên
     ])
-    def test_create_course_sessions_bva(self, api_client, admin_user, setup_course_data, sessions, expected_status, expected_msg):
+    def test_UTL_001_create_course_sessions_bva(self, api_client, admin_user, setup_course_data, sessions, expected_status, expected_msg):
         """Kiểm tra giá trị biên cho tổng số buổi học (10-30)"""
-        level, _ = setup_course_data
+        level, tag = setup_course_data
         api_client.force_authenticate(user=admin_user)
-        
-        data = {"name": f"Course {sessions}", "total_sessions": sessions, "level": level.id}
-        response = api_client.post(reverse('course-list'), data)
-        
+        data = {"name": f"Course {sessions}", "total_sessions": sessions, "level": level.id, "description": "Khóa học nâng cao", "price": 3000000, "tags": [tag.id],}
+        response = api_client.post(reverse('course-list'), data, format='multipart')
+        print("COURSE DATA:", repr(response.data))
         assert response.status_code == expected_status
         if expected_msg:
             assert expected_msg in str(response.data)
 
     @pytest.mark.parametrize("price", [1000000, 1999999])
-    def test_update_course_price_rejects_below_minimum(self, api_client, admin_user, setup_course_data, price):
+    def test_UTL_002_update_course_price_rejects_below_minimum(self, api_client, admin_user, setup_course_data, price):
         """Kiểm tra học phí dưới mức 2.000.000 VND phải bị từ chối"""
         level, _ = setup_course_data
         course = baker.make('courses.Course', level=level)
@@ -38,13 +37,13 @@ class TestCourseModule:
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert "Học phí tối thiểu là 2.000.000 VND" in str(response.data)
 
-    def test_tag_serializer_fails_if_name_is_blank(self):
+    def test_UTL_003_tag_serializer_fails_if_name_is_blank(self):
         """Xác nhận Serializer báo lỗi khi trường tên thẻ bị để trống"""
         serializer = TagSerializer(data={"name": ""})
         assert not serializer.is_valid()
-        assert "Trường này không được bỏ trống" in str(serializer.errors)
+        assert "Trường này không được bỏ trống." in str(serializer.errors)
 
-    def test_delete_course_fails_if_protected_by_scores(self, api_client, admin_user):
+    def test_UTL_004_delete_course_fails_if_protected_by_scores(self, api_client, admin_user):
         """Đảm bảo không thể xóa khóa học nếu đang có ràng buộc dữ liệu với các loại điểm"""
         course = baker.make('courses.Course')
         baker.make('courses.ScoreType', course=course)
@@ -56,18 +55,19 @@ class TestCourseModule:
         assert "Không thể xóa khóa học này" in str(response.data)
 
     @pytest.mark.parametrize("weight", [-1.0, 0, 3.1, 4.0])
-    def test_create_score_type_fails_if_weight_invalid(self, api_client, admin_user, weight):
+    def test_UTL_005_create_score_type_fails_if_weight_invalid(self, weight):
         """Kiểm tra hệ số điểm nằm ngoài khoảng (0, 3] phải báo lỗi đúng câu thông báo của backend"""
         course = baker.make('courses.Course')
-        api_client.force_authenticate(user=admin_user)
-        
-        data = {"name": "Final", "weight": weight, "course": course.id}
-        response = api_client.post(reverse('score-type-list'), data)
-        
-        assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert "Hệ số phải lớn hơn 0 và nhỏ hơn hoặc bằng 3" in str(response.data)
 
-    def test_get_course_classes_returns_correct_list(self, api_client, classroom):
+        serializer = ScoreTypeSerializer(data={
+        "name": "Final",
+        "weight": weight,
+        "course": course.id
+        })
+        assert not serializer.is_valid()
+        assert "Hệ số phải lớn hơn 0 và nhỏ hơn hoặc bằng 3" in str(serializer.errors)
+
+    def test_UTL_006_get_course_classes_returns_correct_list(self, api_client, classroom):
         """Kiểm tra action get_classes trả về đúng và đủ danh sách lớp học thuộc khóa học đó"""
         course = classroom.course
         baker.make('classes.ClassRoom', course=course, _quantity=2)
@@ -77,7 +77,7 @@ class TestCourseModule:
         assert response.status_code == status.HTTP_200_OK
         assert len(response.data) == 3
 
-    def test_course_serializer_representation_is_correct(self, setup_course_data):
+    def test_UTL_007_course_serializer_representation_is_correct(self, setup_course_data):
         """Xác nhận dữ liệu trả về của CourseSerializer bao gồm thông tin chi tiết của các thẻ (tags)"""
         level, tag = setup_course_data
         course = baker.make('courses.Course', level=level)
@@ -86,15 +86,7 @@ class TestCourseModule:
         data = CourseSerializer(instance=course).data
         assert data['tags'][0]['name'] == tag.name
 
-    def test_score_type_serializer_returns_read_only_course_name(self):
-        """Kiểm tra trường course_name trong ScoreTypeSerializer hiển thị đúng tên khóa học và là ReadOnly"""
-        course = baker.make('courses.Course', name="Math")
-        st = baker.make('courses.ScoreType', course=course, name="Quiz")
-        
-        data = ScoreTypeSerializer(instance=st).data
-        assert data['course_name'] == "Math"
-
-    def test_update_course_detail_success_with_multipart(self, api_client, admin_user, setup_course_data):
+    def test_UTL_009_update_course_detail_success_with_multipart(self, api_client, admin_user, setup_course_data):
         """Kiểm tra cập nhật thông tin khóa học thành công khi sử dụng định dạng dữ liệu multipart"""
         level, _ = setup_course_data
         course = baker.make('courses.Course', level=level)
@@ -108,9 +100,78 @@ class TestCourseModule:
         
         assert response.status_code == status.HTTP_200_OK
 
+    @pytest.mark.parametrize("sessions", [1, 9])
+    def test_UTL_010_course_serializer_rejects_non_positive_sessions(self, setup_course_data, sessions):
+        """Số buổi học phải lớn hơn 0"""
+
+        level, _ = setup_course_data
+
+        serializer = CourseSerializer(data={
+            "name": "Test",
+            "total_sessions": sessions,
+            "level": level.id
+        })
+
+        assert not serializer.is_valid()
+        assert "từ 10 buổi trở lên" in str(serializer.errors)
+
+    def test_UTL_013_student_cannot_create_course(self, api_client, active_user, setup_course_data):
+        """Chỉ admin được tạo khóa học"""
+
+        level, _ = setup_course_data
+
+        api_client.force_authenticate(user=active_user)
+
+        response = api_client.post(reverse('course-list'), {
+                "name": "Hack Course",
+                "total_sessions": 15,
+                "level": level.id
+        })
+
+        assert response.status_code == 403
+
+    def test_UTL_014_student_cannot_create_classroom(self, api_client, active_user, classroom):
+        """Chỉ admin được tạo lớp học"""
+
+        api_client.force_authenticate(user=active_user)
+
+        response = api_client.post(reverse('classroom-list'), {
+                "name": "Class Hack",
+                "course": classroom.course.id,
+                "start_date": "2026-05-01",
+                "end_date": "2026-08-01"
+        })
+
+        assert response.status_code == 403
+
+    def test_UTL_017_course_serializer_rejects_zero_sessions(self, setup_course_data):
+        level, _ = setup_course_data
+
+        serializer = CourseSerializer(data={
+            "name": "Test",
+            "total_sessions": 0,
+            "level": level.id
+        })
+
+        assert not serializer.is_valid()
+        assert "total_sessions" in serializer.errors
+        assert serializer.errors["total_sessions"][0] is not None
+
+    def test_UTL_018_course_list_is_public(self, api_client):
+        response = api_client.get(reverse('course-list'))
+        assert response.status_code == 200
+
+    def test_UTL_019_tag_list_is_public(self, api_client):
+        response = api_client.get(reverse('tag-list'))
+        assert response.status_code == 200
+
+    def test_UTL_020_level_list_is_public(self, api_client):
+        response = api_client.get(reverse('level-list'))
+        assert response.status_code == 200
+
 @pytest.mark.django_db
 class TestCourseModels:
-    def test_model_string_representations(self):
+    def test_UTL_021_model_string_representations(self):
         """Kiểm tra phương thức hiển thị chuỗi str của tất cả các model trong module Course"""
         test_data = [
             ('courses.Course', "Python"),

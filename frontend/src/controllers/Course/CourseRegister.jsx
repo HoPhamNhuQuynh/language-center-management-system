@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import CourseRegisterForm from "../../pages/Payment/CourseRegisterForm";
-import { courseDetailApi, searchCourseApi } from "../../services/courseService";
-import { enrollmentApi, paymentApi, enrollmentDetailApi } from "../../services/enrollmentService";
+import { searchCourseApi, classApi, courseApi } from "../../services/courseService";
+import { enrollmentApi, paymentApi, deleteEnrollmentApi } from "../../services/enrollmentService";
 import { myPaymentApi } from "../../services/studentService";
 import Apis from "../../services/Apis";
 
@@ -12,6 +12,7 @@ function CourseRegister() {
   const [searchParams] = useSearchParams();
   const selectedCourse = location.state?.course;
 
+  const [pendingEnrollmentId, setPendingEnrollmentId] = useState(null);
   const [search, setSearch] = useState("");
   const [course, setCourse] = useState(null);
   const [selected_class, setSelectedClass] = useState(null);
@@ -19,10 +20,10 @@ function CourseRegister() {
   const [confirm, setConfirm] = useState(false);
   const [paid, setPaid] = useState(false);
   const [bill, setBill] = useState(false);
-  const [method, setMethod] = useState("momo");
+  const [method, setMethod] = useState("vnpay");
   const [percent, setPercent] = useState(100);
   const [loading, setLoading] = useState(false);
-  const [enrollmentStatus, setEnrollmentStatus] = useState(null);
+  const [paymentStatus, setPaymentStatus] = useState(null);
   const [myEnrollments, setMyEnrollments] = useState([]);
 
   useEffect(() => {
@@ -42,7 +43,6 @@ function CourseRegister() {
       .then((res) => {
         const data = Array.isArray(res.data) ? res.data : res.data.results ?? [];
         setMyEnrollments(data);
-        console.log("myEnrollments:", JSON.stringify(data[0]));
       })
       .catch(console.error);
   }, []);
@@ -55,10 +55,13 @@ function CourseRegister() {
       if (courseId) {
         setLoading(true);
         try {
-          const res = await courseDetailApi(courseId);
+          const [detail, classes] = await Promise.all([
+            courseApi(courseId),
+            classApi(courseId),
+          ]);
           setCourse({
-            ...res,
-            classes: res.classroom_set || res.classes || [],
+            ...detail,
+            classes: classes?.results ?? classes ?? [],
           });
         } catch (ex) {
           console.error("Lỗi lấy chi tiết khóa học:", ex);
@@ -78,6 +81,15 @@ function CourseRegister() {
     const amount = searchParams.get("vnp_Amount");
 
     if (responseCode && txnRef) {
+      Apis.get("payments/vnpay-callback/", {
+        params: Object.fromEntries(searchParams),
+      }).catch(console.error);
+
+      if (window.opener) {
+        window.opener.postMessage({ type: "PAYMENT_SUCCESS", txnRef }, "*");
+        window.close();
+      }
+
       const savedCourseId = localStorage.getItem("pendingCourseId");
       localStorage.removeItem("pendingCourseId");
 
@@ -86,7 +98,7 @@ function CourseRegister() {
         : new Date().toISOString();
       const price = amount ? Number(amount) / 100 : 0;
 
-      setEnrollmentStatus({
+      setPaymentStatus({
         id: transactionNo,
         status: responseCode === "00" ? "SUCCESS" : "FAILED",
         created_at: formattedDate,
@@ -95,102 +107,155 @@ function CourseRegister() {
       setPaid(true);
 
       Promise.all([
-        savedCourseId ? courseDetailApi(savedCourseId) : Promise.resolve(null),
-        myPaymentApi(),
-      ]).then(([courseRes, payments]) => {
-        const found = payments.find(p => String(p.id) === String(txnRef));
-
+        savedCourseId ? courseApi(savedCourseId) : Promise.resolve(null),
+        myPaymentApi(txnRef),
+      ]).then(([courseRes, paymentDetail]) => {
         const mergedCourse = {
           ...(courseRes || {}),
           classes: courseRes?.classroom_set || courseRes?.classes || [],
           price,
-          total_sessions: found?.total_sessions || courseRes?.total_sessions || "---",
+          total_sessions: paymentDetail?.total_sessions || courseRes?.total_sessions || "---",
         };
 
         setCourse(mergedCourse);
         setSelectedClass({
-          id: found?.enrollment || txnRef,
-          name: found?.classroom || "---",
+          id: paymentDetail?.enrollment || txnRef,
+          name: paymentDetail?.classroom || "---",
         });
         setBill(true);
-      }).catch(() => {
-        setCourse({ price, total_sessions: "---" });
-        setSelectedClass({ id: txnRef, name: "---" });
-        setBill(true);
-      });
+      })
+        .catch(() => {
+          setCourse({ price, total_sessions: "---" });
+          setSelectedClass({ id: txnRef, name: "---" });
+          setBill(true);
+        });
 
       window.history.replaceState({}, "", "/course-register");
     }
   }, []);
 
-  const handleSubmit = async () => {
+  useEffect(() => {
+    const refreshEnrollments = async () => {
+      try {
+        const res = await Apis.get("users/me/enrollments/");
+        const data = Array.isArray(res.data) ? res.data : res.data.results ?? [];
+        setMyEnrollments(data);
+      } catch (ex) {
+        console.error("Lỗi refresh enrollments:", ex);
+      }
+    };
+
+    const handleMessage = async (e) => {
+      if (e.data?.type === "PAYMENT_SUCCESS") {
+        await refreshEnrollments();
+        setPaid(true);
+        setBill(true);
+      }
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        refreshEnrollments();
+      }
+    };
+
+    const handleFocus = () => {
+      refreshEnrollments();
+    };
+
+    window.addEventListener("message", handleMessage);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    window.addEventListener("focus", handleFocus);
+
+    return () => {
+      window.removeEventListener("message", handleMessage);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      window.removeEventListener("focus", handleFocus);
+    };
+  }, []);
+
+  const handleOpenConfirm = async () => {
     if (!selected_class || !course) {
       alert("Vui lòng chọn lớp học trước khi đăng ký!");
       return;
     }
-
     setLoading(true);
     try {
       const enrollmentData = await enrollmentApi({ classroom: selected_class.id });
-      console.log("Đã tạo Enrollment:", enrollmentData);
       if (enrollmentData?.id) {
-        const paymentPayload = {
-          enrollment: enrollmentData.id,
-          amount: course.price,
-          payment_method: "VNPAY",
-        };
-
-        const res = await paymentApi(paymentPayload);
-        const paymentData = res.data || res;
-
-        console.log("Dữ liệu payment:", paymentData);
-        console.log("Link thanh toán:", paymentData.payment_url);
-
-        if (paymentData && paymentData.payment_url) {
-          localStorage.setItem("pendingCourseId", course.id);
-          localStorage.setItem("lastCourseId", course.id);
-          sessionStorage.setItem("pendingClass", JSON.stringify(selected_class));
-
-          setPayment(false);
-          setConfirm(false);
-          alert("Đang chuyển hướng sang cổng thanh toán VNPay...");
-          window.location.href = paymentData.payment_url;
-        } else {
-          alert("Không tìm thấy link trong paymentData rồi!");
-          console.log("Dữ liệu payment:", paymentData);
-
-        }
+        setPendingEnrollmentId(enrollmentData.id);
+        setPayment(false);
+        setConfirm(true);
       }
     } catch (ex) {
-      console.error("Lỗi đăng ký:", ex.response?.data);
       const errorData = ex.response?.data;
       let errorMsg = "Lỗi kết nối Server";
-
       if (errorData) {
-        if (typeof errorData === "string") {
-          errorMsg = errorData;
-        } else if (errorData.detail) {
-          errorMsg = errorData.detail;
-        } else if (Array.isArray(errorData)) {
-          errorMsg = errorData.join("\n");
-        } else if (typeof errorData === "object") {
-          errorMsg = Object.values(errorData).flat().join("\n");
-        }
+        if (typeof errorData === "string") errorMsg = errorData;
+        else if (errorData.detail) errorMsg = errorData.detail;
+        else if (Array.isArray(errorData)) errorMsg = errorData.join("\n");
+        else if (typeof errorData === "object") errorMsg = Object.values(errorData).flat().join("\n");
       }
       alert("Đăng ký thất bại: " + errorMsg);
+    } finally {
+      setLoading(false);
     }
+  };
+
+  const handleSubmit = async () => {
+    if (!pendingEnrollmentId || !course) return;
+    setLoading(true);
+    try {
+      const res = await paymentApi({
+        enrollment: pendingEnrollmentId,
+        amount: course.price,
+        payment_method: "VNPAY",
+      });
+      const paymentData = res.data || res;
+      if (paymentData?.payment_url) {
+        localStorage.setItem("pendingCourseId", course.id);
+        localStorage.setItem("lastCourseId", course.id);
+        sessionStorage.setItem("pendingClass", JSON.stringify(selected_class));
+        setConfirm(false);
+        alert("Đang chuyển hướng sang cổng thanh toán VNPay...");
+        window.open(paymentData.payment_url, "_blank");
+      }
+    } catch (ex) {
+      alert("Thanh toán thất bại");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCancelConfirm = async () => {
+    if (pendingEnrollmentId) {
+      try {
+        await deleteEnrollmentApi(pendingEnrollmentId);
+      } catch (ex) {
+        console.error("Lỗi hủy enrollment:", ex);
+      } finally {
+        setPendingEnrollmentId(null);
+      }
+    }
+    setConfirm(false);
+    setPayment(true);
   };
 
   const handleSearch = async () => {
     try {
       setLoading(true);
       let res = await searchCourseApi(search);
-      const data = res.results || res;
+      const data = res.results || res.data?.results || res.data || res;
       if (data.length > 0) {
-        const detail = await courseDetailApi(data[0].id);
+        const courseId = data[0].id;
+        const [detail, classes] = await Promise.all([
+          courseApi(courseId),
+          classApi(courseId),
+        ]);
+
         setCourse({
           ...detail,
-          classes: detail.classroom_set
+          classes: classes?.results ?? classes ?? [],
         });
         setSelectedClass(null);
       } else {
@@ -203,25 +268,26 @@ function CourseRegister() {
     }
   };
 
-  const handlePayment = () => {
-    if (!selected_class) {
-      alert("Vui lòng chọn lớp!");
-      return;
-    }
+  const handleRetry = (enrolledRecord) => {
+    const enrollmentId = enrolledRecord?.id;
+    if (!enrollmentId) return;
+
+    setPendingEnrollmentId(enrollmentId);
+    setPaid(false);
+    setBill(false);
+    setConfirm(false);
+    setPaymentStatus(null);
     setPayment(true);
   };
 
   const handleSelectClass = (cls) => {
     setSelectedClass(cls);
-    setPaid(false);     
-    setBill(false);      
-    setPayment(false);   
-    setConfirm(false);   
-    setEnrollmentStatus(null);
+    setPaid(false);
+    setBill(false);
+    setPayment(false);
+    setConfirm(false);
+    setPaymentStatus(null);
   };
-
-  // console.log("Dữ liệu course hiện tại:", course);
-  // console.log("Danh sách lớp tìm thấy:", course?.classes);
 
   const openBill = () => {
     setPayment(false);
@@ -241,8 +307,6 @@ function CourseRegister() {
     navigate("/course-list");
   };
 
-
-
   return (
     <div>
       <CourseRegisterForm
@@ -252,7 +316,6 @@ function CourseRegister() {
         onSearch={handleSearch}
         selected_class={selected_class}
         onSelectClass={handleSelectClass}
-        onPayment={handlePayment}
         onSubmit={handleSubmit}
         method={method}
         setMethod={setMethod}
@@ -270,8 +333,11 @@ function CourseRegister() {
         openBill={openBill}
         openConfirm={openConfirm}
         backToCourse={backToCourse}
-        enrollmentStatus={enrollmentStatus}
+        paymentStatus={paymentStatus}
         myEnrollments={myEnrollments}
+        onOpenConfirm={handleOpenConfirm}
+        onCancelConfirm={handleCancelConfirm}
+        onRetry={handleRetry}
       />
     </div>
   );
