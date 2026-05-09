@@ -56,8 +56,16 @@ class ScheduleSerializer(serializers.ModelSerializer):
             if current_classroom:
                 qs = qs.exclude(classroom=current_classroom)
 
+            
             if qs.exists():
-                raise serializers.ValidationError("Phòng học này đã bị trùng lịch.")
+                conflicting = qs.select_related(
+                    "classroom"
+                ).first() 
+                raise serializers.ValidationError(
+                    f"Phòng '{room.name}' đã bị trùng lịch vào {DAY_NAMES.get(day_of_week, '')} "
+                    f"({conflicting.start_time.strftime('%H:%M')} - {conflicting.end_time.strftime('%H:%M')}) "
+                    f"với lớp '{conflicting.classroom.name}'."
+                )
 
         return data
 
@@ -115,6 +123,12 @@ class ClassRoomSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Sĩ số lớp học không hợp lệ.")
         return capacity
 
+    def to_internal_value(self, data):
+        if self.instance:
+            self._context['classroom'] = self.instance
+        return super().to_internal_value(data)
+
+
     def validate(self, data):
         start_date = data.get("start_date")
         end_date = data.get("end_date")
@@ -166,14 +180,7 @@ class ClassRoomSerializer(serializers.ModelSerializer):
 
             for s in schedules_data:
                 s.pop("classroom", None)
-
-                serializer = ScheduleSerializer(data=s)
-
-                serializer.is_valid(raise_exception=True)
-
-                Schedule.objects.create(
-                    classroom=classroom, **serializer.validated_data
-                )
+                Schedule.objects.create(classroom=classroom, **s)
 
             if schedules_data:
                 classroom.generate_sessions_from_schedules()  # sinh sessions tu dong
@@ -210,11 +217,8 @@ class ClassRoomSerializer(serializers.ModelSerializer):
                 for s in schedules_data:
                     s.pop("classroom", None)
 
-                    serializer = ScheduleSerializer(context={"classroom": instance})
-
-                    validated_schedule = serializer.validate(s)
-
-                    Schedule.objects.create(classroom=instance, **validated_schedule)
+                    s.pop("room", None) if not isinstance(s.get("room"), object) else None
+                    Schedule.objects.create(classroom=instance, **s)
 
                 instance.generate_sessions_from_schedules()
         return instance
