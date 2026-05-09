@@ -118,7 +118,6 @@ describe("Schedule", () => {
     ]);
     render(<MemoryRouter><Schedule /></MemoryRouter>);
     await waitFor(() => {
-      // session vẫn được map, count = 1
       expect(screen.getByTestId("schedule-count").textContent).toBe("1");
     });
   });

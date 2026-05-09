@@ -25,28 +25,28 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>92/92</span>
+                <span class='fraction'>97/97</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">91.37% </span>
+                <span class="strong">89.65% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>53/58</span>
+                <span class='fraction'>52/58</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>13/13</span>
+                <span class='fraction'>15/15</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>88/88</span>
+                <span class='fraction'>93/93</span>
             </div>
         
             
@@ -277,13 +277,22 @@
 <a name='L212'></a><a href='#L212'>212</a>
 <a name='L213'></a><a href='#L213'>213</a>
 <a name='L214'></a><a href='#L214'>214</a>
-<a name='L215'></a><a href='#L215'>215</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L215'></a><a href='#L215'>215</a>
+<a name='L216'></a><a href='#L216'>216</a>
+<a name='L217'></a><a href='#L217'>217</a>
+<a name='L218'></a><a href='#L218'>218</a>
+<a name='L219'></a><a href='#L219'>219</a>
+<a name='L220'></a><a href='#L220'>220</a>
+<a name='L221'></a><a href='#L221'>221</a>
+<a name='L222'></a><a href='#L222'>222</a>
+<a name='L223'></a><a href='#L223'>223</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">89x</span>
 <span class="cline-any cline-yes">89x</span>
 <span class="cline-any cline-yes">89x</span>
 <span class="cline-any cline-yes">89x</span>
@@ -357,6 +366,8 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">32x</span>
 <span class="cline-any cline-yes">32x</span>
 <span class="cline-any cline-yes">32x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -383,6 +394,11 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">52x</span>
 <span class="cline-any cline-yes">52x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">52x</span>
+<span class="cline-any cline-yes">52x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">45x</span>
 <span class="cline-any cline-yes">52x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">52x</span>
@@ -495,11 +511,12 @@
 import StudentInfoForm from "../../pages/User/StudentInfoForm";
 import "../../styles/StudentInfo.css";
 import { useEffect, useState } from "react";
-import { studentApi, updateStudentApi, updateStudentAvatarApi, myEnrollmentApi, resetPasswordApi, deleteAccountApi } from "../../services/studentService";
+import { studentApi, updateStudentApi, updateStudentAvatarApi, myEnrollmentApi, resetPasswordApi, deleteAccountApi, myPaymentApi } from "../../services/studentService";
 &nbsp;
 function StudentInfo() {
   const [userInfo, setUserInfo] = useState(null);
   const [enrollments, setEnrollments] = useState([]);
+  const [payments, setPayments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
@@ -567,12 +584,14 @@ function StudentInfo() {
   useEffect(() =&gt; {
     const loadProfile = async () =&gt; {
       try {
-        const [user, enrollmentData] = await Promise.all([
+        const [user, enrollmentData, paymentData] = await Promise.all([
           studentApi(),
           myEnrollmentApi(),
+          myPaymentApi(),
         ]);
         setUserInfo(user);
         setEnrollments(enrollmentData);
+        setPayments(paymentData);
       } catch (ex) {
         console.error("Failed to load profile:", ex);
       } finally {
@@ -596,8 +615,13 @@ function StudentInfo() {
   };
 &nbsp;
   const totalAmount = enrollments.reduce((sum, e) =&gt; sum + (Number(e.classroom?.course_price) || 0), 0);
-  const totalPaid = enrollments.reduce((sum, e) =&gt; sum + (Number(e.amount) || 0), 0);
-  const remaining = totalAmount - totalPaid;
+  const totalPaid = payments
+    .filter((p) =&gt; {
+      const enrollment = enrollments.find((e) =&gt; e.id === p.enrollment);
+      return enrollment?.enrollment_status === "SUCCESS";
+    })
+    .reduce((sum, p) =&gt; sum + (Number(p.amount) || <span class="branch-1 cbranch-no" title="branch not covered" >0), 0</span>); 
+    const remaining = totalAmount - totalPaid;
 &nbsp;
   const tuition = {
     paid: totalPaid.toLocaleString('vi-VN') + " VND",
@@ -712,7 +736,7 @@ export default StudentInfo;</pre></td></tr></table></pre>
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-05-09T20:32:22.795Z
+                at 2026-05-09T20:49:55.081Z
             </div>
         <script src="../../prettify.js"></script>
         <script>
