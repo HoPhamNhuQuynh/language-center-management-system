@@ -81,6 +81,10 @@ function CourseRegister() {
     const amount = searchParams.get("vnp_Amount");
 
     if (responseCode && txnRef) {
+      Apis.get("payments/vnpay-callback/", {
+        params: Object.fromEntries(searchParams),
+      }).catch(console.error);
+
       if (window.opener) {
         window.opener.postMessage({ type: "PAYMENT_SUCCESS", txnRef }, "*");
         window.close();

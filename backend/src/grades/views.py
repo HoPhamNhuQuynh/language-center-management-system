@@ -66,7 +66,10 @@ class BulkSyncScoreView(APIView):
             raise PermissionDenied("Bạn không có quyền nhập điểm cho lớp học này.")
 
         if classroom.grade_deadline and timezone.now() > classroom.grade_deadline:
-            raise PermissionDenied("Đã quá thời hạn nộp điểm.")
+            if classroom.grade_status in [ClassRoom.Status.DRAFT, ClassRoom.Status.REOPENED]:
+                classroom.grade_status = ClassRoom.Status.SUBMITTED
+                classroom.save(update_fields=["grade_status"])
+            raise PermissionDenied("Đã quá thời hạn nộp điểm, bảng điểm đã bị khóa tự động.")
 
         if classroom.grade_status == ClassRoom.Status.SUBMITTED:
             raise PermissionDenied("Bảng điểm đã nộp, vui lòng liên hệ Admin để mở lại nếu cần chỉnh sửa.")
@@ -90,6 +93,13 @@ class SubmitScoreView(APIView):
 
         classroom = generics.get_object_or_404(ClassRoom, pk=class_id)
 
+        if classroom.grade_deadline and timezone.now() > classroom.grade_deadline:
+            if classroom.grade_status in [ClassRoom.Status.DRAFT, ClassRoom.Status.REOPENED]:
+                classroom.grade_status = ClassRoom.Status.SUBMITTED
+                classroom.save(update_fields=["grade_status"])
+            raise PermissionDenied("Đã quá thời hạn nộp điểm, bảng điểm đã bị khóa tự động.")
+
+
         is_main = TeachingAssignment.objects.filter(
             classroom=classroom, teacher=request.user, is_main=True
         ).exists()
@@ -102,15 +112,20 @@ class SubmitScoreView(APIView):
         if required_count == 0:
             raise ValidationError("Chưa cấu hình các loại điểm cho khóa học này.")
 
-        enrollments = Enrollment.objects.filter(classroom=classroom)\
-        .select_related('student')\
-        .prefetch_related(
-            Prefetch('score_set', queryset=Score.objects.select_related('score_type'))
-        )\
-        .annotate(
-            scored_count=Count(
-                'score',
-                filter=Q(score__score_type__in=required_score_types)
+        enrollments = (
+            Enrollment.objects.filter(
+                classroom=classroom, active=True, enrollment_status__in=["SUCCESS"]
+            )
+            .select_related("student")
+            .prefetch_related(
+                Prefetch(
+                    "score_set", queryset=Score.objects.select_related("score_type")
+                )
+            )
+            .annotate(
+                scored_count=Count(
+                    "score", filter=Q(score__score_type__in=required_score_types)
+                )
             )
         )
 

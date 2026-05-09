@@ -113,7 +113,7 @@ describe("scoreService", () => {
 
       const result = await loadClassesApi();
 
-      expect(Apis.get).toHaveBeenCalledWith("classes/");
+      expect(Apis.get).toHaveBeenCalledWith("classes/", { params: {} });
       expect(result).toEqual([{ id: 1, name: "IELTS Basic" }]);
     });
 

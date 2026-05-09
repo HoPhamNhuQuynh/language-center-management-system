@@ -94,7 +94,12 @@ class TestGradesAPI:
             schedule__classroom=classroom
         )
         
-        baker.make('enrollments.Enrollment', classroom=classroom, _quantity=3)
+        baker.make(
+            "enrollments.Enrollment",
+            classroom=classroom,
+            enrollment_status=Enrollment.Status.SUCCESS,
+            _quantity=3,
+        )
 
         url = reverse('attendance-list') 
         response = api_client.get(f"{url}?session_id={session.id}")
@@ -428,7 +433,9 @@ class TestGradesAPI:
 
         enrollment = baker.make(
             "enrollments.Enrollment",
-            classroom=classroom
+            classroom=classroom,
+            enrollment_status=Enrollment.Status.SUCCESS,
+            active=True,
         )
 
         score_type_1 = baker.make(
@@ -482,7 +489,9 @@ class TestGradesAPI:
 
         enrollment = baker.make(
             "enrollments.Enrollment",
-            classroom=classroom
+            classroom=classroom,
+            enrollment_status=Enrollment.Status.SUCCESS,
+            active=True,
         )
 
         score_type = baker.make(

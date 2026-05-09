@@ -7,7 +7,7 @@ function ScoreEntryForm({
   onClassChange,
   scoreTypes,
   scoreRows,
-  isSubmitted,
+  lockReason,
   loading,
   error,
   onScoreChange,
@@ -40,9 +40,11 @@ function ScoreEntryForm({
           </div>
         </div>
         <div className="header-flex">
-          {isSubmitted && (
+          {lockReason && (
             <Tag icon={<LockFilled />} className="status-badge-locked">
-              BẢNG ĐIỂM ĐÃ KHÓA — KHÔNG THỂ CHỈNH SỬA
+              {lockReason === "deadline"
+                ? "ĐÃ QUÁ THỜI HẠN — BẢNG ĐIỂM BỊ KHÓA TỰ ĐỘNG"
+                : "BẢNG ĐIỂM ĐÃ NỘP — LIÊN HỆ ADMIN ĐỂ MỞ LẠI"}
             </Tag>
           )}
         </div>
@@ -90,9 +92,9 @@ function ScoreEntryForm({
                         <td key={st.id} className="col-score">
                           <input
                             type="text"
-                            className={isSubmitted ? "input-locked" : ""}
+                            className={lockReason ? "input-locked" : ""}
                             value={getDisplayValue(row, st.id)}
-                            disabled={isSubmitted}
+                            disabled={!!lockReason}
                             onFocus={() => onFocus(row.enrollmentId, st.id)}
                             onChange={(e) =>
                               onScoreChange(
@@ -114,9 +116,9 @@ function ScoreEntryForm({
                         <input
                           type="text"
                           placeholder="Nhập nhận xét..."
-                          className={`score-entry-input-remark ${isSubmitted ? "input-locked" : ""}`}
+                          className={`score-entry-input-remark ${lockReason ? "input-locked" : ""}`}
                           value={row.remark || ""}
-                          disabled={isSubmitted}
+                          disabled={!!lockReason}
                           onChange={(e) =>
                             onScoreChange(
                               row.enrollmentId,
@@ -133,7 +135,7 @@ function ScoreEntryForm({
             </div>
 
             <div className="score-entry-actions">
-              {!isSubmitted ? (
+              {!lockReason ? (
                 <>
                   <button className="save-btn" onClick={onLocalSave}>
                     LƯU TẠM
@@ -147,12 +149,10 @@ function ScoreEntryForm({
                 </>
               ) : (
                 <div className="locked-notification">
-                  <Tag
-                    icon={<WarningFilled />}
-                    color="warning"
-                    className="ant-tag-warning"
-                  >
-                    Bảng điểm đã được nộp và khóa.
+                  <Tag icon={<WarningFilled />} color="warning">
+                    {lockReason === "deadline"
+                      ? "Đã quá thời hạn nộp điểm, bảng điểm bị khóa tự động."
+                      : "Bảng điểm đã được nộp và khóa."}
                   </Tag>
                 </div>
               )}

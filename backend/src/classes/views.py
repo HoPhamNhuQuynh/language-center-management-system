@@ -9,6 +9,7 @@ from django.db.models import Prefetch, Count, Q, F
 from core import core_perms, paginators
 
 
+
 class ClassRoomViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.ClassRoomSerializer
     pagination_class = paginators.ItemPaginator

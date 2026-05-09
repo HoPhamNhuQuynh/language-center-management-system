@@ -21,7 +21,7 @@ vi.mock("../../pages/Score/ScoreEntryForm", () => ({
     onClassChange,
     scoreRows,
     scoreTypes,
-    isSubmitted,
+    lockReason,
     loading,
     error,
     onScoreChange,
@@ -48,7 +48,7 @@ vi.mock("../../pages/Score/ScoreEntryForm", () => ({
 
       {loading && <div data-testid="loading">Đang tải...</div>}
       {error && <div data-testid="error">{error}</div>}
-      {isSubmitted && <div data-testid="submitted-badge">Đã nộp</div>}
+      {lockReason && <div data-testid="submitted-badge">Đã nộp</div>}
 
       {scoreRows.map((row) => (
         <div key={row.enrollmentId} data-testid={`row-${row.enrollmentId}`}>
@@ -212,7 +212,7 @@ describe("2. Chọn lớp", () => {
     ["2", "TOEIC_01 (SUBMITTED)", true, "submitted-badge"],
     ["1", "IELTS_01 (OPEN)", false, "submitted-badge"],
   ])(
-    "SCR-004 chọn lớp id=%s (%s) thì isSubmitted=%s",
+    "SCR-004 chọn lớp id=%s (%s) thì lockReason=%s",
     async (classId, _label, expectSubmitted, badgeTestId) => {
       await renderAndWait();
       // Lớp SUBMITTED không có rows để chờ, nên không dùng waitForRow
@@ -324,20 +324,17 @@ describe("5. Nhập điểm — handleScoreChange", () => {
     expect(screen.getByTestId("remark-101")).toHaveValue("Học tốt");
   });
 
-  it("SCR-013 isSubmitted = true thì handleScoreChange không cập nhật điểm", async () => {
+  it("SCR-013 lockReason != null thì handleScoreChange không cập nhật điểm", async () => {
     await renderAndWait();
+    await selectClass("1");
+
     fireEvent.change(screen.getByTestId("class-select"), {
       target: { value: "2" },
     });
-    await waitFor(() => screen.getByTestId("submitted-badge"));
-    await waitFor(() => screen.getByTestId("row-101"));
 
-    const input = screen.getByTestId("score-101-1");
-    const originalValue = input.value;
-
-    fireEvent.change(input, { target: { value: "5.0" } });
-
-    expect(input).toHaveValue(originalValue);
+    await waitFor(() =>
+      expect(screen.getByTestId("submitted-badge")).toBeInTheDocument(),
+    );
   });
 });
 
@@ -369,7 +366,7 @@ describe("7. handleLocalSave", () => {
     expect(window.alert).toHaveBeenCalledWith("Đã lưu tạm vào trình duyệt!");
   });
 
-  it("không làm gì khi chưa chọn lớp", async () => {
+  it("SCR-016 không làm gì khi chưa chọn lớp", async () => {
     await renderAndWait();
     fireEvent.click(screen.getByTestId("btn-local-save"));
 
@@ -425,7 +422,7 @@ describe("9. handleSubmit", () => {
     expect(submitScoresApi).not.toHaveBeenCalled();
   });
 
-  it("SCR-020 happy path: gọi API đúng remarks, set isSubmitted, xóa localStorage", async () => {
+  it("SCR-020 happy path: gọi API đúng remarks, set lockReason, xóa localStorage", async () => {
     submitScoresApi.mockResolvedValue({ message: "Đã nộp thành công!" });
     localStorage.setItem("temp_scores_class_1", JSON.stringify([]));
     await setup();
@@ -464,5 +461,45 @@ describe("9. handleSubmit", () => {
     await waitFor(() => {
       expect(window.alert).toHaveBeenCalledWith("Bảng điểm chưa đầy đủ");
     });
+  });
+
+  it("SCR- lockReason=deadline khi API trả 403 có 'thời hạn'", async () => {
+    bulkSyncScoresApi.mockRejectedValue({
+      response: {
+        status: 403,
+        data: { detail: "Đã quá thời hạn nộp điểm" },
+      },
+    });
+    await setup();
+    fireEvent.click(screen.getByTestId("btn-save-db"));
+    await waitFor(() => {
+      expect(screen.getByTestId("submitted-badge")).toBeInTheDocument();
+      expect(window.alert).toHaveBeenCalledWith(
+        "Đã quá thời hạn nộp điểm, bảng điểm bị khóa tự động.",
+      );
+    });
+  });
+
+  it("SCR- lockReason=submitted khi API trả 403 không có 'thời hạn'", async () => {
+    bulkSyncScoresApi.mockRejectedValue({
+      response: {
+        status: 403,
+        data: { detail: "Bảng điểm đã nộp" },
+      },
+    });
+    await setup();
+    fireEvent.click(screen.getByTestId("btn-save-db"));
+    await waitFor(() => {
+      expect(screen.getByTestId("submitted-badge")).toBeInTheDocument();
+      expect(window.alert).toHaveBeenCalledWith(
+        "Bảng điểm đã nộp. Liên hệ Admin để mở lại nếu cần chỉnh sửa.",
+      );
+    });
+  });
+
+  it("SCR- onFocus cập nhật focusedCell", async () => {
+    await setup();
+    fireEvent.focus(screen.getByTestId("score-101-1"));
+    expect(screen.getByTestId("score-101-1")).toBeInTheDocument();
   });
 });

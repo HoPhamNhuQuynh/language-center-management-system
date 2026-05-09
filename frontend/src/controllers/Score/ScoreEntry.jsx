@@ -26,11 +26,12 @@ const transformScores = (scores) => {
       };
     }
 
-    studentMap[key].scores[String(score.score_type_id)] = String(
-      score.score_value,
-    );
+    if (score.score_type_id !== null && score.score_value !== null) {
+      studentMap[key].scores[String(score.score_type_id)] = String(
+        score.score_value,
+      );
+    }
   }
-
   return Object.values(studentMap);
 };
 
@@ -50,11 +51,11 @@ const calcAverage = (scores, scoreTypes) => {
 };
 
 function ScoreEntry() {
-  const [classes, setClasses] = useState([]); 
+  const [classes, setClasses] = useState([]);
   const [selectedClass, setSelectedClass] = useState("");
   const [scoreTypes, setScoreTypes] = useState([]);
   const [scoreRows, setScoreRows] = useState([]);
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [lockReason, setLockReason] = useState(null);
   const [focusedCell, setFocusedCell] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -75,6 +76,17 @@ function ScoreEntry() {
         ]);
 
         setScoreTypes(types);
+        console.info(scores);
+        console.log("scores từ API:", scores.length);
+        console.log(
+          "all students:",
+          scores.map(
+            (s) =>
+              `${s.student.first_name} ${s.student.last_name} - enrollment: ${s.enrollment_id} - score_type: ${s.score_type_id}`,
+          ),
+        );
+        const transformed = transformScores(scores);
+        console.log("rows sau transform:", transformed.length);
 
         const serverRows = transformScores(scores).map((row) => ({
           ...row,
@@ -128,7 +140,7 @@ function ScoreEntry() {
     } catch (ex) {
       console.error(ex);
     }
-  }
+  };
 
   const handleClassChange = (classId) => {
     setSelectedClass(classId);
@@ -137,11 +149,13 @@ function ScoreEntry() {
       (c) => String(c.id) === String(classId),
     );
 
-    if (selectedClsData && selectedClsData.grade_status === "SUBMITTED") {
-      setIsSubmitted(true);
+    if (selectedClsData?.grade_status === "SUBMITTED") {
+      setLockReason("submitted");
     } else {
-      setIsSubmitted(false);
+      setLockReason(null);
     }
+
+    setScoreRows([]);
 
     setScoreRows([]);
     setScoreTypes([]);
@@ -149,7 +163,7 @@ function ScoreEntry() {
   };
 
   const handleScoreChange = (enrollmentId, scoreTypeId, value) => {
-    if (isSubmitted) return;
+    if (lockReason) return;
 
     if (scoreTypeId === "remark") {
       setScoreRows((prev) =>
@@ -233,6 +247,18 @@ function ScoreEntry() {
     } catch (err) {
       console.error(err.response?.data);
       alert("Lưu thất bại, vui lòng thử lại.");
+      if (err.response?.status === 403) {
+        const detail = err.response?.data?.detail ?? "";
+        if (detail.includes("thời hạn")) {
+          setLockReason("deadline");
+          alert("Đã quá thời hạn nộp điểm, bảng điểm bị khóa tự động.");
+        } else {
+          setLockReason("submitted");
+          alert("Bảng điểm đã nộp. Liên hệ Admin để mở lại nếu cần chỉnh sửa.");
+        }
+        return;
+      }
+      alert("Lưu thất bại, vui lòng thử lại.");
     }
   };
 
@@ -248,7 +274,7 @@ function ScoreEntry() {
 
       const res = await submitScoresApi(selectedClass, { remarks });
       localStorage.removeItem(`temp_scores_class_${selectedClass}`);
-      setIsSubmitted(true);
+      setLockReason("submitted");
       alert(res?.message || "Đã nộp thành công!");
     } catch (err) {
       const errorMsg =
@@ -258,7 +284,7 @@ function ScoreEntry() {
       alert(errorMsg);
     }
   };
-  
+
   return (
     <ScoreEntryForm
       classes={classes}
@@ -266,7 +292,7 @@ function ScoreEntry() {
       onClassChange={handleClassChange}
       scoreRows={scoreRows}
       scoreTypes={scoreTypes}
-      isSubmitted={isSubmitted}
+      lockReason={lockReason}
       loading={loading}
       error={error}
       onScoreChange={handleScoreChange}

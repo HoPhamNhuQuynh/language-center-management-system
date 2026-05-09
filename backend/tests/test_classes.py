@@ -350,7 +350,7 @@ class TestScheduleSerializer:
         }
         serializer = ScheduleSerializer(data=data)
         assert not serializer.is_valid()
-        assert "Phòng học này đã bị trùng lịch" in str(serializer.errors)
+        assert "đã bị trùng lịch" in str(serializer.errors)
 
     @pytest.mark.django_db
     @pytest.mark.parametrize(

@@ -178,7 +178,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'language_center_db',
         'USER': 'root',
-        'PASSWORD': 'root',
+        'PASSWORD': 'Nhuquynh261105@',
         'HOST': '127.0.0.1', # mặc định localhost
         'PORT': '3306',
     }
@@ -227,7 +227,7 @@ VNPAY_TMN_CODE = 'YCXQRNYD'
 VNPAY_HASH_SECRET = 'SAR75YVR7QKTU9HLD3C4MXY77Y01E387'
 VNPAY_URL = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html"
 VNPAY_RETURN_URL = 'https://pseudopsychological-vasoconstrictive-ellison.ngrok-free.dev/course-register'
-VNPAY_IPN_URL = "https://pseudopsychological-vasoconstrictive-ellison.ngrok-free.dev/api/payments/vnpay-callback/"
+# VNPAY_IPN_URL = "https://pseudopsychological-vasoconstrictive-ellison.ngrok-free.dev/api/payments/vnpay-callback/"
 
 
 # VNPAY_TMN_CODE = '4X8RC0YB'

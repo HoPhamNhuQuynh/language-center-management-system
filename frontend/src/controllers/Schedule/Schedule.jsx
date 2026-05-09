@@ -84,11 +84,13 @@ function Schedule() {
   const currentMonday = allMondays[selectedWeek - 1];
   const weekDates = currentMonday ? getWeekDates(currentMonday) : [];
 
-  const filteredSessions = sessions.filter(session => {
-    if (!weekDates.length) return false;
-    const [, m, d] = session.date.split('-');
-    const sessionDate = `${d}/${m}`;
-    return weekDates.includes(sessionDate);
+  const filteredSessions = sessions.filter((session) => {
+    if (!currentMonday) return false;
+    const sessionDate = new Date(session.date);
+    const sunday = new Date(currentMonday);
+    sunday.setDate(currentMonday.getDate() + 6);
+    sunday.setHours(23, 59, 59, 999);
+    return sessionDate >= currentMonday && sessionDate <= sunday;
   });
 
   const scheduleData = filteredSessions.map(session => ({

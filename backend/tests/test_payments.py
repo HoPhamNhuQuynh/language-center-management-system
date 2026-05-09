@@ -72,9 +72,10 @@ class TestPaymentModule:
         """ Test callback hiển thị thông báo thất bại do giao dịch thất bại """
         url = reverse('payment-vnpay-callback')
         # vnp_ResponseCode khác 00 
-        response = api_client.get(f"{url}?vnp_ResponseCode=99")
+        payment = baker.make('enrollments.Payment')
+        response = api_client.get(f"{url}?vnp_ResponseCode=99&vnp_TxnRef={payment.id}")
         assert response.status_code == 200
-        assert "Thanh toán thất bại" in response.data['message']
+        assert response.data["RspCode"] == "00"
 
     def test_UTL_006_vnpay_ipn_returns_already_confirmed_when_payment_already_success(self, api_client):
         """ IPN gọi lại cho đơn đã SUCCESS thì kh bị duplicate record """

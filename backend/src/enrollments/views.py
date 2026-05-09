@@ -105,10 +105,31 @@ class PaymentViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAP
     def vnpay_callback(self, request):
         data = request.GET
         vnp_response_code = data.get('vnp_ResponseCode')
-        
-        if vnp_response_code == "00":
-            return Response({"status": "Success", "message": "Thanh toán thành công!"})
-        return Response({"status": "Failed", "message": "Thanh toán thất bại hoặc đã bị hủy."})
+        vnp_txn_ref = data.get('vnp_TxnRef')
+        vnp_transaction_no = data.get('vnp_TransactionNo')
+
+        try:
+            payment = Payment.objects.select_related('enrollment').get(id=vnp_txn_ref)
+
+            if payment.payment_status == Payment.Status.SUCCESS:
+                return Response({"RspCode": "00", "Message": "Already confirmed"})
+
+            with transaction.atomic():
+                if vnp_response_code == "00":
+                    payment.payment_status = Payment.Status.SUCCESS
+                    payment.paid_at = timezone.now()
+                    payment.transaction_id = vnp_transaction_no
+                    payment.save()
+                    enrollment = payment.enrollment
+                    enrollment.enrollment_status = Enrollment.Status.SUCCESS
+                    enrollment.save()
+                else:
+                    payment.payment_status = Payment.Status.FAILED
+                    payment.save()
+
+            return Response({"RspCode": "00", "Message": "Confirm success"})
+        except Payment.DoesNotExist:
+            return Response({"RspCode": "01", "Message": "Payment not found"}, status=404)
 
     @action(detail=False, methods=['get'], url_path='vnpay-ipn', permission_classes=[permissions.AllowAny])
     def vnpay_ipn(self, request):

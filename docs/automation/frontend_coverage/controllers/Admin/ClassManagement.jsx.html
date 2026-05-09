@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">95.15% </span>
+                <span class="strong">93.78% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>157/165</span>
+                <span class='fraction'>166/177</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">84.92% </span>
+                <span class="strong">84.09% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>107/126</span>
+                <span class='fraction'>111/132</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">88.88% </span>
+                <span class="strong">89.06% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>56/63</span>
+                <span class='fraction'>57/64</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">97.24% </span>
+                <span class="strong">96.1% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>141/145</span>
+                <span class='fraction'>148/154</span>
             </div>
         
             
@@ -832,7 +832,16 @@
 <a name='L767'></a><a href='#L767'>767</a>
 <a name='L768'></a><a href='#L768'>768</a>
 <a name='L769'></a><a href='#L769'>769</a>
-<a name='L770'></a><a href='#L770'>770</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L770'></a><a href='#L770'>770</a>
+<a name='L771'></a><a href='#L771'>771</a>
+<a name='L772'></a><a href='#L772'>772</a>
+<a name='L773'></a><a href='#L773'>773</a>
+<a name='L774'></a><a href='#L774'>774</a>
+<a name='L775'></a><a href='#L775'>775</a>
+<a name='L776'></a><a href='#L776'>776</a>
+<a name='L777'></a><a href='#L777'>777</a>
+<a name='L778'></a><a href='#L778'>778</a>
+<a name='L779'></a><a href='#L779'>779</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -1085,12 +1094,21 @@
 <span class="cline-any cline-yes">16x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">11x</span>
+<span class="cline-any cline-yes">11x</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">10x</span>
@@ -1853,13 +1871,22 @@ const ClassManagement = () =&gt; {
       );
       handleClose();
     } catch (ex) {
-      const data = ex.response?.data;
-      console.error("Toàn bộ lỗi:", JSON.stringify(data, null, 2));
-      const msg = Array.isArray(data)
-        ? data[0]
-        : typeof data === "object"
-          ? Object.values(data).flat()[0]
-          : <span class="branch-1 cbranch-no" title="branch not covered" >"Lưu thất bại, vui lòng thử lại.";</span>
+      const data = ex.response?.data; 
+&nbsp;
+      const extractErrorMessage = (data) =&gt; {
+        <span class="missing-if-branch" title="if path not taken" >I</span>if (!data) <span class="cstat-no" title="statement not covered" >return "Lưu thất bại, vui lòng thử lại.";</span>
+        if (typeof data === "string") return data;
+        if (Array.isArray(data)) return extractErrorMessage(data[0]);
+        <span class="missing-if-branch" title="else path not taken" >E</span>if (typeof data === "object") {
+          <span class="missing-if-branch" title="if path not taken" >I</span>if (data.non_field_errors)
+<span class="cstat-no" title="statement not covered" >            return extractErrorMessage(data.non_field_errors);</span>
+          const first = Object.values(data)[0];
+          return extractErrorMessage(first);
+        }
+<span class="cstat-no" title="statement not covered" >        return "Lưu thất bại, vui lòng thử lại.";</span>
+      };
+&nbsp;
+      const msg = extractErrorMessage(data);
       setErrors({ general: msg });
     } finally {
       setSaving(false);
@@ -2377,7 +2404,7 @@ export default ClassManagement;
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-05-09T09:27:12.532Z
+                at 2026-05-09T20:32:22.795Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

@@ -130,22 +130,38 @@ describe("Schedule", () => {
     });
   });
 
-  it("TKB-010: session ở tuần khác bị filter ra, count = 0 ở tuần hiện tại", async () => {
-    const futureDate = fmt(new Date(today.getFullYear(), today.getMonth(), today.getDate() + 21));
+  it("TKB-010: session ở tuần khác bị filter ra khi chuyển tuần", async () => {
+    // có 2 session: 1 tuần hiện tại, 1 tuần tương lai
     myScheduleApi.mockResolvedValue([
       {
-        date: futureDate,
+        date: fmt(today), // tuần hiện tại
+        day_of_week: 1,
+        start_time: "08:00:00",
+        end_time: "10:00:00",
+        classroom_name: "Lớp A",
+        room: { name: "P101" },
+        teacher_fullname: "Teacher A",
+      },
+      {
+        date: fmt(
+          new Date(today.getFullYear(), today.getMonth(), today.getDate() + 21),
+        ),
         day_of_week: 3,
         start_time: "09:00:00",
         end_time: "11:00:00",
         classroom_name: "Lớp F",
         room: { name: "P302" },
-        teacher_fullname: "Tran G",
+        teacher_fullname: "Teacher B",
       },
     ]);
-    render(<MemoryRouter><Schedule /></MemoryRouter>);
+    render(
+      <MemoryRouter>
+        <Schedule />
+      </MemoryRouter>,
+    );
+    // tuần hiện tại chỉ có 1 session (today), session +21 bị filter ra
     await waitFor(() => {
-      expect(screen.getByTestId("schedule-count").textContent).toBe("0");
+      expect(screen.getByTestId("schedule-count").textContent).toBe("1");
     });
   });
 
