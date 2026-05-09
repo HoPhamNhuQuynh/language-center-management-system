@@ -2,9 +2,6 @@ import pytest
 from rest_framework.test import APIClient
 from django.contrib.auth.models import Group
 from model_bakery import baker
-from django.conf import settings
-from oauth2_provider.models import Application
-from django.contrib.auth import get_user_model
 
 @pytest.fixture
 def api_client():
@@ -39,11 +36,7 @@ def active_teacher(db, teacher_group):
 
 @pytest.fixture
 def classroom(db):
-    course = baker.make(
-        "courses.Course",
-        price=6000000,
-        total_sessions=20,
-    )
+    course = baker.make('courses.Course', price=6000000)
     return baker.make('classes.ClassRoom', course=course, capacity=20, name="Lớp Python")
 
 
@@ -57,23 +50,3 @@ def setup_course_data(db):
     level = baker.make('courses.Level', name="Basic")
     tag = baker.make('courses.Tag', name="Python")
     return level, tag
-
-@pytest.fixture(autouse=True)
-def oauth_application(db): 
-    User = get_user_model()
-    admin, _ = User.objects.get_or_create(
-        username="admin", defaults={"password": "admin123"}
-    )
-
-    app, _ = Application.objects.get_or_create(
-        name="Language Center",
-        defaults={
-            "user": admin,
-            "client_type": Application.CLIENT_CONFIDENTIAL,
-            "authorization_grant_type": Application.GRANT_PASSWORD,
-        },
-    )
-    settings.CLIENT_ID = app.client_id
-    settings.CLIENT_SECRET = app.client_secret
-
-    return app

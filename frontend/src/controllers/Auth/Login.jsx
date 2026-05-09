@@ -5,25 +5,7 @@ import { setTokens } from "../../utils/token";
 import { useGoogleLogin } from "@react-oauth/google";
 import { FacebookLoginClient } from "@greatsumini/react-facebook-login";
 import { useEffect } from "react";
-import { message } from "antd";
 
-const translateError = (errorMsg) => {
-  if (!errorMsg) return "Đã có lỗi xảy ra. Vui lòng thử lại.";
-
-  if (errorMsg.includes("FACEBOOK"))
-    return "Email này đã được đăng ký qua Facebook. Vui lòng đăng nhập bằng Facebook.";
-  if (errorMsg.includes("GOOGLE"))
-    return "Email này đã được đăng ký qua Google. Vui lòng đăng nhập bằng Google.";
-  if (
-    errorMsg.toLowerCase().includes("invalid") ||
-    errorMsg.toLowerCase().includes("unauthorized") ||
-    errorMsg.toLowerCase().includes("credentials") ||
-    errorMsg.toLowerCase().includes("grant")
-  )
-    return "Tên đăng nhập hoặc mật khẩu không đúng.";
-
-  return "Đã có lỗi xảy ra. Vui lòng thử lại."; // ← đổi từ return errorMsg
-};
 
 function Login(){
     const navigate = useNavigate();
@@ -45,18 +27,12 @@ function Login(){
       try {
         const res = await loginApi(username, password);
 
-        setTokens(res.access_token, res.refresh_token, res.user);
-        if (res.user.role === "Admin") {
-          navigate("/dashboard")
-        } else if (res.user.role === "Teacher") {
-          navigate("/schedule")
-        } else {
-          navigate("/");
-        }
-        console.info(res)
+        setTokens(res.access_token, res.refresh_token);
+
+        console.info(res);
+        navigate("/");
       } catch (error) {
-        const errorMsg = error.response?.data?.error;
-        message.error(translateError(errorMsg));
+        alert("Sai tài khoản hoặc mật khẩu.");
       }
     };
 
@@ -67,12 +43,12 @@ function Login(){
         try {
           const res = await googleLoginApi(tokenResponse.access_token);
 
-          setTokens(res.access_token, res.refresh_token, res.user);
+          setTokens(res.access_token, res.refresh_token);
           console.log("Google trả về:", tokenResponse);
           navigate("/");
         } catch (err) {
-          const errorMsg = err.response?.data?.error;
-          message.error(translateError(errorMsg) || "Đăng nhập Google thất bại.")
+          console.log(err.response?.data);
+          alert("Google login thất bại");
         }
       },
       onError: () => {
@@ -87,13 +63,10 @@ function Login(){
             facebookLoginApi(response.authResponse.accessToken)
               .then((res) => {
                 console.info(res)
-                setTokens(res.access_token, res.refresh_token, res.user);
+                setTokens(res.access_token, res.refresh_token);
                 navigate("/");
               })
-              .catch((err) => {
-                const errorMsg = err.response?.data?.error;
-                message.error(translateError(errorMsg) || "Đăng nhập Facebook thất bại.");
-              });
+              .catch(() => alert("Facebook login thất bại"));
           } else {
             alert("Facebook login bị huỷ");
           }

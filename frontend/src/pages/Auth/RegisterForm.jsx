@@ -3,24 +3,21 @@ import classImg from "../../assets/class.jpg";
 import googleImg from "../../assets/google.png";
 import facebookImg from "../../assets/facebook.png";
 import "../../styles/Register.css";
-import "../../styles/Styles.css";
 import { Link } from "react-router-dom";
 import { validatePassword } from "../../utils/validation";
 
-function RegisterForm({
-  onRegister,
-  onGoogleLogin,
-  onFacebookLogin,
-}) {
+function RegisterForm({ onRegister, onGoogleLogin, onFacebookLogin }) {
   return (
     <div className="auth-container">
       <Card className="auth-card" styles={{ body: { padding: 0 } }}>
         <div className="auth-wrapper">
+          {/* LEFT IMAGE */}
           <div
             className="auth-image-side"
             style={{ backgroundImage: `url(${classImg})` }}
           />
 
+          {/* RIGHT FORM */}
           <div className="auth-form-side">
             <h2 className="auth-title">Đăng ký tài khoản</h2>
 
@@ -123,7 +120,7 @@ function RegisterForm({
               >
                 <Checkbox>Tôi đồng ý với Điều khoản và Chính sách</Checkbox>
               </Form.Item>
-              
+
               <Button
                 type="primary"
                 htmlType="submit"

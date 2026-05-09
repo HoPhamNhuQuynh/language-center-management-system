@@ -41,7 +41,6 @@ urlpatterns = [
     path('api/', include('enrollments.urls')),
     path('api/', include('grades.urls')),
     path('api/', include('users.urls')),
-    path("api/", include("analytics.urls")),
     # url cho swagger 
     re_path(r'^swagger(?P<format>\.json|\.yaml)$',
             schema_view.without_ui(cache_timeout=0),

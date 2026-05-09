@@ -16,7 +16,3 @@ export const enrollmentDetailApi = async (id) => {
     return res.data;
 };
 
-export const deleteEnrollmentApi = async (id) => {
-  const res = await Apis.delete(`enrollments/${id}/`);
-  return res.data;
-};

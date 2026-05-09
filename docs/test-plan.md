@@ -24,9 +24,6 @@ Quá trình kiểm thử là đảm bảo các chức năng của hệ thống h
 * Đăng nhập hệ thống
 
 2. Chức năng cho học viên:
-* Đăng ký tài khoản
-* Đăng nhập bằng Google/Facebook
-* Cập nhật thông tin cá nhân
 * Đăng ký khóa học
 * Thanh toán học phí trực tuyến
 * Xem biên lai thu phí
@@ -34,7 +31,8 @@ Quá trình kiểm thử là đảm bảo các chức năng của hệ thống h
 * Xem kết quả học tập
   
 3. Chức năng cho giáo viên:
-* Xem lịch dạy   
+* Xem lịch dạy  
+* Xem danh sách học viên  
 * Điểm danh học viên  
 * Nhập điểm và nhận xét đánh giá  
 
@@ -50,7 +48,8 @@ Quá trình kiểm thử là đảm bảo các chức năng của hệ thống h
 Kiểm thử hiệu năng hệ thống.  
 Kiểm thử bảo mật nâng cao.  
 Kiểm thử trên nhiều thiết bị hoặc nền tảng khác nhau.  
-Không kiểm thử sâu hệ thống bên thứ ba trên môi trường production như Google/Facebook OAuth, MoMo/VNPay, Cloudinary. 
+Tích hợp với các hệ thống bên thứ ba ngoài phạm vi dự án.  
+
 
 ## 3. QUALITY OBJECTIVES  
 Đảm bảo hệ thống quản lý trung tâm ngoại ngữ đáp ứng đúng các yêu cầu đã được đặc tả và hoạt động ổn định trong quá trình sử dụng.
@@ -87,29 +86,16 @@ Ngoài mục tiêu chính, kiểm thử cũng hướng đến các mục tiêu p
 -API testing được áp dụng cho các chức năng backend như xác thực người dùng, lấy thông tin người dùng, quản lý khóa học, quản lý lớp học, đăng ký khóa học, điểm số và thanh toán. Các trường hợp kiểm thử bao gồm request hợp lệ, request thiếu dữ liệu, dữ liệu sai định dạng, không có token hoặc token không hợp lệ.
 
 ### 4.3 Automation Testing
--Nhóm áp dụng kiểm thử tự động cho cả backend và frontend nhằm tăng khả năng kiểm tra lặp lại, giảm thời gian test thủ công và phát hiện lỗi sớm sau mỗi lần thay đổi code.
+-Áp dụng kiểm thử tự động ở tầng backend bằng công cụ pytest. Các file test tự động được tổ chức trong thư mục backend/tests/, bao gồm các test theo từng module như users, courses, classes, enrollments, grades và payments.
 
--Đối với backend, nhóm sử dụng **pytest** để kiểm thử các API, serializer, service class và business logic chính của hệ thống. Các file test tự động được tổ chức trong thư mục `backend/tests/`, bao gồm các test theo từng module như users, courses, classes, enrollments, grades và payments.
+-Automation testing được sử dụng để kiểm tra các hàm, service class và một số logic xử lý chính của backend. File conftest.py được dùng để cấu hình fixture, dữ liệu mẫu hoặc các thiết lập cần thiết trước khi chạy test.
 
--Đối với frontend, nhóm sử dụng **Vitest** để kiểm thử các component, service, controller và các hàm xử lý logic ở tầng giao diện. Vitest giúp kiểm tra các hành vi của frontend như render component, xử lý dữ liệu, gọi service và phản hồi của giao diện trong một số tình huống chính.
+-Tuy nhiên, automation chưa bao phủ toàn bộ hệ thống. Các chức năng liên quan đến giao diện người dùng và luồng thao tác thực tế vẫn được kiểm thử thủ công.
 
--Ngoài ra, nhóm sử dụng coverage report để đánh giá mức độ bao phủ của automation test. Backend coverage được đo bằng pytest coverage, frontend coverage được đo bằng Vitest coverage.
-
--Tuy nhiên, automation testing chưa bao phủ toàn bộ hệ thống. Các chức năng liên quan đến trải nghiệm người dùng, luồng thao tác thực tế, giao diện, evidence trực quan và kiểm tra nghiệp vụ end-to-end vẫn được thực hiện bằng manual testing.
 ### 4.4 Test Techniques
 -Sử dụng kỹ thuật black-box testing là chính. Tester tập trung vào dữ liệu đầu vào, kết quả đầu ra và hành vi của hệ thống mà không cần quan tâm đến mã nguồn bên trong. Kỹ thuật này được áp dụng cho manual testing và API testing.
 
 -Bên cạnh đó, nhóm có áp dụng một phần white-box testing đối với backend thông qua pytest. Các test này kiểm tra trực tiếp logic bên trong các hàm, service class và các xử lý nghiệp vụ quan trọng của hệ thống.
-
-| Kỹ thuật test | Module áp dụng | Test case được áp dụng |
-|---|---|---|
-| **Phân vùng tương đương (EP)** | Form đăng ký, đăng nhập, khóa học, lịch học, điểm số, học phí, thanh toán | Email hợp lệ / không hợp lệ; mật khẩu hợp lệ / không hợp lệ; số điện thoại hợp lệ / không hợp lệ; học phí hợp lệ / không hợp lệ; phương thức thanh toán hợp lệ / không hợp lệ. |
-| **Phân tích giá trị biên (BVA)** | Điểm số, học phí, số buổi học, số lượng học viên, mật khẩu, ngày bắt đầu/kết thúc | Điểm từ 1 đến 10; số buổi học tại biên 10 và 30; học phí tại ngưỡng tối thiểu; số tiền thanh toán tại ngưỡng 50% học phí. |
-| **Bảng quyết định** | Đăng nhập, đăng ký tài khoản, đăng ký khóa học, thanh toán, phân quyền | Đăng nhập theo điều kiện email/mật khẩu; đăng ký khóa học theo điều kiện trùng lịch, trùng lớp, sĩ số, trạng thái lớp/khóa học; xử lý thanh toán theo mã phản hồi VNPay. |
-| **Kiểm thử chuyển đổi trạng thái** | Điểm danh, nhập điểm, đăng ký khóa học, thanh toán | Điểm danh: `Chưa điểm danh -> Có mặt / Trễ / Vắng`<br>Nhập điểm: `Chưa có điểm -> Bản nháp -> Đã nộp -> Mở lại`<br>Đăng ký khóa học: `Chờ thanh toán -> Thanh toán một phần -> Thành công / Hủy`<br>Thanh toán: `Chờ -> Thành công / Thất bại` |
-| **Use Case Testing** | Đăng ký khóa học, thanh toán, quản lý khóa học, cấu hình học phí, quản lý lịch học, quản lý điểm | Học viên đăng ký khóa học; học viên thanh toán học phí; admin cấu hình học phí; admin tạo khóa học; giáo viên nhập điểm; người dùng xem lịch học. |
-| **Đoán lỗi** | Tất cả form nhập liệu | Bỏ trống field bắt buộc; nhập ký tự đặc biệt; nhập trùng email; bấm submit nhiều lần. |
-
 
 ## 5. ROLES AND RESPONSIBILITIES  
 
@@ -181,18 +167,8 @@ Chiến lược kiểm thử này mô tả cách tiếp cận toàn diện để
 
 
 
-### 8.3 Testing Types
-
-Dự án áp dụng nhiều loại kiểm thử nhằm đảm bảo hệ thống hoạt động đúng yêu cầu, dữ liệu được xử lý chính xác và các vai trò người dùng có quyền truy cập phù hợp.
-
-| Loại kiểm thử | Mô tả | Công cụ / Phương pháp áp dụng |
-|---|---|---|
-| **Functional Testing** | Kiểm tra các chức năng chính của hệ thống có hoạt động đúng theo yêu cầu hay không. | Manual testing, Postman, Pytest |
-| **UI Testing** | Kiểm tra giao diện người dùng, bố cục màn hình, điều hướng, form nhập liệu và thông báo lỗi. | Manual testing trên trình duyệt |
-| **API Testing** | Kiểm tra các API endpoint, bao gồm method, request body, status code, response body và xử lý lỗi. | Postman |
-| **Unit Testing** | Kiểm tra các hàm, component, serializer, service hoặc business logic riêng lẻ. | Pytest cho backend, Vitest cho frontend |
-| **Validation Testing** | Kiểm tra dữ liệu đầu vào hợp lệ và không hợp lệ, bao gồm field bắt buộc, sai định dạng, dữ liệu trùng và giá trị ngoài khoảng cho phép. | Manual testing, Postman, Pytest |
-| **Permission Testing** | Kiểm tra quyền truy cập theo vai trò Admin, Teacher và Student. | Manual testing, API testing |
+### 8.3 Testing Types 
+(Liệt kê các loại test: Functional, Regression, Integration, v.v.)
 
 ### 8.4 Bug Severity and Priority Definition 
 
@@ -233,8 +209,7 @@ Mô tả các yêu cầu về phần cứng, phần mềm, công cụ và môi t
 
 - **Công cụ kiểm thử kỹ thuật và tự động hóa:**
     * **Postman:** Sử dụng Postman để kiểm tra tính đúng đắn của các phương thức (GET, POST, PUT, DELETE) từ Django Backend, đảm bảo dữ liệu phản hồi khớp với tài liệu đặc tả trước khi tích hợp vào Frontend.
-    * **Kiểm thử tự động backend:** Pytest được sử dụng để viết và chạy các testcase tự động cho backend Django. Pytest Coverage được sử dụng để đo mức độ bao phủ code của backend automation test.
-    * **Kiểm thử tự động frontend:** Vitest được sử dụng để viết và chạy unit test cho frontend ReactJS. Vitest Coverage được sử dụng để tạo báo cáo coverage cho frontend, bao gồm statements, branches, functions và lines coverage.
+    * **Kiểm thử tự động (Automation Testing):** Tích hợp ngôn ngữ lập trình Python kết hợp với framework pytest trong môi trường Visual Studio Code, cho phép xây dựng các kịch bản kiểm thử tự động cho các luồng nghiệp vụ quan trọng
 - **Công cụ hỗ trợ khác:** Các phần mềm chụp ảnh và quay video màn hình (Snipping Tool,...) được sử dụng để trích xuất minh chứng, phục vụ cho việc đính kèm vào báo cáo lỗi nhằm hỗ trợ đội ngũ Developer trong quá trình định danh và khắc phục sai sót.
 
 ### 9.2 Configuration Management (Quản lý cấu hình)
@@ -268,10 +243,10 @@ Môi trường kiểm thử được thiết lập nhằm giả lập tối đa 
 ## 10. TEST SCHEDULE  
 | Giai đoạn  | Nội dung                                                    | Thời gian               |
 |-------------|-------------------------------------------------------------|-------------------------|
-| Chuẩn bị    | Chuẩn bị môi trường kiểm thử, thiết kế các test case       | 20-04-2026 - 30-04-2026 |
-| Thực hiện   | Kiểm thử các chức năng hệ thống                             | 01-05-2026 - 08-05-2026 |
-| Sửa lỗi     | Sửa các lỗi đã phát hiện và thực hiện kiểm thử lại          | 06-05-2026 - 08-05-2026 |
-| Báo cáo     | Tổng hợp kết quả kiểm thử và báo cáo                        | 09-04-2026 - 10-05-2026 |
+| Chuẩn bị    | Chuẩn bị môi trường kiểm thử, thiết kế các test case       | 17-03-2026 - 22-03-2026 |
+| Thực hiện   | Kiểm thử các chức năng hệ thống                             | 19-03-2026 - 29-03-2026 |
+| Sửa lỗi     | Sửa các lỗi đã phát hiện và thực hiện kiểm thử lại          | 25-03-2026 - 05-04-2026 |
+| Báo cáo     | Tổng hợp kết quả kiểm thử và báo cáo                        | 02-04-2026 - 12-04-2026 |
 
 ## 11. APPROVALS  
 Hồ Phạm Như Quỳnh  

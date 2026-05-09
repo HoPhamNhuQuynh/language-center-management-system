@@ -3,12 +3,15 @@ from users.models import User, Profile
 from rest_framework import serializers
 from django.db import transaction
 import re
-from django.core.files.uploadedfile import UploadedFile
 
 def validate_password_common(password):
         if len(password) < 6:
             raise serializers.ValidationError("Mật khẩu phải có ít nhất 6 ký tự")
 
+        instance = self.instance or self.context.get('profile_instance')
+
+        if instance:
+            qs = qs.exclude(pk=instance.pk)
         if not re.search(r"[A-Z]", password):
             raise serializers.ValidationError("Mật khẩu phải có ít nhất 1 chữ in hoa")
 
@@ -18,6 +21,10 @@ def validate_password_common(password):
         if not re.search(r"\d", password):
             raise serializers.ValidationError("Mật khẩu phải có ít nhất 1 chữ số")
 
+        return phone
+    
+    def update(self, instance, validated_data):
+        return super().update(instance, validated_data)
         if not re.search(r"[!@#$%^&*(),.?\":{}|<>_\-\\/]", password):
             raise serializers.ValidationError("Mật khẩu phải có ít nhất 1 ký tự đặc biệt")
         return password
@@ -28,20 +35,10 @@ class UserSerializer(serializers.ModelSerializer):
     Dùng cho api đăng ký tài khoản, chỉnh sửa thông tin cá nhân
     """
     phone_num = serializers.CharField(write_only=True)
-    role = serializers.SerializerMethodField()
-
-    def get_role(self, obj):
-        if obj.is_admin:
-            return "Admin"
-        if obj.is_teacher:
-            return "Teacher"
-        if obj.is_student:
-            return "Student"
-        return None
 
     class Meta:
         model = User
-        fields = ['id', 'first_name', 'last_name', 'email', 'username', 'password', 'phone_num', 'role']
+        fields = ['id', 'first_name', 'last_name', 'email', 'username', 'password', 'phone_num']
         extra_kwargs = {
             'password': {
                 'write_only': True
@@ -79,17 +76,8 @@ class UserSerializer(serializers.ModelSerializer):
         Profile.objects.create(user=user, phone_num=phone)
         return user
     
-    def to_representation(self, instance):
-        data = super().to_representation(instance)
-        data['phone_num'] = instance.profile.phone_num if hasattr(instance, 'profile') else None
-        return data
-    
     def update(self, instance, validated_data):
         validated_data.pop("password", None)
-        phone = validated_data.pop("phone_num", None)
-        if phone:
-            instance.profile.phone_num = phone
-            instance.profile.save()
         return super().update(instance, validated_data)
     
 class PasswordUpdateSerializer(serializers.Serializer):
@@ -127,18 +115,11 @@ class AvatarUpdateSerializer(serializers.ModelSerializer):
         fields = ['avatar']
 
     def validate_avatar(self, file):
-        if isinstance(file, UploadedFile):
+        if file.size > 2 * 1024 * 1024:
+            raise serializers.ValidationError("Ảnh quá lớn (max 2MB)")
 
-            if file.size > 2 * 1024 * 1024:
-                raise serializers.ValidationError(
-                    "Ảnh quá lớn (max 2MB)"
-                )
-
-            if not file.content_type.startswith("image/"):
-                raise serializers.ValidationError(
-                    "File phải là ảnh"
-                )
-
+        if not file.content_type.startswith('image/'):
+            raise serializers.ValidationError("File phải là ảnh")
         return file
 
     def to_representation(self, instance):
@@ -156,33 +137,31 @@ class UserDetailSerializer(UserSerializer):
     Docstring for UserDetailSerializer
     Thông tin chi tiết của user
     """
-    avatar = serializers.SerializerMethodField()
-
-    def get_avatar(self, obj):
-        try:
-            if obj.profile.avatar:
-                return obj.profile.avatar.url
-        except:
-            pass
-        return None
-
+    avatar = serializers.CharField(source='profile.avatar', read_only=True)
     class Meta:
         model = UserSerializer.Meta.model
-        fields = UserSerializer.Meta.fields + ['date_joined', 'last_login', 'auth_provider', 'avatar', 'is_active']
+        fields = UserSerializer.Meta.fields + ['date_joined', 'last_login', 'auth_provider', 'avatar']
         extra_kwargs = UserSerializer.Meta.extra_kwargs
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.partial:
+            self.fields['profile'].partial = True
+        if self.instance:
+            try:
+                profile = self.instance.profile
+                self.fields['profile'].instance = profile
+            except Exception:
+                pass
 
     @transaction.atomic
     def create(self, validated_data):
-        phone = validated_data.pop("phone_num", None)
         password = validated_data.pop('password', None)
         user = User(**validated_data)
 
         if password:
             user.set_password(password)
         user.save()
-
-        if phone:
-            Profile.objects.create(user=user, phone_num=phone)
 
         request = self.context.get('request')
         if request and request.user and request.user.is_authenticated and request.user.is_admin:
@@ -191,19 +170,24 @@ class UserDetailSerializer(UserSerializer):
         return user
 
     def update(self, instance, validated_data):
-        list_attrs_to_drop = ['password', 'avatar', 'date_joined', 'last_login', 'auth_provider']
-        for attr in list_attrs_to_drop:
-            validated_data.pop(attr, None)
+        profile_data = validated_data.pop('profile', None)
 
-        phone = validated_data.pop("phone_num", None)
-        if phone:
-            instance.profile.phone_num = phone
-            instance.profile.save()
-
-        for attr, value in validated_data.items():
-            setattr(instance, attr, value)
+        instance.first_name = validated_data.get('first_name', instance.first_name)
+        instance.last_name = validated_data.get('last_name', instance.last_name)
+        instance.email = validated_data.get('email', instance.email)
         instance.save()
-        return instance
 
+        if profile_data is not None:
+            profile = instance.profile
+            profile_serializer = ProfileSerializer(
+                profile,
+                data=profile_data,
+                partial=True,
+                context={'profile_instance': profile}
+            )
+            if profile_serializer.is_valid(raise_exception=True):
+                profile_serializer.save()
+
+        return instance
 
     

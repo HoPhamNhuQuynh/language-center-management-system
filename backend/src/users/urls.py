@@ -3,6 +3,7 @@ from rest_framework.routers import DefaultRouter
 from . import views
 from oauth2_provider.views import RevokeTokenView, TokenView
 from .views import SocialTokenExchangeViewSet
+from oauth2_provider import urls as oauth2_urls
 
 
 r = DefaultRouter()
@@ -20,6 +21,6 @@ auth_patterns = [
 
 urlpatterns = [
     path('', include(r.urls)),
-    path('teachers/', views.ListTeachersView.as_view(), name='teachers-list'),
     path('auth/', include(auth_patterns)),
+    # path('o/', include(oauth2_urls)),
 ]

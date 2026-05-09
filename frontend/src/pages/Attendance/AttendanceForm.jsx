@@ -1,151 +1,118 @@
-import { LockFilled, WarningFilled } from "@ant-design/icons";
-import { Tag } from "antd";
-import { formatDate } from "../../utils/format";
-
-function AttendanceForm({
-  classes,
-  sessions,
-  students,
-  selectedClass,
-  selectedSession,
-  onClassChange,
-  onSessionChange,
-  onStatusChange,
-  onNoteChange,
-  onSubmit,
-  loading,
-  error,
-  canAttendance,
-}) {
+function AttendanceForm({logo, selectedClass, selectedDate, setSelectedClass, setSelectedDate, classes, dates, students, onStatusChange, onNoteChange, onSubmit,}) {
   return (
     <div className="attendance-layout">
+      <aside className="attendance-sidebar">
+
+
+        <button className="attendance-sidebar-btn active">Điểm danh</button>
+        <button className="attendance-sidebar-btn">Lịch giảng dạy</button>
+        <button className="attendance-sidebar-btn">Nhập điểm</button>
+        <button className="attendance-sidebar-btn">Danh sách học viên</button>
+      </aside>
+
       <main className="attendance-main">
-        <h1 style={{ textAlign: "center" }}>ĐIỂM DANH</h1>
+        <h1 level={1} style={{ textAlign: "center" }}>ĐIỂM DANH</h1>
 
         <div className="attendance-filters">
           <div className="filter-item">
             <label>Lớp</label>
             <select
               value={selectedClass}
-              onChange={(e) => onClassChange(e.target.value)}
+              onChange={(e) => setSelectedClass(e.target.value)}
             >
-              <option value="">-- Chọn lớp --</option>
-              {classes.map((cls) => (
-                <option key={cls.id} value={cls.id}>
-                  {cls.name}
+              <option value="">Chọn lớp học</option>
+              {classes.map((item) => (
+                <option key={item} value={item}>
+                  {item}
                 </option>
               ))}
             </select>
           </div>
+
           <div className="filter-item">
-            <label>Buổi học</label>
+            <label>Ngày</label>
             <select
-              value={selectedSession}
-              onChange={(e) => onSessionChange(e.target.value)}
-              disabled={!selectedClass}
+              value={selectedDate}
+              onChange={(e) => setSelectedDate(e.target.value)}
             >
-              <option value="">-- Chọn buổi --</option>
-              {sessions.map((s) => (
-                <option key={s.id} value={s.id}>
-                  {formatDate(s.date)}
+              {dates.map((item) => (
+                <option key={item} value={item}>
+                  {item}
                 </option>
               ))}
             </select>
           </div>
         </div>
 
-        {selectedSession && !canAttendance && (
-          <Tag
-            icon={<LockFilled />}
-            color="error"
-            className="status-badge-locked"
-          >
-            BUỔI HỌC NÀY KHÔNG THỂ ĐIỂM DANH
-          </Tag>
-        )}
+        <div className="attendance-table-wrapper">
+          <table className="attendance-table">
+            <thead>
+              <tr>
+                <th>STT</th>
+                <th>HỌ TÊN</th>
+                <th>TRẠNG THÁI</th>
+                <th>GHI CHÚ</th>
+              </tr>
+            </thead>
 
-        {loading && <div className="score-loading">Đang tải...</div>}
-        {error && <div className="score-error">{error}</div>}
-
-        {!loading && !error && students.length > 0 && (
-          <>
-            <div className="attendance-table-wrapper">
-              <table className="attendance-table">
-                <thead>
-                  <tr>
-                    <th>STT</th>
-                    <th>HỌ TÊN</th>
-                    <th>TRẠNG THÁI</th>
-                    <th>GHI CHÚ</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {students.map((student, index) => (
-                    <tr key={student.enrollmentId}>
-                      <td>{index + 1}</td>
-                      <td>{student.fullName}</td>
-                      <td>
-                        <div className="status-options">
-                          {["Có mặt", "Vắng", "Trễ"].map((status) => (
-                            <label key={status}>
-                              <input
-                                type="radio"
-                                name={`status-${student.enrollmentId}`}
-                                checked={student.status === status}
-                                onChange={() =>
-                                  onStatusChange(student.enrollmentId, status)
-                                }
-                                disabled={!canAttendance}
-                              />
-                              {status}
-                            </label>
-                          ))}
-                        </div>
-                      </td>
-                      <td>
+            <tbody>
+              {students.map((student, index) => (
+                <tr key={student.id}>
+                  <td>{index + 1}</td>
+                  <td>{student.fullName}</td>
+                  <td>
+                    <div className="status-options">
+                      <label>
                         <input
-                          className="note-input"
-                          type="text"
-                          value={student.note}
-                          onChange={(e) =>
-                            onNoteChange(student.enrollmentId, e.target.value)
-                          }
-                          disabled={!canAttendance}
+                          type="radio"
+                          name={`status-${student.id}`}
+                          checked={student.status === "Có mặt"}
+                          onChange={() => onStatusChange(student.id, "Có mặt")}
                         />
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                        Có mặt
+                      </label>
 
-            <div className="attendance-submit">
-              {canAttendance ? (
-                <button className="complete-btn" onClick={onSubmit}>
-                  HOÀN TẤT
-                </button>
-              ) : (
-                <div className="locked-notification">
-                  <Tag
-                    icon={<WarningFilled />}
-                    color="warning"
-                    className="ant-tag-warning"
-                  >
-                    Chỉ có thể điểm danh trong ngày diễn ra buổi học.
-                  </Tag>
-                </div>
-              )}
-            </div>
-          </>
-        )}
+                      <label>
+                        <input
+                          type="radio"
+                          name={`status-${student.id}`}
+                          checked={student.status === "Vắng"}
+                          onChange={() => onStatusChange(student.id, "Vắng")}
+                        />
+                        Vắng
+                      </label>
 
-        {!loading && !error && selectedSession && students.length === 0 && (
-          <div className="score-entry-empty">Không có học viên nào.</div>
-        )}
+                      <label>
+                        <input
+                          type="radio"
+                          name={`status-${student.id}`}
+                          checked={student.status === "Trễ"}
+                          onChange={() => onStatusChange(student.id, "Trễ")}
+                        />
+                        Trễ
+                      </label>
+                    </div>
+                  </td>
 
-        {!selectedClass && (
-          <div className="score-entry-empty">Vui lòng chọn lớp để bắt đầu.</div>
-        )}
+                  <td>
+                    <input
+                      className="note-input"
+                      type="text"
+                      value={student.note}
+                      onChange={(e) => onNoteChange(student.id, e.target.value)}
+                    />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <div className="attendance-submit">
+          <button className="complete-btn" onClick={onSubmit}>
+            HOÀN TẤT
+          </button>
+        </div>
       </main>
     </div>
   );

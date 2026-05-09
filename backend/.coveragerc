@@ -9,14 +9,6 @@ omit =
     src/config/settings.py
     src/__init__.py
 
-    */admin.py
-    */apps.py
-    */urls.py
-    */tests.py
-
-    */adapter.py
-    */perms.py
-
 [report]
 fail_under = 80
 show_missing = True

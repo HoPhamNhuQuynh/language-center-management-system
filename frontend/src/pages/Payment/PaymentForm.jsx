@@ -37,7 +37,8 @@ function PaymentForm({ data, method, setMethod, percent, setPercent, onSubmit, o
               <b>Phương thức thanh toán:</b>
             </div>
             <Radio.Group disabled={isPaid} value={method} onChange={(e) => setMethod(e.target.value)} disabled={isPaid}>
-              <Radio value="vnpay" style={{ marginRight: 60 }}>VNPay</Radio>
+              <Radio value="momo" style={{ marginRight: 60 }}>Momo</Radio>
+              <Radio value="vnpay">VNPay</Radio>
             </Radio.Group>
           </div>
           <div style={{ display: "flex", alignItems: "center" }}>

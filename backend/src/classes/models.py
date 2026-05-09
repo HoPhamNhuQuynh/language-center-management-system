@@ -2,8 +2,6 @@
 from django.db import models
 from core.models import BaseActiveModel, TimeStampedModel
 from django.conf import settings
-from datetime import timedelta
-from django.db import transaction
 '''
     Class, Room, Schedule, Session, TeachingAssignment
 '''
@@ -29,33 +27,6 @@ class ClassRoom(BaseActiveModel, TimeStampedModel):
 
     def __str__(self):
         return self.name
-    
-    @transaction.atomic()
-    def generate_sessions_from_schedules(self):
-        """
-        Với mỗi Schedule của lớp, duyệt từng ngày trong [start_date, end_date].
-        Nếu ngày đó khớp day_of_week → tạo Session.
-        day_of_week: 0=Thứ 2, 1=Thứ 3, ..., 6=Chủ nhật (theo Python weekday())
-        """
-        sessions_to_create = []
-
-        for schedule in self.schedule_set.filter(active=True):
-            current = self.start_date
-
-            while current <= self.end_date:
-                if current.weekday() == schedule.day_of_week:
-                    sessions_to_create.append(Session(
-                        schedule=schedule,
-                        date=current,
-                        start_time=schedule.start_time,
-                        end_time=schedule.end_time,
-                        room=schedule.room,
-                        user=None,  
-                    ))
-                current += timedelta(days=1)
-
-        Session.objects.bulk_create(sessions_to_create)
-        return len(sessions_to_create)
     
 class Room(BaseActiveModel, TimeStampedModel):
     name = models.CharField(max_length=50, unique=True)

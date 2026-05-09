@@ -1,25 +1,21 @@
 import Apis from "./Apis";
-import axios from "axios";
 
 export const loginApi = async (username, password) => {
-  const res = await Apis.post(
-    "auth/login/",
-    {
-      username,
-      password,
-    },
-    {
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-    },
-  );
-  return res.data;
+    const res = await Apis.post("auth/login/", {
+        username,
+        password,
+    }, {
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+            },
+        }
+    );
+    return res.data;
 };
 
 export const registerApi = async (data) => {
-  const res = await Apis.post("auth/register/", data);
-  return res.data;
+    const res = await Apis.post("auth/register/", data);
+    return res.data;
 };
 
 export const googleLoginApi = async (access_token) => {
@@ -41,27 +37,14 @@ export const facebookLoginApi = async (access_token) => {
 };
 
 export const revokeTokenApi = async (refreshToken) => {
-  const params = new URLSearchParams();
-  params.append("token", refreshToken);
+    const params = new URLSearchParams();
+    params.append('token', refreshToken);
 
-  const res = await Apis.post("auth/logout/", params, {
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
-  });
+    const res = await Apis.post("auth/logout/", params, {
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+            },
+        });
 
-  return res;
-};
-
-export const refreshTokenApi = async (refresh_token) => {
-  const res = await axios.post(
-    "auth/refresh/",
-    { refresh_token },
-    {
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-    },
-  );
-  return res.data;
+    return res;
 };

@@ -47,7 +47,7 @@ function BillViewForm({ data = {}, onClose }) {
               <b>PHƯƠNG THỨC THANH TOÁN:</b> {getValue(data.paymentMethod)}
             </div>
             <div>
-              <b>TRẠNG THÁI THANH TOÁN:</b> {getValue(data.paymentStatus)}
+              <b>TRẠNG THÁI THANH TOÁN:</b> {getValue(data.enrollmentStatus)}
             </div>
           </div>
 

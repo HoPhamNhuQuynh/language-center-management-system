@@ -36,9 +36,9 @@ function PaymentHistoryForm({ payments, totalPaid, statusFilter, setStatusFilter
                   <td>{item.content}</td>
                   <td>
                     {item.status === "SUCCESS" ? "Giao dịch thành công" :
-                    item.status === "PENDING" ? "Đang xử lý giao dịch" :
-                    item.status === "FAILED" ? "Giao dịch thất bại" :
-                    item.status}
+                      item.status === "PENDING" ? "Giao dịch thất bại" :
+                        item.status === "FAILED" ? "Đang xử lý giao dịch" :
+                          item.status}
                   </td>
                   <td>{formatCurrency(item.amount)}</td>
                 </tr>

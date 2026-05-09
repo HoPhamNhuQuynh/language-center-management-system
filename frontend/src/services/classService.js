@@ -1,6 +1,6 @@
 import Apis from "./Apis";
 
-export const classDetailApi = async (data) => {
-    const res = await Apis.get(`classes/${data}/`);
+export const sessionApi = async () => {
+    const res = await Apis.get("sessions/");
     return res.data;
-}
+};
