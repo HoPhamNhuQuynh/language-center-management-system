@@ -36,6 +36,7 @@ function Schedule() {
         setSessions(res);
 
         const today = new Date();
+        today.setHours(0, 0, 0, 0);
         const allDates = res.map(s => new Date(s.date));
         const minDate = new Date(Math.min(Math.min(...allDates), today));
         const maxDate = new Date(Math.max(Math.max(...allDates), today));
@@ -53,6 +54,7 @@ function Schedule() {
         let weekIdx = mondays.findIndex(mon => {
           const sunday = new Date(mon);
           sunday.setDate(mon.getDate() + 6);
+          sunday.setHours(23, 59, 59, 999);
           return today >= mon && today <= sunday;
         });
 
@@ -81,7 +83,7 @@ function Schedule() {
   const weekDates = currentMonday ? getWeekDates(currentMonday) : [];
   const weekLabel = weekDates.length
     ? (() => {
-      const fmt = (d) => { const [, m, day] = d.split('-'); return `${day}/${m}`; };
+      const fmt = (d) => { const [y, m, day] = d.split('-'); return `${day}/${m}/${y}`; };
       return `${fmt(weekDates[0])} - ${fmt(weekDates[6])}`;
     })()
     : "";
