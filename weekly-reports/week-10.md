@@ -19,14 +19,14 @@
 
 ---
 ## 2. Tiến độ tổng thể
-| Hạng mục           | Trạng thái     | %    |
-|--------------------|----------------|------|
-| Phân tích yêu cầu  | Đã hoàn thành  | 100% |
-| Thiết kế kiến trúc | Đã hoàn thành  | 100% |
-| Backend API        | Đã hoàn thành  | 100% |
-| Frontend UI        | Đang thực hiện | 100% |
-| Testing            | Đang thực hiện | 100% |
-| Báo cáo            | Chưa bắt đầu   | 100% |
+| Hạng mục           | Trạng thái    | %    |
+|--------------------|---------------|------|
+| Phân tích yêu cầu  | Đã hoàn thành | 100% |
+| Thiết kế kiến trúc | Đã hoàn thành | 100% |
+| Backend API        | Đã hoàn thành | 100% |
+| Frontend UI        | Đã hoàn thành | 100% |
+| Testing            | Đã hoàn thành | 100% |
+| Báo cáo            | Đã hoàn thành | 100% |
 
 **Tổng tiến độ: 100%**
 ---
