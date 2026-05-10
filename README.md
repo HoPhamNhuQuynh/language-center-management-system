@@ -73,9 +73,9 @@ pytest -q --cov=src --cov-report=term-missing
 npm install
 
 # Chạy test
-npm run test:run  # xác nhận toàn bộ test pass/fail
-npm run test:run -- --reporter=verbose 2>&1 # debug và xem log lỗi chi tiết
-npm run test  # cần feedback ngay khi code có thay đổi
+npm run test:run
+npm run test:run -- --reporter=verbose 2>&1 
+npm run test 
 npm run test -- --coverage
 ```
 
@@ -84,7 +84,7 @@ npm run test -- --coverage
 - Backend API: https://localhost:8000/
 
 ## Demo
-[Link video demo hoặc screenshots]
+[Demo sản phẩm](docs/screenshots/Demo/)
 
 ## Tài liệu
 - [Phân tích yêu cầu](docs/requirements.md)
