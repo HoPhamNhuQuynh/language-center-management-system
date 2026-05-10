@@ -29,7 +29,7 @@ Một số nội dung chưa được kiểm thử đầy đủ gồm kiểm th�
 | 781 | 781 | 774 | 7 |
 
 ## b) Số Test cases passed/ failed
-![Test Summary](test-summary.png)
+![Test Summary](./screenshots/Test%20summary/test-summary.png)
 
 ## c) Số Bugs tìm được và Tình trạng & Mức độ nghiêm trọng của chúng
 
@@ -39,7 +39,7 @@ Một số nội dung chưa được kiểm thử đầy đủ gồm kiểm th�
 | Open | 0 | 0 | 0 | 1 | 1 |
 | Total | 0 | 1 | 5 | 1 | 7 |
 
-![Test Summary](Test-summary-bug.png)
+![Test Summary](./screenshots/Test%20summary/Test-summary-bug.png)
 
 ## d) Sự phân phối bugs
 
@@ -51,7 +51,7 @@ Một số nội dung chưa được kiểm thử đầy đủ gồm kiểm th�
 | Cosmetic | 0 | 0 | 0 | 1 | 1 |
 | Total => | 1 | 1 | 1 | 4 | 7 |
 
-![Test Summary](test-summary-phan-phoi-bug.png)
+![Test Summary](./screenshots/Test%20summary/test-summary-phan-phoi-bug.png)
 
 # V. Các loại kiểm thử được thực hiện
 
@@ -111,7 +111,7 @@ Viết Pytest fixture dùng chung cho dữ liệu test — dữ liệu mẫu nh�
 Có - Toàn bộ 781 test cases đã được thực hiện, đạt tỷ lệ thực thi 100%
 ## b)Tất cả các Bug cực kì nghiêm trọng, nghiêm trọng, trung bình cần được xác minh và đóng: 
 Có - 8 bugs thuộc mức nghiêm trọng và trung bình đã được Closed trước khi kết thúc chu kỳ kiểm thử.
-## c) ất kỳ các bug nhỏ, độ ưu tiên thấp đều có kế hoạch thực hiện và được chuẩn bị với ngày đóng cửa dự kiến. 
+## c) Bất kỳ các bug nhỏ, độ ưu tiên thấp đều có kế hoạch thực hiện và được chuẩn bị với ngày đóng cửa dự kiến. 
 Còn 1 bug mức Cosmetic đang Open, thuộc module Users. Bug này không ảnh hưởng đến chức năng thực tế của hệ thống và dự kiến được xử lý trong lần cập nhật môi trường kiểm thử tiếp theo.
 # XI. Kết luận
  Sau quá trình kiểm thử, nhóm đã hoàn thành việc đánh giá các chức năng chính của “Hệ thống quản lý trung tâm ngoại ngữ” trên cả frontend, backend và API. Các chức năng chính trọng tâm đã được kiểm thử. Kết quả kiểm thử cho thấy hệ thống đạt mức độ ổn định tương đối tốt với tỷ lệ testcase pass khoảng 98.98% và tỷ lệ fail khoảng 1.02%. Điều này cho thấy phần lớn chức năng của hệ thống đã hoạt động đúng theo yêu cầu đề ra.   

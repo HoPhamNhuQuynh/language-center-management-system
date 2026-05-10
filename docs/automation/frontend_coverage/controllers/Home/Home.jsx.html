@@ -3,7 +3,7 @@
 <html lang="en">
 
 <head>
-    <title>Code coverage report for controllers/Student/ResultAcademic.jsx</title>
+    <title>Code coverage report for controllers/Home/Home.jsx</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="../../prettify.css" />
     <link rel="stylesheet" href="../../base.css" />
@@ -19,13 +19,13 @@
 <body>
 <div class='wrapper'>
     <div class='pad1'>
-        <h1><a href="../../index.html">All files</a> / <a href="index.html">controllers/Student</a> ResultAcademic.jsx</h1>
+        <h1><a href="../../index.html">All files</a> / <a href="index.html">controllers/Home</a> Home.jsx</h1>
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>20/20</span>
+                <span class='fraction'>13/13</span>
             </div>
         
             
@@ -39,14 +39,14 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>4/4</span>
+                <span class='fraction'>6/6</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>18/18</span>
+                <span class='fraction'>12/12</span>
             </div>
         
             
@@ -111,7 +111,12 @@
 <a name='L46'></a><a href='#L46'>46</a>
 <a name='L47'></a><a href='#L47'>47</a>
 <a name='L48'></a><a href='#L48'>48</a>
-<a name='L49'></a><a href='#L49'>49</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L49'></a><a href='#L49'>49</a>
+<a name='L50'></a><a href='#L50'>50</a>
+<a name='L51'></a><a href='#L51'>51</a>
+<a name='L52'></a><a href='#L52'>52</a>
+<a name='L53'></a><a href='#L53'>53</a>
+<a name='L54'></a><a href='#L54'>54</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -120,94 +125,104 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">7x</span>
-<span class="cline-any cline-yes">7x</span>
-<span class="cline-any cline-yes">7x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">7x</span>
-<span class="cline-any cline-yes">7x</span>
-<span class="cline-any cline-yes">7x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-yes">9x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">9x</span>
+<span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">7x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">9x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">9x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
-import { myClassResultApi } from "../../services/studentService";
-import { classDetailApi } from "../../services/classService";
-import ResultAcademicForm from "../../pages/User/ResultAcademicForm";
-import "../../styles/ResultAcademic.css";
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">9x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">9x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { useState, useEffect } from 'react';
+import { FaBook } from 'react-icons/fa';
+import { GiTeacher, GiLaptop } from "react-icons/gi";
+import HomeContent from "../../pages/Home/HomeContent";
+import chinaFlag from "../../assets/china-flag.png";
+import englandFlag from "../../assets/england-flag.png";
+import japanFlag from "../../assets/japan-flag.png";
+import koreaFlag from "../../assets/korea-flag.png";
+import "../../styles/Home.css";
+&nbsp;
+function Home() {
+  const [courses, setCourses] = useState([]);
+&nbsp;
+  useEffect(() =&gt; {
+    fetch("/api/courses/")
+      .then((res) =&gt; res.json())
+      .then((data) =&gt; {
+        const list = Array.isArray(data) ? data : data.results ?? [];
+        const shuffled = [...list].sort(() =&gt; Math.random() - 0.5).slice(0, 3);
+        setCourses(shuffled);
+      })
+      .catch((err) =&gt; console.error("Failed to fetch courses:", err));
+  }, []);
+&nbsp;
+  const languages = [
+    { id: 1, name: "English", description: "Học kỹ năng giao tiếp toàn cầu.", image: englandFlag },
+    { id: 2, name: "Japanese", description: "Cải thiện tiếng Nhật trong công việc và đời sống hàng ngày.", image: japanFlag },
+    { id: 3, name: "Korean", description: "Khám phá ngôn ngữ và văn hóa Hàn Quốc.", image: koreaFlag },
+    { id: 4, name: "Chinese", description: "Xây dựng khả năng giao tiếp mạnh mẽ.", image: chinaFlag },
+  ];
+&nbsp;
+  const reasons = [
+    { id: 1, icon: &lt;GiTeacher size={64} color="#6f93d8" /&gt;, title: "Giáo viên có kinh nghiệm", description: "Học cùng với những giáo viên tận tâm." },
+    { id: 2, icon: &lt;FaBook size={64} color="#d8ab62" /&gt;, title: "Lộ trình học linh hoạt", description: "Chọn các khóa học phù hợp với trình độ của bạn." },
+    { id: 3, icon: &lt;GiLaptop size={64} color="#6aa8c9" /&gt;, title: "Môi trường học tập hiện đại", description: "Sử dụng các tài liệu và phương pháp giảng dạy được cập nhật." },
+  ];
 &nbsp;
 &nbsp;
-function ResultAcademic() {
-    const { state } = useLocation();
-    const enrollmentId = state?.enrollmentId;
-    const classId = state?.classId;
+  const testimonials = [
+    { id: 1, name: "John Doe", content: "Tôi đã đạt được mục tiêu IELTS của mình nhờ vào sự hỗ trợ của những giáo viên ở đây." },
+    { id: 2, name: "Ami Tanaka", content: "Khóa học tiếng Nhật đã giúp tôi cảm thấy tự tin hơn nhiều trong công việc." },
+  ];
 &nbsp;
-    const [result, setResult] = useState(null);
-    const [classInfo, setClassInfo] = useState(null);
-    const [loading, setLoading] = useState(true);
-&nbsp;
-    useEffect(() =&gt; {
-        const loadData = async () =&gt; {
-            try {
-                const [all, classDetail] = await Promise.all([
-                    myClassResultApi(),
-                    classDetailApi(classId)
-                ]);
-                const found = all.find(r =&gt; String(r.enrollment_id) === String(enrollmentId));
-                setResult(found || null);
-                setClassInfo(classDetail);
-            } catch (e) {
-                console.error(e);
-            } finally {
-                setLoading(false);
-            }
-        };
-        loadData();
-    }, [enrollmentId, classId]);
-&nbsp;
-&nbsp;
-    if (loading) return &lt;div&gt;Loading...&lt;/div&gt;;
-&nbsp;
-    return (
-        &lt;div className="student-info-layout"&gt;
-            &lt;main className="student-info-main"&gt;
-                &lt;ResultAcademicForm result={result} classInfo={classInfo} /&gt;
-            &lt;/main&gt;
-        &lt;/div&gt;
-    );
+  return (
+    &lt;HomeContent
+      languages={languages}
+      courses={courses}
+      reasons={reasons}
+      testimonials={testimonials}
+    /&gt;
+  );
 }
 &nbsp;
-export default ResultAcademic;</pre></td></tr></table></pre>
+export default Home;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
             </div><!-- /wrapper -->
