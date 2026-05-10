@@ -84,7 +84,7 @@ npm run test -- --coverage
 - Backend API: https://localhost:8000/
 
 ## Demo
-[Demo sản phẩm](docs/screenshots/Demo/)
+[Demo sản phẩm](./docs/demo.md)
 
 ## Tài liệu
 - [Phân tích yêu cầu](docs/requirements.md)
