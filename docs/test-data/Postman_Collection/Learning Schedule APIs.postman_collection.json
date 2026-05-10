@@ -1,0 +1,668 @@
+{
+  "info": {
+    "_postman_id": "75e5757a-1ef0-4f37-97f7-20765c9722ae",
+    "name": "Learning Schedule APIs",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "53925870",
+    "_collection_link": "https://go.postman.co/collection/50437165-75e5757a-1ef0-4f37-97f7-20765c9722ae?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Attend by teacher",
+      "item": [
+        {
+          "name": "POST Attendances - WRONG CLASS_ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "\r",
+                  "\r",
+                  "pm.test(\"Status code is 403\", function () {\r",
+                  "    pm.response.to.have.status(403);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Has error message\", function () {\r",
+                  "    let data = pm.response.json();\r",
+                  "    pm.expect(data.detail).to.exist;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Correct error message\", function () {\r",
+                  "    let data = pm.response.json();\r",
+                  "    pm.expect(data.detail).to.eql(\"Buổi học không thuộc lớp này\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"session_id\": 1,\r\n  \"attendances\": [\r\n    {\r\n      \"enrollment_id\": 1,\r\n      \"attendance_status\": \"LATE\",\r\n      \"note\":\"Trễ 20 phút\"\r\n    }\r\n  ]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/classes/2/bulk-sync-attendances/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "classes",
+                "2",
+                "bulk-sync-attendances",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST Bulk Sync Attendances",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "let data = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response exists\", function () {\r",
+                  "    pm.expect(data).to.exist;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Attendance list valid\", function () {\r",
+                  "    pm.expect(data.attendances).to.be.an(\"array\");\r",
+                  "\r",
+                  "    data.attendances.forEach(item => {\r",
+                  "        pm.expect(item.enrollment_id).to.exist;\r",
+                  "        pm.expect(item.attendance_status).to.exist;\r",
+                  "    });\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"session_id\": 1,\r\n  \"attendances\": [\r\n    {\r\n      \"enrollment_id\": 1,\r\n      \"attendance_status\": \"PRESENT\",\r\n      \"note\": \"\"\r\n    },\r\n    {\r\n      \"enrollment_id\": 2,\r\n      \"attendance_status\": \"ABSENT\",\r\n      \"note\": \"Nghỉ ốm\"\r\n    }\r\n  ]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/classes/1/bulk-sync-attendances/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "classes",
+                "1",
+                "bulk-sync-attendances",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "POST Bulk Sync Attendances",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"session_id\": 1,\r\n  \"attendances\": [\r\n    {\r\n      \"enrollment_id\": 1,\r\n      \"attendance_status\": \"PRESENT\",\r\n      \"note\": \"\"\r\n    },\r\n    {\r\n      \"enrollment_id\": 2,\r\n      \"attendance_status\": \"ABSENT\",\r\n      \"note\": \"Nghỉ ốm\"\r\n    }\r\n  ]\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/classes/1/bulk-sync-attendances/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "classes",
+                    "1",
+                    "bulk-sync-attendances",
+                    ""
+                  ]
+                }
+              },
+              "_postman_previewlanguage": null,
+              "header": null,
+              "cookie": [],
+              "body": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Sessions",
+      "item": [
+        {
+          "name": "GET Sessions by Teachers",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is JSON\", function () {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "const data = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Response is an array\", function () {\r",
+                  "    pm.expect(data).to.be.an(\"array\");\r",
+                  "});\r",
+                  "\r",
+                  "if (data.length > 0) {\r",
+                  "    pm.test(\"Each session has correct structure\", function () {\r",
+                  "        data.forEach((item) => {\r",
+                  "            pm.expect(item).to.be.an(\"object\");\r",
+                  "\r",
+                  "            pm.expect(item).to.have.property(\"id\");\r",
+                  "            pm.expect(item.id).to.be.a(\"number\");\r",
+                  "\r",
+                  "            pm.expect(item).to.have.property(\"date\");\r",
+                  "            pm.expect(item.date).to.be.a(\"string\").and.not.empty;\r",
+                  "\r",
+                  "            pm.expect(item).to.have.property(\"start_time\");\r",
+                  "            pm.expect(item.start_time).to.be.a(\"string\").and.not.empty;\r",
+                  "\r",
+                  "            pm.expect(item).to.have.property(\"end_time\");\r",
+                  "            pm.expect(item.end_time).to.be.a(\"string\").and.not.empty;\r",
+                  "\r",
+                  "            pm.expect(item).to.have.property(\"user\");\r",
+                  "            pm.expect(item.user).to.be.a(\"number\");\r",
+                  "\r",
+                  "            pm.expect(item).to.have.property(\"teacher_fullname\");\r",
+                  "            pm.expect(item.teacher_fullname).to.be.a(\"string\");\r",
+                  "\r",
+                  "            pm.expect(item).to.have.property(\"room\");\r",
+                  "            pm.expect(item.room).to.be.an(\"object\");\r",
+                  "\r",
+                  "            pm.expect(item.room).to.have.property(\"id\");\r",
+                  "            pm.expect(item.room.id).to.be.a(\"number\");\r",
+                  "\r",
+                  "            pm.expect(item.room).to.have.property(\"name\");\r",
+                  "            pm.expect(item.room.name).to.be.a(\"string\").and.not.empty;\r",
+                  "\r",
+                  "            pm.expect(item.room).to.have.property(\"capacity\");\r",
+                  "            pm.expect(item.room.capacity).to.be.a(\"number\");\r",
+                  "        });\r",
+                  "    });\r",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{base_url}}/sessions",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "sessions"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "GET Sessions by Teachers",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": ""
+                },
+                "url": {
+                  "raw": "{{base_url}}/sessions",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "sessions"
+                  ]
+                }
+              },
+              "_postman_previewlanguage": null,
+              "header": null,
+              "cookie": [],
+              "body": "[\r\n    {\r\n        \"id\": 1,\r\n        \"date\": \"2024-05-06\",\r\n        \"start_time\": \"18:00:00\",\r\n        \"end_time\": \"20:00:00\",\r\n        \"user\": 2,\r\n        \"teacher_fullname\": \"Doe John\",\r\n        \"room\": {\r\n            \"id\": 1,\r\n            \"name\": \"Phòng Lab 01 (Cơ Sở 1)\",\r\n            \"capacity\": 30\r\n        },\r\n        \"created_at\": \"2026-04-19T15:09:21Z\",\r\n        \"active\": true\r\n    },\r\n    {\r\n        \"id\": 2,\r\n        \"date\": \"2024-05-08\",\r\n        \"start_time\": \"18:00:00\",\r\n        \"end_time\": \"20:00:00\",\r\n        \"user\": 2,\r\n        \"teacher_fullname\": \"Doe John\",\r\n        \"room\": {\r\n            \"id\": 1,\r\n            \"name\": \"Phòng Lab 01 (Cơ Sở 1)\",\r\n            \"capacity\": 30\r\n        },\r\n        \"created_at\": \"2026-04-19T15:09:21Z\",\r\n        \"active\": true\r\n    },\r\n    {\r\n        \"id\": 3,\r\n        \"date\": \"2024-06-18\",\r\n        \"start_time\": \"19:30:00\",\r\n        \"end_time\": \"21:30:00\",\r\n        \"user\": 3,\r\n        \"teacher_fullname\": \"Nguyễn Lan\",\r\n        \"room\": {\r\n            \"id\": 2,\r\n            \"name\": \"Phòng B.102 (Phòng Học Tiêu Chuẩn)\",\r\n            \"capacity\": 35\r\n        },\r\n        \"created_at\": \"2026-04-19T15:09:21Z\",\r\n        \"active\": true\r\n    }\r\n]"
+            }
+          ]
+        },
+        {
+          "name": "GET Sessions by Students",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is JSON\", function () {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "const data = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Response is an array\", function () {\r",
+                  "    pm.expect(data).to.be.an(\"array\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Session list is not empty\", function () {\r",
+                  "    pm.expect(data.length).to.be.greaterThan(0);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Each session has correct structure\", function () {\r",
+                  "    data.forEach((item) => {\r",
+                  "        pm.expect(item).to.be.an(\"object\");\r",
+                  "\r",
+                  "        pm.expect(item).to.have.property(\"id\");\r",
+                  "        pm.expect(item.id).to.be.a(\"number\");\r",
+                  "\r",
+                  "        pm.expect(item).to.have.property(\"date\");\r",
+                  "        pm.expect(item.date).to.be.a(\"string\").and.not.empty;\r",
+                  "\r",
+                  "        pm.expect(item).to.have.property(\"start_time\");\r",
+                  "        pm.expect(item.start_time).to.be.a(\"string\").and.not.empty;\r",
+                  "\r",
+                  "        pm.expect(item).to.have.property(\"end_time\");\r",
+                  "        pm.expect(item.end_time).to.be.a(\"string\").and.not.empty;\r",
+                  "\r",
+                  "        pm.expect(item).to.have.property(\"user\");\r",
+                  "        pm.expect(item.user).to.be.a(\"number\");\r",
+                  "\r",
+                  "        pm.expect(item).to.have.property(\"teacher_fullname\");\r",
+                  "        pm.expect(item.teacher_fullname).to.be.a(\"string\");\r",
+                  "\r",
+                  "        pm.expect(item).to.have.property(\"room\");\r",
+                  "        pm.expect(item.room).to.be.an(\"object\");\r",
+                  "\r",
+                  "        pm.expect(item.room).to.have.property(\"id\");\r",
+                  "        pm.expect(item.room.id).to.be.a(\"number\");\r",
+                  "\r",
+                  "        pm.expect(item.room).to.have.property(\"name\");\r",
+                  "        pm.expect(item.room.name).to.be.a(\"string\").and.not.empty;\r",
+                  "\r",
+                  "        pm.expect(item.room).to.have.property(\"capacity\");\r",
+                  "        pm.expect(item.room.capacity).to.be.a(\"number\");\r",
+                  "    });\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/sessions",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "sessions"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "GET Sessions by Students",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/sessions",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "sessions"
+                  ]
+                }
+              },
+              "_postman_previewlanguage": null,
+              "header": null,
+              "cookie": [],
+              "body": "[\r\n    {\r\n        \"id\": 1,\r\n        \"date\": \"2024-05-06\",\r\n        \"start_time\": \"18:00:00\",\r\n        \"end_time\": \"20:00:00\",\r\n        \"user\": 2,\r\n        \"teacher_fullname\": \"Doe John\",\r\n        \"room\": {\r\n            \"id\": 1,\r\n            \"name\": \"Phòng Lab 01 (Cơ Sở 1)\",\r\n            \"capacity\": 30\r\n        },\r\n        \"created_at\": \"2026-04-19T15:09:21Z\",\r\n        \"active\": true\r\n    },\r\n    {\r\n        \"id\": 2,\r\n        \"date\": \"2024-05-08\",\r\n        \"start_time\": \"18:00:00\",\r\n        \"end_time\": \"20:00:00\",\r\n        \"user\": 2,\r\n        \"teacher_fullname\": \"Doe John\",\r\n        \"room\": {\r\n            \"id\": 1,\r\n            \"name\": \"Phòng Lab 01 (Cơ Sở 1)\",\r\n            \"capacity\": 30\r\n        },\r\n        \"created_at\": \"2026-04-19T15:09:21Z\",\r\n        \"active\": true\r\n    },\r\n    {\r\n        \"id\": 3,\r\n        \"date\": \"2024-06-18\",\r\n        \"start_time\": \"19:30:00\",\r\n        \"end_time\": \"21:30:00\",\r\n        \"user\": 3,\r\n        \"teacher_fullname\": \"Nguyễn Lan\",\r\n        \"room\": {\r\n            \"id\": 2,\r\n            \"name\": \"Phòng B.102 (Phòng Học Tiêu Chuẩn)\",\r\n            \"capacity\": 35\r\n        },\r\n        \"created_at\": \"2026-04-19T15:09:21Z\",\r\n        \"active\": true\r\n    }\r\n]"
+            }
+          ]
+        },
+        {
+          "name": "GET List Sessions by class_id-SUCESS",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is JSON\", function () {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "const data = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Response is an array\", function () {\r",
+                  "    pm.expect(data).to.be.an(\"array\");\r",
+                  "});\r",
+                  "\r",
+                  "if (data.length > 0) {\r",
+                  "    pm.test(\"Each session is an object\", function () {\r",
+                  "        data.forEach((item) => {\r",
+                  "            pm.expect(item).to.be.an(\"object\");\r",
+                  "        });\r",
+                  "    });\r",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/classes/1/sessions/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "classes",
+                "1",
+                "sessions",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "GET List Sessions by class_id-SUCESS",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/classes/1/sessions/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "classes",
+                    "1",
+                    "sessions",
+                    ""
+                  ]
+                }
+              },
+              "_postman_previewlanguage": null,
+              "header": null,
+              "cookie": [],
+              "body": "[\r\n    {\r\n        \"id\": 1,\r\n        \"date\": \"2024-05-06\",\r\n        \"start_time\": \"18:00:00\",\r\n        \"end_time\": \"20:00:00\",\r\n        \"user\": 2,\r\n        \"teacher_fullname\": \"Doe John\",\r\n        \"room\": {\r\n            \"id\": 1,\r\n            \"name\": \"Phòng Lab 01 (Cơ Sở 1)\",\r\n            \"capacity\": 30\r\n        },\r\n        \"created_at\": \"2026-04-19T15:09:21Z\",\r\n        \"active\": true\r\n    },\r\n    {\r\n        \"id\": 2,\r\n        \"date\": \"2024-05-08\",\r\n        \"start_time\": \"18:00:00\",\r\n        \"end_time\": \"20:00:00\",\r\n        \"user\": 2,\r\n        \"teacher_fullname\": \"Doe John\",\r\n        \"room\": {\r\n            \"id\": 1,\r\n            \"name\": \"Phòng Lab 01 (Cơ Sở 1)\",\r\n            \"capacity\": 30\r\n        },\r\n        \"created_at\": \"2026-04-19T15:09:21Z\",\r\n        \"active\": true\r\n    }\r\n]"
+            }
+          ]
+        },
+        {
+          "name": "GET List Sessions by class_id-NO TOKEN",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 401\", function () {\r",
+                  "    pm.response.to.have.status(401);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/classes/1/sessions/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "classes",
+                "1",
+                "sessions",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "GET List Sessions by class_id-NO TOKEN",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/classes/1/sessions/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "classes",
+                    "1",
+                    "sessions",
+                    ""
+                  ]
+                }
+              },
+              "_postman_previewlanguage": null,
+              "header": null,
+              "cookie": [],
+              "body": "{\r\n    \"detail\": \"Authentication credentials were not provided.\"\r\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "GET List attendances",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{access_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/attendances/?session_id=1",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "attendances",
+            ""
+          ],
+          "query": [
+            {
+              "key": "session_id",
+              "value": "1"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GET Timetable",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{access_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/sessions/",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "sessions",
+            ""
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ]
+}

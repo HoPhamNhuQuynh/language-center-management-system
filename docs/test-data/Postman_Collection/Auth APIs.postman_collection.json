@@ -1,0 +1,2781 @@
+{
+  "info": {
+    "_postman_id": "c439a556-c1a4-46f1-a08a-8bc232a7c2e5",
+    "name": "Auth APIs",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "53925870",
+    "_collection_link": "https://go.postman.co/collection/50437165-c439a556-c1a4-46f1-a08a-8bc232a7c2e5?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Create user by admin",
+      "item": [
+        {
+          "name": "POST Create user - SUCCESS",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "\r",
+                  "\r",
+                  "pm.test(\"TC04 - Tạo teacher thành công\", function () {\r",
+                  "    pm.response.to.have.status(201);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"TC05 - Có đủ field user\", function () {\r",
+                  "    let jsonData = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(jsonData).to.include.all.keys(\r",
+                  "        \"id\",\r",
+                  "        \"email\",\r",
+                  "        \"username\",\r",
+                  "        \"first_name\",\r",
+                  "        \"last_name\",\r",
+                  "        \"profile\"\r",
+                  "    );\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"TC06 - Có profile\", function () {\r",
+                  "    let profile = pm.response.json().profile;\r",
+                  "\r",
+                  "    pm.expect(profile).to.be.an(\"object\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"TC07 - Có avatar\", function () {\r",
+                  "    let avatar = pm.response.json().profile.avatar;\r",
+                  "\r",
+                  "    pm.expect(avatar).to.be.a(\"string\");\r",
+                  "    \r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"TC08 - full_name đúng\", function () {\r",
+                  "    let jsonData = pm.response.json();\r",
+                  "\r",
+                  "    let expected = jsonData.last_name + \" \" + jsonData.first_name;\r",
+                  "\r",
+                  "    pm.expect(jsonData.full_name).to.eql(expected);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"TC9 - Không lộ password\", function () {\r",
+                  "    let jsonData = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(jsonData).to.not.have.property(\"password\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"first_name\": \"Gv04\",\r\n    \"last_name\": \"Test\",\r\n    \"username\": \"Gv04\",\r\n    \"password\": \"Testgv@123\",\r\n    \"email\": \"testgv4@gmail.com\"\r\n\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/users/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "users",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "POST Create user - SUCCESS",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "[\r\n  {\r\n    \"first_name\": \"Gv05\",\r\n    \"last_name\": \"Test\",\r\n    \"username\": \"Gv05\",\r\n    \"password\": \"Testgv@123\",\r\n    \"email\": \"testgv5@gmail.com\"\r\n  },\r\n  {\r\n    \"first_name\": \"Gv06\",\r\n    \"last_name\": \"Test\",\r\n    \"username\": \"Gv06\",\r\n    \"password\": \"Testgv@123\",\r\n    \"email\": \"testgv6@gmail.com\"\r\n  },\r\n  {\r\n    \"first_name\": \"Gv07\",\r\n    \"last_name\": \"Test\",\r\n    \"username\": \"Gv07\",\r\n    \"password\": \"Testgv@123\",\r\n    \"email\": \"testgv7@gmail.com\"\r\n  }\r\n]",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/users/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "users",
+                    ""
+                  ]
+                }
+              },
+              "_postman_previewlanguage": "",
+              "header": [],
+              "cookie": [
+                {
+                  "expires": "Invalid Date",
+                  "domain": "",
+                  "path": ""
+                }
+              ],
+              "body": ""
+            }
+          ]
+        },
+        {
+          "name": "POST Create user - DUPLICATE",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Duplicate user validation failed\", function () {\r",
+                  "    let data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data).to.have.property(\"email\");\r",
+                  "    pm.expect(data).to.have.property(\"username\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Email duplicate error message is valid\", function () {\r",
+                  "    let data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data.email[0]).to.eql(\"người dùng có email đã tồn tại.\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Username duplicate error message is valid\", function () {\r",
+                  "    let data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data.username[0]).to.eql(\"Tên đăng nhập đã được sử dụng\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"first_name\": \"Gv03\",\r\n    \"last_name\": \"Test\",\r\n    \"username\": \"Gv03\",\r\n    \"password\": \"Testgv@123\",\r\n    \"email\": \"testgv3@gmail.com\"\r\n\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/users/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "users",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "POST Create user - DUPLICATE",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"first_name\": \"Gv05\",\r\n    \"last_name\": \"Test\",\r\n    \"username\": \"Gv05\",\r\n    \"password\": \"Testgv@123\",\r\n    \"email\": \"testgv5@gmail.com\"\r\n\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/users/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "users",
+                    ""
+                  ]
+                }
+              },
+              "_postman_previewlanguage": "",
+              "header": [],
+              "cookie": [
+                {
+                  "expires": "Invalid Date",
+                  "domain": "",
+                  "path": ""
+                }
+              ],
+              "body": ""
+            }
+          ]
+        },
+        {
+          "name": "POST Create user - EMPTY FIELD",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});\r",
+                  "\r",
+                  "const jsonData = pm.response.json();\r",
+                  "\r",
+                  "// Lấy field nào đang bị bỏ trống từ request body\r",
+                  "const requestBody = JSON.parse(pm.request.body.raw);\r",
+                  "\r",
+                  "let expectedMessage = \"\";\r",
+                  "\r",
+                  "if (!requestBody.username || requestBody.username.trim() === \"\") {\r",
+                  "    expectedMessage = \"Vui lòng nhập tên người dùng\";\r",
+                  "}\r",
+                  "else if (!requestBody.email || requestBody.email.trim() === \"\") {\r",
+                  "    expectedMessage = \"Vui lòng nhập email\";\r",
+                  "}\r",
+                  "else if (!requestBody.password || requestBody.password.trim() === \"\") {\r",
+                  "    expectedMessage = \"Vui lòng nhập mật khẩu\";\r",
+                  "}\r",
+                  "\r",
+                  "pm.test(\"Hiển thị đúng thông báo lỗi\", function () {\r",
+                  "    pm.expect(jsonData.message).to.eql(expectedMessage);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"username\": \"\",\r\n    \"password\": \"\",\r\n    \"email\": \"\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/users/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "users",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "POST Create user - EMPTY FIELD",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"username\": \"\",\r\n    \"password\": \"\",\r\n    \"email\": \"\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/users/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "users",
+                    ""
+                  ]
+                }
+              },
+              "_postman_previewlanguage": null,
+              "header": null,
+              "cookie": [],
+              "body": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Logout by all user",
+      "item": [
+        {
+          "name": "POST Logout SUCCESS",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "\r",
+                  "\r",
+                  "pm.test(\"Logout thành công\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Thời gian phản hồi < 2000ms\", function () {\r",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "client_id",
+                  "value": "aJ7nxWPdKdjy8isgOPQsGKPzR9E2Keehq8A7D4gr",
+                  "type": "text",
+                  "uuid": "c0f81993-e012-49fc-8a37-85be88d553b2"
+                },
+                {
+                  "key": "client_secret",
+                  "value": "fCxz6BFuPTTmgtFHf8vCxJDlNzYTGvrfwXaVpDO3WQI9ZFIitOZYUj4csqHHPwoSANhlSPTdQMNUCYpW35EdGBQ7EpDEdrovmLxuaO9eqawgGj2CHFRHZK7Ftnui1kUV",
+                  "type": "text",
+                  "uuid": "5be55467-4b05-491e-b744-424dbc694459"
+                },
+                {
+                  "key": "token",
+                  "value": "{{refresh_token}}",
+                  "type": "text",
+                  "uuid": "74b781a5-c3f4-4fd3-80a9-873463760f68"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/logout/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "logout",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "POST Logout",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "key": "client_id",
+                      "value": "aJ7nxWPdKdjy8isgOPQsGKPzR9E2Keehq8A7D4gr",
+                      "type": "text",
+                      "uuid": "c0f81993-e012-49fc-8a37-85be88d553b2"
+                    },
+                    {
+                      "key": "client_secret",
+                      "value": "fCxz6BFuPTTmgtFHf8vCxJDlNzYTGvrfwXaVpDO3WQI9ZFIitOZYUj4csqHHPwoSANhlSPTdQMNUCYpW35EdGBQ7EpDEdrovmLxuaO9eqawgGj2CHFRHZK7Ftnui1kUV",
+                      "type": "text",
+                      "uuid": "5be55467-4b05-491e-b744-424dbc694459"
+                    },
+                    {
+                      "key": "token",
+                      "value": "{{refresh_token}}",
+                      "type": "text",
+                      "uuid": "1205bc99-a199-4329-a869-9e7dc77f1c4a"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{base_url}}/auth/logout/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "logout",
+                    ""
+                  ]
+                }
+              },
+              "_postman_previewlanguage": "",
+              "header": [],
+              "cookie": [
+                {
+                  "expires": "Invalid Date",
+                  "domain": "",
+                  "path": ""
+                }
+              ],
+              "body": ""
+            }
+          ]
+        },
+        {
+          "name": "POST Logout - WRONG TOKEN",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "client_id",
+                  "value": "aJ7nxWPdKdjy8isgOPQsGKPzR9E2Keehq8A7D4gr",
+                  "type": "text",
+                  "uuid": "98a9e6a1-08b3-462e-8bf3-84a90572bd7e"
+                },
+                {
+                  "key": "client_secret",
+                  "value": "fCxz6BFuPTTmgtFHf8vCxJDlNzYTGvrfwXaVpDO3WQI9ZFIitOZYUj4csqHHPwoSANhlSPTdQMNUCYpW35EdGBQ7EpDEdrovmLxuaO9eqawgGj2CHFRHZK7Ftnui1kUV",
+                  "type": "text",
+                  "uuid": "fb8346bd-bce1-4067-8675-22bb887e2c13"
+                },
+                {
+                  "key": "token",
+                  "value": "{{refresh_token}}",
+                  "type": "text",
+                  "uuid": "eca1d3ae-29ca-4f9a-aaed-b466e8e0cc8b"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/logout/?",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "logout",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "",
+                  "value": null,
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "POST Logout - WRONG TOKEN",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "key": "client_id",
+                      "value": "aJ7nxWPdKdjy8isgOPQsGKPzR9E2Keehq8A7D4gr",
+                      "type": "text",
+                      "uuid": "98a9e6a1-08b3-462e-8bf3-84a90572bd7e"
+                    },
+                    {
+                      "key": "client_secret",
+                      "value": "fCxz6BFuPTTmgtFHf8vCxJDlNzYTGvrfwXaVpDO3WQI9ZFIitOZYUj4csqHHPwoSANhlSPTdQMNUCYpW35EdGBQ7EpDEdrovmLxuaO9eqawgGj2CHFRHZK7Ftnui1kUV",
+                      "type": "text",
+                      "uuid": "fb8346bd-bce1-4067-8675-22bb887e2c13"
+                    },
+                    {
+                      "key": "token",
+                      "value": "{{refresh_token}}",
+                      "type": "text",
+                      "uuid": "eca1d3ae-29ca-4f9a-aaed-b466e8e0cc8b"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{base_url}}/auth/logout/?",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "logout",
+                    ""
+                  ],
+                  "query": [
+                    {
+                      "key": "",
+                      "value": null,
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "_postman_previewlanguage": null,
+              "header": null,
+              "cookie": [],
+              "body": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Register by student",
+      "item": [
+        {
+          "name": "POST Auth Register SUCCESS",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "let jsonData = {};\r",
+                  "let requestBody = {};\r",
+                  "\r",
+                  "pm.test(\"Response is JSON\", function () {\r",
+                  "    pm.response.to.be.json;\r",
+                  "    jsonData = pm.response.json();\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is an object\", function () {\r",
+                  "    pm.expect(jsonData).to.be.an(\"object\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Status code is 201 Created\", function () {\r",
+                  "    pm.response.to.have.status(201);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Has access token\", function () {\r",
+                  "    pm.expect(jsonData).to.have.property(\"access_token\");\r",
+                  "    pm.expect(jsonData.access_token).to.be.a(\"string\").and.not.empty;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Has refresh token\", function () {\r",
+                  "    pm.expect(jsonData).to.have.property(\"refresh_token\");\r",
+                  "    pm.expect(jsonData.refresh_token).to.be.a(\"string\").and.not.empty;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Token type is Bearer\", function () {\r",
+                  "    pm.expect(jsonData).to.have.property(\"token_type\");\r",
+                  "    pm.expect(jsonData.token_type).to.eql(\"Bearer\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Has user object\", function () {\r",
+                  "    pm.expect(jsonData).to.have.property(\"user\");\r",
+                  "    pm.expect(jsonData.user).to.be.an(\"object\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"User data matches request body\", function () {\r",
+                  "    requestBody = JSON.parse(pm.request.body.raw);\r",
+                  "\r",
+                  "    pm.expect(jsonData.user).to.have.property(\"id\");\r",
+                  "    pm.expect(jsonData.user.first_name).to.eql(requestBody.first_name);\r",
+                  "    pm.expect(jsonData.user.last_name).to.eql(requestBody.last_name);\r",
+                  "    pm.expect(jsonData.user.email).to.eql(requestBody.email);\r",
+                  "    pm.expect(jsonData.user.username).to.eql(requestBody.username);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"User role is Student\", function () {\r",
+                  "    pm.expect(jsonData.user).to.have.property(\"role\");\r",
+                  "    pm.expect(jsonData.user.role).to.eql(\"Student\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Password is not returned\", function () {\r",
+                  "    pm.expect(jsonData.user).to.not.have.property(\"password\");\r",
+                  "});\r",
+                  "\r",
+                  "if (jsonData.access_token) {\r",
+                  "    pm.environment.set(\"access_token\", jsonData.access_token);\r",
+                  "}\r",
+                  "\r",
+                  "if (jsonData.refresh_token) {\r",
+                  "    pm.environment.set(\"refresh_token\", jsonData.refresh_token);\r",
+                  "}\r",
+                  "\r",
+                  "if (jsonData.user && jsonData.user.id) {\r",
+                  "    pm.environment.set(\"user_id\", jsonData.user.id);\r",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "packages": {},
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "strictSSL": false
+          },
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"first_name\": \"Hv303\",\r\n    \"last_name\": \"Test\",\r\n    \"username\": \"test122\",\r\n    \"password\": \"Testhv@123\",\r\n    \"email\": \"test122@gmail.com\",\r\n    \"phone_num\": \"0127384768\"\r\n\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/register/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "register",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "POST Auth Register SUCCESS",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"first_name\": \"Hv18\",\r\n    \"last_name\": \"Test\",\r\n    \"username\": \"Hv18\",\r\n    \"password\": \"Testhv@123\",\r\n    \"email\": \"test18@gmail.com\",\r\n    \"phone_num\": \"0123445789\"\r\n\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/auth/register/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "register",
+                    ""
+                  ]
+                }
+              },
+              "_postman_previewlanguage": "",
+              "header": [],
+              "cookie": [
+                {
+                  "expires": "Invalid Date",
+                  "domain": "",
+                  "path": ""
+                }
+              ],
+              "body": "{\r\n    \"access_token\": \"TKL3NIEXmOjaONz7kHHihBxo1KUjmf\",\r\n    \"expires_in\": 36000,\r\n    \"token_type\": \"Bearer\",\r\n    \"scope\": \"read write\",\r\n    \"refresh_token\": \"qL2Wyf1nR2wtDwN1YlEbhbWE3dA5UG\",\r\n    \"user\": {\r\n        \"id\": 528,\r\n        \"first_name\": \"Hv300\",\r\n        \"last_name\": \"Test\",\r\n        \"email\": \"test1234@gmail.com\",\r\n        \"username\": \"test1234\",\r\n        \"role\": \"Student\",\r\n        \"phone_num\": \"0127384788\"\r\n    }\r\n}"
+            }
+          ]
+        },
+        {
+          "name": "POST Auth Register DUPLICATE",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () {\r",
+                  "    pm.expect(pm.response.code).to.be.oneOf([400]);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"first_name\": \"Hv12\",\r\n    \"last_name\": \"Test\",\r\n    \"username\": \"Hv12\",\r\n    \"password\": \"Testhv@123\",\r\n    \"email\": \"test12@gmail.com\"\r\n\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/register/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "register",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "POST Auth Register DUPLICATE",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"first_name\": \"Hv12\",\r\n    \"last_name\": \"Test\",\r\n    \"username\": \"Hv12\",\r\n    \"password\": \"Testhv@123\",\r\n    \"email\": \"test12@gmail.com\"\r\n\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/auth/register/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "register",
+                    ""
+                  ]
+                }
+              },
+              "_postman_previewlanguage": "",
+              "header": [],
+              "cookie": [
+                {
+                  "expires": "Invalid Date",
+                  "domain": "",
+                  "path": ""
+                }
+              ],
+              "body": "{\r\n    \"email\": [\r\n        \"người dùng có email đã tồn tại.\"\r\n    ],\r\n    \"username\": [\r\n        \"Tên đăng nhập đã được sử dụng\"\r\n    ],\r\n    \"phone_num\": [\r\n        \"Trường này là bắt buộc.\"\r\n    ]\r\n}"
+            }
+          ]
+        },
+        {
+          "name": "POST Auth Register MISSING EMAIL",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"first_name\": \"Hv\",\r\n    \"last_name\": \"Test\",\r\n    \"username\": \"Hv13\",\r\n    \"password\": \"Testhv@123\",\r\n    \"email\": \"\"\r\n\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/register/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "register",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "POST Auth Register MISSING EMAIL",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"first_name\": \"\",\r\n    \"last_name\": \"Test\",\r\n    \"username\": \"Hv13\",\r\n    \"password\": \"Testhv@123\",\r\n    \"email\": \"test13@gmail.com\"\r\n\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/auth/register/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "register",
+                    ""
+                  ]
+                }
+              },
+              "_postman_previewlanguage": "",
+              "header": [],
+              "cookie": [
+                {
+                  "expires": "Invalid Date",
+                  "domain": "",
+                  "path": ""
+                }
+              ],
+              "body": "{\r\n    \"email\": [\r\n        \"Trường này không được bỏ trống.\"\r\n    ]\r\n}"
+            }
+          ]
+        },
+        {
+          "name": "POST Auth Register MISSING Username",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"first_name\": \"Hv12\",\r\n    \"last_name\": \"Test\",\r\n    \"username\": \"\",\r\n    \"password\": \"Testhv@123\",\r\n    \"email\": \"test14@gmail.com\"\r\n\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/register/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "register",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "POST Auth Register MISSING Username",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"first_name\": \"Hv12\",\r\n    \"last_name\": \"Test\",\r\n    \"username\": \"\",\r\n    \"password\": \"Testhv@123\",\r\n    \"email\": \"test14@gmail.com\"\r\n\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/auth/register/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "register",
+                    ""
+                  ]
+                }
+              },
+              "_postman_previewlanguage": "",
+              "header": [],
+              "cookie": [
+                {
+                  "expires": "Invalid Date",
+                  "domain": "",
+                  "path": ""
+                }
+              ],
+              "body": "{\r\n    \"username\": [\r\n        \"Trường này không được bỏ trống.\"\r\n    ]\r\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Update Avatar by student",
+      "item": [
+        {
+          "name": "PATCH Avatar - SUCCESS",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "\r",
+                  "\r",
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response time < 2000ms\", function () {\r",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "avatar",
+                  "value": "https://i.imgur.com/8Km9tLL.jpg",
+                  "type": "text",
+                  "uuid": "aa1304df-17b6-459b-afca-92b6bc6b8880"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/users/me/avatar/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "users",
+                "me",
+                "avatar",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "PATCH Avatar - SUCCESS",
+              "originalRequest": {
+                "method": "PATCH",
+                "header": [],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "key": "avatar",
+                      "value": "https://i.imgur.com/8Km9tLL.jpg",
+                      "type": "text",
+                      "uuid": "aa1304df-17b6-459b-afca-92b6bc6b8880"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{base_url}}/users/me/avatar/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "users",
+                    "me",
+                    "avatar",
+                    ""
+                  ]
+                }
+              },
+              "_postman_previewlanguage": null,
+              "header": null,
+              "cookie": [],
+              "body": null
+            }
+          ]
+        },
+        {
+          "name": "PATCH Avatar - INVALID FORMAT",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "\r",
+                  "\r",
+                  "pm.test(\"Upload avatar fail when invalid file extension\", function () {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "avatar",
+                  "type": "file",
+                  "uuid": "57a4bf17-484f-4087-90dd-e02f414675c7",
+                  "src": "/D:/NHUQUYNH/HK2_25/Kiem_thu_phan_mem/report-template.pdf"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/users/me/avatar/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "users",
+                "me",
+                "avatar",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "PATCH Avatar - INVALID FORMAT",
+              "originalRequest": {
+                "method": "PATCH",
+                "header": [],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "key": "avatar",
+                      "value": "https://i.imgur.com/8Km9tLL",
+                      "type": "text",
+                      "uuid": "57a4bf17-484f-4087-90dd-e02f414675c7"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{base_url}}/users/me/avatar/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "users",
+                    "me",
+                    "avatar",
+                    ""
+                  ]
+                }
+              },
+              "_postman_previewlanguage": null,
+              "header": null,
+              "cookie": [],
+              "body": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "PATCH Update User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is JSON\", function () {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "const data = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Response is an object\", function () {\r",
+                  "    pm.expect(data).to.be.an(\"object\");\r",
+                  "});\r",
+                  "\r",
+                  "if (data.first_name !== undefined) {\r",
+                  "    pm.test(\"first_name is string\", function () {\r",
+                  "        pm.expect(data.first_name).to.be.a(\"string\");\r",
+                  "    });\r",
+                  "}\r",
+                  "\r",
+                  "if (data.last_name !== undefined) {\r",
+                  "    pm.test(\"last_name is string\", function () {\r",
+                  "        pm.expect(data.last_name).to.be.a(\"string\");\r",
+                  "    });\r",
+                  "}\r",
+                  "\r",
+                  "if (data.email !== undefined) {\r",
+                  "    pm.test(\"email is string\", function () {\r",
+                  "        pm.expect(data.email).to.be.a(\"string\").and.not.empty;\r",
+                  "    });\r",
+                  "}\r",
+                  "\r",
+                  "pm.test(\"Does not expose password\", function () {\r",
+                  "    pm.expect(data.password).to.eql(undefined);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"email\": \"ab@gmail.com\",\r\n  \"phone_num\": \"0123456489\",\r\n  \"first_name\": \"Minh\",\r\n  \"last_name\": \"Trong\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/users/me/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "users",
+                "me",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET Users me",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "const data = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"User info is returned\", function () {\r",
+                  "    pm.expect(data.id).to.be.a(\"number\");\r",
+                  "    pm.expect(data.email).to.be.a(\"string\").and.not.empty;\r",
+                  "    pm.expect(data.username).to.be.a(\"string\").and.not.empty;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Password is not exposed\", function () {\r",
+                  "    pm.expect(data.password).to.eql(undefined);\r",
+                  "});\r",
+                  "pm.test(\"Status code is 401\", function () {\r",
+                  "    pm.response.to.have.status(401);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is JSON if backend returns JSON\", function () {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/users/me/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "users",
+                "me",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "GET Users me",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/users/me/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "users",
+                    "me",
+                    ""
+                  ]
+                }
+              },
+              "_postman_previewlanguage": "",
+              "header": [],
+              "cookie": [
+                {
+                  "expires": "Invalid Date",
+                  "domain": "",
+                  "path": ""
+                }
+              ],
+              "body": "{\r\n    \"id\": 4,\r\n    \"first_name\": \"Minh\",\r\n    \"last_name\": \"Tran\",\r\n    \"email\": \"minhtran@gmail.com\",\r\n    \"username\": \"student_minh\",\r\n    \"date_joined\": \"2026-04-19T22:09:21+07:00\",\r\n    \"last_login\": null,\r\n    \"auth_provider\": \"LOCAL\",\r\n    \"avatar\": \"language_center_testing/defaults/student_avatar\"\r\n}"
+            }
+          ]
+        },
+        {
+          "name": "PATCH Reset password",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is JSON\", function () {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "const data = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Response is an object\", function () {\r",
+                  "    pm.expect(data).to.be.an(\"object\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Has id\", function () {\r",
+                  "    pm.expect(data).to.have.property(\"id\");\r",
+                  "    pm.expect(data.id).to.be.a(\"number\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Has username\", function () {\r",
+                  "    pm.expect(data).to.have.property(\"username\");\r",
+                  "    pm.expect(data.username).to.be.a(\"string\").and.not.empty;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Has email\", function () {\r",
+                  "    pm.expect(data).to.have.property(\"email\");\r",
+                  "    pm.expect(data.email).to.be.a(\"string\").and.not.empty;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Password is not returned\", function () {\r",
+                  "    pm.expect(data.password).to.eql(undefined);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"old_password\": \"Testhv@123\",\r\n  \"password\": \"New123@\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/users/me/reset-password/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "users",
+                "me",
+                "reset-password",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "PATCH Reset password",
+              "originalRequest": {
+                "method": "GET",
+                "header": []
+              },
+              "_postman_previewlanguage": "",
+              "header": [],
+              "cookie": [
+                {
+                  "expires": "Invalid Date",
+                  "domain": "",
+                  "path": ""
+                }
+              ],
+              "body": "{\r\n    \"id\": 28,\r\n    \"first_name\": \"Hv30\",\r\n    \"last_name\": \"Test\",\r\n    \"email\": \"test30@gmail.com\",\r\n    \"username\": \"Hv30\"\r\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Create courses by admin",
+      "item": [
+        {
+          "name": "POST Create Course",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () {\r",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is JSON\", function () {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "const data = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Response is an object\", function () {\r",
+                  "    pm.expect(data).to.be.an(\"object\");\r",
+                  "});\r",
+                  "\r",
+                  "if (data.id !== undefined) {\r",
+                  "    pm.test(\"Has id\", function () {\r",
+                  "        pm.expect(data.id).to.be.a(\"number\");\r",
+                  "    });\r",
+                  "}\r",
+                  "\r",
+                  "if (data.name !== undefined) {\r",
+                  "    pm.test(\"Has name\", function () {\r",
+                  "        pm.expect(data.name).to.be.a(\"string\").and.not.empty;\r",
+                  "    });\r",
+                  "}\r",
+                  "\r",
+                  "if (data.level !== undefined) {\r",
+                  "    pm.test(\"Has level\", function () {\r",
+                  "        pm.expect(data.level).to.be.a(\"number\");\r",
+                  "    });\r",
+                  "}\r",
+                  "\r",
+                  "if (data.description !== undefined) {\r",
+                  "    pm.test(\"Has description\", function () {\r",
+                  "        pm.expect(data.description).to.be.a(\"string\");\r",
+                  "    });\r",
+                  "}\r",
+                  "\r",
+                  "if (data.image !== undefined) {\r",
+                  "    pm.test(\"Has image\", function () {\r",
+                  "        pm.expect(data.image).to.be.a(\"string\");\r",
+                  "    });\r",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "name",
+                  "value": " Khóa học Giao Tiếp Nâng Cao K24",
+                  "type": "text",
+                  "uuid": "f5c170b1-b172-419f-82fc-a1afdf865f44"
+                },
+                {
+                  "key": "level",
+                  "value": "1",
+                  "type": "text",
+                  "uuid": "9bc6c152-3e05-4df6-979d-46dab7b12961"
+                },
+                {
+                  "key": "description  ",
+                  "value": "Khóa học tập trung phát triển kỹ năng giao tiếp nâng cao",
+                  "type": "text",
+                  "uuid": "a683deda-5c55-4487-8190-70ea53f8d6a3"
+                },
+                {
+                  "key": "image",
+                  "type": "file",
+                  "uuid": "29c32c57-7634-4e58-9568-b33c69128a4d",
+                  "src": "postman-cloud:///1f13b020-9104-42b0-80a5-0e7d1b8d68bc"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/courses/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "courses",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "POST Create Course",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "key": "name",
+                      "value": " Khóa học Giao Tiếp Nâng Cao K24",
+                      "type": "text",
+                      "uuid": "f5c170b1-b172-419f-82fc-a1afdf865f44"
+                    },
+                    {
+                      "key": "level",
+                      "value": "1",
+                      "type": "text",
+                      "uuid": "9bc6c152-3e05-4df6-979d-46dab7b12961"
+                    },
+                    {
+                      "key": "description  ",
+                      "value": "Khóa học tập trung phát triển kỹ năng giao tiếp nâng cao",
+                      "type": "text",
+                      "uuid": "a683deda-5c55-4487-8190-70ea53f8d6a3"
+                    },
+                    {
+                      "key": "image",
+                      "type": "file",
+                      "uuid": "29c32c57-7634-4e58-9568-b33c69128a4d",
+                      "src": "postman-cloud:///1f13b020-9104-42b0-80a5-0e7d1b8d68bc"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{base_url}}/courses/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "courses",
+                    ""
+                  ]
+                }
+              },
+              "_postman_previewlanguage": "",
+              "header": [],
+              "cookie": [
+                {
+                  "expires": "Invalid Date",
+                  "domain": "",
+                  "path": ""
+                }
+              ],
+              "body": "{\r\n    \"id\": 7,\r\n    \"name\": \"Khóa học Giao Tiếp Nâng Cao K24\",\r\n    \"image\": \"https://res.cloudinary.com/desvczltb/image/upload/v1777565770/language_center_testing/courses/vou9ic9ycet4isn8jacc.jpg\",\r\n    \"total_sessions\": 0,\r\n    \"level\": 1,\r\n    \"level_name\": \"Cơ bản (Beginner)\",\r\n    \"tags\": []\r\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Create tags by admin",
+      "item": [
+        {
+          "name": "POST Create Tags",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () {\r",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is JSON\", function () {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "const data = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Response is an object\", function () {\r",
+                  "    pm.expect(data).to.be.an(\"object\");\r",
+                  "});\r",
+                  "\r",
+                  "if (data.id !== undefined) {\r",
+                  "    pm.test(\"Has id\", function () {\r",
+                  "        pm.expect(data.id).to.be.a(\"number\");\r",
+                  "    });\r",
+                  "}\r",
+                  "\r",
+                  "if (data.name !== undefined) {\r",
+                  "    pm.test(\"Has name\", function () {\r",
+                  "        pm.expect(data.name).to.be.a(\"string\").and.not.empty;\r",
+                  "    });\r",
+                  "}\r",
+                  "\r",
+                  "if (data.description !== undefined) {\r",
+                  "    pm.test(\"Has description\", function () {\r",
+                  "        pm.expect(data.description).to.be.a(\"string\");\r",
+                  "    });\r",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "name",
+                  "value": "DELF",
+                  "type": "text",
+                  "uuid": "7657569a-9fb9-4e2b-b6fd-e47dfbd8288c"
+                },
+                {
+                  "key": "description",
+                  "value": "Thẻ dành cho các khóa học thi Vstep",
+                  "type": "text",
+                  "uuid": "1be45162-33e5-4a8b-8007-bd5b2a4d40fb"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/tags/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "tags",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "POST Create Tags",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "key": "name",
+                      "value": "Luyện thi Vstep",
+                      "type": "text",
+                      "uuid": "7657569a-9fb9-4e2b-b6fd-e47dfbd8288c"
+                    },
+                    {
+                      "key": "description",
+                      "value": "Thẻ dành cho các khóa học thi Vstep",
+                      "type": "text",
+                      "uuid": "1be45162-33e5-4a8b-8007-bd5b2a4d40fb"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{base_url}}/tags/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "tags",
+                    ""
+                  ]
+                }
+              },
+              "_postman_previewlanguage": "",
+              "header": [],
+              "cookie": [
+                {
+                  "expires": "Invalid Date",
+                  "domain": "",
+                  "path": ""
+                }
+              ],
+              "body": "{\r\n    \"id\": 6,\r\n    \"name\": \"Luyện thi Vstep\"\r\n}"
+            }
+          ]
+        },
+        {
+          "name": "PATCH Tags",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is JSON\", function () {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "const data = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Response is an object\", function () {\r",
+                  "    pm.expect(data).to.be.an(\"object\");\r",
+                  "});\r",
+                  "\r",
+                  "if (data.id !== undefined) {\r",
+                  "    pm.test(\"Has id\", function () {\r",
+                  "        pm.expect(data.id).to.be.a(\"number\");\r",
+                  "    });\r",
+                  "}\r",
+                  "\r",
+                  "pm.test(\"Has updated name\", function () {\r",
+                  "    pm.expect(data).to.have.property(\"name\");\r",
+                  "    pm.expect(data.name).to.be.a(\"string\").and.not.empty;\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"name\": \"Vstep cấp tốc\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/tags/5/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "tags",
+                "5",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "PATCH Tags",
+              "originalRequest": {
+                "method": "PATCH",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"name\": \"\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/tags/5/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "tags",
+                    "5",
+                    ""
+                  ]
+                }
+              },
+              "_postman_previewlanguage": "",
+              "header": [],
+              "cookie": [
+                {
+                  "expires": "Invalid Date",
+                  "domain": "",
+                  "path": ""
+                }
+              ],
+              "body": "{\r\n    \"id\": 5,\r\n    \"name\": \"Vstep cấp tốc\"\r\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Get all user by admin",
+      "item": [
+        {
+          "name": "GET all users",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is JSON\", function () {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "const data = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Response is an array\", function () {\r",
+                  "    pm.expect(data).to.be.an(\"array\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"User list is not empty\", function () {\r",
+                  "    pm.expect(data.length).to.be.greaterThan(0);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Each user has correct structure\", function () {\r",
+                  "    data.forEach((item) => {\r",
+                  "        pm.expect(item).to.be.an(\"object\");\r",
+                  "\r",
+                  "        pm.expect(item).to.have.property(\"id\");\r",
+                  "        pm.expect(item.id).to.be.a(\"number\");\r",
+                  "\r",
+                  "        pm.expect(item).to.have.property(\"first_name\");\r",
+                  "        pm.expect(item.first_name).to.be.a(\"string\");\r",
+                  "\r",
+                  "        pm.expect(item).to.have.property(\"last_name\");\r",
+                  "        pm.expect(item.last_name).to.be.a(\"string\");\r",
+                  "\r",
+                  "        pm.expect(item).to.have.property(\"email\");\r",
+                  "        pm.expect(item.email).to.be.a(\"string\").and.not.empty;\r",
+                  "\r",
+                  "        pm.expect(item).to.have.property(\"username\");\r",
+                  "        pm.expect(item.username).to.be.a(\"string\").and.not.empty;\r",
+                  "\r",
+                  "        pm.expect(item).to.have.property(\"date_joined\");\r",
+                  "        pm.expect(item.date_joined).to.be.a(\"string\").and.not.empty;\r",
+                  "\r",
+                  "        pm.expect(item).to.have.property(\"last_login\");\r",
+                  "\r",
+                  "        pm.expect(item).to.have.property(\"profile\");\r",
+                  "        pm.expect(item.profile).to.be.an(\"object\");\r",
+                  "\r",
+                  "        if (item.profile.phone_num !== null) {\r",
+                  "            pm.expect(item.profile.phone_num).to.be.a(\"string\");\r",
+                  "        }\r",
+                  "\r",
+                  "        if (item.profile.avatar !== null) {\r",
+                  "            pm.expect(item.profile.avatar).to.be.a(\"string\");\r",
+                  "        }\r",
+                  "\r",
+                  "        pm.expect(item.password).to.eql(undefined);\r",
+                  "    });\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/users/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "users",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "GET all users",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/users/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "users",
+                    ""
+                  ]
+                }
+              },
+              "_postman_previewlanguage": "",
+              "header": [],
+              "cookie": [
+                {
+                  "expires": "Invalid Date",
+                  "domain": "",
+                  "path": ""
+                }
+              ],
+              "body": "[\r\n    {\r\n        \"id\": 1,\r\n        \"first_name\": \"Quản Trị\",\r\n        \"last_name\": \"Viên\",\r\n        \"email\": \"admin@ttngoaingu.edu.vn\",\r\n        \"username\": \"admin\",\r\n        \"date_joined\": \"2026-04-19T22:09:21+07:00\",\r\n        \"last_login\": \"2026-04-22T10:51:03.485561+07:00\",\r\n        \"auth_provider\": \"LOCAL\",\r\n        \"avatar\": \"language_center_testing/defaults/admin_avatar\"\r\n    },\r\n    {\r\n        \"id\": 2,\r\n        \"first_name\": \"John\",\r\n        \"last_name\": \"Doe\",\r\n        \"email\": \"johndoe@ttngoaingu.edu.vn\",\r\n        \"username\": \"teacher_john\",\r\n        \"date_joined\": \"2026-04-19T22:09:21+07:00\",\r\n        \"last_login\": null,\r\n        \"auth_provider\": \"LOCAL\",\r\n        \"avatar\": \"language_center_testing/defaults/teacher_avatar\"\r\n    },\r\n    {\r\n        \"id\": 3,\r\n        \"first_name\": \"Lan\",\r\n        \"last_name\": \"Nguyễn\",\r\n        \"email\": \"lannguyen@ttngoaingu.edu.vn\",\r\n        \"username\": \"teacher_lan\",\r\n        \"date_joined\": \"2026-04-19T22:09:21+07:00\",\r\n        \"last_login\": null,\r\n        \"auth_provider\": \"LOCAL\",\r\n        \"avatar\": \"language_center_testing/defaults/teacher_avatar\"\r\n    },\r\n    {\r\n        \"id\": 4,\r\n        \"first_name\": \"Minh\",\r\n        \"last_name\": \"Tran\",\r\n        \"email\": \"minhtran@gmail.com\",\r\n        \"username\": \"student_minh\",\r\n        \"date_joined\": \"2026-04-19T22:09:21+07:00\",\r\n        \"last_login\": null,\r\n        \"auth_provider\": \"LOCAL\",\r\n        \"avatar\": \"language_center_testing/defaults/student_avatar\"\r\n    },\r\n    {\r\n        \"id\": 5,\r\n        \"first_name\": \"Hoa\",\r\n        \"last_name\": \"Lê\",\r\n        \"email\": \"hoale@gmail.com\",\r\n        \"username\": \"student_hoa\",\r\n        \"date_joined\": \"2026-04-19T22:09:21+07:00\",\r\n        \"last_login\": null,\r\n        \"auth_provider\": \"LOCAL\",\r\n        \"avatar\": \"language_center_testing/defaults/student_avatar\"\r\n    },\r\n    {\r\n        \"id\": 6,\r\n        \"first_name\": \"test\",\r\n        \"last_name\": \"demo\",\r\n        \"email\": \"a@gmail.com\",\r\n        \"username\": \"demo\",\r\n        \"date_joined\": \"2026-04-22T00:37:16.054368+07:00\",\r\n        \"last_login\": null,\r\n        \"auth_provider\": \"LOCAL\",\r\n        \"avatar\": \"language_center_testing/defaults/student_4297861_lyjelp\"\r\n    },\r\n    {\r\n        \"id\": 7,\r\n        \"first_name\": \"demo\",\r\n        \"last_name\": \"Test\",\r\n        \"email\": \"test@gmail.com\",\r\n        \"username\": \"test\",\r\n        \"date_joined\": \"2026-04-22T10:13:42.680789+07:00\",\r\n        \"last_login\": null,\r\n        \"auth_provider\": \"LOCAL\",\r\n        \"avatar\": \"language_center_testing/defaults/student_4297861_lyjelp\"\r\n    },\r\n    {\r\n        \"id\": 18,\r\n        \"first_name\": \"C\",\r\n        \"last_name\": \"Bui Van\",\r\n        \"email\": \"c@gmail.com\",\r\n        \"username\": \"c\",\r\n        \"date_joined\": \"2026-04-22T16:35:21.561703+07:00\",\r\n        \"last_login\": null,\r\n        \"auth_provider\": \"LOCAL\",\r\n        \"avatar\": \"language_center_testing/defaults/student_4297861_lyjelp\"\r\n    },\r\n    {\r\n        \"id\": 20,\r\n        \"first_name\": \"Như\",\r\n        \"last_name\": \"\",\r\n        \"email\": \"quynhho2611@gmail.com\",\r\n        \"username\": \"quynhho2611\",\r\n        \"date_joined\": \"2026-04-22T18:00:16.814498+07:00\",\r\n        \"last_login\": null,\r\n        \"auth_provider\": \"FACEBOOK\",\r\n        \"avatar\": \"language_center_testing/defaults/student_4297861_lyjelp\"\r\n    },\r\n    {\r\n        \"id\": 21,\r\n        \"first_name\": \"QUỲNH\",\r\n        \"last_name\": \"\",\r\n        \"email\": \"2351050149quynh@ou.edu.vn\",\r\n        \"username\": \"2351050149quynh\",\r\n        \"date_joined\": \"2026-04-22T18:04:27.681247+07:00\",\r\n        \"last_login\": null,\r\n        \"auth_provider\": \"GOOGLE\",\r\n        \"avatar\": \"language_center_testing/defaults/student_4297861_lyjelp\"\r\n    },\r\n    {\r\n        \"id\": 22,\r\n        \"first_name\": \"Như\",\r\n        \"last_name\": \"\",\r\n        \"email\": \"quinhquinhk5@gmail.com\",\r\n        \"username\": \"quinhquinhk5\",\r\n        \"date_joined\": \"2026-04-22T18:04:56.976025+07:00\",\r\n        \"last_login\": null,\r\n        \"auth_provider\": \"GOOGLE\",\r\n        \"avatar\": \"language_center_testing/defaults/student_4297861_lyjelp\"\r\n    },\r\n    {\r\n        \"id\": 23,\r\n        \"first_name\": \"Hv12\",\r\n        \"last_name\": \"Test\",\r\n        \"email\": \"test12@gmail.com\",\r\n        \"username\": \"Hv12\",\r\n        \"date_joined\": \"2026-04-25T18:51:30.835532+07:00\",\r\n        \"last_login\": null,\r\n        \"auth_provider\": \"LOCAL\",\r\n        \"avatar\": \"language_center_testing/defaults/student_4297861_lyjelp\"\r\n    },\r\n    {\r\n        \"id\": 24,\r\n        \"first_name\": \"\",\r\n        \"last_name\": \"Test\",\r\n        \"email\": \"test13@gmail.com\",\r\n        \"username\": \"Hv13\",\r\n        \"date_joined\": \"2026-04-25T19:05:24.879504+07:00\",\r\n        \"last_login\": null,\r\n        \"auth_provider\": \"LOCAL\",\r\n        \"avatar\": \"language_center_testing/defaults/student_4297861_lyjelp\"\r\n    },\r\n    {\r\n        \"id\": 25,\r\n        \"first_name\": \"Hv14\",\r\n        \"last_name\": \"Test\",\r\n        \"email\": \"test14@gmail.com\",\r\n        \"username\": \"Hv14\",\r\n        \"date_joined\": \"2026-04-25T22:18:34.593616+07:00\",\r\n        \"last_login\": null,\r\n        \"auth_provider\": \"LOCAL\",\r\n        \"avatar\": \"language_center_testing/defaults/student_4297861_lyjelp\"\r\n    },\r\n    {\r\n        \"id\": 26,\r\n        \"first_name\": \"Hv20\",\r\n        \"last_name\": \"Test\",\r\n        \"email\": \"test20@gmail.com\",\r\n        \"username\": \"Hv20\",\r\n        \"date_joined\": \"2026-04-30T23:04:48.434301+07:00\",\r\n        \"last_login\": null,\r\n        \"auth_provider\": \"LOCAL\",\r\n        \"avatar\": \"language_center_testing/defaults/student_4297861_lyjelp\"\r\n    },\r\n    {\r\n        \"id\": 27,\r\n        \"first_name\": \"Hv22\",\r\n        \"last_name\": \"Test\",\r\n        \"email\": \"test22@gmail.com\",\r\n        \"username\": \"Hv22\",\r\n        \"date_joined\": \"2026-04-30T23:13:12.974933+07:00\",\r\n        \"last_login\": null,\r\n        \"auth_provider\": \"LOCAL\",\r\n        \"avatar\": \"language_center_testing/defaults/student_4297861_lyjelp\"\r\n    },\r\n    {\r\n        \"id\": 28,\r\n        \"first_name\": \"Hv30\",\r\n        \"last_name\": \"Test\",\r\n        \"email\": \"test30@gmail.com\",\r\n        \"username\": \"Hv30\",\r\n        \"date_joined\": \"2026-04-30T23:20:09.583466+07:00\",\r\n        \"last_login\": null,\r\n        \"auth_provider\": \"LOCAL\",\r\n        \"avatar\": \"language_center_testing/defaults/student_4297861_lyjelp\"\r\n    }\r\n]"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "POST Auth User",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "\r",
+              "pm.test(\"Status code is 200\", function () {\r",
+              "    pm.response.to.have.status(200);\r",
+              "})\r",
+              "\r",
+              "pm.test(\"Response time is less than 500ms\", function () {\r",
+              "    pm.expect(pm.response.responseTime).to.be.below(500);\r",
+              "})\r",
+              "\r",
+              "pm.test(\"Has Content-Type\", function () {\r",
+              "    pm.response.to.have.header(\"Content-Type\");\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Response has enough fields\", function () {\r",
+              "    let jsonData = pm.response.json();\r",
+              "    pm.expect(jsonData).to.include.all.keys(\r",
+              "        \"access_token\",\r",
+              "        \"refresh_token\",\r",
+              "        \"expires_in\",\r",
+              "        \"token_type\"\r",
+              "    );\r",
+              "})\r",
+              "\r",
+              "pm.test(\"Right data types for fields\", function () {\r",
+              "    let jsonData = pm.response.json();\r",
+              "\r",
+              "    pm.expect(jsonData.access_token).to.be.a(\"string\");\r",
+              "    pm.expect(jsonData.refresh_token).to.be.a(\"string\");\r",
+              "    pm.expect(jsonData.expires_in).to.be.a(\"number\");\r",
+              "    pm.expect(jsonData.token_type).to.eql(\"Bearer\");\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Don't have password in response\", function () {\r",
+              "    let jsonData = pm.response.json();\r",
+              "    pm.expect(jsonData).to.not.have.property(\"password\");\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Validated access_token length\", function () {\r",
+              "    let jsonData = pm.response.json();\r",
+              "    pm.expect(jsonData.access_token.length).to.be.above(10);\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Not duplicate access_token\", function () {\r",
+              "    let jsonData = pm.response.json();\r",
+              "\r",
+              "    let oldToken = pm.environment.get(\"access_token\");\r",
+              "    let newToken = jsonData.access_token\r",
+              "\r",
+              "    if (oldToken) {\r",
+              "        if (newToken === oldToken) {\r",
+              "            pm.expect.fail(\"Access token bị trùng\");\r",
+              "        }\r",
+              "    }\r",
+              "\r",
+              "    pm.environment.set(\"access_token\", newToken);\r",
+              "    pm.environment.set(\"refresh_token\", jsonData.refresh_token);\r",
+              "})\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "client_id",
+              "value": "aJ7nxWPdKdjy8isgOPQsGKPzR9E2Keehq8A7D4gr",
+              "type": "text",
+              "uuid": "6543a9e6-6b72-45ac-b970-3a3f4f569221",
+              "disabled": true
+            },
+            {
+              "key": "client_secret",
+              "value": "fCxz6BFuPTTmgtFHf8vCxJDlNzYTGvrfwXaVpDO3WQI9ZFIitOZYUj4csqHHPwoSANhlSPTdQMNUCYpW35EdGBQ7EpDEdrovmLxuaO9eqawgGj2CHFRHZK7Ftnui1kUV",
+              "type": "text",
+              "uuid": "2ffd4ac6-f91d-4d6a-a52d-2af68b583cde",
+              "disabled": true
+            },
+            {
+              "key": "username",
+              "value": "student_phuc_333",
+              "type": "text",
+              "uuid": "3161f63e-a706-4790-b390-680498e52518"
+            },
+            {
+              "key": "password",
+              "value": "Abc123@",
+              "type": "text",
+              "uuid": "65a34eba-5234-4cad-ba24-e7dfc39968db"
+            },
+            {
+              "key": "grant_type",
+              "value": "password",
+              "type": "text",
+              "uuid": "c2525101-f2d0-4244-9f7e-73b1ba27c26a",
+              "disabled": true
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{base_url}}/auth/login/",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "auth",
+            "login",
+            ""
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "POST Auth User",
+          "originalRequest": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "client_id",
+                  "value": "aJ7nxWPdKdjy8isgOPQsGKPzR9E2Keehq8A7D4gr",
+                  "type": "text",
+                  "uuid": "6543a9e6-6b72-45ac-b970-3a3f4f569221",
+                  "disabled": true
+                },
+                {
+                  "key": "client_secret",
+                  "value": "fCxz6BFuPTTmgtFHf8vCxJDlNzYTGvrfwXaVpDO3WQI9ZFIitOZYUj4csqHHPwoSANhlSPTdQMNUCYpW35EdGBQ7EpDEdrovmLxuaO9eqawgGj2CHFRHZK7Ftnui1kUV",
+                  "type": "text",
+                  "uuid": "2ffd4ac6-f91d-4d6a-a52d-2af68b583cde",
+                  "disabled": true
+                },
+                {
+                  "key": "username",
+                  "value": "student_minh",
+                  "type": "text",
+                  "uuid": "3161f63e-a706-4790-b390-680498e52518"
+                },
+                {
+                  "key": "password",
+                  "value": "Abc123@",
+                  "type": "text",
+                  "uuid": "65a34eba-5234-4cad-ba24-e7dfc39968db"
+                },
+                {
+                  "key": "grant_type",
+                  "value": "password",
+                  "type": "text",
+                  "uuid": "c2525101-f2d0-4244-9f7e-73b1ba27c26a",
+                  "disabled": true
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "login",
+                ""
+              ]
+            }
+          },
+          "_postman_previewlanguage": null,
+          "header": null,
+          "cookie": [],
+          "body": "{\r\n    \"access_token\": \"9rI33DxciqUSQOtCrmtZNglBbZcwG0\",\r\n    \"expires_in\": 36000,\r\n    \"token_type\": \"Bearer\",\r\n    \"scope\": \"read write\",\r\n    \"refresh_token\": \"6a8pQ573Jp7koFxTM3kSv2dnKLs3Lf\"\r\n}"
+        }
+      ]
+    },
+    {
+      "name": "Exchange token",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code = 200\", function (){\r",
+              "    pm.response.to.have.status(200);\r",
+              "})\r",
+              "\r",
+              "pm.test(\"Có đủ field token + user\", function () {\r",
+              "    let jsonData = pm.response.json();\r",
+              "\r",
+              "    pm.expect(jsonData).to.include.all.keys(\r",
+              "        \"access_token\",\r",
+              "        \"refresh_token\",\r",
+              "        \"expires_in\",\r",
+              "        \"token_type\",\r",
+              "        \"user\"\r",
+              "    );\r",
+              "})\r",
+              "\r",
+              "pm.test(\"Access_token là string và không rỗng\", function () {\r",
+              "    let token = pm.response.json().access_token;\r",
+              "\r",
+              "    pm.expect(token).to.be.a(\"string\").and.not.empty;\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Refresh_token hợp lệ\", function () {\r",
+              "    let token = pm.response.json().refresh_token;\r",
+              "\r",
+              "    pm.expect(token).to.be.a(\"string\").and.not.empty;\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Expires_in là số\", function () {\r",
+              "    let expires = pm.response.json().expires_in;\r",
+              "\r",
+              "    pm.expect(expires).to.be.a(\"number\");\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Token_type = Bearer\", function () {\r",
+              "    let type = pm.response.json().token_type;\r",
+              "\r",
+              "    pm.expect(type).to.eql(\"Bearer\");\r",
+              "});\r",
+              "\r",
+              "pm.test(\"User là object\", function () {\r",
+              "    let user = pm.response.json().user;\r",
+              "\r",
+              "    pm.expect(user).to.be.an(\"object\");\r",
+              "});\r",
+              "\r",
+              "pm.test(\"User có email và provider\", function () {\r",
+              "    let user = pm.response.json().user;\r",
+              "\r",
+              "    pm.expect(user).to.include.all.keys(\"email\", \"provider\");\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Email hợp lệ\", function () {\r",
+              "    let email = pm.response.json().user.email;\r",
+              "\r",
+              "    pm.expect(email).to.match(/^[^@]+@[^@]+\\.[^@]+$/);\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Provider = GOOGLE\", function () {\r",
+              "    let provider = pm.response.json().user.provider;\r",
+              "\r",
+              "    pm.expect(provider).to.be.oneOf([\"GOOGLE\", \"FACEBOOK\"]);\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Không lộ thông tin nhạy cảm\", function () {\r",
+              "    let jsonData = pm.response.json();\r",
+              "\r",
+              "    pm.expect(jsonData).to.not.have.property(\"password\");\r",
+              "    pm.expect(jsonData).to.not.have.property(\"id_token\");\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Access_token không trùng\", function () {\r",
+              "    let jsonData = pm.response.json();\r",
+              "\r",
+              "    let oldToken = pm.environment.get(\"access_token\");\r",
+              "\r",
+              "    if (oldToken) {\r",
+              "        pm.expect(jsonData.access_token).to.not.eql(oldToken);\r",
+              "    }\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Lưu token\", function () {\r",
+              "    let jsonData = pm.response.json();\r",
+              "\r",
+              "    pm.environment.set(\"access_token\", jsonData.access_token);\r",
+              "    pm.environment.set(\"refresh_token\", jsonData.refresh_token);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"provider\": \"google\",\r\n    \"access_token\": \"ya29.a0Aa7MYipgdV6YcqIlOiD06Xvek-HGqZ-BJ-002aqUq6QJ2vZYm8wJdbwhCIlpdbOqJUhXFVbE1YsqyEgMJywknnEYwZkecdAl6LFmTmp_5UJIh0gFeUIbCcVcv3Q3SOYmkvRk7su5ukKLrO-Zcu1vi1uQdGoWOzrf_P-dirIi5OZtfyslalagQr_YXTeT0wVjgGaErNsaCgYKAUcSARYSFQHGX2MigLuIbCFMvmVX6xLr7S4uQQ0206\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/auth/social-login/",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "auth",
+            "social-login",
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "POST Auth Login",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});\r",
+              "\r",
+              "const data = pm.response.json();\r",
+              "\r",
+              "pm.test(\"Has access token\", function () {\r",
+              "    pm.expect(data.access_token).to.be.a(\"string\").and.not.empty;\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Has refresh token\", function () {\r",
+              "    pm.expect(data.refresh_token).to.be.a(\"string\").and.not.empty;\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Token type is Bearer\", function () {\r",
+              "    pm.expect(data.token_type).to.eql(\"Bearer\");\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "urlencoded",
+          "urlencoded": [
+            {
+              "key": "grant_type",
+              "value": "password",
+              "type": "text",
+              "uuid": "b0637289-dc82-4dd8-9ddc-418dd0ea2f35"
+            },
+            {
+              "key": "username",
+              "value": "teacher_john",
+              "type": "text",
+              "uuid": "53ed8226-e40d-4363-943f-ce236b6be61c"
+            },
+            {
+              "key": "password",
+              "value": "Abc123@",
+              "type": "text",
+              "uuid": "b6f6ab21-819b-450c-8da5-e613ef49aa68"
+            },
+            {
+              "key": "client_id",
+              "value": "aJ7nxWPdKdjy8isgOPQsGKPzR9E2Keehq8A7D4gr",
+              "type": "text",
+              "uuid": "feb845c1-70f3-4993-b13d-8bd13607b478"
+            },
+            {
+              "key": "client_secret",
+              "value": "fCxz6BFuPTTmgtFHf8vCxJDlNzYTGvrfwXaVpDO3WQI9ZFIitOZYUj4csqHHPwoSANhlSPTdQMNUCYpW35EdGBQ7EpDEdrovmLxuaO9eqawgGj2CHFRHZK7Ftnui1kUV",
+              "type": "text",
+              "uuid": "67cc073b-9546-4cc6-988f-cb3eca565aff"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{base_url}}/auth/token/",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "auth",
+            "token",
+            ""
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "POST Auth Login",
+          "originalRequest": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "grant_type",
+                  "value": "password",
+                  "type": "text",
+                  "uuid": "b0637289-dc82-4dd8-9ddc-418dd0ea2f35"
+                },
+                {
+                  "key": "username",
+                  "value": "teacher_john",
+                  "type": "text",
+                  "uuid": "53ed8226-e40d-4363-943f-ce236b6be61c"
+                },
+                {
+                  "key": "password",
+                  "value": "Abc123@",
+                  "type": "text",
+                  "uuid": "b6f6ab21-819b-450c-8da5-e613ef49aa68"
+                },
+                {
+                  "key": "client_id",
+                  "value": "aJ7nxWPdKdjy8isgOPQsGKPzR9E2Keehq8A7D4gr",
+                  "type": "text",
+                  "uuid": "feb845c1-70f3-4993-b13d-8bd13607b478"
+                },
+                {
+                  "key": "client_secret",
+                  "value": "fCxz6BFuPTTmgtFHf8vCxJDlNzYTGvrfwXaVpDO3WQI9ZFIitOZYUj4csqHHPwoSANhlSPTdQMNUCYpW35EdGBQ7EpDEdrovmLxuaO9eqawgGj2CHFRHZK7Ftnui1kUV",
+                  "type": "text",
+                  "uuid": "67cc073b-9546-4cc6-988f-cb3eca565aff"
+                }
+              ]
+            },
+            "url": {
+              "raw": "https://127.0.0.1:8000/api/auth/token/",
+              "protocol": "https",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "auth",
+                "token",
+                ""
+              ]
+            }
+          },
+          "_postman_previewlanguage": null,
+          "header": null,
+          "cookie": [],
+          "body": null
+        }
+      ]
+    },
+    {
+      "name": "POST Auth Refresh",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Response is JSON\", function () {\r",
+              "    pm.response.to.be.json;\r",
+              "});\r",
+              "\r",
+              "const data = pm.response.json();\r",
+              "\r",
+              "pm.test(\"Has access_token\", function () {\r",
+              "    pm.expect(data.access_token).to.be.a(\"string\").and.not.empty;\r",
+              "});\r",
+              "\r",
+              "pm.test(\"token_type is Bearer\", function () {\r",
+              "    pm.expect(data.token_type).to.eql(\"Bearer\");\r",
+              "});\r",
+              "\r",
+              "pm.test(\"expires_in is number\", function () {\r",
+              "    pm.expect(data.expires_in).to.be.a(\"number\");\r",
+              "});\r",
+              "\r",
+              "// Nếu API có trả refresh_token mới thì chỉ check, không lưu\r",
+              "if (data.refresh_token !== undefined) {\r",
+              "    pm.test(\"refresh_token is valid if returned\", function () {\r",
+              "        pm.expect(data.refresh_token).to.be.a(\"string\").and.not.empty;\r",
+              "    });\r",
+              "}\r",
+              "\r",
+              "pm.test(\"Status code is 401\", function () {\r",
+              "    pm.response.to.have.status(401);\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Response is JSON\", function () {\r",
+              "    pm.response.to.be.json;\r",
+              "});\r",
+              "\r",
+              "\r",
+              "pm.test(\"Error is invalid_client\", function () {\r",
+              "    pm.expect(data.error).to.eql(\"invalid_client\");\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Status code is 400 or 401\", function () {\r",
+              "    pm.expect(pm.response.code).to.be.oneOf([400, 401]);\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Response is JSON\", function () {\r",
+              "    pm.response.to.be.json;\r",
+              "});\r",
+              "\r",
+              "\r",
+              "\r",
+              "pm.test(\"Error is invalid_grant or invalid_token\", function () {\r",
+              "    pm.expect(data.error).to.be.oneOf([\"invalid_grant\", \"invalid_token\"]);\r",
+              "});\r",
+              "pm.test(\"Status code is 400\", function () {\r",
+              "    pm.response.to.have.status(400);\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Response is JSON\", function () {\r",
+              "    pm.response.to.be.json;\r",
+              "});\r",
+              "\r",
+              "\r",
+              "\r",
+              "pm.test(\"Error is unsupported_grant_type\", function () {\r",
+              "    pm.expect(data.error).to.eql(\"unsupported_grant_type\");\r",
+              "});\r",
+              "pm.test(\"Status code is 400 or 401\", function () {\r",
+              "    pm.expect(pm.response.code).to.be.oneOf([400, 401]);\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Response is JSON\", function () {\r",
+              "    pm.response.to.be.json;\r",
+              "});\r",
+              "\r",
+              "\r",
+              "\r",
+              "pm.test(\"Has error field\", function () {\r",
+              "    pm.expect(data).to.have.property(\"error\");\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "urlencoded",
+          "urlencoded": [
+            {
+              "key": "refresh_token",
+              "value": "SsCRXxZp2DKAR1ldHwaM0D052sjo2f",
+              "type": "text",
+              "uuid": "b50aacef-1453-467e-83b5-2ab98b3d63ae"
+            },
+            {
+              "key": "client_id",
+              "value": "aJ7nxWPdKdjy8isgOPQsGKPzR9E2Keehq8A7D4gr",
+              "type": "text",
+              "uuid": "9842a872-1430-4789-92e1-6c9898194af4"
+            },
+            {
+              "key": "client_secret",
+              "value": "fCxz6BFuPTTmgtFHf8vCxJDlNzYTGvrfwXaVpDO3WQI9ZFIitOZYUj4csqHHPwoSANhlSPTdQMNUCYpW35EdGBQ7EpDEdrovmLxuaO9eqawgGj2CHFRHZK7Ftnui1kUV",
+              "type": "text",
+              "uuid": "7948227c-cd04-4864-8a56-445ba4fd2e4c"
+            },
+            {
+              "key": "grant_type",
+              "value": "refresh_token",
+              "type": "text",
+              "uuid": "e9c511af-5aab-445c-a711-5304367aeab3"
+            }
+          ]
+        },
+        "url": {
+          "raw": "https://127.0.0.1:8000/api/auth/refresh/",
+          "protocol": "https",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "api",
+            "auth",
+            "refresh",
+            ""
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "POST Auth Refresh",
+          "originalRequest": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "refresh_token",
+                  "value": "m4xpZMypHrGTtYTCB3gEt451mpjnnb",
+                  "type": "text",
+                  "uuid": "b50aacef-1453-467e-83b5-2ab98b3d63ae"
+                },
+                {
+                  "key": "client_id",
+                  "value": "aJ7nxWPdKdjy8isgOPQsGKPzR9E2Keehq8A7D4gr",
+                  "type": "text",
+                  "uuid": "9842a872-1430-4789-92e1-6c9898194af4"
+                },
+                {
+                  "key": "client_secret",
+                  "value": "fCxz6BFuPTTmgtFHf8vCxJDlNzYTGvrfwXaVpDO3WQI9ZFIitOZYUj4csqHHPwoSANhlSPTdQMNUCYpW35EdGBQ7EpDEdrovmLxuaO9eqawgGj2CHFRHZK7Ftnui1kUV",
+                  "type": "text",
+                  "uuid": "7948227c-cd04-4864-8a56-445ba4fd2e4c"
+                },
+                {
+                  "key": "grant_type",
+                  "value": "refresh_token",
+                  "type": "text",
+                  "uuid": "e9c511af-5aab-445c-a711-5304367aeab3"
+                }
+              ]
+            },
+            "url": {
+              "raw": "https://127.0.0.1:8000/api/auth/refresh/",
+              "protocol": "https",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "auth",
+                "refresh",
+                ""
+              ]
+            }
+          },
+          "_postman_previewlanguage": "",
+          "header": [],
+          "cookie": [
+            {
+              "expires": "Invalid Date",
+              "domain": "",
+              "path": ""
+            }
+          ],
+          "body": "{\r\n    \"access_token\": \"RFYJKLhefo8gRTXjlt7zOb263CKAcS\",\r\n    \"expires_in\": 36000,\r\n    \"token_type\": \"Bearer\",\r\n    \"scope\": \"read write\",\r\n    \"refresh_token\": \"D9c527ac49ziu0ae7bUb5kZPBEXY5d\"\r\n}"
+        }
+      ]
+    },
+    {
+      "name": "GET all payments",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Response is JSON\", function () {\r",
+              "    pm.response.to.be.json;\r",
+              "});\r",
+              "\r",
+              "const data = pm.response.json();\r",
+              "\r",
+              "pm.test(\"Response is an array\", function () {\r",
+              "    pm.expect(data).to.be.an(\"array\");\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Payment list is not empty\", function () {\r",
+              "    pm.expect(data.length).to.be.greaterThan(0);\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Each payment has correct structure\", function () {\r",
+              "    data.forEach((item) => {\r",
+              "        pm.expect(item).to.be.an(\"object\");\r",
+              "\r",
+              "        pm.expect(item).to.have.property(\"id\");\r",
+              "        pm.expect(item.id).to.be.a(\"number\");\r",
+              "\r",
+              "        pm.expect(item).to.have.property(\"enrollment\");\r",
+              "        pm.expect(item.enrollment).to.be.a(\"number\");\r",
+              "\r",
+              "        pm.expect(item).to.have.property(\"amount\");\r",
+              "        pm.expect(item.amount).to.be.a(\"string\").and.not.empty;\r",
+              "\r",
+              "        pm.expect(item).to.have.property(\"payment_method\");\r",
+              "        pm.expect(item.payment_method).to.be.a(\"string\").and.not.empty;\r",
+              "\r",
+              "        pm.expect(item).to.have.property(\"paid_at\");\r",
+              "        pm.expect(item.paid_at).to.be.a(\"string\").and.not.empty;\r",
+              "\r",
+              "        pm.expect(item).to.have.property(\"classroom\");\r",
+              "        pm.expect(item.classroom).to.be.a(\"string\").and.not.empty;\r",
+              "    });\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{access_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/payments/",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "payments",
+            ""
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": ""
+    }
+  ]
+}
