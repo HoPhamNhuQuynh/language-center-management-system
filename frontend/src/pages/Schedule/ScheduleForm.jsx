@@ -2,10 +2,14 @@ function ScheduleForm({ weekLabel, weekNumber, weekDates, totalWeeks, onWeekChan
 
   const daysOfWeek = [
     "Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu", "Thứ Bảy", "Chủ Nhật"
-  ].map((day, i) => ({
-    day,
-    dateLabel: weekDates?.[i] || ""
-  }));
+  ].map((day, i) => {
+    const raw = weekDates?.[i] || "";
+    const [y, m, d] = raw.split('-');
+    return {
+      day,
+      dateLabel: raw ? `${d}/${m}/${y}` : ""
+    };
+  });
 
   const getLessonsByDay = (day) =>
     scheduleData.filter(item => item.day === day);
