@@ -36,13 +36,13 @@ Báo cáo nhằm ghi nhận số lượng testcase đã thiết kế và thực 
 
 | Chỉ số | Số lượng |
 | :---- | :---- |
-| Tổng số testcase dự kiến thực hiện | 778 |
-| Tổng số testcase đã thực hiện | 778 |
-| Tổng số testcase PASS  | 769 |
-| Tổng số testcase FAIL  | 9 |
+| Tổng số testcase dự kiến thực hiện | 781 |
+| Tổng số testcase đã thực hiện | 781 |
+| Tổng số testcase PASS  | 773 |
+| Tổng số testcase FAIL  | 8 |
 | Tỉ lệ thực hiện | 100%  |
-| Tỉ lệ testcase PASS | 98.84%  |
-| Tỉ lệ testcase FAIL | 1.16%  |
+| Tỉ lệ testcase PASS | 98.98%  |
+| Tỉ lệ testcase FAIL | 1.02%  |
 | Mật độ lỗi | 1 lỗi/ngày |
 
 **3.3 Coverage**

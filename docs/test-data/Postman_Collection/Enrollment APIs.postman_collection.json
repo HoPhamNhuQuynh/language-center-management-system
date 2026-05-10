@@ -1,0 +1,1436 @@
+{
+  "info": {
+    "_postman_id": "2e44b577-ab3c-447a-99a9-989cffd5c681",
+    "name": "Enrollment APIs",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "53925870",
+    "_collection_link": "https://go.postman.co/collection/50437165-2e44b577-ab3c-447a-99a9-989cffd5c681?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Payment by student",
+      "item": [
+        {
+          "name": "POST Payment full - SUCCESS",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "\r",
+                  "\r",
+                  "pm.test(\" 100% payment success flow\", function () {\r",
+                  "    pm.expect(pm.response.code).to.eql(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Full payment is marked SUCCESS\", function () {\r",
+                  "    let data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect([\"SUCCESS\"]).to.include(data.payment_status);\r",
+                  "    pm.expect(data.payment_percent).to.eql(100);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "enrollment",
+                  "value": "4",
+                  "type": "text",
+                  "uuid": "411a6dec-bfea-493e-94ad-a6f6de5dacba"
+                },
+                {
+                  "key": "amount",
+                  "value": "2500000",
+                  "type": "text",
+                  "uuid": "c83e4a90-0e1b-4c20-82e5-6a42488fa362"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/payments/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "payments",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "POST Payment full - SUCCESS",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "key": "enrollment",
+                      "value": "4",
+                      "type": "text",
+                      "uuid": "411a6dec-bfea-493e-94ad-a6f6de5dacba"
+                    },
+                    {
+                      "key": "amount",
+                      "value": "3500000",
+                      "type": "text",
+                      "uuid": "c83e4a90-0e1b-4c20-82e5-6a42488fa362"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{base_url}}/payments/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "payments",
+                    ""
+                  ]
+                }
+              },
+              "_postman_previewlanguage": null,
+              "header": null,
+              "cookie": [],
+              "body": null
+            }
+          ]
+        },
+        {
+          "name": "POST Payment 50% - SUCCESS",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "\r",
+                  "\r",
+                  "pm.test(\" 50% payment success flow\", function () {\r",
+                  "    pm.expect(pm.response.code).to.eql(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Payment is marked SUCCESS\", function () {\r",
+                  "    let data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect([\"SUCCESS\"]).to.include(data.payment_status);\r",
+                  "    pm.expect(data.payment_percent).to.eql(100);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "enrollment",
+                  "value": "2",
+                  "type": "text",
+                  "uuid": "fb2da832-1ff7-4d87-8a7c-9c90401aecde"
+                },
+                {
+                  "key": "amount ",
+                  "value": "4000000",
+                  "type": "text",
+                  "uuid": "10cbcaa3-f6bb-4eaf-a748-37ea1ae7344b"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/payments/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "payments",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "POST Payment 50% - SUCCESS",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "key": "enrollment",
+                      "value": "2",
+                      "type": "text",
+                      "uuid": "fb2da832-1ff7-4d87-8a7c-9c90401aecde"
+                    },
+                    {
+                      "key": "amount ",
+                      "value": "4000000",
+                      "type": "text",
+                      "uuid": "10cbcaa3-f6bb-4eaf-a748-37ea1ae7344b"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{base_url}}/payments/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "payments",
+                    ""
+                  ]
+                }
+              },
+              "_postman_previewlanguage": null,
+              "header": null,
+              "cookie": [],
+              "body": null
+            }
+          ]
+        },
+        {
+          "name": "POST Payment full - UNDER 5M",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Partial payment under 5M should fail\", function () {\r",
+                  "    pm.expect(pm.response.code).to.eql(400);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Error message is correct\", function () {\r",
+                  "    let data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data.non_field_errors).to.exist;\r",
+                  "    pm.expect(data.non_field_errors[0])\r",
+                  "        .to.include(\"Khóa học dưới 5tr bắt buộc thanh toán toàn bộ\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "enrollment",
+                  "value": "4",
+                  "type": "text",
+                  "uuid": "411a6dec-bfea-493e-94ad-a6f6de5dacba"
+                },
+                {
+                  "key": "amount",
+                  "value": "100000",
+                  "type": "text",
+                  "uuid": "c83e4a90-0e1b-4c20-82e5-6a42488fa362"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/payments/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "payments",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "POST Payment full - UNDER 5M",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "key": "enrollment",
+                      "value": "4",
+                      "type": "text",
+                      "uuid": "411a6dec-bfea-493e-94ad-a6f6de5dacba"
+                    },
+                    {
+                      "key": "amount",
+                      "value": "100000",
+                      "type": "text",
+                      "uuid": "c83e4a90-0e1b-4c20-82e5-6a42488fa362"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{base_url}}/payments/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "payments",
+                    ""
+                  ]
+                }
+              },
+              "_postman_previewlanguage": null,
+              "header": null,
+              "cookie": [],
+              "body": null
+            }
+          ]
+        },
+        {
+          "name": "GET List Payments",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is JSON\", function () {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "const data = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Response is an array\", function () {\r",
+                  "    pm.expect(data).to.be.an(\"array\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Payment list is not empty\", function () {\r",
+                  "    pm.expect(data.length).to.be.greaterThan(0);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Each payment has correct structure\", function () {\r",
+                  "    data.forEach((item) => {\r",
+                  "        pm.expect(item).to.be.an(\"object\");\r",
+                  "\r",
+                  "        pm.expect(item).to.have.property(\"id\");\r",
+                  "        pm.expect(item.id).to.be.a(\"number\");\r",
+                  "\r",
+                  "        pm.expect(item).to.have.property(\"enrollment\");\r",
+                  "        pm.expect(item.enrollment).to.be.a(\"number\");\r",
+                  "\r",
+                  "        pm.expect(item).to.have.property(\"amount\");\r",
+                  "        pm.expect(item.amount).to.be.a(\"string\").and.not.empty;\r",
+                  "\r",
+                  "        pm.expect(item).to.have.property(\"payment_method\");\r",
+                  "        pm.expect(item.payment_method).to.be.a(\"string\").and.not.empty;\r",
+                  "\r",
+                  "        pm.expect(item).to.have.property(\"paid_at\");\r",
+                  "        pm.expect(item.paid_at).to.be.a(\"string\").and.not.empty;\r",
+                  "\r",
+                  "        pm.expect(item).to.have.property(\"classroom\");\r",
+                  "        pm.expect(item.classroom).to.be.a(\"string\").and.not.empty;\r",
+                  "    });\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/users/me/payments",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "users",
+                "me",
+                "payments"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Enrollment by student",
+      "item": [
+        {
+          "name": "POST Enrollment course - SUCCESS",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "\r",
+                  "\r",
+                  "pm.test(\"TC-12 - Đăng ký lớp học thành công\", function () {\r",
+                  "    pm.response.to.have.status(201);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"TC-12 - Có trả về thông tin đăng ký\", function () {\r",
+                  "    let jsonData = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(jsonData).to.have.property(\"id\");\r",
+                  "    pm.expect(jsonData).to.have.property(\"student\");\r",
+                  "    pm.expect(jsonData).to.have.property(\"classroom\");\r",
+                  "    pm.expect(jsonData.enrollment_status).to.eql(\"PENDING_PAYMENT\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"classroom\": 78\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/enrollments/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "enrollments",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "POST Enrollment course - SUCCESS",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"classroom\": 1\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/enrollments/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "enrollments",
+                    ""
+                  ]
+                }
+              },
+              "_postman_previewlanguage": null,
+              "header": null,
+              "cookie": [],
+              "body": null
+            }
+          ]
+        },
+        {
+          "name": "POST Enrollment course - NO CHOICE",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "\r",
+                  "\r",
+                  "pm.test(\"TC-13 - Chưa chọn lớp\", function () {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"TC-13 - Báo lỗi classroom bắt buộc\", function () {\r",
+                  "    let jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData).to.have.property(\"classroom\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"classroom\": \"\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/enrollments/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "enrollments",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST Enrollment course - SCHEDULE CONFLICT",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "\r",
+                  "\r",
+                  "pm.test(\"TC-17 - Trùng lịch học\", function () {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"TC-17 - Báo lỗi trùng lịch\", function () {\r",
+                  "    let jsonData = pm.response.json();\r",
+                  "    pm.expect(JSON.stringify(jsonData)).to.include(\"Lịch học bị trùng\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"TC-18 - Khác thời gian đăng ký thành công\", function () {\r",
+                  "    pm.response.to.have.status(201);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"TC-19 - Trùng 1 phần thời gian\", function () {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"TC-19 - Có báo lỗi\", function () {\r",
+                  "    let jsonData = pm.response.json();\r",
+                  "    pm.expect(JSON.stringify(jsonData)).to.include(\"Lịch học bị trùng\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"classroom\": 1\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/enrollments/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "enrollments",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "POST Enrollment course - SCHEDULE CONFLICT",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"classroom\": 1\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/enrollments/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "enrollments",
+                    ""
+                  ]
+                }
+              },
+              "_postman_previewlanguage": null,
+              "header": null,
+              "cookie": [],
+              "body": null
+            }
+          ]
+        },
+        {
+          "name": "POST Enrollment course - FULL SLOT",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "\r",
+                  "\r",
+                  "pm.test(\"TC-21 - Lớp đầy\", function () {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"TC-21 - Báo lỗi đủ sĩ số\", function () {\r",
+                  "    let jsonData = pm.response.json();\r",
+                  "    pm.expect(JSON.stringify(jsonData)).to.include(\"Lớp đã đủ sỉ số\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"classroom\": 1\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/enrollments/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "enrollments",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST Enrollment course - SAME DAY DIFFERENT TIME",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "\r",
+                  "\r",
+                  "pm.test(\"TC-20 - Trùng ngày khác giờ vẫn đăng ký được\", function () {\r",
+                  "    pm.response.to.have.status(201);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"classroom\" : 4\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/enrollments/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "enrollments",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "POST Enrollment course - SAME DAY DIFFERENT TIME",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"classroom\" : 4\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/enrollments/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "enrollments",
+                    ""
+                  ]
+                }
+              },
+              "_postman_previewlanguage": null,
+              "header": null,
+              "cookie": [],
+              "body": null
+            }
+          ]
+        },
+        {
+          "name": "GET Enrollment by enroll_id - SUCCESS",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"TC22 - Xem chi tiết enrollment thành công\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"TC22 - Có đủ field enrollment\", function () {\r",
+                  "    let jsonData = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(jsonData).to.include.all.keys(\r",
+                  "        \"id\",\r",
+                  "        \"student\",\r",
+                  "        \"classroom\",\r",
+                  "        \"enrollment_status\",\r",
+                  "        \"payment_deadline\",\r",
+                  "        \"created_at\",\r",
+                  "        \"updated_at\",\r",
+                  "        \"active\"\r",
+                  "    );\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"TC22 - student là object\", function () {\r",
+                  "    let student = pm.response.json().student;\r",
+                  "\r",
+                  "    pm.expect(student).to.be.an(\"object\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"TC22 - classroom là object\", function () {\r",
+                  "    let classroom = pm.response.json().classroom;\r",
+                  "\r",
+                  "    pm.expect(classroom).to.be.an(\"object\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"TC22 - enrollment_status hợp lệ\", function () {\r",
+                  "    let status = pm.response.json().enrollment_status;\r",
+                  "\r",
+                  "    pm.expect([\"SUCCESS\", \"PENDING_PAYMENT\", \"PARTIAL_PAYMENT\"]).to.include(status);\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/enrollments/1/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "enrollments",
+                "1",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET Enrollment by enroll_id - NOT OWNER",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "\r",
+                  "\r",
+                  "pm.test(\"TC23 - Không cho xem enrollment người khác\", function () {\r",
+                  "    pm.expect(pm.response.code).to.be.oneOf([403]);\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/enrollments/2/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "enrollments",
+                "2",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET Enrollment by enroll_id-ADMIN VALID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is JSON\", function () {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "const data = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Response is an object\", function () {\r",
+                  "    pm.expect(data).to.be.an(\"object\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Has enrollment id\", function () {\r",
+                  "    pm.expect(data).to.have.property(\"id\");\r",
+                  "    pm.expect(data.id).to.be.a(\"number\");\r",
+                  "});\r",
+                  "\r",
+                  "// Check các field thường gặp của enrollment\r",
+                  "if (data.student_id !== undefined) {\r",
+                  "    pm.test(\"student_id is number\", function () {\r",
+                  "        pm.expect(data.student_id).to.be.a(\"number\");\r",
+                  "    });\r",
+                  "}\r",
+                  "\r",
+                  "if (data.classroom_id !== undefined) {\r",
+                  "    pm.test(\"classroom_id is number\", function () {\r",
+                  "        pm.expect(data.classroom_id).to.be.a(\"number\");\r",
+                  "    });\r",
+                  "}\r",
+                  "\r",
+                  "if (data.enrollment_status !== undefined) {\r",
+                  "    pm.test(\"enrollment_status is string\", function () {\r",
+                  "        pm.expect(data.enrollment_status).to.be.a(\"string\").and.not.empty;\r",
+                  "    });\r",
+                  "}\r",
+                  "\r",
+                  "if (data.active !== undefined) {\r",
+                  "    pm.test(\"active is boolean\", function () {\r",
+                  "        pm.expect(data.active).to.be.a(\"boolean\");\r",
+                  "    });\r",
+                  "}\r",
+                  "\r",
+                  "// Không lộ thông tin nhạy cảm\r",
+                  "pm.test(\"Does not expose password\", function () {\r",
+                  "    pm.expect(data.password).to.eql(undefined);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/enrollments/2/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "enrollments",
+                "2",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET Enrollment by Admin - SUCCESS",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "\r",
+                  "\r",
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Enrollments list is not empty\", function () {\r",
+                  "    let data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data.length).to.be.above(0);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Enrollment fields are valid\", function () {\r",
+                  "    let data = pm.response.json();\r",
+                  "\r",
+                  "    data.forEach(item => {\r",
+                  "        pm.expect(item).to.have.property(\"id\");\r",
+                  "        pm.expect(item).to.have.property(\"student\");\r",
+                  "        pm.expect(item).to.have.property(\"classroom\");\r",
+                  "        pm.expect(item).to.have.property(\"enrollment_status\");\r",
+                  "        pm.expect(item).to.have.property(\"payment_deadline\");\r",
+                  "        pm.expect(item).to.have.property(\"created_at\");\r",
+                  "        pm.expect(item).to.have.property(\"updated_at\");\r",
+                  "        pm.expect(item).to.have.property(\"active\");\r",
+                  "    });\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Student fields are valid\", function () {\r",
+                  "    let data = pm.response.json();\r",
+                  "\r",
+                  "    data.forEach(item => {\r",
+                  "        pm.expect(item.student).to.have.property(\"id\");\r",
+                  "        pm.expect(item.student).to.have.property(\"first_name\");\r",
+                  "        pm.expect(item.student).to.have.property(\"last_name\");\r",
+                  "        pm.expect(item.student).to.have.property(\"email\");\r",
+                  "        pm.expect(item.student).to.have.property(\"username\");\r",
+                  "        pm.expect(item.student).to.have.property(\"full_name\");\r",
+                  "    });\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Classroom fields are valid\", function () {\r",
+                  "    let data = pm.response.json();\r",
+                  "\r",
+                  "    data.forEach(item => {\r",
+                  "        pm.expect(item.classroom).to.have.property(\"id\");\r",
+                  "        pm.expect(item.classroom).to.have.property(\"name\");\r",
+                  "        pm.expect(item.classroom).to.have.property(\"course\");\r",
+                  "        pm.expect(item.classroom).to.have.property(\"start_date\");\r",
+                  "        pm.expect(item.classroom).to.have.property(\"end_date\");\r",
+                  "        pm.expect(item.classroom).to.have.property(\"active\");\r",
+                  "        pm.expect(item.classroom).to.have.property(\"main_teacher\");\r",
+                  "    });\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Main teacher fields are valid\", function () {\r",
+                  "    let data = pm.response.json();\r",
+                  "\r",
+                  "    data.forEach(item => {\r",
+                  "        pm.expect(item.classroom.main_teacher).to.have.property(\"id\");\r",
+                  "        pm.expect(item.classroom.main_teacher).to.have.property(\"first_name\");\r",
+                  "        pm.expect(item.classroom.main_teacher).to.have.property(\"last_name\");\r",
+                  "        pm.expect(item.classroom.main_teacher).to.have.property(\"email\");\r",
+                  "        pm.expect(item.classroom.main_teacher).to.have.property(\"username\");\r",
+                  "        pm.expect(item.classroom.main_teacher).to.have.property(\"full_name\");\r",
+                  "    });\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "name",
+                  "value": "a",
+                  "type": "text",
+                  "uuid": "48d3d31b-4261-41c3-b052-83a9003275c4",
+                  "disabled": true
+                },
+                {
+                  "key": "course",
+                  "value": "1",
+                  "type": "text",
+                  "uuid": "56969946-30be-406c-9573-46ece7cfc290",
+                  "disabled": true
+                },
+                {
+                  "key": "start_date",
+                  "value": "2026-05-12",
+                  "type": "text",
+                  "uuid": "fad8ad01-66ee-42de-a331-4f994716a140",
+                  "disabled": true
+                },
+                {
+                  "key": "end_date",
+                  "value": "2026-06-12",
+                  "type": "text",
+                  "uuid": "88c7396b-7e3e-4686-95e9-f03f04b85e40",
+                  "disabled": true
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/enrollments/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "enrollments",
+                ""
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "PATCH Update Enrollment",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{access_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "PATCH",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "enrollment_status ",
+              "value": "SUCCESS",
+              "type": "text",
+              "uuid": "024efe8d-9580-4aa7-a49c-c4a775bdf0f5"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{base_url}}/enrollments/1/",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "enrollments",
+            "1",
+            ""
+          ],
+          "query": [
+            {
+              "key": "student_id",
+              "value": "30",
+              "disabled": true
+            }
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "PATCH Update Enrollment",
+          "originalRequest": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "enrollment_status ",
+                  "value": "SUCCESS",
+                  "type": "text",
+                  "uuid": "024efe8d-9580-4aa7-a49c-c4a775bdf0f5"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/enrollments/1/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "enrollments",
+                "1",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "student_id",
+                  "value": "30",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "_postman_previewlanguage": null,
+          "header": null,
+          "cookie": [],
+          "body": null
+        }
+      ]
+    },
+    {
+      "name": "DELETE Delete Enrollment",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{access_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "DELETE",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "enrollment_status ",
+              "value": "SUCCESS",
+              "type": "text",
+              "uuid": "024efe8d-9580-4aa7-a49c-c4a775bdf0f5"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{base_url}}/enrollments/1/",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "enrollments",
+            "1",
+            ""
+          ],
+          "query": [
+            {
+              "key": "student_id",
+              "value": "30",
+              "disabled": true
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GET List Enrollments of Current-user",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Response is JSON\", function () {\r",
+              "    pm.response.to.be.json;\r",
+              "});\r",
+              "\r",
+              "const data = pm.response.json();\r",
+              "\r",
+              "pm.test(\"Response is an array\", function () {\r",
+              "    pm.expect(data).to.be.an(\"array\");\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Enrollment list is not empty\", function () {\r",
+              "    pm.expect(data.length).to.be.greaterThan(0);\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Contains SUCCESS enrollment\", function () {\r",
+              "    const hasSuccess = data.some(item => item.enrollment_status === \"SUCCESS\");\r",
+              "    pm.expect(hasSuccess).to.eql(true);\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Contains classroom id = 1\", function () {\r",
+              "    const hasClassroom1 = data.some(item => item.classroom && item.classroom.id === 1);\r",
+              "    pm.expect(hasClassroom1).to.eql(true);\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Contains classroom info\", function () {\r",
+              "    const hasClassroomInfo = data.some(item =>\r",
+              "        item.classroom &&\r",
+              "        item.classroom.name &&\r",
+              "        item.classroom.course\r",
+              "    );\r",
+              "    pm.expect(hasClassroomInfo).to.eql(true);\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Contains main teacher info\", function () {\r",
+              "    const hasTeacher = data.some(item =>\r",
+              "        item.classroom &&\r",
+              "        item.classroom.main_teacher &&\r",
+              "        item.classroom.main_teacher.username\r",
+              "    );\r",
+              "    pm.expect(hasTeacher).to.eql(true);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{access_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/users/me/enrollments/",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "users",
+            "me",
+            "enrollments",
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "New Request",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    }
+  ]
+}

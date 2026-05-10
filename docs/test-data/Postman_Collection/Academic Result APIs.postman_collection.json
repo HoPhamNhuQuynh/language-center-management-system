@@ -1,0 +1,673 @@
+{
+  "info": {
+    "_postman_id": "3659b05a-714b-4d1a-a4e2-59b6e7938806",
+    "name": "Academic Result APIs",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "53925870",
+    "_collection_link": "https://go.postman.co/collection/50437165-3659b05a-714b-4d1a-a4e2-59b6e7938806?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "List Score by ClassID",
+      "item": [
+        {
+          "name": "GET List Score by admin - SUCCESS",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Score list is not empty\", function () {\r",
+                  "    let data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data.length).to.be.above(0);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Score fields are valid\", function () {\r",
+                  "    let data = pm.response.json();\r",
+                  "\r",
+                  "    data.forEach(item => {\r",
+                  "        pm.expect(item).to.have.property(\"id\");\r",
+                  "        pm.expect(item).to.have.property(\"score_value\");\r",
+                  "        pm.expect(item).to.have.property(\"score_type\");\r",
+                  "        pm.expect(item).to.have.property(\"student\");\r",
+                  "    });\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Student fields are valid\", function () {\r",
+                  "    let data = pm.response.json();\r",
+                  "\r",
+                  "    data.forEach(item => {\r",
+                  "        pm.expect(item.student).to.have.property(\"id\");\r",
+                  "        pm.expect(item.student).to.have.property(\"first_name\");\r",
+                  "        pm.expect(item.student).to.have.property(\"last_name\");\r",
+                  "        pm.expect(item.student).to.have.property(\"email\");\r",
+                  "        pm.expect(item.student).to.have.property(\"username\");\r",
+                  "        pm.expect(item.student).to.have.property(\"full_name\");\r",
+                  "    });\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/classes/1/scores/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "classes",
+                "1",
+                "scores",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "GET List Score by admin - SUCCESS",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/classes/1/scores/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "classes",
+                    "1",
+                    "scores",
+                    ""
+                  ]
+                }
+              },
+              "_postman_previewlanguage": null,
+              "header": null,
+              "cookie": [],
+              "body": "[\r\n    {\r\n        \"id\": 1,\r\n        \"score_value\": 8.0,\r\n        \"score_type\": \"Điểm Chuyên Cần (Attendance)\",\r\n        \"student\": {\r\n            \"id\": 4,\r\n            \"first_name\": \"Minh\",\r\n            \"last_name\": \"Tran\",\r\n            \"email\": \"minhtran@gmail.com\",\r\n            \"username\": \"student_minh\"\r\n        }\r\n    },\r\n    {\r\n        \"id\": 2,\r\n        \"score_value\": 7.0,\r\n        \"score_type\": \"Bài Thi Giữa Kỳ (Midterm)\",\r\n        \"student\": {\r\n            \"id\": 4,\r\n            \"first_name\": \"Minh\",\r\n            \"last_name\": \"Tran\",\r\n            \"email\": \"minhtran@gmail.com\",\r\n            \"username\": \"student_minh\"\r\n        }\r\n    }\r\n]"
+            }
+          ]
+        },
+        {
+          "name": "GET List Score by ClassId - WRONG ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "\r",
+                  "\r",
+                  "pm.test(\"Status code is 404\", function () {\r",
+                  "    pm.response.to.have.status(404);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Wrong class id validation failed\", function () {\r",
+                  "    let data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data).to.have.property(\"detail\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Wrong class id error message is valid\", function () {\r",
+                  "    let data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data.detail).to.eql(\"No ClassRoom matches the given query.\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/classes/10/scores/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "classes",
+                "10",
+                "scores",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "GET List Score by ClassId - WRONG ID",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/classes/10/scores/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "classes",
+                    "10",
+                    "scores",
+                    ""
+                  ]
+                }
+              },
+              "_postman_previewlanguage": null,
+              "header": null,
+              "cookie": [],
+              "body": "[]\r\n"
+            }
+          ]
+        },
+        {
+          "name": "GET List Score by ClassId - WRONG FORMAT",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 404\", function () {\r",
+                  "    pm.response.to.have.status(404);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/classes/abc/scores/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "classes",
+                "abc",
+                "scores",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET List Score by ClassID - NO CLASS_ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "\r",
+                  "\r",
+                  "pm.test(\"Status code is 404\", function () {\r",
+                  "    pm.response.to.have.status(404);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Wrong class id validation failed\", function () {\r",
+                  "    let data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data).to.have.property(\"detail\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Wrong class id error message is valid\", function () {\r",
+                  "    let data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data.detail).to.eql(\"Không tìm thấy.\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/classes/scores/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "classes",
+                "scores",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "GET List Score by ClassID - NO CLASS_ID",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/classes/scores/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "classes",
+                    "scores",
+                    ""
+                  ]
+                }
+              },
+              "_postman_previewlanguage": null,
+              "header": null,
+              "cookie": [],
+              "body": "{\r\n    \"detail\": \"Không tìm thấy.\"\r\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "POST Score",
+      "item": [
+        {
+          "name": "POST Bulk Sync Scores - SUCCESS",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is JSON\", function () {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "const data = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Response is an object\", function () {\r",
+                  "    pm.expect(data).to.be.an(\"object\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Has message OK\", function () {\r",
+                  "    pm.expect(data).to.have.property(\"message\");\r",
+                  "    pm.expect(data.message).to.eql(\"OK\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Has data object\", function () {\r",
+                  "    pm.expect(data).to.have.property(\"data\");\r",
+                  "    pm.expect(data.data).to.be.an(\"object\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Has updated field\", function () {\r",
+                  "    pm.expect(data.data).to.have.property(\"updated\");\r",
+                  "    pm.expect(data.data.updated).to.be.a(\"number\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Has created field\", function () {\r",
+                  "    pm.expect(data.data).to.have.property(\"created\");\r",
+                  "    pm.expect(data.data.created).to.be.a(\"number\");\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"scores\": [\r\n    {\r\n      \"enrollment_id\": 1,\r\n      \"score_type_id\": 1,\r\n      \"score_value\": 8.5\r\n    },\r\n    {\r\n      \"enrollment_id\": 1,\r\n      \"score_type_id\": 2,\r\n      \"score_value\": 7.5\r\n    },\r\n    {\r\n      \"enrollment_id\": 2,\r\n      \"score_type_id\": 1,\r\n      \"score_value\": 6.5\r\n    },\r\n    {\r\n      \"enrollment_id\": 2,\r\n      \"score_type_id\": 3,\r\n      \"score_value\": 9.0\r\n    }\r\n  ]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/classes/1/bulk-sync-scores/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "classes",
+                "1",
+                "bulk-sync-scores",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "POST Bulk Sync Scores",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"scores\": [\r\n    {\r\n      \"enrollment_id\": 1,\r\n      \"score_type_id\": 1,\r\n      \"score_value\": 8.0\r\n    },\r\n    {\r\n      \"enrollment_id\": 1,\r\n      \"score_type_id\": 2,\r\n      \"score_value\": 7.0\r\n    },\r\n    {\r\n      \"enrollment_id\": 2,\r\n      \"score_type_id\": 1,\r\n      \"score_value\": 6.5\r\n    },\r\n    {\r\n      \"enrollment_id\": 2,\r\n      \"score_type_id\": 3,\r\n      \"score_value\": 9.0\r\n    }\r\n  ]\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/classes/1/bulk-sync-scores/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "classes",
+                    "1",
+                    "bulk-sync-scores",
+                    ""
+                  ]
+                }
+              },
+              "_postman_previewlanguage": null,
+              "header": null,
+              "cookie": [],
+              "body": "{\r\n    \"message\": \"OK\",\r\n    \"data\": {\r\n        \"updated\": 2,\r\n        \"created\": 0\r\n    }\r\n}"
+            }
+          ]
+        },
+        {
+          "name": "POST Bulk Sync Scores - MISSING VALUE",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 403\", function () {\r",
+                  "    pm.response.to.have.status(403);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is JSON\", function () {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "\r",
+                  "pm.test(\"Has detail message\", function () {\r",
+                  "    pm.expect(data).to.have.property(\"detail\");\r",
+                  "    pm.expect(data.detail).to.be.a(\"string\").and.not.empty;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Detail message is correct\", function () {\r",
+                  "    pm.expect(data.detail).to.eql(\"Bạn không có quyền nhập điểm cho lớp học này.\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"scores\": [\r\n    {\r\n      \"enrollment_id\": 1,\r\n      \"score_type_id\": 2,\r\n      \"score_value\": \"\"\r\n    },\r\n    {\r\n      \"enrollment_id\": 1,\r\n      \"score_type_id\": 2,\r\n      \"score_value\": \"\"\r\n    },\r\n    {\r\n      \"enrollment_id\": 2,\r\n      \"score_type_id\": 1,\r\n      \"score_value\": 8\r\n    },\r\n    {\r\n      \"enrollment_id\": 2,\r\n      \"score_type_id\": 3,\r\n      \"score_value\": 8\r\n    }\r\n  ]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/classes/1/bulk-sync-scores/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "classes",
+                "1",
+                "bulk-sync-scores",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "POST Bulk Sync Scores - MISSING VALUE",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"scores\": [\r\n    {\r\n      \"enrollment_id\": 1,\r\n      \"score_type_id\": 2,\r\n      \"score_value\": \"\"\r\n    },\r\n    {\r\n      \"enrollment_id\": 1,\r\n      \"score_type_id\": 2,\r\n      \"score_value\": \"\"\r\n    },\r\n    {\r\n      \"enrollment_id\": 2,\r\n      \"score_type_id\": 1,\r\n      \"score_value\": 8\r\n    },\r\n    {\r\n      \"enrollment_id\": 2,\r\n      \"score_type_id\": 3,\r\n      \"score_value\": 8\r\n    }\r\n  ]\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/classes/1/bulk-sync-scores/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "classes",
+                    "1",
+                    "bulk-sync-scores",
+                    ""
+                  ]
+                }
+              },
+              "_postman_previewlanguage": "",
+              "header": [],
+              "cookie": [
+                {
+                  "expires": "Invalid Date",
+                  "domain": "",
+                  "path": ""
+                }
+              ],
+              "body": "{\r\n    \"scores\": [\r\n        {\r\n            \"score_value\": [\r\n                \"A valid number is required.\"\r\n            ]\r\n        },\r\n        {\r\n            \"score_value\": [\r\n                \"A valid number is required.\"\r\n            ]\r\n        },\r\n        {},\r\n        {}\r\n    ]\r\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "GET List Score",
+      "item": [
+        {
+          "name": "GET List Score of Class - SUCCESS",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/classes/1/scores/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "classes",
+                "1",
+                "scores",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "GET List Score of Class",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/classes/1/scores/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "classes",
+                    "1",
+                    "scores",
+                    ""
+                  ]
+                }
+              },
+              "_postman_previewlanguage": null,
+              "header": null,
+              "cookie": [],
+              "body": "[\r\n    {\r\n        \"enrollment_id\": 1,\r\n        \"score_type_id\": 1,\r\n        \"score_value\": 8.0,\r\n        \"student\": {\r\n            \"id\": 4,\r\n            \"first_name\": \"Minh\",\r\n            \"last_name\": \"Trần\"\r\n        }\r\n    },\r\n    {\r\n        \"enrollment_id\": 1,\r\n        \"score_type_id\": 2,\r\n        \"score_value\": 7.2,\r\n        \"student\": {\r\n            \"id\": 4,\r\n            \"first_name\": \"Minh\",\r\n            \"last_name\": \"Trần\"\r\n        }\r\n    },\r\n    {\r\n        \"enrollment_id\": 1,\r\n        \"score_type_id\": 3,\r\n        \"score_value\": 9.0,\r\n        \"student\": {\r\n            \"id\": 4,\r\n            \"first_name\": \"Minh\",\r\n            \"last_name\": \"Trần\"\r\n        }\r\n    },\r\n    {\r\n        \"enrollment_id\": 2,\r\n        \"score_type_id\": null,\r\n        \"score_value\": null,\r\n        \"student\": {\r\n            \"id\": 5,\r\n            \"first_name\": \"Hoa\",\r\n            \"last_name\": \"Lê\"\r\n        }\r\n    },\r\n    {\r\n        \"enrollment_id\": 4,\r\n        \"score_type_id\": null,\r\n        \"score_value\": null,\r\n        \"student\": {\r\n            \"id\": 23,\r\n            \"first_name\": \"Hv09\",\r\n            \"last_name\": \"Test\"\r\n        }\r\n    },\r\n    {\r\n        \"enrollment_id\": 5,\r\n        \"score_type_id\": null,\r\n        \"score_value\": null,\r\n        \"student\": {\r\n            \"id\": 25,\r\n            \"first_name\": \"Hv14\",\r\n            \"last_name\": \"Test\"\r\n        }\r\n    },\r\n    {\r\n        \"enrollment_id\": 6,\r\n        \"score_type_id\": null,\r\n        \"score_value\": null,\r\n        \"student\": {\r\n            \"id\": 26,\r\n            \"first_name\": \"Hv15\",\r\n            \"last_name\": \"Test\"\r\n        }\r\n    },\r\n    {\r\n        \"enrollment_id\": 7,\r\n        \"score_type_id\": null,\r\n        \"score_value\": null,\r\n        \"student\": {\r\n            \"id\": 27,\r\n            \"first_name\": \"Hv16\",\r\n            \"last_name\": \"Test\"\r\n        }\r\n    },\r\n    {\r\n        \"enrollment_id\": 8,\r\n        \"score_type_id\": null,\r\n        \"score_value\": null,\r\n        \"student\": {\r\n            \"id\": 28,\r\n            \"first_name\": \"Hv17\",\r\n            \"last_name\": \"Test\"\r\n        }\r\n    },\r\n    {\r\n        \"enrollment_id\": 9,\r\n        \"score_type_id\": null,\r\n        \"score_value\": null,\r\n        \"student\": {\r\n            \"id\": 29,\r\n            \"first_name\": \"Minh\",\r\n            \"last_name\": \"Trong\"\r\n        }\r\n    }\r\n]"
+            }
+          ]
+        },
+        {
+          "name": "GET List Score of Class - NO TOKEN",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/classes/1/scores/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "classes",
+                "1",
+                "scores",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "GET List Score of Class",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/classes/1/scores/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "classes",
+                    "1",
+                    "scores",
+                    ""
+                  ]
+                }
+              },
+              "_postman_previewlanguage": null,
+              "header": null,
+              "cookie": [],
+              "body": "{\r\n    \"detail\": \"Authentication credentials were not provided.\"\r\n}"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": ""
+    }
+  ]
+}
