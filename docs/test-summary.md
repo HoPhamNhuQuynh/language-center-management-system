@@ -29,7 +29,7 @@ Một số nội dung chưa được kiểm thử đầy đủ gồm kiểm th�
 | 781 | 781 | 774 | 7 |
 
 ## b) Số Test cases passed/ failed
-![Test Summary](screenshots/Test summary/test-summary.png)
+![Test Summary](test-summary.png)
 
 ## c) Số Bugs tìm được và Tình trạng & Mức độ nghiêm trọng của chúng
 
@@ -39,7 +39,7 @@ Một số nội dung chưa được kiểm thử đầy đủ gồm kiểm th�
 | Open | 0 | 0 | 0 | 1 | 1 |
 | Total | 0 | 1 | 5 | 1 | 7 |
 
-![Test Summary](screenshots/Test summary/Test-summary-bug.png)
+![Test Summary](Test-summary-bug.png)
 
 ## d) Sự phân phối bugs
 
@@ -51,7 +51,7 @@ Một số nội dung chưa được kiểm thử đầy đủ gồm kiểm th�
 | Cosmetic | 0 | 0 | 0 | 1 | 1 |
 | Total => | 1 | 1 | 1 | 4 | 7 |
 
-![Test Summary](screenshots/Test summary/test-summary-phan-phoi-bug.png)
+![Test Summary](test-summary-phan-phoi-bug.png)
 
 # V. Các loại kiểm thử được thực hiện
 
