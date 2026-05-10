@@ -127,7 +127,6 @@
   margin-bottom: 18px;
   box-shadow: var(--shadow-soft);
   display: flex;
-  align-items: center;
   justify-content: space-between;
   gap: 24px;
 }
@@ -421,3 +420,32 @@
 }
 
 .btn-cancel-inline:hover { background: #f8f9fa; }
+
+.student-course-table a {
+  color: var(--navy-600);
+  text-decoration: underline;
+}
+
+.profile-action-btns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.btn--danger {
+  min-width: 120px;
+  height: 44px;
+  border: none;
+  background: linear-gradient(135deg, #c0392b, #e74c3c);
+  color: #fff;
+  border-radius: 18px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 8px 18px rgba(192, 57, 43, 0.22);
+  padding: 0 18px;
+  transition: opacity 0.15s;
+}
+
+.btn--danger:hover { opacity: 0.88; }

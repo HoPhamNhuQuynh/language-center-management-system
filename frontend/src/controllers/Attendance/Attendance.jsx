@@ -1,73 +1,165 @@
-import { useState } from "react";
-import logo from "../../assets/hero.png";
+import { useState, useEffect } from "react";
 import AttendanceForm from "../../pages/Attendance/AttendanceForm";
 import "../../styles/Attendance.css";
+import {
+  getSessionsApi,
+  getAttendancesApi,
+  bulkSyncAttendancesApi,
+} from "../../services/attendanceService";
+import { loadClassesApi } from "../../services/scoreService";
+
+const STATUS_BE_TO_FE = {
+  PRESENT: "Có mặt",
+  ABSENT: "Vắng",
+  LATE: "Trễ",
+};
+const STATUS_FE_TO_BE = {
+  "Có mặt": "PRESENT",
+  Vắng: "ABSENT",
+  Trễ: "LATE",
+};
 
 function Attendance() {
+  const [classes, setClasses] = useState([]);
+  const [sessions, setSessions] = useState([]);
+  const [students, setStudents] = useState([]);
+
   const [selectedClass, setSelectedClass] = useState("");
-  const [selectedDate, setSelectedDate] = useState("18/03/2026");
+  const [selectedSession, setSelectedSession] = useState("");
 
-  const [students, setStudents] = useState([
-    {
-      id: 1,
-      fullName: "Nguyễn Văn Đạt",
-      status: "Có mặt",
-      note: "",
-    },
-    {
-      id: 2,
-      fullName: "Trần Ngọc Lan",
-      status: "Vắng",
-      note: "Xin phép",
-    },
-    {
-      id: 3,
-      fullName: "Lê Minh Khôi",
-      status: "Trễ",
-      note: "",
-    },
-  ]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [canAttendance, setCanAttendance] = useState(true);
 
-  const classes = ["English Giao tiếp 01", "English Giao tiếp 02"];
+  useEffect(() => {
+    const fetchClasses = async () => {
+      try {
+        const res = await loadClassesApi();
+        setClasses(res.results);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchClasses();
+  }, []);
 
-  const dates = ["18/03/2026", "19/03/2026", "20/03/2026"];
+  useEffect(() => {
+    if (!selectedClass) return;
+    setSessions([]);
+    setStudents([]);
+    setSelectedSession("");
 
-  const handleStatusChange = (studentId, newStatus) => {
+    const fetchSessions = async () => {
+      try {
+        const res = await getSessionsApi(selectedClass);
+        setSessions(res);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchSessions();
+  }, [selectedClass]);
+
+  useEffect(() => {
+    if (!selectedSession) return;
+    setStudents([]);
+
+    const fetchAttendances = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const res = await getAttendancesApi(selectedSession);
+
+        setCanAttendance(res.can_attendance); 
+
+        const rows = res.attendances.map((a) => ({
+          enrollmentId: a.enrollment_id,
+          fullName: a.student_name,
+          studentCode: a.student_code,
+          status: STATUS_BE_TO_FE[a.attendance_status] ?? "Vắng",
+          note: a.note ?? "",
+        }));
+        setStudents(rows);
+      } catch (err) {
+        setError("Không thể tải danh sách điểm danh.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchAttendances();
+  }, [selectedSession]);
+
+  const handleClassChange = (classId) => {
+    setSelectedClass(classId);
+    setSelectedSession("");
+    setStudents([]); 
+    setSessions([]);
+  };
+
+  const handleSessionChange = (sessionId) => {
+    setSelectedSession(sessionId);
+    setCanAttendance(true); 
+  };
+
+  const handleStatusChange = (enrollmentId, newStatus) => {
     setStudents((prev) =>
-      prev.map((student) =>
-        student.id === studentId ? { ...student, status: newStatus } : student
-      )
+      prev.map((s) =>
+        s.enrollmentId === enrollmentId ? { ...s, status: newStatus } : s,
+      ),
     );
   };
 
-  const handleNoteChange = (studentId, newNote) => {
+  const handleNoteChange = (enrollmentId, newNote) => {
     setStudents((prev) =>
-      prev.map((student) =>
-        student.id === studentId ? { ...student, note: newNote } : student
-      )
+      prev.map((s) =>
+        s.enrollmentId === enrollmentId ? { ...s, note: newNote } : s,
+      ),
     );
   };
 
-  const handleSubmit = () => {
-    console.log("Lớp:", selectedClass);
-    console.log("Ngày:", selectedDate);
-    console.log("Dữ liệu điểm danh:", students);
-    alert("Hoàn tất điểm danh!");
+  const handleSubmit = async () => {
+    if (!selectedClass || !selectedSession) {
+      alert("Vui lòng chọn lớp và buổi học.");
+      return;
+    }
+
+    try {
+      const payload = {
+        session_id: parseInt(selectedSession),
+        attendances: students.map((s) => ({
+          enrollment_id: s.enrollmentId,
+          attendance_status: STATUS_FE_TO_BE[s.status],
+          note: s.note ?? "",
+        })),
+      };
+
+      await bulkSyncAttendancesApi(selectedClass, payload);
+      alert("Điểm danh thành công!");
+    } catch (err) {
+      const errorMsg =
+        err.response?.data?.detail ||
+        err.response?.data?.[0] ||
+        "Điểm danh thất bại, vui lòng thử lại.";
+      alert(errorMsg);
+      console.error(err);
+    }
   };
 
   return (
     <AttendanceForm
-      logo={logo}
-      selectedClass={selectedClass}
-      selectedDate={selectedDate}
-      setSelectedClass={setSelectedClass}
-      setSelectedDate={setSelectedDate}
       classes={classes}
-      dates={dates}
+      sessions={sessions}
       students={students}
+      selectedClass={selectedClass}
+      selectedSession={selectedSession}
+      onClassChange={handleClassChange}
+      onSessionChange={handleSessionChange}
       onStatusChange={handleStatusChange}
       onNoteChange={handleNoteChange}
       onSubmit={handleSubmit}
+      loading={loading}
+      error={error}
+      canAttendance={canAttendance}
     />
   );
 }

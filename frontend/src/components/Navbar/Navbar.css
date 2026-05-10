@@ -6,6 +6,82 @@
   box-shadow: var(--shadow-soft);
 }
 
+.nav-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 16px;
+  border-radius: 14px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #2d4a8a;
+  cursor: pointer;
+  transition: all 0.22s ease;
+}
+
+.nav-item:hover {
+  color: #1a2f5e;
+  background: linear-gradient(180deg, #ffffff, #eef5ff);
+  box-shadow: 0 6px 16px rgba(39, 68, 114, 0.10);
+  transform: translateY(-2px);
+}
+
+.custom-dropdown-menu {
+  background: #ffffff !important;
+  border: 1px solid #dbe6f5 !important;
+  border-radius: 18px !important;
+  box-shadow: 0 16px 40px rgba(39, 68, 114, 0.13) !important;
+  padding: 8px !important;
+  min-width: 220px !important;
+}
+
+.custom-dropdown-menu::before {
+  content: '';
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  transform: translateX(-50%) rotate(45deg);
+  width: 12px;
+  height: 12px;
+  background: #ffffff;
+  border-left: 1px solid #dbe6f5;
+  border-top: 1px solid #dbe6f5;
+  border-radius: 3px 0 0 0;
+}
+
+.custom-dropdown-menu .ant-dropdown-menu-item {
+  border-radius: 12px !important;
+  padding: 10px 14px !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  color: #2d4a8a !important;
+  transition: all 0.18s ease !important;
+}
+
+.custom-dropdown-menu .ant-dropdown-menu-item:hover {
+  background: linear-gradient(135deg, #eef3ff, #f5f9ff) !important;
+  color: #1a2f5e !important;
+  transform: translateX(3px);
+}
+
+.custom-dropdown-menu .ant-dropdown-menu-item .anticon {
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  background: linear-gradient(135deg, #dbeafe, #eff6ff);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px !important;
+  color: #2563eb !important;
+  margin-right: 4px;
+}
+
+.custom-dropdown-menu .ant-dropdown-menu-item-divider {
+  background-color: #e8eef8 !important;
+  margin: 6px 8px !important;
+}
+
 .navbar__inner {
   min-height: 88px;
   display: flex;
@@ -138,4 +214,19 @@
 .login-btn {
   background: linear-gradient(135deg, var(--navy-800), var(--navy-600));
   box-shadow: 0 12px 24px rgba(30, 47, 91, 0.16);
+}
+
+.navbar__menu a,
+.navbar__menu .nav-item {
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  display: inline-flex;
+  align-items: center;
+  padding: 12px 18px;
+  color: var(--navy-700);
+  line-height: 1.5;
+}
+
+.navbar__menu .ant-space {
+  gap: 6px !important;
 }

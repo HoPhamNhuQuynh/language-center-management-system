@@ -16,7 +16,6 @@
 - Backend: Python (Django, RESTful API)
 - Frontend: ReactJS
 - Database: MySQL
-- AI (nếu có): OpenAI API
 
 ## Cài đặt và chạy
 
@@ -61,11 +60,23 @@ npm run dev
 
 ### Chạy test report 
 ```bash
+### BACKEND DJANGO
 # Cài dependencies
 pip install -r requirements.txt
 
 # Chạy test report
 pytest -q --cov=src --cov-report=term-missing
+
+
+### FRONTEND REACTJS VITE
+# Cài dependencies
+npm install
+
+# Chạy test
+npm run test:run
+npm run test:run -- --reporter=verbose 2>&1 
+npm run test 
+npm run test -- --coverage
 ```
 
 ### Truy cập hệ thống
@@ -73,7 +84,7 @@ pytest -q --cov=src --cov-report=term-missing
 - Backend API: https://localhost:8000/
 
 ## Demo
-[Link video demo hoặc screenshots]
+[Demo sản phẩm](./docs/demo.md)
 
 ## Tài liệu
 - [Phân tích yêu cầu](docs/requirements.md)

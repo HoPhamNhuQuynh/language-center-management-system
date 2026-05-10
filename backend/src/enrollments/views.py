@@ -2,15 +2,16 @@ from rest_framework import viewsets, generics, permissions, status
 from rest_framework.decorators import action
 from enrollments.models import Enrollment, Payment
 from enrollments.serializers import PaymentSerializer, EnrollmentSerializer, EnrollmentDetailSerializer
-from core import core_perms
+from core import core_perms, paginators
 from .perms import IsEnrollmentOwner
 from rest_framework.response import Response
 from .services import VNPayService
 from django.utils import timezone
 from django.db import transaction
+from rest_framework.filters import SearchFilter
 
 
-class EnrollmentViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.RetrieveDestroyAPIView):
+class EnrollmentViewSet(viewsets.ViewSet, generics.ListCreateAPIView):
     def get_queryset(self):
         if getattr(self, 'swagger_fake_view', False):
             return Enrollment.objects.none()
@@ -25,7 +26,7 @@ class EnrollmentViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.R
         return Enrollment.objects.select_related('student', 'classroom').filter(student=self.request.user, active=True)
     
     def get_serializer_class(self):
-        if self.action == 'retrieve' or self.request.user.is_staff:
+        if self.request.user.is_authenticated and self.request.user.is_admin:
             return EnrollmentDetailSerializer
         return EnrollmentSerializer
     
@@ -52,22 +53,33 @@ class EnrollmentViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.R
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class PaymentViewSet(viewsets.ViewSet, generics.ListAPIView):
+class PaymentViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAPIView):
     serializer_class = PaymentSerializer
     permission_classes = [permissions.IsAuthenticated]
+    pagination_class = paginators.ItemPaginator
+    filter_backends = [SearchFilter]
+    search_fields = ["transaction_id"]
 
     def get_queryset(self):
+        if getattr(self, 'swagger_fake_view', False): 
+            return Payment.objects.none()
         user = self.request.user
 
-        if user.is_staff:
-            return Payment.objects.select_related(
+        if user.is_authenticated and user.is_admin:
+            qs = Payment.objects.select_related(
                 'enrollment__classroom',
                 'enrollment__student'
             ).all()
+        else: 
+            qs = Payment.objects.select_related("enrollment__classroom").filter(
+                enrollment__student=user
+            )
 
-        return Payment.objects.select_related(
-            'enrollment__classroom'
-        ).filter(enrollment__student=user)
+        status = self.request.query_params.get("payment_status")
+        if status:
+            qs = qs.filter(payment_status=status)
+
+        return qs.order_by("id")
 
     def create(self, request):
         s = PaymentSerializer(data=request.data, context={'request': request})
@@ -93,27 +105,50 @@ class PaymentViewSet(viewsets.ViewSet, generics.ListAPIView):
     def vnpay_callback(self, request):
         data = request.GET
         vnp_response_code = data.get('vnp_ResponseCode')
-        
-        if vnp_response_code == "00":
-            return Response({"status": "Success", "message": "Thanh toán thành công!"})
-        return Response({"status": "Failed", "message": "Thanh toán thất bại hoặc đã bị hủy."})
+        vnp_txn_ref = data.get('vnp_TxnRef')
+        vnp_transaction_no = data.get('vnp_TransactionNo')
+
+        try:
+            payment = Payment.objects.select_related('enrollment').get(id=vnp_txn_ref)
+
+            if payment.payment_status == Payment.Status.SUCCESS:
+                return Response({"RspCode": "00", "Message": "Already confirmed"})
+
+            with transaction.atomic():
+                if vnp_response_code == "00":
+                    payment.payment_status = Payment.Status.SUCCESS
+                    payment.paid_at = timezone.now()
+                    payment.transaction_id = vnp_transaction_no
+                    payment.save()
+                    enrollment = payment.enrollment
+                    enrollment.enrollment_status = Enrollment.Status.SUCCESS
+                    enrollment.save()
+                else:
+                    payment.payment_status = Payment.Status.FAILED
+                    payment.save()
+
+            return Response({"RspCode": "00", "Message": "Confirm success"})
+        except Payment.DoesNotExist:
+            return Response({"RspCode": "01", "Message": "Payment not found"}, status=404)
 
     @action(detail=False, methods=['get'], url_path='vnpay-ipn', permission_classes=[permissions.AllowAny])
     def vnpay_ipn(self, request):
         data = request.GET
         vnp_txn_ref = data.get('vnp_TxnRef') 
         vnp_response_code = data.get('vnp_ResponseCode')
+        vnp_transaction_no = data.get('vnp_TransactionNo')
 
         try:
             payment = Payment.objects.select_related('enrollment').get(id=vnp_txn_ref)
-            
+
             if payment.payment_status == Payment.Status.SUCCESS:
                 return Response({"RspCode": "00", "Message": "Already confirmed"})
-    
+
             with transaction.atomic():
                 if vnp_response_code == "00":
                     payment.payment_status = Payment.Status.SUCCESS
                     payment.paid_at = timezone.now()
+                    payment.transaction_id = vnp_transaction_no
                     payment.save()
 
                     enrollment = payment.enrollment
@@ -124,6 +159,6 @@ class PaymentViewSet(viewsets.ViewSet, generics.ListAPIView):
                     payment.payment_status = Payment.Status.FAILED
                     payment.save()
 
-            return Response({"RspCode": "00", "Message": "Confirm success"}) 
+            return Response({"RspCode": "00", "Message": "Confirm success"})
         except Payment.DoesNotExist:
             return Response({"RspCode": "01", "Message": "Enrollment not found"})

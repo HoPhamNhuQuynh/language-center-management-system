@@ -41,7 +41,22 @@ export const myScheduleApi = async () => {
     return res.data;
 };
 
+export const myClassResultApi = async () => {
+    const res = await Apis.get("users/me/results/");
+    return res.data;
+}
+
 export const paymentDetailApi = async (id) => {
     const res = await Apis.get(`payments/${id}/`);
     return res.data;
+};
+
+export const resetPasswordApi = async (payload) => {
+  const res = await Apis.patch("users/me/reset-password/", payload);
+  return res.data;
+};
+
+export const deleteAccountApi = async () => {
+  const res = await Apis.delete("users/me/");
+  return res.data;
 };

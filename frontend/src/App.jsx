@@ -5,41 +5,76 @@ import AboutUs from "./controllers/Home/AboutUs";
 import CourseList from "./controllers/Course/CourseList";
 import CourseRegister from "./controllers/Course/CourseRegister";
 import Payment from "./controllers/Payment/Payment";
-import Confirm from "./controllers/Payment/Confirm";
-import BillView from "./controllers/Payment/BillView";
 import Home from "./controllers/Home/Home";
 import Attendance from "./controllers/Attendance/Attendance";
 import ScoreEntry from "./controllers/Score/ScoreEntry";
 import Schedule from "./controllers/Schedule/Schedule";
 import StudentInfo from "./controllers/Student/StudentInfo";
+import ResultAcademic from "./controllers/Student/ResultAcademic";
 import PaymentHistory from "./controllers/Payment/PaymentHistory";
-import './App.css'
+import "./App.css";
 import MainLayout from "./components/Base/MainLayout";
 import { GoogleOAuthProvider } from "@react-oauth/google";
+import ProtectedRoute from "./components/Base/ProtectedRoute";
+import Dashboard from "./controllers/Admin/Dashboard";
+import CourseManagement from "./controllers/Admin/CourseManagement";
+import ClassManagement from "./controllers/Admin/ClassManagement";
+import AccountManagement from "./controllers/Admin/AccountManagement";
+import SessionManagement from "./controllers/Admin/SessionManagement";
+import PaymentManagement from "./controllers/Admin/PaymentManagement";
+import PublicRoute from "./components/Base/PublicRoute";
 
 const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 function App() {
   return (
     <GoogleOAuthProvider clientId={googleClientId}>
-        <Routes>
-          <Route element={<MainLayout />}>
-            <Route path="/" element={<Home />} />
-            <Route path="/about-us" element={<AboutUs />} />
-            <Route path="/course-list" element={<CourseList />} />
-            <Route path="/course-register" element={<CourseRegister />} />
-            <Route path="/payment" element={<Payment />} />
-            <Route path="/confirm" element={<Confirm />} />
-            <Route path="/bill-view" element={<BillView />} />
-            <Route path="/attendance" element={<Attendance />} />
-            <Route path="/score-entry" element={<ScoreEntry />} />
+      <Routes>
+        <Route element={<MainLayout />}>
+          {/* AI CŨNG XEM ĐƯỢC */}
+          <Route path="/" element={<Home />} />
+          <Route path="/about-us" element={<AboutUs />} />
+          <Route path="/course-list" element={<CourseList />} />
+
+          <Route
+            element={<ProtectedRoute allowedRoles={["Teacher", "Student"]} />}
+          >
             <Route path="/schedule" element={<Schedule />} />
-            <Route path="/student-info" element={<StudentInfo />} />
-            <Route path="/payment-history" element={<PaymentHistory />} />
           </Route>
 
+          {/* CHỈ HỌC VIÊN (STUDENT) MỚI VÀO ĐƯỢC */}
+          <Route element={<ProtectedRoute allowedRoles={["Student"]} />}>
+            <Route path="/payment" element={<Payment />} />
+            <Route path="/student-info" element={<StudentInfo />} />
+            <Route path="/result-academic" element={<ResultAcademic />} />
+            <Route path="/payment-history" element={<PaymentHistory />} />
+            <Route path="/course-register" element={<CourseRegister />} />
+          </Route>
+
+          {/* CHỈ GIẢNG VIÊN (TEACHER) MỚI VÀO ĐƯỢC */}
+          <Route element={<ProtectedRoute allowedRoles={["Teacher"]} />}>
+            <Route path="/attendance" element={<Attendance />} />
+            <Route path="/score-entry" element={<ScoreEntry />} />
+          </Route>
+
+          {/* CHỈ ADMIN MỚI VÀO ĐƯỢC */}
+          <Route element={<ProtectedRoute allowedRoles={["Admin"]} />}>
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/course-config" element={<CourseManagement />} />
+            <Route path="/class-config" element={<ClassManagement />} />
+            <Route path="/payment-config" element={<PaymentManagement />} />
+            <Route path="/account-config" element={<AccountManagement />} />
+            <Route
+              path="/session-config/:classId"
+              element={<SessionManagement />}
+            />
+          </Route>
+        </Route>
+
+        <Route element={<PublicRoute />}>
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
-        </Routes>
+        </Route>
+      </Routes>
     </GoogleOAuthProvider>
   );
 }

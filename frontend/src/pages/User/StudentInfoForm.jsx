@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { useRef } from "react";
 
-function StudentInfoForm({ logo, user, studentProfile, tuition, courses, isModalOpen, editData, setEditData, onOpenModal, onSave, setIsOpen, onAvatarChange }) {
+function StudentInfoForm({ user, studentProfile, tuition, courses, isModalOpen, editData, setEditData, onOpenModal, onSave, setIsOpen, onAvatarChange, onDeleteAccount, isPasswordModalOpen, setIsPasswordModalOpen, passwordData, onChangePassword, setPasswordData }) {
   const fileInputRef = useRef(null);
 
   return (
@@ -48,11 +48,78 @@ function StudentInfoForm({ logo, user, studentProfile, tuition, courses, isModal
                 <span>Chỉnh sửa thông tin</span>
               </button>
             )}
+
+            {!isPasswordModalOpen ? (
+              <div className="profile-action-btns">
+                <button className="btn btn--outline" onClick={() => setIsPasswordModalOpen(true)}>
+                  🔑 Đổi mật khẩu
+                </button>
+                <button className="btn btn--danger" onClick={onDeleteAccount}>
+                  🗑 Xóa tài khoản
+                </button>
+              </div>
+            ) : (
+              <div className="password-edit-inline-area" style={{
+                marginTop: "20px",
+                padding: "20px",
+                background: "#f0f2f5", 
+                borderRadius: "15px",
+                display: "block",    
+                maxWidth: "400px",  
+              }}>
+                <h3 style={{ fontSize: 20, marginBottom: "15px", color: "#191970", marginTop: 0 }}>
+                  🔒 Thay đổi mật khẩu
+                </h3>
+
+                <input
+                  className="inline-input"
+                  style={{ display: "block", marginBottom: "10px", width: "100%", maxWidth: "300px" }}
+                  type="password"
+                  placeholder="Mật khẩu hiện tại"
+                  value={passwordData.old_password}
+                  onChange={(e) => setPasswordData({ ...passwordData, old_password: e.target.value })}
+                />
+                <input
+                  className="inline-input"
+                  style={{ display: "block", marginBottom: "10px", width: "100%", maxWidth: "300px" }}
+                  type="password"
+                  placeholder="Mật khẩu mới"
+                  value={passwordData.password}
+                  onChange={(e) => setPasswordData({ ...passwordData, password: e.target.value })}
+                />
+                <input
+                  className="inline-input"
+                  style={{ display: "block", marginBottom: "15px", width: "100%", maxWidth: "300px" }}
+                  type="password"
+                  placeholder="Xác nhận mật khẩu mới"
+                  value={passwordData.confirm_password}
+                  onChange={(e) => setPasswordData({ ...passwordData, confirm_password: e.target.value })}
+                />
+
+                <div className="inline-actions" style={{ display: "flex", gap: "10px", justifyContent: "flex-start" }}>
+                  <button
+                    onClick={onChangePassword}
+                    className="btn-save-inline"
+                    style={{ padding: "8px 18px", background: "#191970", borderRadius: "15px", border: "none", color: "white" }}
+                  >
+                    Cập nhật
+                  </button>
+                  <button
+                    onClick={() => setIsPasswordModalOpen(false)}
+                    className="btn-cancel-inline"
+                    style={{ padding: "8px 18px", background: "white", borderRadius: "15px", border: "1px solid #d9d9d9", color: "black" }}
+                  >
+                    Đóng
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
 
+
           <div className="student-profile-avatar" onClick={() => fileInputRef.current?.click()}>
-            {user?.profile?.avatar ? (
-              <img src={user.profile.avatar} alt="avatar"
+            {user?.avatar ? (
+              <img src={user?.avatar} alt="avatar"
                 style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "22px" }} />
             ) : (
               <div className="student-profile-avatar-inner"></div>
@@ -85,6 +152,7 @@ function StudentInfoForm({ logo, user, studentProfile, tuition, courses, isModal
                 <tr>
                   <th>MÃ LỚP</th><th>TÊN LỚP</th><th>LỊCH HỌC</th>
                   <th>GIÁO VIÊN</th><th>HỌC PHÍ</th><th>TRẠNG THÁI</th>
+                  <th></th>
                 </tr>
               </thead>
               <tbody>
@@ -100,6 +168,11 @@ function StudentInfoForm({ logo, user, studentProfile, tuition, courses, isModal
                         course.status === "PENDING_PAYMENT" ? "Đang chờ thanh toán" :
                           course.status === "PARTIAL_PAYMENT" ? "Thanh toán một phần" :
                             course.status}
+                    </td>
+                    <td>
+                      <Link to="/result-academic" state={{ enrollmentId: course.id, classId: course.classId }}>
+                        Xem chi tiết
+                      </Link>
                     </td>
                   </tr>
                 ))}

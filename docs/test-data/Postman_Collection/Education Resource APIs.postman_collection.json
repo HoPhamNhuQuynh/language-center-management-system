@@ -1,0 +1,4061 @@
+{
+  "info": {
+    "_postman_id": "a66af66c-4882-4493-a3c2-a8c72f4ecaaf",
+    "name": "Education Resource APIs",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "53925870",
+    "_collection_link": "https://go.postman.co/collection/50437165-a66af66c-4882-4493-a3c2-a8c72f4ecaaf?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Course by all user",
+      "item": [
+        {
+          "name": "GET Course - SUCCESS",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "\r",
+                  "\r",
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Course list is not empty\", function () {\r",
+                  "    let data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data.length).to.be.above(0);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Course fields are valid\", function () {\r",
+                  "    let data = pm.response.json();\r",
+                  "\r",
+                  "    data.forEach(course => {\r",
+                  "        pm.expect(course).to.have.property(\"id\");\r",
+                  "        pm.expect(course).to.have.property(\"name\");\r",
+                  "        pm.expect(course).to.have.property(\"image\");\r",
+                  "        pm.expect(course).to.have.property(\"total_sessions\");\r",
+                  "        pm.expect(course).to.have.property(\"level\");\r",
+                  "        pm.expect(course).to.have.property(\"level_name\");\r",
+                  "        pm.expect(course).to.have.property(\"tags\");\r",
+                  "    });\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Tags structure is valid\", function () {\r",
+                  "    let data = pm.response.json();\r",
+                  "\r",
+                  "    data.forEach(course => {\r",
+                  "        course.tags.forEach(tag => {\r",
+                  "            pm.expect(tag).to.have.property(\"id\");\r",
+                  "            pm.expect(tag).to.have.property(\"name\");\r",
+                  "        });\r",
+                  "    });\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/courses/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "courses",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "GET Course - SUCCESS",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/courses/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "courses",
+                    ""
+                  ]
+                }
+              },
+              "_postman_previewlanguage": "",
+              "header": [],
+              "cookie": [
+                {
+                  "expires": "Invalid Date",
+                  "domain": "",
+                  "path": ""
+                }
+              ],
+              "body": "[\r\n    {\r\n        \"id\": 1,\r\n        \"name\": \"Khóa Học Giao Tiếp Toàn Diện 360\",\r\n        \"image\": \"https://res.cloudinary.com/desvczltb/image/upload/v1/language_center_testing/courses/giaotiep360\",\r\n        \"total_sessions\": 36,\r\n        \"level\": 1,\r\n        \"level_name\": \"Cơ bản (Beginner)\",\r\n        \"tags\": [\r\n            {\r\n                \"id\": 1,\r\n                \"name\": \"Giao Tiếp Thực Chiến\"\r\n            }\r\n        ]\r\n    },\r\n    {\r\n        \"id\": 2,\r\n        \"name\": \"IELTS Master 6.5+ (Đảm Bảo Đầu Ra)\",\r\n        \"image\": \"https://res.cloudinary.com/desvczltb/image/upload/v1/language_center_testing/courses/ielts_master\",\r\n        \"total_sessions\": 48,\r\n        \"level\": 3,\r\n        \"level_name\": \"Nâng cao (Advanced/IELTS)\",\r\n        \"tags\": [\r\n            {\r\n                \"id\": 2,\r\n                \"name\": \"Luyện Thi IELTS\"\r\n            }\r\n        ]\r\n    },\r\n    {\r\n        \"id\": 3,\r\n        \"name\": \"Tiếng Anh Doanh Nghiệp (Business English)\",\r\n        \"image\": \"https://res.cloudinary.com/desvczltb/image/upload/v1/language_center_testing/courses/business_eng\",\r\n        \"total_sessions\": 24,\r\n        \"level\": 2,\r\n        \"level_name\": \"Trung cấp (Intermediate)\",\r\n        \"tags\": [\r\n            {\r\n                \"id\": 1,\r\n                \"name\": \"Giao Tiếp Thực Chiến\"\r\n            },\r\n            {\r\n                \"id\": 4,\r\n                \"name\": \"Tiếng Anh Doanh Nghiệp\"\r\n            }\r\n        ]\r\n    },\r\n    {\r\n        \"id\": 7,\r\n        \"name\": \"Khóa học Giao Tiếp Nâng Cao K24\",\r\n        \"image\": \"https://res.cloudinary.com/desvczltb/image/upload/v1777565770/language_center_testing/courses/vou9ic9ycet4isn8jacc.jpg\",\r\n        \"total_sessions\": 0,\r\n        \"level\": 1,\r\n        \"level_name\": \"Cơ bản (Beginner)\",\r\n        \"tags\": []\r\n    }\r\n]"
+            }
+          ]
+        },
+        {
+          "name": "GET Course by course_id - SUCCESS",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is JSON\", function () {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "const data = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Response is an object\", function () {\r",
+                  "    pm.expect(data).to.be.an(\"object\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Has id\", function () {\r",
+                  "    pm.expect(data).to.have.property(\"id\");\r",
+                  "    pm.expect(data.id).to.be.a(\"number\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Has name\", function () {\r",
+                  "    pm.expect(data).to.have.property(\"name\");\r",
+                  "    pm.expect(data.name).to.be.a(\"string\").and.not.empty;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Has image\", function () {\r",
+                  "    pm.expect(data).to.have.property(\"image\");\r",
+                  "    pm.expect(data.image).to.be.a(\"string\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Has total_sessions\", function () {\r",
+                  "    pm.expect(data).to.have.property(\"total_sessions\");\r",
+                  "    pm.expect(data.total_sessions).to.be.a(\"number\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Has level and level_name\", function () {\r",
+                  "    pm.expect(data).to.have.property(\"level\");\r",
+                  "    pm.expect(data.level).to.be.a(\"number\");\r",
+                  "    pm.expect(data).to.have.property(\"level_name\");\r",
+                  "    pm.expect(data.level_name).to.be.a(\"string\").and.not.empty;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Has tags array\", function () {\r",
+                  "    pm.expect(data).to.have.property(\"tags\");\r",
+                  "    pm.expect(data.tags).to.be.an(\"array\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Each tag has correct structure\", function () {\r",
+                  "    data.tags.forEach((tag) => {\r",
+                  "        pm.expect(tag).to.be.an(\"object\");\r",
+                  "        pm.expect(tag).to.have.property(\"id\");\r",
+                  "        pm.expect(tag.id).to.be.a(\"number\");\r",
+                  "        pm.expect(tag).to.have.property(\"name\");\r",
+                  "        pm.expect(tag.name).to.be.a(\"string\").and.not.empty;\r",
+                  "    });\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Has price\", function () {\r",
+                  "    pm.expect(data).to.have.property(\"price\");\r",
+                  "    pm.expect(data.price).to.be.a(\"string\").and.not.empty;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Has description\", function () {\r",
+                  "    pm.expect(data).to.have.property(\"description\");\r",
+                  "    pm.expect(data.description).to.be.a(\"string\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Has active\", function () {\r",
+                  "    pm.expect(data).to.have.property(\"active\");\r",
+                  "    pm.expect(data.active).to.be.a(\"boolean\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Has created_at\", function () {\r",
+                  "    pm.expect(data).to.have.property(\"created_at\");\r",
+                  "    pm.expect(data.created_at).to.be.a(\"string\").and.not.empty;\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/courses/2/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "courses",
+                "2",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "GET Course by course_id",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/courses/2/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "courses",
+                    "2",
+                    ""
+                  ]
+                }
+              },
+              "_postman_previewlanguage": "",
+              "header": [],
+              "cookie": [
+                {
+                  "expires": "Invalid Date",
+                  "domain": "",
+                  "path": ""
+                }
+              ],
+              "body": "{\r\n    \"id\": 2,\r\n    \"name\": \"IELTS Master 6.5+ (Đảm Bảo Đầu Ra)\",\r\n    \"image\": \"https://res.cloudinary.com/desvczltb/image/upload/v1/language_center_testing/courses/ielts_master\",\r\n    \"total_sessions\": 48,\r\n    \"level\": 3,\r\n    \"level_name\": \"Nâng cao (Advanced/IELTS)\",\r\n    \"tags\": [\r\n        {\r\n            \"id\": 2,\r\n            \"name\": \"Luyện Thi IELTS\"\r\n        }\r\n    ],\r\n    \"price\": \"8000000.00\",\r\n    \"description\": \"Chiến lược làm bài thực chiến 4 kỹ năng nghe, nói, đọc, viết theo chuẩn IELTS.\",\r\n    \"active\": true,\r\n    \"created_at\": \"2026-04-19T22:09:21+07:00\"\r\n}"
+            }
+          ]
+        },
+        {
+          "name": "GET Course by course_id - INVALID FORMAT",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is JSON\", function () {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "const data = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Response is an object\", function () {\r",
+                  "    pm.expect(data).to.be.an(\"object\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Has id\", function () {\r",
+                  "    pm.expect(data).to.have.property(\"id\");\r",
+                  "    pm.expect(data.id).to.be.a(\"number\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Has name\", function () {\r",
+                  "    pm.expect(data).to.have.property(\"name\");\r",
+                  "    pm.expect(data.name).to.be.a(\"string\").and.not.empty;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Has image\", function () {\r",
+                  "    pm.expect(data).to.have.property(\"image\");\r",
+                  "    pm.expect(data.image).to.be.a(\"string\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Has total_sessions\", function () {\r",
+                  "    pm.expect(data).to.have.property(\"total_sessions\");\r",
+                  "    pm.expect(data.total_sessions).to.be.a(\"number\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Has level and level_name\", function () {\r",
+                  "    pm.expect(data).to.have.property(\"level\");\r",
+                  "    pm.expect(data.level).to.be.a(\"number\");\r",
+                  "    pm.expect(data).to.have.property(\"level_name\");\r",
+                  "    pm.expect(data.level_name).to.be.a(\"string\").and.not.empty;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Has tags array\", function () {\r",
+                  "    pm.expect(data).to.have.property(\"tags\");\r",
+                  "    pm.expect(data.tags).to.be.an(\"array\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Each tag has correct structure\", function () {\r",
+                  "    data.tags.forEach((tag) => {\r",
+                  "        pm.expect(tag).to.be.an(\"object\");\r",
+                  "        pm.expect(tag).to.have.property(\"id\");\r",
+                  "        pm.expect(tag.id).to.be.a(\"number\");\r",
+                  "        pm.expect(tag).to.have.property(\"name\");\r",
+                  "        pm.expect(tag.name).to.be.a(\"string\").and.not.empty;\r",
+                  "    });\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Has price\", function () {\r",
+                  "    pm.expect(data).to.have.property(\"price\");\r",
+                  "    pm.expect(data.price).to.be.a(\"string\").and.not.empty;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Has description\", function () {\r",
+                  "    pm.expect(data).to.have.property(\"description\");\r",
+                  "    pm.expect(data.description).to.be.a(\"string\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Has active\", function () {\r",
+                  "    pm.expect(data).to.have.property(\"active\");\r",
+                  "    pm.expect(data.active).to.be.a(\"boolean\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Has created_at\", function () {\r",
+                  "    pm.expect(data).to.have.property(\"created_at\");\r",
+                  "    pm.expect(data.created_at).to.be.a(\"string\").and.not.empty;\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/courses/abc/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "courses",
+                "abc",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "GET Course by course_id",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/courses/abc/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "courses",
+                    "abc",
+                    ""
+                  ]
+                }
+              },
+              "_postman_previewlanguage": "",
+              "header": [],
+              "cookie": [
+                {
+                  "expires": "Invalid Date",
+                  "domain": "",
+                  "path": ""
+                }
+              ],
+              "body": "{\r\n    \"detail\": \"Không tìm thấy.\"\r\n}"
+            }
+          ]
+        },
+        {
+          "name": "DELETE Course",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 204\", function () {\r",
+                  "    pm.expect(pm.response.code).to.be.oneOf([204]);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/courses/4/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "courses",
+                "4",
+                ""
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Tag by all user",
+      "item": [
+        {
+          "name": "GET Tag - SUCCESS",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "\r",
+                  "\r",
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Tag list is not empty\", function () {\r",
+                  "    let data = pm.response.json();\r",
+                  "    pm.expect(data.length).to.be.above(0);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Tag fields are valid\", function () {\r",
+                  "    let data = pm.response.json();\r",
+                  "\r",
+                  "    data.forEach(tag => {\r",
+                  "        pm.expect(tag).to.have.property(\"id\");\r",
+                  "        pm.expect(tag).to.have.property(\"name\");\r",
+                  "    });\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/tags/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "tags",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "GET Tag - SUCCESS",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/tags/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "tags",
+                    ""
+                  ]
+                }
+              },
+              "_postman_previewlanguage": "",
+              "header": [],
+              "cookie": [
+                {
+                  "expires": "Invalid Date",
+                  "domain": "",
+                  "path": ""
+                }
+              ],
+              "body": "[\r\n    {\r\n        \"id\": 1,\r\n        \"name\": \"Giao Tiếp Thực Chiến\"\r\n    },\r\n    {\r\n        \"id\": 2,\r\n        \"name\": \"Luyện Thi IELTS\"\r\n    },\r\n    {\r\n        \"id\": 3,\r\n        \"name\": \"Luyện Thi TOEIC\"\r\n    },\r\n    {\r\n        \"id\": 4,\r\n        \"name\": \"Tiếng Anh Doanh Nghiệp\"\r\n    },\r\n    {\r\n        \"id\": 5,\r\n        \"name\": \"Giao tiếp nâng cao\"\r\n    }\r\n]"
+            }
+          ]
+        },
+        {
+          "name": "DELETE Tag - SUCCESS",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "\r",
+                  "\r",
+                  "pm.test(\"Status code is 204\", function () {\r",
+                  "    pm.response.to.have.status(204);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Tag deleted successfully\", function () {\r",
+                  "    pm.expect(pm.response.text()).to.eql(\"\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{base_url}}/tags/5/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "tags",
+                "5",
+                ""
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Class by all user",
+      "item": [
+        {
+          "name": "GET List Classes by course_id-SUCCESS",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is JSON\", function () {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "const data = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Response is an array\", function () {\r",
+                  "    pm.expect(data).to.be.an(\"array\");\r",
+                  "});\r",
+                  "\r",
+                  "if (data.length > 0) {\r",
+                  "    pm.test(\"Each class item is an object\", function () {\r",
+                  "        data.forEach((item) => {\r",
+                  "            pm.expect(item).to.be.an(\"object\");\r",
+                  "        });\r",
+                  "    });\r",
+                  "}\r",
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/courses/99999/classes/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "courses",
+                "99999",
+                "classes",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "GET List Classes by course_id-SUCCESS",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/courses/1/classes/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "courses",
+                    "1",
+                    "classes",
+                    ""
+                  ]
+                }
+              },
+              "_postman_previewlanguage": "",
+              "header": [],
+              "cookie": [
+                {
+                  "expires": "Invalid Date",
+                  "domain": "",
+                  "path": ""
+                }
+              ],
+              "body": ""
+            }
+          ]
+        },
+        {
+          "name": "GET List Classes by course_id-INVALID FORMAT",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/courses/abc/classes/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "courses",
+                "abc",
+                "classes",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "GET List Classes by course_id-INVALID FORMAT",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/courses/abc/classes/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "courses",
+                    "abc",
+                    "classes",
+                    ""
+                  ]
+                }
+              },
+              "_postman_previewlanguage": null,
+              "header": null,
+              "cookie": [],
+              "body": null
+            }
+          ]
+        },
+        {
+          "name": "GET List Classes by id-SUCCESS",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is JSON\", function () {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "const data = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Response is an object\", function () {\r",
+                  "    pm.expect(data).to.be.an(\"object\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Has id\", function () {\r",
+                  "    pm.expect(data).to.have.property(\"id\");\r",
+                  "    pm.expect(data.id).to.be.a(\"number\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"session_id\": 1,\r\n  \"attendances\": [\r\n    {\r\n      \"enrollment_id\": 1,\r\n      \"attendance_status\": \"PRESENT\",\r\n      \"note\": \"\"\r\n    },\r\n    {\r\n      \"enrollment_id\": 2,\r\n      \"attendance_status\": \"ABSENT\",\r\n      \"note\": \"Nghỉ ốm\"\r\n    }\r\n  ]\r\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/classes/1/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "classes",
+                "1",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "GET List Classes by id-SUCCESS",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"session_id\": 1,\r\n  \"attendances\": [\r\n    {\r\n      \"enrollment_id\": 1,\r\n      \"attendance_status\": \"PRESENT\",\r\n      \"note\": \"\"\r\n    },\r\n    {\r\n      \"enrollment_id\": 2,\r\n      \"attendance_status\": \"ABSENT\",\r\n      \"note\": \"Nghỉ ốm\"\r\n    }\r\n  ]\r\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/classes/1/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "classes",
+                    "1",
+                    ""
+                  ]
+                }
+              },
+              "_postman_previewlanguage": null,
+              "header": null,
+              "cookie": [],
+              "body": null
+            }
+          ]
+        },
+        {
+          "name": "GET List Classes by id-INVALID FORMAT",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400 or 404\", function () {\r",
+                  "    pm.expect(pm.response.code).to.be.oneOf([400, 404]);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/classes/abc/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "classes",
+                "abc",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "GET List Classes by id-INVALID FORMAT",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/classes/abc/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "classes",
+                    "abc",
+                    ""
+                  ]
+                }
+              },
+              "_postman_previewlanguage": null,
+              "header": null,
+              "cookie": [],
+              "body": null
+            }
+          ]
+        },
+        {
+          "name": "GET Student by teacher - SUCCESS",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "\r",
+                  "\r",
+                  "let data = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Student list is not empty\", function () {\r",
+                  "    let data = pm.response.json();\r",
+                  "    pm.expect(data.length).to.be.above(0);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is array\", function () {\r",
+                  "    pm.expect(data).to.be.an(\"array\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/classes/1/students/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "classes",
+                "1",
+                "students",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "GET Student by teacher - SUCCESS",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/classes/1/students/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "classes",
+                    "1",
+                    "students",
+                    ""
+                  ]
+                }
+              },
+              "_postman_previewlanguage": "",
+              "header": [],
+              "cookie": [
+                {
+                  "expires": "Invalid Date",
+                  "domain": "",
+                  "path": ""
+                }
+              ],
+              "body": "[\r\n    {\r\n        \"id\": 1,\r\n        \"student\": {\r\n            \"id\": 4,\r\n            \"first_name\": \"Minh\",\r\n            \"last_name\": \"Tran\",\r\n            \"email\": \"minhtran@gmail.com\",\r\n            \"username\": \"student_minh\"\r\n        },\r\n        \"classroom\": {\r\n            \"id\": 1,\r\n            \"name\": \"Lớp Giao Tiếp Căn Bản - K23 (Ca Tối)\",\r\n            \"course\": \"Khóa Học Giao Tiếp Toàn Diện 360\",\r\n            \"start_date\": \"2024-05-01\",\r\n            \"end_date\": \"2024-07-31\",\r\n            \"active\": false,\r\n            \"main_teacher\": {\r\n                \"id\": 2,\r\n                \"first_name\": \"John\",\r\n                \"last_name\": \"Doe\",\r\n                \"email\": \"johndoe@ttngoaingu.edu.vn\",\r\n                \"username\": \"teacher_john\"\r\n            }\r\n        },\r\n        \"enrollment_status\": \"SUCCESS\",\r\n        \"payment_deadline\": \"2024-04-21T06:59:59+07:00\"\r\n    }\r\n]"
+            }
+          ]
+        },
+        {
+          "name": "GET Student - WRONG CLASS",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "\r",
+                  "\r",
+                  "pm.test(\"Status code is 404\", function () {\r",
+                  "    pm.response.to.have.status(404);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Not found validation failed\", function () {\r",
+                  "    let data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data).to.have.property(\"detail\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Not found error message is valid\", function () {\r",
+                  "    let data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data.detail).to.eql(\"No ClassRoom matches the given query.\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/classes/10/students/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "classes",
+                "10",
+                "students",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "GET Student - WRONG CLASS",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/classes/10/students/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "classes",
+                    "10",
+                    "students",
+                    ""
+                  ]
+                }
+              },
+              "_postman_previewlanguage": "",
+              "header": [],
+              "cookie": [
+                {
+                  "expires": "Invalid Date",
+                  "domain": "",
+                  "path": ""
+                }
+              ],
+              "body": "{\r\n    \"detail\": \"No ClassRoom matches the given query.\"\r\n}"
+            }
+          ]
+        },
+        {
+          "name": "GET Student - INVALID FORMAT",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 404\", function () {\r",
+                  "    pm.response.to.have.status(404);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Not found validation failed\", function () {\r",
+                  "    let data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data).to.have.property(\"detail\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Not found error message is valid\", function () {\r",
+                  "    let data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data.detail).to.eql(\"Không tìm thấy.\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/classes/abc/students/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "classes",
+                "abc",
+                "students",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "GET Student - INVALID FORMAT",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/classes/abc/students/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "classes",
+                    "abc",
+                    "students",
+                    ""
+                  ]
+                }
+              },
+              "_postman_previewlanguage": "",
+              "header": [],
+              "cookie": [
+                {
+                  "expires": "Invalid Date",
+                  "domain": "",
+                  "path": ""
+                }
+              ],
+              "body": "{\r\n    \"detail\": \"Không tìm thấy.\"\r\n}"
+            }
+          ]
+        },
+        {
+          "name": "GET Student - NO CLASS_ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "\r",
+                  "\r",
+                  "pm.test(\"Status code is 404\", function () {\r",
+                  "    pm.response.to.have.status(404);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Missing class id validation failed\", function () {\r",
+                  "    let data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data).to.have.property(\"detail\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Missing class id error message is valid\", function () {\r",
+                  "    let data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data.detail).to.eql(\"Không tìm thấy.\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/classes/students/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "classes",
+                "students",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "GET Student - NO CLASS_ID",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/classes/students/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "classes",
+                    "students",
+                    ""
+                  ]
+                }
+              },
+              "_postman_previewlanguage": "",
+              "header": [],
+              "cookie": [
+                {
+                  "expires": "Invalid Date",
+                  "domain": "",
+                  "path": ""
+                }
+              ],
+              "body": "{\r\n    \"detail\": \"Không tìm thấy.\"\r\n}"
+            }
+          ]
+        },
+        {
+          "name": "GET Student by admin - SUCCESS",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "\r",
+                  "\r",
+                  "let data = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Student list is not empty\", function () {\r",
+                  "    let data = pm.response.json();\r",
+                  "    pm.expect(data.length).to.be.above(0);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is array\", function () {\r",
+                  "    pm.expect(data).to.be.an(\"array\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/classes/1/students/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "classes",
+                "1",
+                "students",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "GET Student by admin - SUCCESS",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/classes/1/students/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "classes",
+                    "1",
+                    "students",
+                    ""
+                  ]
+                }
+              },
+              "_postman_previewlanguage": "",
+              "header": [],
+              "cookie": [
+                {
+                  "expires": "Invalid Date",
+                  "domain": "",
+                  "path": ""
+                }
+              ],
+              "body": "[\r\n    {\r\n        \"id\": 1,\r\n        \"student\": {\r\n            \"id\": 4,\r\n            \"first_name\": \"Minh\",\r\n            \"last_name\": \"Tran\",\r\n            \"email\": \"minhtran@gmail.com\",\r\n            \"username\": \"student_minh\"\r\n        },\r\n        \"classroom\": {\r\n            \"id\": 1,\r\n            \"name\": \"Lớp Giao Tiếp Căn Bản - K23 (Ca Tối)\",\r\n            \"course\": \"Khóa Học Giao Tiếp Toàn Diện 360\",\r\n            \"start_date\": \"2024-05-01\",\r\n            \"end_date\": \"2024-07-31\",\r\n            \"active\": false,\r\n            \"main_teacher\": {\r\n                \"id\": 2,\r\n                \"first_name\": \"John\",\r\n                \"last_name\": \"Doe\",\r\n                \"email\": \"johndoe@ttngoaingu.edu.vn\",\r\n                \"username\": \"teacher_john\"\r\n            }\r\n        },\r\n        \"enrollment_status\": \"SUCCESS\",\r\n        \"payment_deadline\": \"2024-04-21T06:59:59+07:00\"\r\n    }\r\n]"
+            }
+          ]
+        },
+        {
+          "name": "GET Classes - SUCCESS",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "\r",
+                  "\r",
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Classes list is not empty\", function () {\r",
+                  "    let data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data.count).to.be.above(0);\r",
+                  "    pm.expect(data.results.length).to.be.above(0);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Pagination fields are valid\", function () {\r",
+                  "    let data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data).to.have.property(\"count\");\r",
+                  "    pm.expect(data).to.have.property(\"next\");\r",
+                  "    pm.expect(data).to.have.property(\"previous\");\r",
+                  "    pm.expect(data).to.have.property(\"results\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Class fields are valid\", function () {\r",
+                  "    let data = pm.response.json();\r",
+                  "\r",
+                  "    data.results.forEach(item => {\r",
+                  "        pm.expect(item).to.have.property(\"id\");\r",
+                  "        pm.expect(item).to.have.property(\"name\");\r",
+                  "        pm.expect(item).to.have.property(\"course\");\r",
+                  "        pm.expect(item).to.have.property(\"start_date\");\r",
+                  "        pm.expect(item).to.have.property(\"end_date\");\r",
+                  "        pm.expect(item).to.have.property(\"active\");\r",
+                  "        pm.expect(item).to.have.property(\"created_at\");\r",
+                  "        pm.expect(item).to.have.property(\"grade_deadline\");\r",
+                  "        pm.expect(item).to.have.property(\"grade_status\");\r",
+                  "        pm.expect(item).to.have.property(\"main_teacher\");\r",
+                  "    });\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Main teacher fields are valid\", function () {\r",
+                  "    let data = pm.response.json();\r",
+                  "\r",
+                  "    data.results.forEach(item => {\r",
+                  "        pm.expect(item.main_teacher).to.have.property(\"id\");\r",
+                  "        pm.expect(item.main_teacher).to.have.property(\"first_name\");\r",
+                  "        pm.expect(item.main_teacher).to.have.property(\"last_name\");\r",
+                  "        pm.expect(item.main_teacher).to.have.property(\"email\");\r",
+                  "        pm.expect(item.main_teacher).to.have.property(\"username\");\r",
+                  "        pm.expect(item.main_teacher).to.have.property(\"full_name\");\r",
+                  "    });\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/classes/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "classes",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "student_id",
+                  "value": "30",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PATCH Classes - SUCCESS",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "\r",
+                  "\r",
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Class updated successfully\", function () {\r",
+                  "    let data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data).to.have.property(\"id\");\r",
+                  "    pm.expect(data).to.have.property(\"name\");\r",
+                  "    pm.expect(data).to.have.property(\"course\");\r",
+                  "    pm.expect(data).to.have.property(\"start_date\");\r",
+                  "    pm.expect(data).to.have.property(\"end_date\");\r",
+                  "    pm.expect(data).to.have.property(\"active\");\r",
+                  "    pm.expect(data).to.have.property(\"created_at\");\r",
+                  "    pm.expect(data).to.have.property(\"grade_deadline\");\r",
+                  "    pm.expect(data).to.have.property(\"grade_status\");\r",
+                  "    pm.expect(data).to.have.property(\"main_teacher\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Updated data is correct\", function () {\r",
+                  "    let data = pm.response.json();\r",
+                  "    let body = JSON.parse(pm.request.body.raw);\r",
+                  "\r",
+                  "    if (body.name !== undefined)\r",
+                  "        pm.expect(data.name).to.eql(body.name);\r",
+                  "\r",
+                  "    if (body.start_date !== undefined)\r",
+                  "        pm.expect(data.start_date).to.eql(body.start_date);\r",
+                  "\r",
+                  "    if (body.end_date !== undefined)\r",
+                  "        pm.expect(data.end_date).to.eql(body.end_date);\r",
+                  "\r",
+                  "    if (body.active !== undefined)\r",
+                  "        pm.expect(data.active).to.eql(body.active);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Main teacher fields are valid\", function () {\r",
+                  "    let data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data.main_teacher).to.have.property(\"id\");\r",
+                  "    pm.expect(data.main_teacher).to.have.property(\"first_name\");\r",
+                  "    pm.expect(data.main_teacher).to.have.property(\"last_name\");\r",
+                  "    pm.expect(data.main_teacher).to.have.property(\"email\");\r",
+                  "    pm.expect(data.main_teacher).to.have.property(\"username\");\r",
+                  "    pm.expect(data.main_teacher).to.have.property(\"full_name\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"Lớp Giao Tiếp Căn Bản - K20 (Ca Tối)\",\r\n    \"course\": 1,\r\n    \"start_date\": \"2024-05-01\",\r\n    \"end_date\": \"2024-07-31\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/classes/1/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "classes",
+                "1",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "PATCH Classes - SUCCESS",
+              "originalRequest": {
+                "method": "PATCH",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"name\": \"Lớp Giao Tiếp Căn Bản - K20 (Ca Tối)\",\r\n    \"course\": 1,\r\n    \"start_date\": \"2024-05-01\",\r\n    \"end_date\": \"2024-07-31\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/classes/1/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "classes",
+                    "1",
+                    ""
+                  ]
+                }
+              },
+              "_postman_previewlanguage": null,
+              "header": null,
+              "cookie": [],
+              "body": null
+            }
+          ]
+        },
+        {
+          "name": "PATCH Classes - DUPLICATE",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "\r",
+                  "\r",
+                  "pm.test(\"Status code is 400\", function () {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Duplicate validation failed\", function () {\r",
+                  "    let data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data).to.have.property(\"name\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Duplicate error message is valid\", function () {\r",
+                  "    let data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data.name[0]).to.eql(\"class room có name đã tồn tại.\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"Lớp Giao Tiếp Căn Bản - K20 (Ca Tối)\",\r\n    \"course\": 1,\r\n    \"start_date\": \"2024-05-01\",\r\n    \"end_date\": \"2024-07-31\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/classes/2/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "classes",
+                "2",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "PATCH Classes - DUPLICATE",
+              "originalRequest": {
+                "method": "PATCH",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"name\": \"Lớp Giao Tiếp Căn Bản - K20 (Ca Tối)\",\r\n    \"course\": 1,\r\n    \"start_date\": \"2024-05-01\",\r\n    \"end_date\": \"2024-07-31\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/classes/2/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "classes",
+                    "2",
+                    ""
+                  ]
+                }
+              },
+              "_postman_previewlanguage": null,
+              "header": null,
+              "cookie": [],
+              "body": null
+            }
+          ]
+        },
+        {
+          "name": "PATCH Classes - EMPTY FIELD",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "\r",
+                  "\r",
+                  "pm.test(\"Status code is 400\", function () {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Required fields validation failed\", function () {\r",
+                  "    let data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data).to.have.property(\"name\");\r",
+                  "    pm.expect(data).to.have.property(\"course\");\r",
+                  "    pm.expect(data).to.have.property(\"start_date\");\r",
+                  "    pm.expect(data).to.have.property(\"end_date\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Validation error messages are valid\", function () {\r",
+                  "    let data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data.name[0]).to.eql(\"Trường này không được bỏ trống.\");\r",
+                  "    pm.expect(data.course[0]).to.eql(\"This field may not be null.\");\r",
+                  "    pm.expect(data.start_date[0]).to.eql(\"Ngày sai định dạng. Dùng một trong những định dạng sau để thay thế: YYYY-MM-DD.\");\r",
+                  "    pm.expect(data.end_date[0]).to.eql(\"Ngày sai định dạng. Dùng một trong những định dạng sau để thay thế: YYYY-MM-DD.\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"\",\r\n    \"course\": \"\",\r\n    \"start_date\": \"\",\r\n    \"end_date\": \"\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/classes/1/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "classes",
+                "1",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "PATCH Classes - EMPTY FIELD",
+              "originalRequest": {
+                "method": "PATCH",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"name\": \"\",\r\n    \"course\": \"\",\r\n    \"start_date\": \"\",\r\n    \"end_date\": \"\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/classes/1/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "classes",
+                    "1",
+                    ""
+                  ]
+                }
+              },
+              "_postman_previewlanguage": null,
+              "header": null,
+              "cookie": [],
+              "body": null
+            }
+          ]
+        },
+        {
+          "name": "PATCH Classes - WRONG ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "\r",
+                  "\r",
+                  "pm.test(\"Status code is 404\", function () {\r",
+                  "    pm.response.to.have.status(404);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Not found validation failed\", function () {\r",
+                  "    let data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data).to.have.property(\"detail\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Not found error message is valid\", function () {\r",
+                  "    let data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data.detail).to.eql(\"No ClassRoom matches the given query.\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"Lớp Giao Tiếp Căn Bản - K20 (Ca Tối)\",\r\n    \"course\": 1,\r\n    \"start_date\": \"2024-05-01\",\r\n    \"end_date\": \"2024-07-31\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/classes/10/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "classes",
+                "10",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "PATCH Classes - WRONG ID",
+              "originalRequest": {
+                "method": "PATCH",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"name\": \"Lớp Giao Tiếp Căn Bản - K20 (Ca Tối)\",\r\n    \"course\": 1,\r\n    \"start_date\": \"2024-05-01\",\r\n    \"end_date\": \"2024-07-31\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/classes/10/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "classes",
+                    "10",
+                    ""
+                  ]
+                }
+              },
+              "_postman_previewlanguage": null,
+              "header": null,
+              "cookie": [],
+              "body": null
+            }
+          ]
+        },
+        {
+          "name": "PATCH Classes - WRONG DATEFORMAT",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "\r",
+                  "\r",
+                  "pm.test(\"Status code is 400\", function () {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Date format validation failed\", function () {\r",
+                  "    let data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data).to.have.property(\"start_date\");\r",
+                  "    pm.expect(data).to.have.property(\"end_date\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Date format error messages are valid\", function () {\r",
+                  "    let data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data.start_date[0]).to.eql(\"Ngày sai định dạng. Dùng một trong những định dạng sau để thay thế: YYYY-MM-DD.\");\r",
+                  "    pm.expect(data.end_date[0]).to.eql(\"Ngày sai định dạng. Dùng một trong những định dạng sau để thay thế: YYYY-MM-DD.\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"Lớp Giao Tiếp Căn Bản - K20 (Ca Tối)\",\r\n    \"course\": 1,\r\n    \"start_date\": \"01/05/2024\",\r\n    \"end_date\": \"31/07/2024\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/classes/1/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "classes",
+                "1",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "PATCH Classes - WRONG DATEFORMAT",
+              "originalRequest": {
+                "method": "PATCH",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"name\": \"Lớp Giao Tiếp Căn Bản - K20 (Ca Tối)\",\r\n    \"course\": 1,\r\n    \"start_date\": \"01/05/2024\",\r\n    \"end_date\": \"31/07/2024\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/classes/1/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "classes",
+                    "1",
+                    ""
+                  ]
+                }
+              },
+              "_postman_previewlanguage": null,
+              "header": null,
+              "cookie": [],
+              "body": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Level by user",
+      "item": [
+        {
+          "name": "GET Level - SUCCESS",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "\r",
+                  "\r",
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Level list is not empty\", function () {\r",
+                  "    let data = pm.response.json();\r",
+                  "    pm.expect(data.length).to.be.above(0);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Level fields are valid\", function () {\r",
+                  "    let data = pm.response.json();\r",
+                  "\r",
+                  "    data.forEach(level => {\r",
+                  "        pm.expect(level).to.have.property(\"id\");\r",
+                  "        pm.expect(level).to.have.property(\"name\");\r",
+                  "        pm.expect(level).to.have.property(\"description\");\r",
+                  "    });\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/levels/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "levels",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "GET Level - SUCCESS",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/levels/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "levels",
+                    ""
+                  ]
+                }
+              },
+              "_postman_previewlanguage": "",
+              "header": [],
+              "cookie": [
+                {
+                  "expires": "Invalid Date",
+                  "domain": "",
+                  "path": ""
+                }
+              ],
+              "body": "[\r\n    {\r\n        \"id\": 1,\r\n        \"name\": \"Cơ bản (Beginner)\",\r\n        \"description\": \"Dành cho học viên mất gốc, bắt đầu làm quen tiếng Anh.\"\r\n    },\r\n    {\r\n        \"id\": 2,\r\n        \"name\": \"Trung cấp (Intermediate)\",\r\n        \"description\": \"Có nền tảng, tập trung phát triển tư duy tiếng Anh và phản xạ.\"\r\n    },\r\n    {\r\n        \"id\": 3,\r\n        \"name\": \"Nâng cao (Advanced/IELTS)\",\r\n        \"description\": \"Sử dụng tiếng Anh chuyên sâu, luyện thi chứng chỉ quốc tế.\"\r\n    }\r\n]"
+            }
+          ]
+        },
+        {
+          "name": "POST Level by Admin - SUCCESS",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () {\r",
+                  "    pm.response.to.have.status(201);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Level created successfully\", function () {\r",
+                  "    let data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data).to.have.property(\"id\");\r",
+                  "    pm.expect(data).to.have.property(\"name\");\r",
+                  "    pm.expect(data).to.have.property(\"description\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Level data is correct\", function () {\r",
+                  "    let data = pm.response.json();\r",
+                  "    let requestBody = JSON.parse(pm.request.body.raw);\r",
+                  "\r",
+                  "    pm.expect(data.name).to.eql(requestBody.name);\r",
+                  "    pm.expect(data.description).to.eql(requestBody.description);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\" : \"Tiếng Nga cơ bản (Beginner)\",\r\n    \"description\":\"Tiếng Nga cơ bản cho người mới bắt đầu\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/levels/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "levels",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "POST Level by Admin - SUCCESS",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"name\" : \"Tiếng Nga cơ bản (Beginner)\",\r\n    \"description\":\"Tiếng Nga cơ bản cho người mới bắt đầu\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/levels/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "levels",
+                    ""
+                  ]
+                }
+              },
+              "_postman_previewlanguage": "",
+              "header": [],
+              "cookie": [
+                {
+                  "expires": "Invalid Date",
+                  "domain": "",
+                  "path": ""
+                }
+              ],
+              "body": "{\r\n    \"id\": 5,\r\n    \"name\": \"Tiếng Nga cơ bản (Beginner)\",\r\n    \"description\": \"Tiếng Nga cơ bản cho người mới bắt đầu\"\r\n}"
+            }
+          ]
+        },
+        {
+          "name": "POST Level by Admin - DUPLICATE",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "\r",
+                  "\r",
+                  "pm.test(\"Status code is 400\", function () {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Duplicate level creation failed\", function () {\r",
+                  "    let data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data).to.have.property(\"name\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Duplicate error message is valid\", function () {\r",
+                  "    let data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data.name[0]).to.include(\"đã tồn tại\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\" : \"Tiếng Nga cơ bản (Beginner)\",\r\n    \"description\":\"Tiếng Nga cơ bản cho người mới bắt đầu\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/levels/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "levels",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "student_id",
+                  "value": "30",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "POST Level by Admin - DUPLICATE",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"name\" : \"Tiếng Nga cơ bản (Beginner)\",\r\n    \"description\":\"Tiếng Nga cơ bản cho người mới bắt đầu\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/levels/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "levels",
+                    ""
+                  ],
+                  "query": [
+                    {
+                      "key": "student_id",
+                      "value": "30",
+                      "disabled": true
+                    }
+                  ]
+                }
+              },
+              "_postman_previewlanguage": null,
+              "header": null,
+              "cookie": [],
+              "body": null
+            }
+          ]
+        },
+        {
+          "name": "POST Level by Admin - EMPTY FIELD",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "\r",
+                  "\r",
+                  "pm.test(\"Status code is 400\", function () {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response has validation errors\", function () {\r",
+                  "    let data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data).to.have.property(\"name\");\r",
+                  "    pm.expect(data.name[0]).to.eql(\"Trường này không được bỏ trống.\");\r",
+                  "\r",
+                  "    pm.expect(data).to.have.property(\"description\");\r",
+                  "    pm.expect(data.description[0]).to.eql(\"Trường này không được bỏ trống.\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"No id is returned on validation error\", function () {\r",
+                  "    let data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data).to.not.have.property(\"id\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\" : \"\",\r\n    \"description\":\"\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/levels/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "levels",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "student_id",
+                  "value": "30",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE Levels",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 204\", function () {\r",
+                  "    pm.expect(pm.response.code).to.be.oneOf([204]);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": []
+            },
+            "url": {
+              "raw": "{{base_url}}/levels/4/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "levels",
+                "4",
+                ""
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Score-type by admin",
+      "item": [
+        {
+          "name": "GET Score-type - SUCCESS",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "\r",
+                  "\r",
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Score-type list is not empty\", function () {\r",
+                  "    let data = pm.response.json();\r",
+                  "    pm.expect(data.length).to.be.above(0);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Score-type fields are valid\", function () {\r",
+                  "    let data = pm.response.json();\r",
+                  "\r",
+                  "    data.forEach(scoretype => {\r",
+                  "        pm.expect(scoretype).to.have.property(\"id\");\r",
+                  "        pm.expect(scoretype).to.have.property(\"name\");\r",
+                  "        pm.expect(scoretype).to.have.property(\"weight\");\r",
+                  "        pm.expect(scoretype).to.have.property(\"course\");\r",
+                  "        pm.expect(scoretype).to.have.property(\"course_name\");\r",
+                  "    });\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/score-types/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "score-types",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "GET Score-type - SUCCESS",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/score-types/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "score-types",
+                    ""
+                  ]
+                }
+              },
+              "_postman_previewlanguage": "",
+              "header": [],
+              "cookie": [
+                {
+                  "expires": "Invalid Date",
+                  "domain": "",
+                  "path": ""
+                }
+              ],
+              "body": "[\r\n    {\r\n        \"id\": 1,\r\n        \"name\": \"Điểm Chuyên Cần (Attendance)\",\r\n        \"weight\": 0.1,\r\n        \"course\": 1,\r\n        \"course_name\": \"Khóa Học Giao Tiếp Toàn Diện 360\"\r\n    },\r\n    {\r\n        \"id\": 2,\r\n        \"name\": \"Bài Thi Giữa Kỳ (Midterm)\",\r\n        \"weight\": 0.3,\r\n        \"course\": 1,\r\n        \"course_name\": \"Khóa Học Giao Tiếp Toàn Diện 360\"\r\n    },\r\n    {\r\n        \"id\": 3,\r\n        \"name\": \"Bài Thi Cuối Kỳ (Final)\",\r\n        \"weight\": 0.6,\r\n        \"course\": 1,\r\n        \"course_name\": \"Khóa Học Giao Tiếp Toàn Diện 360\"\r\n    },\r\n    {\r\n        \"id\": 4,\r\n        \"name\": \"Mock Test IELTS 1\",\r\n        \"weight\": 0.2,\r\n        \"course\": 2,\r\n        \"course_name\": \"IELTS Master 6.5+ (Đảm Bảo Đầu Ra)\"\r\n    },\r\n    {\r\n        \"id\": 5,\r\n        \"name\": \"Mock Test IELTS 2\",\r\n        \"weight\": 0.3,\r\n        \"course\": 2,\r\n        \"course_name\": \"IELTS Master 6.5+ (Đảm Bảo Đầu Ra)\"\r\n    },\r\n    {\r\n        \"id\": 6,\r\n        \"name\": \"Final IELTS Test\",\r\n        \"weight\": 0.5,\r\n        \"course\": 2,\r\n        \"course_name\": \"IELTS Master 6.5+ (Đảm Bảo Đầu Ra)\"\r\n    }\r\n]"
+            }
+          ]
+        },
+        {
+          "name": "POST Create Score-type - SUCCESS",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "\r",
+                  "\r",
+                  "pm.test(\"Status code is 201\", function () {\r",
+                  "    pm.response.to.have.status(201);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Score level created successfully\", function () {\r",
+                  "    let data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data).to.have.property(\"id\");\r",
+                  "    pm.expect(data).to.have.property(\"name\");\r",
+                  "    pm.expect(data).to.have.property(\"weight\");\r",
+                  "    pm.expect(data).to.have.property(\"course\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Score level data is correct\", function () {\r",
+                  "    let data = pm.response.json();\r",
+                  "    let requestBody = JSON.parse(pm.request.body.raw);\r",
+                  "\r",
+                  "    pm.expect(data.name).to.eql(requestBody.name);\r",
+                  "    pm.expect(data.weight).to.eql(requestBody.weight);\r",
+                  "    pm.expect(data.course).to.eql(requestBody.course);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"s\",\r\n    \"weight\": 2,\r\n    \"course\": 1\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/score-types/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "score-types",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "POST Create Score-type - SUCCESS",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"name\": \"MOCK TEST 3 - IELTS\",\r\n    \"weight\": 2,\r\n    \"course\": 1\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/score-types/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "score-types",
+                    ""
+                  ]
+                }
+              },
+              "_postman_previewlanguage": "",
+              "header": [],
+              "cookie": [
+                {
+                  "expires": "Invalid Date",
+                  "domain": "",
+                  "path": ""
+                }
+              ],
+              "body": ""
+            }
+          ]
+        },
+        {
+          "name": "POST Create Score-type - DUPLICATE",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Duplicate validation failed\", function () {\r",
+                  "    let data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data).to.have.property(\"non_field_errors\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Duplicate error message is valid\", function () {\r",
+                  "    let data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data.non_field_errors[0]).to.eql(\"The fields name, course must make a unique set.\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"s\",\r\n    \"weight\": 2,\r\n    \"course\": 1\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/score-types/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "score-types",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "POST Create Score-type - DUPLICATE",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"name\": \"MOCK TEST 3 - IELTS\",\r\n    \"weight\": 2,\r\n    \"course\": 1\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/score-types/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "score-types",
+                    ""
+                  ]
+                }
+              },
+              "_postman_previewlanguage": "",
+              "header": [],
+              "cookie": [
+                {
+                  "expires": "Invalid Date",
+                  "domain": "",
+                  "path": ""
+                }
+              ],
+              "body": ""
+            }
+          ]
+        },
+        {
+          "name": "POST Create Score-type - EMPTY FIELD",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "\r",
+                  "\r",
+                  "pm.test(\"Status code is 400\", function () {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Required fields validation failed\", function () {\r",
+                  "    let data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data).to.have.property(\"name\");\r",
+                  "    pm.expect(data).to.have.property(\"weight\");\r",
+                  "    pm.expect(data).to.have.property(\"course\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Validation error messages are valid\", function () {\r",
+                  "    let data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data.name[0]).to.eql(\"Trường này không được bỏ trống.\");\r",
+                  "    pm.expect(data.weight[0]).to.eql(\"A valid number is required.\");\r",
+                  "    pm.expect(data.course[0]).to.eql(\"This field may not be null.\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"\",\r\n    \"weight\": \"\",\r\n    \"course\": \"\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/score-types/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "score-types",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PATCH Score-type - SUCCESS",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Score type updated successfully\", function () {\r",
+                  "    let data = pm.response.json();\r",
+                  "    let body = JSON.parse(pm.request.body.raw);\r",
+                  "\r",
+                  "    pm.expect(data).to.have.property(\"id\");\r",
+                  "    pm.expect(data).to.have.property(\"name\");\r",
+                  "    pm.expect(data).to.have.property(\"weight\");\r",
+                  "    pm.expect(data).to.have.property(\"course\");\r",
+                  "    pm.expect(data).to.have.property(\"course_name\");\r",
+                  "\r",
+                  "    if (body.name !== undefined)\r",
+                  "        pm.expect(data.name).to.eql(body.name);\r",
+                  "\r",
+                  "    if (body.weight !== undefined)\r",
+                  "        pm.expect(data.weight).to.eql(Number(body.weight));\r",
+                  "\r",
+                  "    if (body.course !== undefined)\r",
+                  "        pm.expect(data.course).to.eql(Number(body.course));\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"j\",\r\n    \"weight\": 2,\r\n    \"course\": 1\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/score-types/10/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "score-types",
+                "10",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "PATCH Score-type - SUCCESS",
+              "originalRequest": {
+                "method": "PATCH",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"name\": \"MOCK TEST 3\",\r\n    \"weight\": 2,\r\n    \"course\": 1\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/score-types/10/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "score-types",
+                    "10",
+                    ""
+                  ]
+                }
+              },
+              "_postman_previewlanguage": "",
+              "header": [],
+              "cookie": [
+                {
+                  "expires": "Invalid Date",
+                  "domain": "",
+                  "path": ""
+                }
+              ],
+              "body": ""
+            }
+          ]
+        },
+        {
+          "name": "PATCH Score-type - DUPLICATE",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "\r",
+                  "\r",
+                  "pm.test(\"Status code is 400\", function () {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Duplicate validation failed\", function () {\r",
+                  "    let data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data).to.have.property(\"non_field_errors\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Duplicate error message is valid\", function () {\r",
+                  "    let data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data.non_field_errors[0]).to.eql(\"The fields name, course must make a unique set.\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"j\",\r\n    \"weight\": 2,\r\n    \"course\": 1\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/score-types/11/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "score-types",
+                "11",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "PATCH Score-type - DUPLICATE",
+              "originalRequest": {
+                "method": "PATCH",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"name\": \"MOCK TEST 4\",\r\n    \"weight\": 2,\r\n    \"course\": 1\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/score-types/11/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "score-types",
+                    "11",
+                    ""
+                  ]
+                }
+              },
+              "_postman_previewlanguage": "",
+              "header": [],
+              "cookie": [
+                {
+                  "expires": "Invalid Date",
+                  "domain": "",
+                  "path": ""
+                }
+              ],
+              "body": ""
+            }
+          ]
+        },
+        {
+          "name": "PATCH Score-type - EMPTY FIELD",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "\r",
+                  "\r",
+                  "pm.test(\"Status code is 400\", function () {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Required fields validation failed\", function () {\r",
+                  "    let data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data).to.have.property(\"name\");\r",
+                  "    pm.expect(data).to.have.property(\"weight\");\r",
+                  "    pm.expect(data).to.have.property(\"course\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Validation error messages are valid\", function () {\r",
+                  "    let data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data.name[0]).to.eql(\"Trường này không được bỏ trống.\");\r",
+                  "    pm.expect(data.weight[0]).to.eql(\"A valid number is required.\");\r",
+                  "    pm.expect(data.course[0]).to.eql(\"This field may not be null.\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"\",\r\n    \"weight\": \"\",\r\n    \"course\": \"\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/score-types/8/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "score-types",
+                "8",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PATCH Score-type - WRONG ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "\r",
+                  "\r",
+                  "pm.test(\"Status code is 404\", function () {\r",
+                  "    pm.response.to.have.status(404);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Not found validation failed\", function () {\r",
+                  "    let data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data).to.have.property(\"detail\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Not found error message is valid\", function () {\r",
+                  "    let data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data.detail).to.eql(\"No ScoreType matches the given query.\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"j\",\r\n    \"weight\": 2,\r\n    \"course\": 1\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/score-types/20/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "score-types",
+                "20",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE Score-type by admin - SUCCESS",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "\r",
+                  "\r",
+                  "pm.test(\"Status code is 204\", function () {\r",
+                  "    pm.response.to.have.status(204);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Score type deleted successfully\", function () {\r",
+                  "    pm.expect(pm.response.text()).to.eql(\"\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/score-types/9/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "score-types",
+                "9",
+                ""
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "POST Create a class",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{access_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "name",
+              "value": "a",
+              "type": "text",
+              "uuid": "48d3d31b-4261-41c3-b052-83a9003275c4",
+              "disabled": true
+            },
+            {
+              "key": "course",
+              "value": "1",
+              "type": "text",
+              "uuid": "56969946-30be-406c-9573-46ece7cfc290",
+              "disabled": true
+            },
+            {
+              "key": "start_date",
+              "value": "2026-05-12",
+              "type": "text",
+              "uuid": "fad8ad01-66ee-42de-a331-4f994716a140",
+              "disabled": true
+            },
+            {
+              "key": "end_date",
+              "value": "2026-06-12",
+              "type": "text",
+              "uuid": "88c7396b-7e3e-4686-95e9-f03f04b85e40",
+              "disabled": true
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{base_url}}/classes/",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "classes",
+            ""
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "POST Create a class",
+          "originalRequest": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "name",
+                  "value": "TOEIC 2 kỹ năng",
+                  "type": "text",
+                  "uuid": "48d3d31b-4261-41c3-b052-83a9003275c4",
+                  "disabled": true
+                },
+                {
+                  "key": "course",
+                  "value": "1",
+                  "type": "text",
+                  "uuid": "56969946-30be-406c-9573-46ece7cfc290",
+                  "disabled": true
+                },
+                {
+                  "key": "start_date",
+                  "value": "2026-05-12",
+                  "type": "text",
+                  "uuid": "fad8ad01-66ee-42de-a331-4f994716a140",
+                  "disabled": true
+                },
+                {
+                  "key": "end_date",
+                  "value": "2026-06-12",
+                  "type": "text",
+                  "uuid": "88c7396b-7e3e-4686-95e9-f03f04b85e40",
+                  "disabled": true
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/classes/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "classes",
+                ""
+              ]
+            }
+          },
+          "_postman_previewlanguage": "",
+          "header": [],
+          "cookie": [
+            {
+              "expires": "Invalid Date",
+              "domain": "",
+              "path": ""
+            }
+          ],
+          "body": ""
+        }
+      ]
+    },
+    {
+      "name": "DELETE Delete Class",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{access_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "DELETE",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "name",
+              "value": "b",
+              "type": "text",
+              "uuid": "c096d887-18fa-4220-83b1-010be3b0c124"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{base_url}}/classes/2/",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "classes",
+            "2",
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "POST Create a course",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{access_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "name",
+              "value": "TOEIC 4 Kỹ năng (Listening + Reading) 550+",
+              "type": "text",
+              "uuid": "3f35ae6a-529f-4133-89ab-e5acbabae1aa"
+            },
+            {
+              "key": "level",
+              "value": "2",
+              "type": "text",
+              "uuid": "e3d5258e-dea6-45f2-a0a0-8b64337fab84"
+            },
+            {
+              "key": "image",
+              "type": "file",
+              "uuid": "cbec552d-e22c-42b5-85c5-4ffc19a5b1c9",
+              "src": "/D:/NHUQUYNH/images/background.jpg"
+            },
+            {
+              "key": "description",
+              "value": "Đạt được 550 điểm TOEIC 4 kỹ năng trong 3 tháng",
+              "type": "text",
+              "uuid": "eb23cfa4-b080-4d80-81f6-bf7ad8802937"
+            },
+            {
+              "key": "total_sessions",
+              "value": "-1",
+              "type": "text",
+              "uuid": "62b927c3-33c0-4878-985a-5fa5a29f0a39"
+            },
+            {
+              "key": "price",
+              "value": "5000000",
+              "type": "text",
+              "uuid": "f254140a-5d95-4e70-a75f-37ccc0481a42"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{base_url}}/courses/",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "courses",
+            ""
+          ],
+          "query": [
+            {
+              "key": "student_id",
+              "value": "30",
+              "disabled": true
+            }
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "POST Create a course",
+          "originalRequest": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "name",
+                  "value": "HSK 1-2",
+                  "type": "text",
+                  "uuid": "3f35ae6a-529f-4133-89ab-e5acbabae1aa"
+                },
+                {
+                  "key": "level",
+                  "value": "1",
+                  "type": "text",
+                  "uuid": "e3d5258e-dea6-45f2-a0a0-8b64337fab84"
+                },
+                {
+                  "key": "image",
+                  "type": "file",
+                  "uuid": "cbec552d-e22c-42b5-85c5-4ffc19a5b1c9",
+                  "src": "/D:/NHUQUYNH/images/background.jpg",
+                  "disabled": true
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/courses/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "courses",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "student_id",
+                  "value": "30",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "_postman_previewlanguage": "",
+          "header": [],
+          "cookie": [
+            {
+              "expires": "Invalid Date",
+              "domain": "",
+              "path": ""
+            }
+          ],
+          "body": ""
+        }
+      ]
+    },
+    {
+      "name": "PATCH Update Course",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{access_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "PATCH",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "name",
+              "value": "aa",
+              "type": "text",
+              "uuid": "a9deb844-9083-40ba-9de4-dba0d8ff4dd2"
+            },
+            {
+              "key": "total_sessions",
+              "value": "20",
+              "type": "text",
+              "uuid": "f67a37df-372a-4dc6-803a-eecb56c6cc0e"
+            },
+            {
+              "key": "level",
+              "value": "1",
+              "type": "text",
+              "uuid": "94beecd0-b778-42f6-a4fc-7d71cd5d1b9e"
+            },
+            {
+              "key": "price",
+              "value": "5000000",
+              "type": "text",
+              "uuid": "17caeb35-1c5f-43d6-8132-6e974a06e96c"
+            },
+            {
+              "key": "description",
+              "value": "hihi",
+              "type": "text",
+              "uuid": "6b1ae9cb-8e5b-4116-8982-e69b7a4973ab"
+            },
+            {
+              "key": "image",
+              "type": "file",
+              "uuid": "485be22c-b406-4213-b3da-ea74f2e6e5c2",
+              "src": "postman-cloud:///1f13b020-9104-42b0-80a5-0e7d1b8d68bc"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{base_url}}/courses/1/",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "courses",
+            "1",
+            ""
+          ],
+          "query": [
+            {
+              "key": "student_id",
+              "value": "30",
+              "disabled": true
+            }
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "PATCH Update Course",
+          "originalRequest": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "name",
+                  "value": "HSK ",
+                  "type": "text",
+                  "uuid": "a9deb844-9083-40ba-9de4-dba0d8ff4dd2"
+                },
+                {
+                  "key": "total_sessions",
+                  "value": "20",
+                  "type": "text",
+                  "uuid": "f67a37df-372a-4dc6-803a-eecb56c6cc0e"
+                },
+                {
+                  "key": "level",
+                  "value": "1",
+                  "type": "text",
+                  "uuid": "94beecd0-b778-42f6-a4fc-7d71cd5d1b9e"
+                },
+                {
+                  "key": "price",
+                  "value": "5000000",
+                  "type": "text",
+                  "uuid": "17caeb35-1c5f-43d6-8132-6e974a06e96c"
+                },
+                {
+                  "key": "description",
+                  "value": "hihi",
+                  "type": "text",
+                  "uuid": "6b1ae9cb-8e5b-4116-8982-e69b7a4973ab"
+                },
+                {
+                  "key": "image",
+                  "type": "file",
+                  "uuid": "485be22c-b406-4213-b3da-ea74f2e6e5c2",
+                  "src": "postman-cloud:///1f13b020-9104-42b0-80a5-0e7d1b8d68bc"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/courses/1/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "courses",
+                "1",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "student_id",
+                  "value": "30",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "_postman_previewlanguage": "",
+          "header": [],
+          "cookie": [
+            {
+              "expires": "Invalid Date",
+              "domain": "",
+              "path": ""
+            }
+          ],
+          "body": ""
+        }
+      ]
+    },
+    {
+      "name": "PATCH Update Level",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{access_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "PATCH",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "name ",
+              "value": "aaaaa",
+              "type": "text",
+              "uuid": "7124bdab-f298-4edf-adf3-13b4ff77f7de"
+            },
+            {
+              "key": "description",
+              "value": "testtttt",
+              "type": "text",
+              "uuid": "6e5ac9e4-3912-4d71-8590-b8f72749a286"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{base_url}}/levels/31/",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "levels",
+            "31",
+            ""
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "PATCH Update Level",
+          "originalRequest": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "name ",
+                  "value": "Căn bản",
+                  "type": "text",
+                  "uuid": "7124bdab-f298-4edf-adf3-13b4ff77f7de"
+                },
+                {
+                  "key": "description",
+                  "value": "testtttt",
+                  "type": "text",
+                  "uuid": "6e5ac9e4-3912-4d71-8590-b8f72749a286"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/levels/31/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "levels",
+                "31",
+                ""
+              ]
+            }
+          },
+          "_postman_previewlanguage": "",
+          "header": [],
+          "cookie": [
+            {
+              "expires": "Invalid Date",
+              "domain": "",
+              "path": ""
+            }
+          ],
+          "body": ""
+        }
+      ]
+    },
+    {
+      "name": "PATCH Update a course",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{access_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "PATCH",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "name",
+              "value": "Test update",
+              "type": "text",
+              "uuid": "d435c8fe-d924-4d22-92de-22c096e4fe3c",
+              "disabled": true
+            },
+            {
+              "key": "level",
+              "value": "1",
+              "type": "text",
+              "uuid": "6decab76-13c4-4295-b58b-eb0d03222578"
+            },
+            {
+              "key": "description",
+              "value": "This is for test",
+              "type": "text",
+              "uuid": "dcc38841-ce94-4f1b-82ab-a3dcaa800594"
+            },
+            {
+              "key": "tags",
+              "value": "2",
+              "type": "text",
+              "uuid": "c804eb81-e887-4db5-8bc6-a720b0f37b9c"
+            },
+            {
+              "key": "tags",
+              "value": "1",
+              "type": "text",
+              "uuid": "1b22d14a-3744-415a-929d-3a39a36af2a9"
+            },
+            {
+              "key": "price",
+              "value": "2300000",
+              "type": "text",
+              "uuid": "2a938c8e-1e86-42da-b7bf-cdd44d2ac27f"
+            },
+            {
+              "key": "total_sessions",
+              "value": "30",
+              "type": "text",
+              "uuid": "fdb4b3b3-981e-43b9-912e-af130220c194"
+            },
+            {
+              "key": "image",
+              "type": "file",
+              "uuid": "35e12a22-747a-41bc-8a40-bac23b8d7b81",
+              "src": "/D:/NHUQUYNH/images/mountain.jpg"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{base_url}}/courses/21/",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "courses",
+            "21",
+            ""
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "PATCH Update a course",
+          "originalRequest": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "name",
+                  "value": "Test update",
+                  "type": "text",
+                  "uuid": "d435c8fe-d924-4d22-92de-22c096e4fe3c",
+                  "disabled": true
+                },
+                {
+                  "key": "level",
+                  "value": "1",
+                  "type": "text",
+                  "uuid": "6decab76-13c4-4295-b58b-eb0d03222578"
+                },
+                {
+                  "key": "description",
+                  "value": "This is for test",
+                  "type": "text",
+                  "uuid": "dcc38841-ce94-4f1b-82ab-a3dcaa800594"
+                },
+                {
+                  "key": "tags",
+                  "value": "2",
+                  "type": "text",
+                  "uuid": "c804eb81-e887-4db5-8bc6-a720b0f37b9c"
+                },
+                {
+                  "key": "tags",
+                  "value": "1",
+                  "type": "text",
+                  "uuid": "1b22d14a-3744-415a-929d-3a39a36af2a9"
+                },
+                {
+                  "key": "price",
+                  "value": "2300000",
+                  "type": "text",
+                  "uuid": "2a938c8e-1e86-42da-b7bf-cdd44d2ac27f"
+                },
+                {
+                  "key": "total_sessions",
+                  "value": "30",
+                  "type": "text",
+                  "uuid": "fdb4b3b3-981e-43b9-912e-af130220c194"
+                },
+                {
+                  "key": "image",
+                  "type": "file",
+                  "uuid": "35e12a22-747a-41bc-8a40-bac23b8d7b81",
+                  "src": "/D:/NHUQUYNH/images/mountain.jpg"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/courses/21/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "courses",
+                "21",
+                ""
+              ]
+            }
+          },
+          "_postman_previewlanguage": null,
+          "header": null,
+          "cookie": [],
+          "body": null
+        }
+      ]
+    },
+    {
+      "name": "PATCH Update level",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{access_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "PATCH",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"name\": \"test update\",\r\n    \"description\": \"test demo\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/levels/30/",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "levels",
+            "30",
+            ""
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "PATCH Update level",
+          "originalRequest": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"test update\",\r\n    \"description\": \"test demo\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/levels/30/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "levels",
+                "30",
+                ""
+              ]
+            }
+          },
+          "_postman_previewlanguage": null,
+          "header": null,
+          "cookie": [],
+          "body": null
+        }
+      ]
+    },
+    {
+      "name": "GET teachers",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{access_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/teachers/",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "teachers",
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GET List payments by Admin",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{access_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/payments/",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "payments",
+            ""
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ]
+}
