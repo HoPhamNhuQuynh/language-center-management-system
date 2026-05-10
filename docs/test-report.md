@@ -28,7 +28,7 @@ Báo cáo nhằm ghi nhận số lượng testcase đã thiết kế và thực 
 | Chỉ số | Giá trị |
 | :---- | :---- |
 | Tiến độ tổng quan của chu kỳ kiểm thử  | Đúng tiến độ |
-| Tổng số testcase | 778 |
+| Tổng số testcase | 781 |
 | Số lượng tester | 4 |
 | Thời gian kiểm thử | 01/05/2026 \- 08/05/2026 |
 
@@ -69,11 +69,11 @@ Sau quá trình kiểm thử, hệ thống **Language Center Management System**
 
 Kết quả kiểm thử cho thấy:
 
-* Tổng số testcase planned là 778\.  
-* Tổng số testcase đã execute là 778\.  
-* Có 769 test case PASS và 9 test case FAIL.  
+* Tổng số testcase planned là 781\.  
+* Tổng số testcase đã execute là 781\.  
+* Có 773 test case PASS và 8 test case FAIL.  
 * Execution rate đạt: 100%.  
-* Pass rate đạt 98.84%.  
+* Pass rate đạt 98.98%.  
 * Evidence được lưu theo role/module để phục vụ việc đối chiếu kết quả kiểm thử.
 
 Nhìn chung, hệ thống đạt mức ổn định tốt ở phần lớn chức năng đã kiểm thử.
