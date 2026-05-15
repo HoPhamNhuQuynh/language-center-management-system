@@ -88,7 +88,7 @@ AUTHENTICATION_BACKENDS = [
 # }
 
 OAUTH2_PROVIDER = {
-    "ACCESS_TOKEN_EXPIRE_SECONDS": 36000,  # 15p
+    "ACCESS_TOKEN_EXPIRE_SECONDS": 3600,  # 15p
     "REFRESH_TOKEN_EXPIRE_SECONDS": 86400 * 30,  # 10 ngày
 }
 
@@ -226,7 +226,8 @@ STATIC_URL = 'static/'
 VNPAY_TMN_CODE = 'YCXQRNYD'
 VNPAY_HASH_SECRET = 'SAR75YVR7QKTU9HLD3C4MXY77Y01E387'
 VNPAY_URL = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html"
-VNPAY_RETURN_URL = 'https://pseudopsychological-vasoconstrictive-ellison.ngrok-free.dev/course-register'
+VNPAY_RETURN_URL = "https://localhost:5173/course-register"
+# VNPAY_RETURN_URL = 'https://pseudopsychological-vasoconstrictive-ellison.ngrok-free.dev/course-register'
 # VNPAY_IPN_URL = "https://pseudopsychological-vasoconstrictive-ellison.ngrok-free.dev/api/payments/vnpay-callback/"
 
 
