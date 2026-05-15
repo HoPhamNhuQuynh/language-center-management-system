@@ -615,7 +615,7 @@ Chi tiết thiết kế cơ sở dữ liệu của hệ thống được mô t�
 # 8. System Models
 
 ## 8.1 Use Case Diagram
-![usecase-diagram](screenshots/usecase-diagram.png)
+![usecase-diagram](./screenshots/SRS%20resource/usecase-diagram.png)
 ## 8.2 Use Case Specification
 ### 8.2.1. Đăng ký khóa học trực tuyến (Online course registration)
 | Field | Content |
@@ -689,80 +689,80 @@ Chi tiết thiết kế cơ sở dữ liệu của hệ thống được mô t�
 # 9. Wireframes UI
 
 ## 9.1 UI Báo Cáo Thống Kê
-![UI-bao-cao-thong-ke](screenshots/bao-cao-thong-ke.png)
+![UI-bao-cao-thong-ke](./screenshots/SRS%20resource/bao-cao-thong-ke.png)
 
 ## 9.2 UI Biên Lai
-![UI-bien-lai](screenshots/bien-lai.png)
+![UI-bien-lai](./screenshots/SRS%20resource/bien-lai.png)
 
 ## 9.3 UI Đăng Ký Khóa Học
 ### 9.3.1 UI chọn khóa học
-![UI-dang-ky-khoa-hoc](screenshots/dang-ky-khoa-hoc-1.png)
+![UI-dang-ky-khoa-hoc](./screenshots/SRS%20resource/dang-ky-khoa-hoc-1.png)
 ### 9.3.2 UI chọn lớp học
-![UI-dang-ky-khoa-hoc](screenshots/dang-ky-khoa-hoc-2.png)
+![UI-dang-ky-khoa-hoc](./screenshots/SRS%20resource/dang-ky-khoa-hoc-2.png)
 ### 9.3.3 UI thanh toán học phí
-![UI-dang-ky-khoa-hoc](screenshots/dang-ky-khoa-hoc-3.png)
+![UI-dang-ky-khoa-hoc](./screenshots/SRS%20resource/dang-ky-khoa-hoc-3.png)
 ### 9.3.4 UI xác nhận hủy hoặc tiếp tục thanh toán khi người dùng bấm vào dấu x
-![UI-dang-ky-khoa-hoc](screenshots/dang-ky-khoa-hoc-4.png)
+![UI-dang-ky-khoa-hoc](./screenshots/SRS%20resource/dang-ky-khoa-hoc-4.png)
 ### 9.3.5 UI xem biên lai khi người dùng thanh toán thành công
-![UI-dang-ky-khoa-hoc](screenshots/dang-ky-khoa-hoc-5.png)
+![UI-dang-ky-khoa-hoc](./screenshots/SRS%20resource/dang-ky-khoa-hoc-5.png)
 
 ## 9.4 UI Trang Chủ
-![UI-trang-chu](screenshots/trang-chu-1.png)
-![UI-trang-chu](screenshots/trang-chu-2.png)
-![UI-trang-chu](screenshots/trang-chu-3.png)
-![UI-trang-chu](screenshots/trang-chu-4.png)
+![UI-trang-chu](./screenshots/SRS%20resource/trang-chu-1.png)
+![UI-trang-chu](./screenshots/SRS%20resource/trang-chu-2.png)
+![UI-trang-chu](./screenshots/SRS%20resource/trang-chu-3.png)
+![UI-trang-chu](./screenshots/SRS%20resource/trang-chu-4.png)
 
 ## 9.5 UI Quản Lý Cấu Hình
-![UI-quan-ly-cau-hinh](screenshots/quan-ly-cau-hinh.png)
+![UI-quan-ly-cau-hinh](./screenshots/SRS%20resource/quan-ly-cau-hinh.png)
 
 ## 9.6 UI Xem Lịch Học - Thời Khóa Biểu
-![UI-xem-lich-hoc-thoi-khoa-bieu](screenshots/xem-khoa-hoc-va-thoi-khoa-bieu.png)
+![UI-xem-lich-hoc-thoi-khoa-bieu](./screenshots/SRS%20resource/xem-khoa-hoc-va-thoi-khoa-bieu.png)
 
 ## 9.7 UI Xem Lịch Dạy
-![UI-xem-lich-day](screenshots/xem-lich-day.png)
+![UI-xem-lich-day](./screenshots/SRS%20resource/xem-lich-day.png)
 
 ## 9.8. UI Chi tiết kết quả học tập
-![result-academic](screenshots/ket-qua-hoc-tap.png)
+![result-academic](./screenshots/SRS%20resource/ket-qua-hoc-tap.png)
 
 ## 9.9. UI Đăng ký tài khoản 
-![UI-dang-ky-tai-khoan](screenshots/dang-ky-tai-khoan.png)
+![UI-dang-ky-tai-khoan](./screenshots/SRS%20resource/dang-ky-tai-khoan.png)
 
 ## 9.10. UI Đăng nhập
-![UI-dang-nhap](screenshots/dang-nhap.png)
+![UI-dang-nhap](./screenshots/SRS%20resource/dang-nhap.png)
 
 ## 9.11. UI Điểm danh
-![UI-diem-danh](screenshots/diem-danh.png)
+![UI-diem-danh](./screenshots/SRS%20resource/diem-danh.png)
 
 ## 9.12. UI Nhập điểm
-![UI-nhap-diem](screenshots/nhap-diem.png)
+![UI-nhap-diem](./screenshots/SRS%20resource/nhap-diem.png)
 
 ## 9.13. UI Thông tin học viên
-![UI-thong-tin-hoc-vien](screenshots/thong-tin-hoc-vien.png)
+![UI-thong-tin-hoc-vien](./screenshots/SRS%20resource/thong-tin-hoc-vien.png)
 
 ## 9.14. UI Chi tiết lịch sử thanh toán
-![UI-chi-tiet-lich-su-thanh-toan](screenshots/chi-tiet-lich-su-thanh-toan.png)
+![UI-chi-tiet-lich-su-thanh-toan](./screenshots/SRS%20resource/chi-tiet-lich-su-thanh-toan.png)
 
 ## 9.15. UI About us
-![UI-About-us](screenshots/About-us-1.png)
-![UI-About-us](screenshots/About-us-2.png)
+![UI-About-us](./screenshots/SRS%20resource/About-us-1.png)
+![UI-About-us](./screenshots/SRS%20resource/About-us-2.png)
 
 ## 9.16. UI quản lý khóa học
-![UI-Quan-ly-khoa-hoc](screenshots/UI-quan-ly-khoa-hoc.png)
+![UI-Quan-ly-khoa-hoc](./screenshots/SRS%20resource/UI-quan-ly-khoa-hoc.png)
 
 ## 9.17. UI thêm khóa học
-![UI-Them-khoa-hoc](screenshots/UI-tao-khoa-hoc.png)
+![UI-Them-khoa-hoc](./screenshots/SRS%20resource/UI-tao-khoa-hoc.png)
 
 ## 9.18. UI quản lý lớp học
-![UI-Quan-ly-lop-hoc](screenshots/UI-quan-ly-lop-hoc.png)
+![UI-Quan-ly-lop-hoc](./screenshots/SRS%20resource/UI-quan-ly-lop-hoc.png)
 
 ## 9.19.  UI thêm lớp học
-![UI-Them-lop-hoc](screenshots/UI-tao-lop-hoc.png)
+![UI-Them-lop-hoc](./screenshots/SRS%20resource/UI-tao-lop-hoc.png)
 
 ## 9.20. UI quản lý buổi học
-![UI-Quan-ly-buoi-hoc](screenshots/UI-quan-ly-buoi-hoc.png)
+![UI-Quan-ly-buoi-hoc](./screenshots/SRS%20resource/UI-quan-ly-buoi-hoc.png)
 
 ## 9.21. UI thêm buổi học
-![UI-Them-buoi-hoc](screenshots/UI-tao-buoi-hoc.png)
+![UI-Them-buoi-hoc](./screenshots/SRS%20resource/UI-tao-buoi-hoc.png)
 
 
 

@@ -80,7 +80,7 @@ Dự án sử dụng **MySQL phiên bản 8.0** làm hệ quản trị cơ sở 
 ### 3.1. Sơ đồ Thực thể - Liên kết (ERD)
 **Mô tả sơ đồ:** Sơ đồ logic dưới đây thực hiện chuẩn hóa dữ liệu ở mức 3 (3NF) nhằm loại bỏ dư thừa dữ liệu. Các mối quan hệ Nhiều-Nhiều (N:N) được giải quyết thông qua các bảng kết hợp để đảm bảo tính toàn vẹn tham chiếu.
 
-![Sơ đồ ERD tổng thể hệ thống](screenshots/erd_diagram.png)
+![Sơ đồ ERD tổng thể hệ thống](./screenshots/SRS%20resource/erd-diagram.png)
 
 
 ### 3.2. Đặc tả các thực thể chính (Entity Descriptions)

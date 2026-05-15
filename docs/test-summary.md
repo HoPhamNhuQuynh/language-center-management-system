@@ -1,3 +1,7 @@
+# TEST SUMMARY
+
+---
+
 # I. Mục đích của tài liệu
 
 Tài liệu được xây dựng nhằm mô tả tổng quan các hoạt động kiểm thử đã được thực hiện đối với “Hệ thống quản lý trung tâm ngoại ngữ”. Giúp đánh giá mức độ ổn định, tính đúng đắn và khả năng đáp ứng yêu cầu của hệ thống trước khi hoàn thiện sản phẩm. Là cơ sở để đối chiếu giữa yêu cầu ban đầu của đề tài với kết quả triển khai thực tế trong quá trình phát triển và kiểm thử phần mềm.
@@ -22,52 +26,54 @@ Một số nội dung chưa được kiểm thử đầy đủ gồm kiểm th�
 
 # IV. Metrics
 
-## a) Số test cases được lên kế hoạch so với số testcases được thực hiện
+## a. Số test cases được lên kế hoạch so với số testcases được thực hiện
 
 | Số test cases lên kế hoạch | Số test case được thực hiện | Số test case pass | Số test case fail |
-|---|---|---|---|
-| 781 | 781 | 774 | 7 |
+|----------------------------|-----------------------------|-------------------|-------------------|
+| 781                        | 781                         | 774               | 7                 |
 
-## b) Số Test cases passed/ failed
+## b. Số Test cases passed/ failed
 ![Test Summary](./screenshots/Test%20summary/test-summary.png)
 
-## c) Số Bugs tìm được và Tình trạng & Mức độ nghiêm trọng của chúng
+## c. Số Bugs tìm được và Tình trạng & Mức độ nghiêm trọng của chúng
 
-|  | Critical | Major | Medium | Consmetic | Total |
-|---|---|---|---|---|---|
-| Closed | 0 | 1 | 5 | 0 | 6 |
-| Open | 0 | 0 | 0 | 1 | 1 |
-| Total | 0 | 1 | 5 | 1 | 7 |
+|        | Critical | Major | Medium | Consmetic | Total |
+|--------|----------|-------|--------|-----------|-------|
+| Closed | 0        | 1     | 5      | 0         | 6     |
+| Open   | 0        | 0     | 0      | 1         | 1     |
+| Total  | 0        | 1     | 5      | 1         | 7     |
 
 ![Test Summary](./screenshots/Test%20summary/Test-summary-bug.png)
 
-## d) Sự phân phối bugs
+## d. Sự phân phối bugs
 
-| Classes | Courses | Enrollment | Users | Total |
-|---|---|---|---|---|
-| Critical | 0 | 0 | 0 | 0 | 0 |
-| Major | 0 | 0 | 1 | 0 | 1 |
-| Medium | 1 | 1 | 0 | 3 | 5 |
-| Cosmetic | 0 | 0 | 0 | 1 | 1 |
-| Total => | 1 | 1 | 1 | 4 | 7 |
+| Classes  | Courses | Enrollment | Users | Total |
+|----------|---------|------------|-------|-------|
+| Critical | 0       | 0          | 0     | 0     |
+| Major    | 0       | 0          | 1     | 0     |
+| Medium   | 1       | 1          | 0     | 3     |
+| Cosmetic | 0       | 0          | 0     | 1     |
+| Total => | 1       | 1          | 1     | 4     |
 
 ![Test Summary](./screenshots/Test%20summary/test-summary-phan-phoi-bug.png)
 
 # V. Các loại kiểm thử được thực hiện
 
-## a) Smoke testing
+## a. Smoke testing
 
-Thử nghiệm này được thực hiện bất cứ khi nào bản Build được nhận để Kiểm tra để đảm bảo chức năng chính hoạt động tốt, bản Build có thể được chấp nhận và kiểm thử có thể bắt đầu.
+Smoke Testing được thực hiện mỗi khi nhóm nhận một bản build mới nhằm xác định các chức năng cốt lõi của hệ thống vẫn hoạt động ổn định và bản build đủ điều kiện để tiếp tục kiểm thử.
 
-Smoke testing được thực hiện mỗi khi có thay đổi mã nguồn mới được merge vào nhánh develop trên GitHub. Mục tiêu là kiểm tra nhanh các chức năng cốt lõi của hệ thống như đăng nhập, đăng ký khóa học và thanh toán học phí còn hoạt động ổn định trước khi tiến hành kiểm thử toàn diện. Nếu smoke test pass, nhóm mới tiến hành các loại kiểm thử sâu hơn; nếu fail, build sẽ được trả lại cho developer xử lý trước.
+Trong dự án, Smoke Testing được tiến hành sau mỗi lần thay đổi mã nguồn được merge vào nhánh `develop` trên GitHub. Mục tiêu của hoạt động này là kiểm tra nhanh các chức năng quan trọng như đăng nhập, đăng ký khóa học và thanh toán học phí để đảm bảo hệ thống không phát sinh lỗi nghiêm trọng sau quá trình tích hợp mã nguồn.
 
-## b) Kiểm thử tích hợp hệ thống
+Nếu Smoke Test đạt yêu cầu, nhóm sẽ tiếp tục thực hiện các loại kiểm thử chi tiết hơn. Ngược lại, nếu phát hiện lỗi thì bản build sẽ được trả lại cho các dev để khắc phục trước khi tiếp tục quy trình kiểm thử.
+
+## b. Kiểm thử tích hợp hệ thống
 
 Đây là kiểm thử được thực hiện trên Ứng dụng đang được thử nghiệm, để xác minh toàn bộ ứng dụng hoạt động theo yêu cầu. Các kịch bản nghiệp vụ quan trọng đã được thử nghiệm để đảm bảo chức năng quan trọng trong ứng dụng hoạt động như dự định mà không có bất kỳ lỗi nào.
 
 Kiểm thử tích hợp được thực hiện nhằm xác minh toàn bộ hệ thống hoạt động đúng khi các thành phần kết hợp với nhau, bao gồm Frontend ReactJS, Backend Django REST Framework, cơ sở dữ liệu MySQL và các dịch vụ bên thứ ba như VNPay Sandbox và Google/Facebook OAuth. Công cụ Postman được sử dụng để kiểm thử các API endpoint trong quá trình tích hợp giữa frontend và backend, đảm bảo request, response đúng định dạng và status code trả về chính xác.
 
-## c) Kiểm thử hồi quy
+## c. Kiểm thử hồi quy
 
 Kiểm thử hồi quy được thực hiện mỗi khi bản build mới được triển khai để kiểm tra có sửa lỗi và cải tiến mới, nếu có. Kiểm thử hồi quy đang được thực hiện trên toàn bộ ứng dụng chứ không chỉ là các chức năng mới và sửa lỗi. Kiểm thử này đảm bảo rằng chức năng hiện có hoạt động tốt sau khi sửa lỗi và các cải tiến mới được thêm vào ứng dụng hiện có. Các testcases cho chức năng mới được thêm vào các testcases hiện có và được thực thi.
 
@@ -77,20 +83,20 @@ Trong quá trình kiểm thử, nhóm cũng ghi nhận một số pytest cũ kh�
 
 # VI. Kiểm tra môi trường kiểm thử
 
-| Thành phần | Thông tin |
-|---|---|
-| Application URL | https://localhost:5173 |
-| Apps Server | Windows 10/11, Python 3.10+, Django REST Framework |
-| Database | MySQL 8.0 |
-| HP QC/ALM | pytest, pytest-django, pytest-cov (Backend) / Vitest (Frontend) / Postman (API) |
+| Thành phần      | Thông tin                                                                       |
+|-----------------|---------------------------------------------------------------------------------|
+| Application URL | https://localhost:5173                                                          |
+| Apps Server     | Windows 10/11, Python 3.10+, Django REST Framework                              |
+| Database        | MySQL 8.0                                                                       |
+| HP QC/ALM       | pytest, pytest-django, pytest-cov (Backend) / Vitest (Frontend) / Postman (API) |
 
 # VII. Bài học kinh nghiệm
 
-| Vấn đề gặp phải | Giải pháp |
-|---|---|
-| Cả frontend lẫn backend đều thay đổi code do logic nghiệp vụ thay đổi giữa chừng, khiến test case đã viết bị fail và phải viết lại từ đầu, tốn nhiều thời gian. | Thống nhất giữa các thành viên trong nhóm về phạm vi thay đổi trước khi thực hiện, nếu có thay đổi thì thông báo sớm để người kiểm thử chuẩn bị cập nhật test case, không để đến lúc chạy mới biết bị fail. |
-| Khi API thay đổi cấu trúc, test case ở cả Vitest, Postman và Pytest đều phải cập nhật thủ công song song dẫn đến dễ bị bỏ sót một cái nào đó. | Sau mỗi lần API thay đổi, kiểm tra lại toàn bộ test case ở cả ba công cụ trước khi kết luận pass/fail. |
-| Vitest mock API ở frontend và Pytest test API thực ở backend đôi khi cho kết quả mâu thuẫn khi nghiệp vụ thay đổi, do hai bên cập nhật không đồng bộ. | Tổ chức cuộc họp online ngắn giữa các thành viên trong nhóm mỗi khi có thay đổi nghiệp vụ, thay vì để mỗi bên tự cập nhật độc lập. |
+| Vấn đề gặp phải                                                                                                                                                                        | Giải pháp                                                                                                                                                                                               |
+|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Một số luồng nghiệp vụ phức tạp (như xử lý thanh toán, timeout kết nối mạng) khó tái hiện trong môi trường kiểm thử dẫn đến không thể kiểm thử trực tiếp được.                         | Sử dụng mock/stub để giả lập các trường hợp khó tái hiện, đồng thời ghi chú rõ đây là phần chưa được kiểm thử thực tế.                                                                                  |
+| Dữ liệu dùng để kiểm thử chưa đủ đa dạng và chính xác so với dữ liệu thực tế khiến cho một số tính năng có thể hoạt động khác đi khi gặp tập dữ liệu thật mà nhóm chưa phát hiện được. | Cần đầu tư xây dựng bộ dữ liệu kiểm thử sát với thực tế hơn, bao gồm cả các trường hợp dữ liệu đúng định dạng và trạng thái với khi phân tích yêu cầu để đảm bảo dữ liệu nhất quán với logic lập trình. |
+| Nhóm còn thiếu kinh nghiệm thực tế nên trong một số trường hợp nghiệp vụ phổ biến (edge case) chưa được nhận diện và đưa vào test case dẫn đến bỏ sót lỗi tiềm ẩn.                     | Kham thảo thêm các tài liệu nghiệp vụ và các dự án tương tự để bổ sung test case sát thực tế hơn trong các lần kiểm thử tiếp theo.                                                                      |
 
 # VIII. Khuyến nghị
 
@@ -107,12 +113,13 @@ Viết test case theo hành vi người dùng thay vì chi tiết kỹ thuật �
 Viết Pytest fixture dùng chung cho dữ liệu test — dữ liệu mẫu như học viên, lớp học, lịch học được định nghĩa một lần và tái sử dụng xuyên suốt, tránh tạo dữ liệu trùng lặp và dễ cập nhật khi có thay đổi.
 
 # X. Exit citeria
-## a) Tất cả các testcases nên được thực hiện: 
-Có - Toàn bộ 781 test cases đã được thực hiện, đạt tỷ lệ thực thi 100%
-## b)Tất cả các Bug cực kì nghiêm trọng, nghiêm trọng, trung bình cần được xác minh và đóng: 
-Có - 8 bugs thuộc mức nghiêm trọng và trung bình đã được Closed trước khi kết thúc chu kỳ kiểm thử.
-## c) Bất kỳ các bug nhỏ, độ ưu tiên thấp đều có kế hoạch thực hiện và được chuẩn bị với ngày đóng cửa dự kiến. 
+## a. Tất cả các testcases nên được thực hiện: 
+Toàn bộ test case ở bước thiết kế đều được thực hiện với tổng số là 781 test cases, đạt tỷ lệ thực thi 100%
+## b. Tất cả các Bug cực kì nghiêm trọng, nghiêm trọng, trung bình cần được xác minh và đóng: 
+Có khoảng 8 bugs thuộc mức nghiêm trọng và trung bình đã được Closed trước khi kết thúc chu kỳ kiểm thử.
+## c. Bất kỳ các bug nhỏ, độ ưu tiên thấp đều có kế hoạch thực hiện và được chuẩn bị với ngày đóng cửa dự kiến. 
 Còn 1 bug mức Cosmetic đang Open, thuộc module Users. Bug này không ảnh hưởng đến chức năng thực tế của hệ thống và dự kiến được xử lý trong lần cập nhật môi trường kiểm thử tiếp theo.
+
 # XI. Kết luận
  Sau quá trình kiểm thử, nhóm đã hoàn thành việc đánh giá các chức năng chính của “Hệ thống quản lý trung tâm ngoại ngữ” trên cả frontend, backend và API. Các chức năng chính trọng tâm đã được kiểm thử. Kết quả kiểm thử cho thấy hệ thống đạt mức độ ổn định tương đối tốt với tỷ lệ testcase pass khoảng 98.98% và tỷ lệ fail khoảng 1.02%. Điều này cho thấy phần lớn chức năng của hệ thống đã hoạt động đúng theo yêu cầu đề ra.   
             
