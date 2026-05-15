@@ -463,7 +463,7 @@ describe("9. handleSubmit", () => {
     });
   });
 
-  it("SCR- lockReason=deadline khi API trả 403 có 'thời hạn'", async () => {
+  it("SCR-022 lockReason=deadline khi API trả 403 có 'thời hạn'", async () => {
     bulkSyncScoresApi.mockRejectedValue({
       response: {
         status: 403,
@@ -480,7 +480,7 @@ describe("9. handleSubmit", () => {
     });
   });
 
-  it("SCR- lockReason=submitted khi API trả 403 không có 'thời hạn'", async () => {
+  it("SCR-023 lockReason=submitted khi API trả 403 không có 'thời hạn'", async () => {
     bulkSyncScoresApi.mockRejectedValue({
       response: {
         status: 403,
@@ -497,7 +497,7 @@ describe("9. handleSubmit", () => {
     });
   });
 
-  it("SCR- onFocus cập nhật focusedCell", async () => {
+  it("SCR-024 onFocus cập nhật focusedCell", async () => {
     await setup();
     fireEvent.focus(screen.getByTestId("score-101-1"));
     expect(screen.getByTestId("score-101-1")).toBeInTheDocument();
