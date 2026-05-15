@@ -205,13 +205,7 @@ class BulkSyncAttendanceView(APIView):
         if session.schedule.classroom_id != classroom.id:
             raise PermissionDenied("Buổi học không thuộc lớp này")
 
-        is_main = TeachingAssignment.objects.filter(
-            classroom=classroom,
-            teacher=request.user,
-            is_main=True
-        ).exists()
-
-        if not is_main:
+        if session.user_id != request.user.id:
             raise PermissionDenied("Bạn không có quyền điểm danh cho buổi học này")
 
         result = AttendanceService.bulk_sync_attendances(

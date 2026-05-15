@@ -25,6 +25,23 @@ class EnrollmentSerializer(serializers.ModelSerializer):
         student = self.context['request'].user
         classroom = attrs.get('classroom')
 
+        old = Enrollment.objects.filter(
+            student=student,
+            classroom=classroom,
+            enrollment_status=Enrollment.Status.PENDING_PAYMENT,
+        ).first()
+        if old:
+            old.delete()
+
+        if Enrollment.objects.filter(
+            student=student,
+            classroom=classroom,
+            enrollment_status=Enrollment.Status.SUCCESS,
+        ).exists():
+            raise serializers.ValidationError(
+                "Sinh viên này đã đăng ký lớp học này rồi."
+            )
+
         if Enrollment.objects.filter(student=student, classroom=classroom).exists():
             raise serializers.ValidationError("Sinh viên này đã đăng ký lớp học này rồi.")
 
@@ -33,9 +50,15 @@ class EnrollmentSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Lớp đã đủ sỉ số, không thể đăng ký thêm")
 
         new_schedule = classroom.schedule_set.all()
-        enrollments = Enrollment.objects.filter(
-            student=student, active=True
-        ).select_related('classroom').prefetch_related('classroom__schedule_set')
+        enrollments = (
+            Enrollment.objects.filter(
+                student=student,
+                active=True,
+                enrollment_status=Enrollment.Status.SUCCESS,
+            )
+            .select_related("classroom")
+            .prefetch_related("classroom__schedule_set")
+        )
 
         for e in enrollments:
             existing_schedule = e.classroom.schedule_set.all()

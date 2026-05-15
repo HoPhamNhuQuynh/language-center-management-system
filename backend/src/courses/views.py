@@ -12,35 +12,46 @@ from core.paginators import CoursePaginator
 
 
 class CourseViewSet(viewsets.ModelViewSet):
-    queryset = Course.objects.select_related('level').prefetch_related('tags').all().order_by("id")
+    queryset = (
+        Course.objects.select_related("level")
+        .prefetch_related("tags")
+        .all()
+        .order_by("id")
+    )
     parser_classes = [parsers.MultiPartParser]
     pagination_class = CoursePaginator
 
     def get_queryset(self):
-        qs = Course.objects.select_related('level').prefetch_related('tags').order_by("id")
+        qs = (
+            Course.objects.select_related("level")
+            .prefetch_related("tags")
+            .order_by("id")
+        )
 
         if self.request.user.is_authenticated and self.request.user.is_admin:
             pass
         else:
             qs = qs.filter(active=True)
 
-        tag = self.request.query_params.get('tag')
+        tag = self.request.query_params.get("tag")
         if tag:
             qs = qs.filter(tags__name__iexact=tag)
 
-        search = self.request.query_params.get('search')
+        search = self.request.query_params.get("search")
         if search:
             qs = qs.filter(name__icontains=search)
 
         return qs
 
     def get_permissions(self):
-        if self.action in ['list', 'retrieve', 'get_classes']:
+        if self.action in ["list", "retrieve", "get_classes"]:
             return [permissions.AllowAny()]
         return [core_perms.IsAdmin()]
 
     def get_serializer_class(self):
-        if self.action in ['retrieve'] or self.request.user.is_authenticated and self.request.user.is_admin:
+        if self.action in ["retrieve"] or (
+            self.request.user.is_authenticated and self.request.user.is_admin
+        ):
             return serializers.CourseDetailSerializer
         return serializers.CourseSerializer
 
@@ -50,11 +61,13 @@ class CourseViewSet(viewsets.ModelViewSet):
         except ProtectedError:
             raise ValidationError("Không thể xóa khóa học này do ràng buộc dữ liệu.")
 
-    @action(methods=['get'], url_path='classes', detail=True)
+    @action(methods=["get"], url_path="classes", detail=True)
     def get_classes(self, request, pk):
         classes = ClassRoom.objects.filter(course_id=pk)
-        return Response(ClassRoomSerializer(classes, many=True).data, status=status.HTTP_200_OK)
-    
+        return Response(
+            ClassRoomSerializer(classes, many=True).data, status=status.HTTP_200_OK
+        )
+
     @action(detail=False, methods=["get"], url_path="all")
     def all_courses(self, request):
         courses = Course.objects.filter(active=True).values("id", "name")
@@ -66,7 +79,7 @@ class TagViewSet(viewsets.ViewSet, generics.ListAPIView):
     serializer_class = serializers.TagSerializer
 
     def get_permissions(self):
-        if self.action == 'list':
+        if self.action == "list":
             return [permissions.AllowAny()]
         return [core_perms.IsAdmin()]
 
@@ -81,7 +94,7 @@ class LevelViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.LevelSerializer
 
     def get_permissions(self):
-        if self.action == 'list':
+        if self.action == "list":
             return [permissions.AllowAny()]
         return [core_perms.IsAdmin()]
 
@@ -97,7 +110,7 @@ class ScoreTypeViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.ScoreTypeSerializer
 
     def get_permissions(self):
-        if self.action == 'list':
+        if self.action == "list":
             return [permissions.AllowAny()]
         return [core_perms.IsAdmin()]
 
